@@ -9,8 +9,9 @@ class GeneratorSpec extends mutable.Specification {
   "a Generator" should {
     
     "correctly generate a simple case class definition in a package" in {
-      val infile = new java.io.File("src/test/avro/twitter.avro")
-      Generator.fromFile(infile)
+      val infile = new java.io.File("avrohugger-core/src/test/avro/twitter.avro")
+      val gen = new Generator
+      gen.fromFile(infile)
       val source = scala.io.Source.fromFile("target/generated-sources/com/miguno/avro/twitter_schema.scala").mkString
       println(source)
        source === 
@@ -22,8 +23,9 @@ case class twitter_schema(username: String, tweet: String, timestamp: Long)"""
     
     
     "correctly generate a set of complex case class definitions in the default package" in {
-      val infile = new java.io.File("src/test/avro/enron.avsc")
-      Generator.fromFile(infile)
+      val infile = new java.io.File("avrohugger-core/src/test/avro/enron.avsc")
+      val gen = new Generator
+      gen.fromFile(infile)
       val source0 = scala.io.Source.fromFile("target/generated-sources/TUPLE_0.scala").mkString
       val source1 = scala.io.Source.fromFile("target/generated-sources/TUPLE_1.scala").mkString
       val source2 = scala.io.Source.fromFile("target/generated-sources/TUPLE_2.scala").mkString

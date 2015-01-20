@@ -1,0 +1,24 @@
+name := "avrohugger"
+
+version := "0.0.1-SNAPSHOT"
+
+organization := "com.julianpeeters"
+
+scalaVersion := "2.11.4"
+
+libraryDependencies ++= Seq( 
+  "org.specs2" %% "specs2" % "2.4" % "test",
+  "org.apache.avro" % "avro" % "1.7.7",
+  "com.eed3si9n" %% "treehugger" % "0.3.0"
+)
+
+lazy val CustomPackage = config("custompackage") extend(Compile) describedAs("Custom package configuration")
+
+packageBin in CustomPackage := {
+  val log = streams.value.log
+  import log._
+  info("""Returning custom packaging artifact, i.e. file(".")""")
+  file(".")
+}
+
+lazy val root = project in file(".") overrideConfigs (CustomPackage)

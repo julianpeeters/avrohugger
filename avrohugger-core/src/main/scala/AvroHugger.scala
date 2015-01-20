@@ -32,7 +32,7 @@ object AvroHugger {
       if (namespace.isDefined) BLOCK(classDef).inPackage(namespace.get)
       else BLOCK(classDef)
     }.withDoc("MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY")
-    
+
     //return the tree
     writeToFile(namespace, schema, tree, outDir)
   }
@@ -40,7 +40,7 @@ object AvroHugger {
   // write the definition to file
   private def writeToFile(namespace: Option[String], schema: Schema, tree: Tree, outDir: String): Unit = {
     val folderPath: Path = Paths.get{
-      if (namespace.isDefined) outDir + namespace.get.toString.replace('.','/')
+      if (namespace.isDefined) outDir + "/" + namespace.get.toString.replace('.','/')
       else outDir
     }
     if (!Files.exists(folderPath)) Files.createDirectories(folderPath)

@@ -25,7 +25,7 @@ object TypeMatcher {
         //case Schema.Type.MAP      => //TODO
         case Schema.Type.NULL     => NullClass
         case Schema.Type.STRING   => StringClass
-        case Schema.Type.RECORD   => classStore.generatedClasses(schema) 
+        case Schema.Type.RECORD   => classStore.generatedClasses(schema)
         case Schema.Type.UNION    => { 
           val unionSchemas = schema.getTypes.toList
           // unions are represented as Scala Option[T], and thus unions must be of two types, one of them NULL

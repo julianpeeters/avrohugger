@@ -7,16 +7,15 @@ import org.apache.avro.generic.{GenericDatumReader, GenericRecord}
 import org.apache.avro.file.DataFileReader
 import scala.collection.JavaConverters._
 
-object FileParser { 
-
+class FileParser { 
+  val parser = new Parser()
   def getSchema(infile: java.io.File): Schema = {
     val schema = infile.getName.split("\\.").last match {
       case "avro" =>
         val gdr = new GenericDatumReader[GenericRecord]
         val dfr = new DataFileReader(infile, gdr)
         dfr.getSchema
-      case "avsc" =>
-        new Parser().parse(infile)
+      case "avsc" => parser.parse(infile)
       case _ => throw new Exception("File must end in .avsc for plain text json files or .avro for binary.")
     }
     schema.getType match {
