@@ -42,12 +42,12 @@ Or download the avrohugger-tools jar and use it like the avro-tools jar:
 
 
     // 'generate' generates Scala case class definitions
-    java -jar /path/to/avrohugger-tools-0.0.1-SNAPSHOT.jar generate schema user.avsc . 
+    java -jar /path/to/avrohugger-tools_2.11-0.0.1-assembly.jar generate schema user.avsc . 
 
 
     // TODO:
     // 'generate-specific' generates case class definitions that extend SpecificRecordBase
-    // java -jar /path/to/avrohugger-tools-0.0.1-SNAPSHOT.jar generate-specific schema user.avsc . 
+    // java -jar /path/to/avrohugger-tools_2.11-0.0.1-assembly.jar generate-specific schema user.avsc . 
 
 
 ## Future
