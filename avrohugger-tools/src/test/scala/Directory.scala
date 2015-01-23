@@ -7,7 +7,7 @@ object Directory {
 
 // where test input/expected output comes from
   val TEST_DIR =
-    new File(System.getProperty("test.compile.schema.dir", "avrohugger-tool/src/test/compiler"));
+    new File(System.getProperty("test.compile.schema.dir", "avrohugger-tools/src/test/compiler"));
   // where test input comes from
   val TEST_INPUT_DIR =
     new File(TEST_DIR, "input");
@@ -31,7 +31,7 @@ object Directory {
 
   // where test output goes
   val TEST_OUTPUT_DIR =
-    new File("avrohugger-tool/target/compiler/output/");
+    new File("avrohugger-tools/target/compiler/output/");
   val TEST_OUTPUT_PLAYER =
     new File(TEST_OUTPUT_DIR, "avro/examples/baseball/Player.scala");
   val TEST_OUTPUT_NICKNAME =

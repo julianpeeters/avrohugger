@@ -1,10 +1,11 @@
 import sbt._
 import Keys._
+import sbtassembly.AssemblyPlugin.autoImport._
 
 object BuildSettings {
   val buildSettings = Defaults.defaultSettings ++ Seq(
     organization := "com.julianpeeters",
-    version := "0.0.1-SNAPSHOT",
+    version := "0.0.1",
     scalacOptions ++= Seq(),
     scalaVersion := "2.11.5",
     libraryDependencies += "org.apache.avro" % "avro" % "1.7.7",
@@ -48,10 +49,8 @@ object MyBuild extends Build {
   lazy val avrohugger: Project = Project(
     "avrohugger",
     file("."),
-    settings = buildSettings ++ Seq(
-      publishArtifact := false
-    )
-  ) aggregate(core, tool)
+    settings = buildSettings 
+  ) aggregate(core, tools)
 
   lazy val core: Project = Project(
     "avrohugger-core",
@@ -59,18 +58,21 @@ object MyBuild extends Build {
     settings = buildSettings ++ Seq(
       libraryDependencies += "com.eed3si9n" %% "treehugger" % "0.3.0"))
 
-  /*
-  *tests project build def was added to the macros build, and could probably be "re-styled" to integrate more cleanly
-  */
-  lazy val tool: Project = Project(
-    "avrohugger-tool",
-    file("avrohugger-tool"), 
+  lazy val tools: Project = Project(
+    "avrohugger-tools",
+    file("avrohugger-tools"), 
     settings = buildSettings)
+    .settings(artifact in (Compile, assembly) := {
+      val art = (artifact in (Compile, assembly)).value
+      art.copy(`classifier` = Some("assembly"))}
+     )
+    .settings(addArtifact(artifact in (Compile, assembly), assembly).settings: _*)
     .settings(
-      publishArtifact := false,
+      assemblyJarName in assembly := "avrohugger-tools-0.0.1.jar",
       libraryDependencies += "org.apache.avro" % "avro-tools" % "1.7.7"
-        // Add your additional libraries here (comma-separated)...
-     ).dependsOn(core)
+      // Add your additional libraries here (comma-separated)...)
+     )
+    .dependsOn(core)
      
 }
 

@@ -58,7 +58,7 @@ class GeneratorTool extends Tool {
          inputs.add(new File(args.get(i)));
       }
     }
-
+    // TODO: add if-branch for .avro files, add DATAFILE_FILTER
     if ("schema".equals(method)) {
       for (src: File <- determineInputs(inputs, SCHEMA_FILTER)) {
         generator.fromFile(src, args.last)
