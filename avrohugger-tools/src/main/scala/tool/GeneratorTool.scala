@@ -33,7 +33,7 @@ class GeneratorTool extends Tool {
   def run(in: InputStream, out: PrintStream, err: PrintStream, args: List[String]): Int = {
     if (args.size() < 3) {
       System.err
-          .println("Usage: [-string] (schema|protocol) input... outputdir");
+          .println("Usage: [-string] (schema|protocol|datafile) input... outputdir");
       System.err
           .println(" input - input files or directories");
       System.err
@@ -58,17 +58,18 @@ class GeneratorTool extends Tool {
          inputs.add(new File(args.get(i)));
       }
     }
-    // TODO: add if-branch for .avro files, add DATAFILE_FILTER
-    if ("schema".equals(method)) {
+    if ("datafile".equals(method)) {
+      for (src: File <- determineInputs(inputs, DATAFILE_FILTER)) {
+        generator.fromFile(src, args.last)
+      }
+    } else if ("schema".equals(method)) {
       for (src: File <- determineInputs(inputs, SCHEMA_FILTER)) {
         generator.fromFile(src, args.last)
       }
     } 
     else if ("protocol".equals(method)) {
       for (src: File <- determineInputs(inputs, PROTOCOL_FILTER)) {
-        val protocol: Protocol = Protocol.parse(src);
-        sys.error("sorry, protocol not yet supported")
-        //TODO generator.fromProtocol(protocol, args(2))
+        generator.fromFile(src, args.last)
       }
     } 
     else {
@@ -123,6 +124,8 @@ class GeneratorTool extends Tool {
     new FileExtensionFilter("avsc");
   val PROTOCOL_FILTER: FileExtensionFilter =
     new FileExtensionFilter("avpr");
+      val DATAFILE_FILTER: FileExtensionFilter =
+    new FileExtensionFilter("avro");
 
   case class FileExtensionFilter(extension: String) extends FilenameFilter {
     @Override

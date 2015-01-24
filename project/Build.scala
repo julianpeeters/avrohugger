@@ -5,11 +5,12 @@ import sbtassembly.AssemblyPlugin.autoImport._
 object BuildSettings {
   val buildSettings = Defaults.defaultSettings ++ Seq(
     organization := "com.julianpeeters",
-    version := "0.0.1",
+    version := "0.0.2-SNAPSHOT",
     scalacOptions ++= Seq(),
     scalaVersion := "2.11.5",
     libraryDependencies += "org.apache.avro" % "avro" % "1.7.7",
     libraryDependencies += "org.specs2" %% "specs2" % "2.4" % "test",
+    parallelExecution in Test := false,
     publishMavenStyle := true,
     publishArtifact in Test := false,
     publishTo <<= version { (v: String) =>
@@ -68,7 +69,6 @@ object MyBuild extends Build {
      )
     .settings(addArtifact(artifact in (Compile, assembly), assembly).settings: _*)
     .settings(
-      assemblyJarName in assembly := "avrohugger-tools-0.0.1.jar",
       libraryDependencies += "org.apache.avro" % "avro-tools" % "1.7.7"
       // Add your additional libraries here (comma-separated)...)
      )

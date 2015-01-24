@@ -1,7 +1,7 @@
 # avrohugger
-Schema-to-case-class code generation for working with Avro in Scala.
+Schema-to-case-class code generation for working with Avro in Scala. Depends on Avro and Treehugger
 
-Case classes can be plain (for use with Scalavro and Salat-Avro), // TODO: or they can extend `SpecificRecordBase` (for use with the Avro Specific API - Scalding, Spark, Avro, etc.).
+Case classes can be plain (for use with Scalavro and Salat-Avro), // TODO: or they can extend `SpecificRecordBase` (for use with the Avro Specific API - Scalding, Spark, Avro, etc.). 
 
 Supports generating case classes with arbitrary fields of the following datatypes: 
 
@@ -38,7 +38,7 @@ Then get a `Generator` or `SpecificGenerator` and use `fromSchema` or `fromFile`
     generator.fromFile(schemaFile, "optional/path/to/output") // default output path = "target/generated-sources/"
 
 
-Or download the avrohugger-tools jar and use it like the avro-tools jar:
+Or download the [avrohugger-tools jar](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.11/0.0.1/avrohugger-tools_2.11-0.0.1-assembly.jar) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
 
 
     // 'generate' generates Scala case class definitions
@@ -51,9 +51,11 @@ Or download the avrohugger-tools jar and use it like the avro-tools jar:
 
 
 ## Future
-* SpecificGenerator
-* Support protocols
-* Support .avro datafiles
+* SpecificGenerator to generate case classes that extend SpecificRecordBase to be compatible with the Avro Specific API
+* Support more avro types: enum, fixed, bytes, map.
+
+#### Credits
+Depends on Avro and Treehugger. Avrohugger-tools based strongly on avro-tools.
 
 #### Fork away, just make sure the tests pass before you send a pull request.
 

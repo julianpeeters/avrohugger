@@ -56,7 +56,23 @@ class GeneratorToolSpec extends mutable.Specification {
 
   "the generated Scala files" should {
 
-    "match the expected single file" in {
+    "match the expected single protocol file" in {
+      doCompile(Array[String] ("protocol",
+        Directory.TEST_INPUT_DIR.toString() + "/mail.avpr",
+        Directory.TEST_OUTPUT_DIR.getPath()
+      ));
+      readFile(Directory.TEST_OUTPUT_MESSAGE) === readFile(Directory.TEST_EXPECTED_MESSAGE)
+    }
+
+    "match the expected single datafile file" in {
+      doCompile(Array[String] ("datafile",
+        Directory.TEST_INPUT_DIR.toString() + "/twitter.avro",
+        Directory.TEST_OUTPUT_DIR.getPath()
+      ));
+      readFile(Directory.TEST_OUTPUT_TWITTER) === readFile(Directory.TEST_EXPECTED_TWITTER)
+    }
+
+    "match the expected single schema file" in {
       doCompile(Array[String] ("schema",
         Directory.TEST_INPUT_DIR.toString() + "/nickname.avsc",
         Directory.TEST_OUTPUT_DIR.getPath()
@@ -86,6 +102,7 @@ class GeneratorToolSpec extends mutable.Specification {
       doCompile(Array[String]("-string", "schema",
         Directory.TEST_INPUT_DIR.toString() + "/nickname.avsc",
         Directory.TEST_INPUT_DIR.toString() + "/player.avsc",
+        Directory.TEST_INPUT_DIR.toString() + "/twitter_schema.avro",
         Directory.TEST_OUTPUT_STRING_DIR.getPath()
       ));
       readFile(Directory.TEST_OUTPUT_STRING_PLAYER) === readFile(Directory.TEST_EXPECTED_STRING_PLAYER)

@@ -13,7 +13,7 @@ import scala.collection.JavaConversions._
 
 
 /** Command-line driver.*/
-class Runner {// extends App{
+class Runner {
 
   var maxLen = 0;
 
