@@ -22,11 +22,11 @@ Supports generating case classes with arbitrary fields of the following datatype
 
 
 
-## Usage
+## Usage (for Scala 2.10 and 2.11)
 Get the dependency with:
 
 
-    "com.julianpeeters" % "avrohugger" %% "0.0.2"
+    "com.julianpeeters" % "avrohugger" %% "0.0.2-SNAPSHOT"
 
 Then get a `Generator` or `SpecificGenerator` and use `fromSchema` or `fromFile`:
 
@@ -38,7 +38,7 @@ Then get a `Generator` or `SpecificGenerator` and use `fromSchema` or `fromFile`
     generator.fromFile(schemaFile, "optional/path/to/output") // default output path = "target/generated-sources/"
 
 
-Or download the [avrohugger-tools jar](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.11/0.0.1/avrohugger-tools_2.11-0.0.1-assembly.jar) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
+Or download the avrohugger-tools jar for Scala [2.10](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.11/0.0.1/avrohugger-tools_2.10-0.0.1-assembly.jar) or Scala [2.11](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.11/0.0.1/avrohugger-tools_2.11-0.0.1-assembly.jar) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
 
 
     // 'generate' generates Scala case class definitions
