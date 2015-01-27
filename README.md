@@ -26,7 +26,7 @@ Supports generating case classes with arbitrary fields of the following datatype
 Get the dependency with:
 
 
-    "com.julianpeeters" % "avrohugger" %% "0.0.1"
+    "com.julianpeeters" % "avrohugger" %% "0.0.2"
 
 Then get a `Generator` or `SpecificGenerator` and use `fromSchema` or `fromFile`:
 

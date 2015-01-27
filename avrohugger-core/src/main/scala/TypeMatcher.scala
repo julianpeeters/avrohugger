@@ -8,10 +8,11 @@ import org.apache.avro.Schema.{Type => AvroType}
 import scala.collection.JavaConversions._
 
 object TypeMatcher {
+  
   def toType(classStore: ClassStore, namespace: Option[String], schema: org.apache.avro.Schema): Type = {
 
     // May contain nested schemas that will use the same namespace as the top-level schema. 
-    // Thus, when a field is parsed, the namespace is passed in once while and nested classes 
+    // Thus, when a field is parsed, the namespace is passed in once
     def matchType(schema: org.apache.avro.Schema): Type = {
       schema.getType match { 
         case Schema.Type.ARRAY    => listType(toType(classStore, namespace, schema.getElementType))
@@ -39,6 +40,7 @@ object TypeMatcher {
         case x => error( x +  "is not yet supported or is not a valid Avro type")
       }
     }
+
     matchType(schema)
   }
 }

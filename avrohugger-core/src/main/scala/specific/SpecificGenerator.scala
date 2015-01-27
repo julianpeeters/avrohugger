@@ -1,9 +1,10 @@
 package avrohugger
+package specific
 
 import org.apache.avro.Schema
 import java.io.{File, FileNotFoundException, IOException}
 
-class Generator {
+class SpecificGenerator {
 
   private val defaultOutputDir = "target/generated-sources/"
   
@@ -14,7 +15,7 @@ class Generator {
     val namespace: Option[String] = parser.getNamespace(schema)
     val recordSchemas: List[Schema] = schema::(parser.getNestedSchemas(schema))
     // if a field's type is a record, the nested Schema has no namespace, but we need one for each file so we pass one
-    recordSchemas.reverse.foreach(schema => AvroHugger.defineCaseClass(classStore, namespace, schema, outDir, false))
+    recordSchemas.reverse.foreach(schema => AvroHugger.defineCaseClass(classStore, namespace, schema, outDir, true))
   }
 
   def fromFile(inFile: File, outDir: String = defaultOutputDir): Unit = {
