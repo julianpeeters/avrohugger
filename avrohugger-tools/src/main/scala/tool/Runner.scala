@@ -21,10 +21,7 @@ class Runner {
    * Available tools, initialized in constructor.
    */
   val tools = new TreeMap[String, Tool]();
-  for (tool <- Array[Tool] {
-      new GeneratorTool()//,
-     // new SpecificGeneratorTool() 
-      }) {
+  for (tool <- Array[Tool]( new GeneratorTool(), new SpecificGeneratorTool() )) {
     var prev: Tool = tools.put(tool.getName(), tool);
     if (prev != null) {
       throw new AssertionError(

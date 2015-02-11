@@ -39,6 +39,21 @@ object Directory {
     new File(TEST_EXPECTED_STRING_OUTPUT_DIR,
              "example/proto/Message.scala");
 
+  val TEST_EXPECTED_SPECIFIC_OUTPUT_DIR =
+    new File(TEST_DIR, "output-specific/");
+  val TEST_EXPECTED_SPECIFIC_NICKNAME =
+    new File(TEST_EXPECTED_SPECIFIC_OUTPUT_DIR,
+             "avro/examples/baseball/Nickname.scala");
+  val TEST_EXPECTED_SPECIFIC_PLAYER =
+    new File(TEST_EXPECTED_SPECIFIC_OUTPUT_DIR,
+             "avro/examples/baseball/Player.scala");
+  val TEST_EXPECTED_SPECIFIC_TWITTER =
+    new File(TEST_EXPECTED_SPECIFIC_OUTPUT_DIR,
+             "com/miguno/avro/twitter_schema.scala");
+  val TEST_EXPECTED_SPECIFIC_MESSAGE =
+    new File(TEST_EXPECTED_SPECIFIC_OUTPUT_DIR,
+             "example/proto/Message.scala");
+
 
   // where test output goes
   val TEST_OUTPUT_DIR =
@@ -53,7 +68,7 @@ object Directory {
     new File(TEST_OUTPUT_DIR, "example/proto/Message.scala");
 
   val TEST_OUTPUT_STRING_DIR =
-    new File("target/compiler/output-string");
+    new File("avrohugger-tools/target/compiler/output-string");
   val TEST_OUTPUT_STRING_PLAYER =
     new File(TEST_OUTPUT_STRING_DIR, "avro/examples/baseball/Player.scala");
   val TEST_OUTPUT_STRING_NICKNAME =
@@ -62,4 +77,15 @@ object Directory {
     new File(TEST_OUTPUT_STRING_DIR, "com/miguno/avro/twitter_schema.scala");
   val TEST_OUTPUT_STRING_MESSAGE =
     new File(TEST_OUTPUT_STRING_DIR, "example/proto/Message.scala");
+
+  val TEST_OUTPUT_SPECIFIC_DIR =
+    new File("avrohugger-tools/target/compiler/output-specific");
+  val TEST_OUTPUT_SPECIFIC_PLAYER =
+    new File(TEST_OUTPUT_SPECIFIC_DIR, "avro/examples/baseball/Player.scala");
+  val TEST_OUTPUT_SPECIFIC_NICKNAME =
+    new File(TEST_OUTPUT_SPECIFIC_DIR, "avro/examples/baseball/Nickname.scala");
+  val TEST_OUTPUT_SPECIFIC_TWITTER =
+    new File(TEST_OUTPUT_SPECIFIC_DIR, "com/miguno/avro/twitter_schema.scala");
+  val TEST_OUTPUT_SPECIFIC_MESSAGE =
+    new File(TEST_OUTPUT_SPECIFIC_DIR, "example/proto/Message.scala");
 }

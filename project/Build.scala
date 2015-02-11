@@ -1,13 +1,15 @@
 import sbt._
 import Keys._
+import ScriptedPlugin._
 import sbtassembly.AssemblyPlugin.autoImport._
 
 object BuildSettings {
-  val buildSettings = Defaults.defaultSettings ++ Seq(
+  val buildSettings = Defaults.defaultSettings ++ scriptedSettings ++ Seq(
     organization := "com.julianpeeters",
     version := "0.0.2-SNAPSHOT",
     scalacOptions ++= Seq(),
-    scalaVersion := "2.11.5",
+    scalaVersion := "2.10.4",
+    crossScalaVersions := Seq("2.10.4", "2.11.5"),
     libraryDependencies += "org.apache.avro" % "avro" % "1.7.7",
     libraryDependencies += "org.specs2" %% "specs2" % "2.4" % "test",
     parallelExecution in Test := false,
@@ -57,7 +59,8 @@ object MyBuild extends Build {
     "avrohugger-core",
     file("avrohugger-core"),
     settings = buildSettings ++ Seq(
-      libraryDependencies += "com.eed3si9n" %% "treehugger" % "0.3.0"))
+      libraryDependencies += "com.eed3si9n" %% "treehugger" % "0.3.0")
+  )
 
   lazy val tools: Project = Project(
     "avrohugger-tools",
@@ -70,7 +73,6 @@ object MyBuild extends Build {
     .settings(addArtifact(artifact in (Compile, assembly), assembly).settings: _*)
     .settings(
       libraryDependencies += "org.apache.avro" % "avro-tools" % "1.7.7"
-      // Add your additional libraries here (comma-separated)...)
      )
     .dependsOn(core)
      

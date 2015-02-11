@@ -17,13 +17,14 @@ object TypeMatcher {
       schema.getType match { 
         case Schema.Type.ARRAY    => listType(toType(classStore, namespace, schema.getElementType))
         case Schema.Type.BOOLEAN  => BooleanClass
-        //case Schema.Type.BYTES    => //TODO
         case Schema.Type.DOUBLE   => DoubleClass
-        //case Schema.Type.FIXED    => //TODO
         case Schema.Type.FLOAT    => FloatClass
         case Schema.Type.LONG     => LongClass
         case Schema.Type.INT      => IntClass
-        //case Schema.Type.MAP      => //TODO
+        case Schema.Type.FIXED    => sys.error("the FIXED datatype is not yet supported")
+        case Schema.Type.ENUM     => sys.error("the ENUM datatype is not yet supported")
+        case Schema.Type.MAP      => sys.error("the MAP datatype is not yet supported")
+        case Schema.Type.BYTES    => sys.error("the BYTES datatype is not yet supported")
         case Schema.Type.NULL     => NullClass
         case Schema.Type.STRING   => StringClass
         case Schema.Type.RECORD   => classStore.generatedClasses(schema)
