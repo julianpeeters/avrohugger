@@ -6,9 +6,9 @@ import sbtassembly.AssemblyPlugin.autoImport._
 object BuildSettings {
   val buildSettings = Defaults.defaultSettings ++ scriptedSettings ++ Seq(
     organization := "com.julianpeeters",
-    version := "0.0.2-SNAPSHOT",
+    version := "0.0.2",
     scalacOptions ++= Seq(),
-    scalaVersion := "2.10.4",
+    scalaVersion := "2.11.5",
     crossScalaVersions := Seq("2.10.4", "2.11.5"),
     libraryDependencies += "org.apache.avro" % "avro" % "1.7.7",
     libraryDependencies += "org.specs2" %% "specs2" % "2.4" % "test",
