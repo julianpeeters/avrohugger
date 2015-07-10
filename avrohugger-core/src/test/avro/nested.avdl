@@ -1,0 +1,15 @@
+@namespace("example.idl")
+protocol NestedProtocol {
+
+  record Level2 {
+    string name;
+  }
+
+  record Level1 {
+    Level2 level2;
+  }
+
+  record Level0 {
+     Level1 level1;
+  }
+}
