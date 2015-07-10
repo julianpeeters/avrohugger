@@ -3,11 +3,11 @@ package tool
 
 
 /** Command-line driver.*/
-object Main extends App{
+object Main {
 
-  override def main(args: Array[String]) = {
+  def main(args: Array[String]) = {
     val r = new Runner()
-    r.run(args)
+    val _ = r.run(args)
   }
 
 }

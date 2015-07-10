@@ -35,9 +35,9 @@ object DefaultParamMatcher {
           if (unionSchemas.length == 2 && unionSchemas.exists(schema => schema.getType == Type.NULL)) {
             val maybeSchema = unionSchemas.find(schema => schema.getType != Type.NULL)
             if (maybeSchema.isDefined ) SOME(asDefaultParam(classStore, maybeSchema.get))
-            else error("no avro type found in this union")  
+            else sys.error("no avro type found in this union")  
           }
-          else error("unions not yet supported beyond nullable fields")
+          else sys.error("unions not yet supported beyond nullable fields")
       }
     }
   }

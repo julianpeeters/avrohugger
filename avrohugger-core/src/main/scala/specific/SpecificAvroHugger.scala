@@ -12,19 +12,6 @@ import java.nio.file.{Path, Paths, Files, StandardOpenOption}
 import java.io.{File, FileNotFoundException, IOException}
 import scala.collection.JavaConversions._
 
-object TEST extends App {
-
-
- val infile = new java.io.File("avrohugger-core/src/test/avro/AvroTypeProviderTestNoNamespace.avro")
-      val gen = new SpecificGenerator
-      gen.fromFile(infile)
-      val source = scala.io.Source.fromFile("target/generated-sources/AvroTypeProviderTestNoNamespace.scala").mkString
-      println(source)
-
-
-}
-
-
 object SpecificAvroHugger {
 
   def write(
@@ -92,7 +79,7 @@ object SpecificAvroHugger {
       else outDir
     }
     if (!Files.exists(folderPath)) Files.createDirectories(folderPath)
-    try Files.write( Paths.get(folderPath.toString + "/" + schema.getName + ".scala"), treeToString(tree).getBytes(), StandardOpenOption.CREATE) //finally pw.close() // create new, overwrite if exists
+    try { Files.write( Paths.get(folderPath.toString + "/" + schema.getName + ".scala"), treeToString(tree).getBytes(), StandardOpenOption.CREATE); () } //finally pw.close() // create new, overwrite if exists
     catch {
       case ex: FileNotFoundException => sys.error("File not found:" + ex)
       case ex: IOException => sys.error("There was a problem using the file: " + ex)

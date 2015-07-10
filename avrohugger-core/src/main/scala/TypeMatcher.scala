@@ -34,11 +34,11 @@ object TypeMatcher {
           if (unionSchemas.length == 2 && unionSchemas.exists(schema => schema.getType == Schema.Type.NULL)) {
             val maybeSchema = unionSchemas.find(schema => schema.getType != Schema.Type.NULL)
             if (maybeSchema.isDefined ) optionType(matchType(maybeSchema.get))
-            else error("no avro type found in this union")  
+            else sys.error("no avro type found in this union")  
           }
-          else error("unions not yet supported beyond nullable fields")
+          else sys.error("unions not yet supported beyond nullable fields")
         }
-        case x => error( x +  "is not yet supported or is not a valid Avro type")
+        case x => sys.error( x +  "is not yet supported or is not a valid Avro type")
       }
     }
 

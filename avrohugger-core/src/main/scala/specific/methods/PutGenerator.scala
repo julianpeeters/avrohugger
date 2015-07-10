@@ -9,6 +9,7 @@ import treehuggerDSL._
 import org.apache.avro.Schema
 
 import scala.collection.JavaConversions._
+import scala.language.postfixOps
 
 object PutGenerator {
 

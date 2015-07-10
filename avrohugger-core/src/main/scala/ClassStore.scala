@@ -14,7 +14,7 @@ class ClassStore {
 
   def accept(schema: Schema, caseClassDef: Symbol) {
     if (!generatedClasses.contains(schema)) {
-      generatedClasses += schema -> caseClassDef
+      val _ = generatedClasses += schema -> caseClassDef
     }
   }
 }
