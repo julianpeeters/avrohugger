@@ -54,5 +54,38 @@ case class twitter_schema(username: String, tweet: String, timestamp: Long)"""
         """.stripMargin.trim
     }
   }
+
+  "correctly generate a nested case class from IDL" in {
+    val infile = new java.io.File("avrohugger-core/src/test/avro/nested.avdl")
+    val gen = new Generator
+    gen.fromFile(infile)
+
+    val source0 = scala.io.Source.fromFile("target/generated-sources/example/idl/Level0.scala").mkString
+    source0 ====
+      """
+        |/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
+        |package example.idl
+        |
+        |case class Level0(level1: Level1)
+      """.stripMargin.trim
+
+    val source1 = scala.io.Source.fromFile("target/generated-sources/example/idl/Level1.scala").mkString
+    source1 ====
+      """
+        |/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
+        |package example.idl
+        |
+        |case class Level1(level2: Level2)
+      """.stripMargin.trim
+
+    val source2 = scala.io.Source.fromFile("target/generated-sources/example/idl/Level2.scala").mkString
+    source2 ====
+      """
+        |/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
+        |package example.idl
+        |
+        |case class Level2(name: String)
+      """.stripMargin.trim
+  }
 }
 

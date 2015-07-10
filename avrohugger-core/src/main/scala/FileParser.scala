@@ -4,6 +4,7 @@ import org.apache.avro.Protocol
 import org.apache.avro.Schema
 import org.apache.avro.Schema.Parser
 import org.apache.avro.Schema.Type.{ARRAY, RECORD, UNION}
+import org.apache.avro.compiler.idl.Idl
 import org.apache.avro.generic.{GenericDatumReader, GenericRecord}
 import org.apache.avro.file.DataFileReader
 import scala.collection.JavaConverters._
@@ -18,6 +19,10 @@ class FileParser {
         List(dfr.getSchema)
       case "avsc" => List(parser.parse(infile))
       case "avpr" => Protocol.parse(infile).getTypes().asScala.toList
+      case "avdl" =>
+        val idlParser = new Idl(infile)
+        val protocol = idlParser.CompilationUnit()
+        protocol.getTypes.asScala.toList
       case _ => throw new Exception("File must end in .avsc for plain text json files or .avro for binary.")
     }
     schemas.map(s => s.getType match {
