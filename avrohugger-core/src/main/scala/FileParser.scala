@@ -41,12 +41,12 @@ class FileParser {
 
   def getNestedSchemas(schema: Schema): List[Schema] = {
     val fields: List[org.apache.avro.Schema.Field] = schema.getFields.asScala.toList
-    val fieldSchemas:List[org.apache.avro.Schema]  = fields.map(field => field.schema())
+    val fieldSchemas: List[org.apache.avro.Schema] = fields.map(field => field.schema())
 
     def flattenSchema(fieldSchema: Schema): List[Schema] = {
       fieldSchema.getType match {
         case ARRAY  => flattenSchema(fieldSchema.getElementType)
-        case RECORD => getNestedSchemas(fieldSchema); List(fieldSchema)
+        case RECORD => fieldSchema :: getNestedSchemas(fieldSchema)
         case UNION  => fieldSchema.getTypes.asScala.toList.flatMap(x => flattenSchema(x))
         case _      => List(fieldSchema)
       }

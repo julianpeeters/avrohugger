@@ -1,0 +1,29 @@
+{
+  "namespace": "example",
+  "type": "record",
+  "name": "Level0",
+  "fields": [
+    {
+      "name": "level1",
+      "type": {
+        "name": "Level1",
+        "type": "record",
+        "fields": [
+          {
+            "name": "level2",
+            "type": {
+              "name": "Level2",
+              "type": "record",
+              "fields": [
+                {
+                  "name": "name",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
