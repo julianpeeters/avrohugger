@@ -4,14 +4,16 @@ import ScriptedPlugin._
 import sbtassembly.AssemblyPlugin.autoImport._
 
 object BuildSettings {
+  private val avroVersion = "1.7.7"
+
   val buildSettings = Defaults.defaultSettings ++ scriptedSettings ++ Seq(
     organization := "com.julianpeeters",
     version := "0.1.0-SNAPSHOT",
-    scalacOptions ++= Seq(),
+    scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-Ywarn-value-discard"),
     scalaVersion := "2.11.5",
     crossScalaVersions := Seq("2.10.4", "2.11.5"),
-    scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-Ywarn-value-discard"),
-    libraryDependencies += "org.apache.avro" % "avro" % "1.7.7",
+    libraryDependencies += "org.apache.avro" % "avro" % avroVersion,
+    libraryDependencies += "org.apache.avro" % "avro-compiler" % avroVersion,
     libraryDependencies += "org.specs2" %% "specs2" % "2.4" % "test",
     parallelExecution in Test := false,
     publishMavenStyle := true,
