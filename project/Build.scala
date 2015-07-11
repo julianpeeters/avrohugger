@@ -10,8 +10,8 @@ object BuildSettings {
     organization := "com.julianpeeters",
     version := "0.1.0-SNAPSHOT",
     scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-Ywarn-value-discard"),
-    scalaVersion := "2.11.5",
-    crossScalaVersions := Seq("2.10.4", "2.11.5"),
+    scalaVersion := "2.11.7",
+    crossScalaVersions := Seq("2.10.5", "2.11.7"),
     libraryDependencies += "org.apache.avro" % "avro" % avroVersion,
     libraryDependencies += "org.apache.avro" % "avro-compiler" % avroVersion,
     libraryDependencies += "org.specs2" %% "specs2" % "2.4" % "test",
@@ -62,7 +62,7 @@ object MyBuild extends Build {
     "avrohugger-core",
     file("avrohugger-core"),
     settings = buildSettings ++ Seq(
-      libraryDependencies += "com.eed3si9n" %% "treehugger" % "0.3.0")
+      libraryDependencies += "com.eed3si9n" %% "treehugger" % "0.4.1")
   )
 
   lazy val tools: Project = Project(
