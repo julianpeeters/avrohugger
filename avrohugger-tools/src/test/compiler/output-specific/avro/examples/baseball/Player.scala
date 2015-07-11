@@ -50,6 +50,7 @@ case class Player(var number: Int, var first_name: String, var last_name: String
       }.asInstanceOf[List[Nickname]]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
     }
+    ()
   }
   def getSchema: org.apache.avro.Schema = SCHEMA$
 }

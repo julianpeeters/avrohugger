@@ -22,6 +22,7 @@ case class Nickname(var name: String) extends org.apache.avro.specific.SpecificR
       }.asInstanceOf[String]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
     }
+    ()
   }
   def getSchema: org.apache.avro.Schema = SCHEMA$
 }

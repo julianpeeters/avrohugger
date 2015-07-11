@@ -58,6 +58,7 @@ case class Message(var to: String, var from: String, var body: String) extends o
       }.asInstanceOf[String]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
     }
+    ()
   }
   def getSchema: org.apache.avro.Schema = SCHEMA$
 }"""

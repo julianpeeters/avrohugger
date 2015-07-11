@@ -37,6 +37,7 @@ case class twitter_schema(var username: String, var tweet: String, var timestamp
       }.asInstanceOf[Long]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
     }
+    ()
   }
   def getSchema: org.apache.avro.Schema = SCHEMA$
 }
