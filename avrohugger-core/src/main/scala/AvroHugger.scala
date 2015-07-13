@@ -8,7 +8,7 @@ import java.nio.file.{Path, Paths, Files, StandardOpenOption}
 import org.apache.avro.Schema
 import java.io.{File, FileNotFoundException, IOException}
 import scala.collection.JavaConversions._
-
+import org.apache.avro.Schema.Type.{ARRAY, RECORD, UNION, ENUM}
 
 object AvroHugger {
 
@@ -23,15 +23,22 @@ object AvroHugger {
     classStore.accept(schema, classSymbol)
 
     // generate list of constructor parameters
-    val params: List[ValDef] = schema.getFields.toList.map { field =>
-      val fieldName = field.name
-      val fieldType = TypeMatcher.toType(classStore, namespace, field.schema)
-      PARAM(fieldName, fieldType): ValDef
-    }
- 
-    // generate class definition 
-    val classDef = {
-      CASECLASSDEF(classSymbol).withParams(params).tree
+    val classDef = schema.getType match {
+      case RECORD =>
+        val params: List[ValDef] = schema.getFields.toList.map { field =>
+          val fieldName = field.name
+          val fieldType = TypeMatcher.toType(classStore, namespace, field.schema)
+          PARAM(fieldName, fieldType): ValDef
+        }
+
+        // generate class definition
+        CASECLASSDEF(classSymbol).withParams(params).tree
+
+      case ENUM =>
+        OBJECTDEF(schema.getName) withParents("Enumeration") := BLOCK(
+          TYPEVAR(schema.getName) := REF("Value"),
+          VAL(schema.getEnumSymbols.mkString(", ")) := REF("Value")
+        )
     }
 
     // wrap the class definition in a block with a comment and a package

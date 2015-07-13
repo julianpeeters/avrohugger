@@ -66,6 +66,26 @@ object Message {
   val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Message\",\"namespace\":\"example.proto\",\"fields\":[{\"name\":\"to\",\"type\":\"string\"},{\"name\":\"from\",\"type\":\"string\"},{\"name\":\"body\",\"type\":\"string\"}]}")
 }"""
     }
+
+    "correctly generate enums that implement `SpecificRecord`" in {
+      val infile = new java.io.File("avrohugger-core/src/test/avro/enums.avsc")
+      val gen = new SpecificGenerator
+      gen.fromFile(infile)
+
+      val source = scala.io.Source.fromFile("target/generated-sources/example/Suit.scala").mkString
+      source ====
+        """
+          |/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
+          |package example
+          |
+          |object Suit extends Enumeration with SpecificRecord {
+          |  type Suit = Value
+          |  val SPADES, DIAMONDS, CLUBS, HEARTS = Value
+          |
+          |  ... TODO ...
+          |}
+        """.stripMargin
+    }.pendingUntilFixed("Specific record not yet implemented")
   }
 
 }

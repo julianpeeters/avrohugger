@@ -1,0 +1,13 @@
+@namespace("example.idl")
+
+protocol EnumProtocol {
+
+  enum Suit {
+    SPADES, DIAMONDS, CLUBS, HEARTS
+  }
+
+  record Card {
+    Suit suit; // refers to the enum Card defined above
+    int number;
+  }
+}

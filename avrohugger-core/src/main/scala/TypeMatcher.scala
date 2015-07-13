@@ -22,7 +22,7 @@ object TypeMatcher {
         case Schema.Type.LONG     => LongClass
         case Schema.Type.INT      => IntClass
         case Schema.Type.FIXED    => sys.error("the FIXED datatype is not yet supported")
-        case Schema.Type.ENUM     => sys.error("the ENUM datatype is not yet supported")
+        case Schema.Type.ENUM     => classStore.generatedClasses(schema)
         case Schema.Type.MAP      => sys.error("the MAP datatype is not yet supported")
         case Schema.Type.BYTES    => sys.error("the BYTES datatype is not yet supported")
         case Schema.Type.NULL     => NullClass

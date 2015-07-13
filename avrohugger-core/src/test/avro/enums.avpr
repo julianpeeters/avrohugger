@@ -1,0 +1,20 @@
+{
+  "namespace": "example.proto",
+  "protocol": "EnumProtocol",
+  "types": [
+     {
+       "name": "Suit",
+       "type": "enum",
+       "symbols" : ["SPADES", "HEARTS", "DIAMONDS", "CLUBS"]
+     },
+     {
+       "name": "Card",
+       "type": "record",
+       "fields": [
+         {"name": "suit",   "type": "Suit"},
+         {"name": "number", "type": "int"}
+       ]
+     }
+   ],
+   "messages": []
+}
