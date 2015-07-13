@@ -20,7 +20,6 @@ class SpecificGeneratorSpec extends mutable.Specification {
 package example.proto
 
 case class Message(var to: String, var from: String, var body: String) extends org.apache.avro.specific.SpecificRecordBase {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Message\",\"namespace\":\"example.proto\",\"fields\":[{\"name\":\"to\",\"type\":\"string\"},{\"name\":\"from\",\"type\":\"string\"},{\"name\":\"body\",\"type\":\"string\"}]}")
   def this() = this("", "", "")
   def get(field: Int): AnyRef = {
     field match {
@@ -60,7 +59,11 @@ case class Message(var to: String, var from: String, var body: String) extends o
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = SCHEMA$
+  def getSchema: org.apache.avro.Schema = Message.SCHEMA$
+}
+
+object Message {
+  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Message\",\"namespace\":\"example.proto\",\"fields\":[{\"name\":\"to\",\"type\":\"string\"},{\"name\":\"from\",\"type\":\"string\"},{\"name\":\"body\",\"type\":\"string\"}]}")
 }"""
     }
   }

@@ -2,7 +2,6 @@
 package avro.examples.baseball
 
 case class Nickname(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Nickname\",\"namespace\":\"avro.examples.baseball\",\"fields\":[{\"name\":\"name\",\"type\":\"string\"}]}")
   def this() = this("")
   def get(field: Int): AnyRef = {
     field match {
@@ -24,5 +23,9 @@ case class Nickname(var name: String) extends org.apache.avro.specific.SpecificR
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = SCHEMA$
+  def getSchema: org.apache.avro.Schema = Nickname.SCHEMA$
+}
+
+object Nickname {
+  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Nickname\",\"namespace\":\"avro.examples.baseball\",\"fields\":[{\"name\":\"name\",\"type\":\"string\"}]}")
 }

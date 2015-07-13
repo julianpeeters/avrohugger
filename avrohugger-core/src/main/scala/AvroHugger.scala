@@ -40,7 +40,6 @@ object AvroHugger {
       else classDef
     }.withDoc("MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY")
 
-    //return the tree
     writeToFile(namespace, schema, tree, outDir)
   }
 

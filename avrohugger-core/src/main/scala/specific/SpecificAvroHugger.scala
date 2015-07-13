@@ -34,9 +34,6 @@ object SpecificAvroHugger {
     // generate class definition 
     val classDef = {
 
-      // register avro classes
-      val ParserClass = RootClass.newClass("org.apache.avro.Schema.Parser")
-
       // extension
       val baseClass = RootClass.newClass("org.apache.avro.specific.SpecificRecordBase")
 
@@ -44,27 +41,41 @@ object SpecificAvroHugger {
       val defaultParams: List[Tree] = schema.getFields.toList.map(avroField => DefaultParamMatcher.asDefaultParam(classStore, avroField.schema))
       val defThis = DEFTHIS.withParams(PARAM("")).tree := THIS APPLY(defaultParams:_*)
 
-      // vals
-      val valSchema = VAL(REF("SCHEMA$")) := (NEW(ParserClass)) APPLY() DOT "parse" APPLY(LIT(schema.toString))
-
       // methods - first add an index the the fields
       val indexedFields = schema.getFields.toList.zipWithIndex.map(p => IndexedField(p._1, p._2))
       val defGet = GetGenerator.toDef(indexedFields)
       val defPut = PutGenerator.toDef(classStore, namespace, indexedFields) 
-      val defGetSchema = GetSchemaGenerator.toDef 
+      val defGetSchema = GetSchemaGenerator(classSymbol).toDef 
 
       // define the class def with the members previously defined
       CASECLASSDEF(classSymbol).withParams(params).withParents(baseClass) := BLOCK( 
-        valSchema,
         defThis,
         defGet,
         defPut,
         defGetSchema
       )
     }
+
+    // generate companion object definition
+    val objectDef = {
+
+      // register avro classes
+      val ParserClass = RootClass.newClass("org.apache.avro.Schema.Parser")
+
+
+      // new val 
+      val valSchema = VAL(REF("SCHEMA$")) := (NEW(ParserClass)) APPLY() DOT "parse" APPLY(LIT(schema.toString))
+
+      // companion object definion
+      OBJECTDEF(classSymbol) := BLOCK( 
+        valSchema
+      )
+ 
+    }
+
     // wrap the class definition in a block with a comment and a package
     val tree = {
-      if (namespace.isDefined) BLOCK(classDef).inPackage(namespace.get)
+      if (namespace.isDefined) BLOCK(classDef, objectDef).inPackage(namespace.get)
       else classDef
     }.withDoc("MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY")
 

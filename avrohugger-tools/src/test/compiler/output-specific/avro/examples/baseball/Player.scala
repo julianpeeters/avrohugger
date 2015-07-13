@@ -2,7 +2,6 @@
 package avro.examples.baseball
 
 case class Player(var number: Int, var first_name: String, var last_name: String, var nicknames: List[Nickname]) extends org.apache.avro.specific.SpecificRecordBase {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Player\",\"namespace\":\"avro.examples.baseball\",\"fields\":[{\"name\":\"number\",\"type\":\"int\"},{\"name\":\"first_name\",\"type\":\"string\"},{\"name\":\"last_name\",\"type\":\"string\"},{\"name\":\"nicknames\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"Nickname\",\"fields\":[{\"name\":\"name\",\"type\":\"string\"}]}}}]}")
   def this() = this(1, "", "", List(new Nickname))
   def get(field: Int): AnyRef = {
     field match {
@@ -52,5 +51,9 @@ case class Player(var number: Int, var first_name: String, var last_name: String
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = SCHEMA$
+  def getSchema: org.apache.avro.Schema = Player.SCHEMA$
+}
+
+object Player {
+  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Player\",\"namespace\":\"avro.examples.baseball\",\"fields\":[{\"name\":\"number\",\"type\":\"int\"},{\"name\":\"first_name\",\"type\":\"string\"},{\"name\":\"last_name\",\"type\":\"string\"},{\"name\":\"nicknames\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"Nickname\",\"fields\":[{\"name\":\"name\",\"type\":\"string\"}]}}}]}")
 }
