@@ -40,29 +40,29 @@ object GetGenerator {
 		      }
 		      case Schema.Type.ARRAY => {
 		      	val applyParam = {
-	      	    schema.getElementType.getType match {
-                // contents that that need converting
-                case Schema.Type.UNION | Schema.Type.ARRAY => {
-                  BLOCK(tree MAP(LAMBDA(PARAM("x")) ==> BLOCK(
-				      			convertToJava(schema.getElementType, REF("x"))
-				      		)))
-                }
-                // types that aren't yet supported
-                case Schema.Type.FIXED | 
-                  Schema.Type.BYTES | 
-                  Schema.Type.MAP | 
-                  Schema.Type.ENUM => {
-                  sys.error("unsupported type")
-                }
-                // contents that don't need converting
-                case _ => BLOCK(tree)
-              }
+              BLOCK(tree MAP(LAMBDA(PARAM("x")) ==> BLOCK(
+		      			convertToJava(schema.getElementType, REF("x"))
+		      		)))
             }
 		      	REF("java.util.Arrays.asList") APPLY(applyParam withType(TYPE_REF(SEQ_WILDCARD)))
 		      }
+		      case Schema.Type.MAP      => {
+            val HashMapClass = RootClass.newClass("java.util.HashMap[String, Any]")
+            BLOCK( 
+	            VAL("map", HashMapClass) := NEW(HashMapClass),
+
+			        tree FOREACH( LAMBDA(PARAM("kvp")) ==> 
+			        	BLOCK(
+			        	  VAL("key") := REF("kvp._1"),
+			        	  VAL("value") := REF("kvp._2"),
+	                REF("map").DOT("put").APPLY(REF("key"), convertToJava(schema.getValueType, REF("value")))
+					      )
+	            ),
+	            REF("map")
+            )
+		      }
 	        case Schema.Type.FIXED    => sys.error("the FIXED datatype is not yet supported")
           case Schema.Type.ENUM     => sys.error("the ENUM datatype is not yet supported")
-          case Schema.Type.MAP      => sys.error("the MAP datatype is not yet supported")
           case Schema.Type.BYTES    => sys.error("the BYTES datatype is not yet supported")
 		      case _ => tree
 		    }

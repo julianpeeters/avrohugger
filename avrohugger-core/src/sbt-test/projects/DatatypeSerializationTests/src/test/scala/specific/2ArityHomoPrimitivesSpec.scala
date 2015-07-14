@@ -297,3 +297,83 @@ class Specific27Test extends Specification {
     }
   }
 }
+
+
+
+class SpecificMap04Test extends Specification {
+
+  "A case class with two Map[Int, Int] fields" should {
+    "serialize and deserialize correctly" in {
+
+      val record = AvroTypeProviderTestMap04(Map("Gorgonzola"->2), Map("Cheddar"->4))
+
+      val file = File.createTempFile("AvroTypeProviderTestMap04", "avro")
+                file.deleteOnExit()
+
+
+      val userDatumWriter = new SpecificDatumWriter[AvroTypeProviderTestMap04]
+      val dataFileWriter = new DataFileWriter[AvroTypeProviderTestMap04](userDatumWriter)
+        dataFileWriter.create(record.getSchema(), file);
+        dataFileWriter.append(record);
+        dataFileWriter.close();
+
+      val userDatumReader = new SpecificDatumReader[AvroTypeProviderTestMap04](AvroTypeProviderTestMap04.SCHEMA$)
+      val dataFileReader = new DataFileReader[AvroTypeProviderTestMap04](file, userDatumReader)
+      val sameRecord = dataFileReader.next()
+
+      sameRecord must ===(record)
+    }
+  }
+}
+
+class SpecificMap05Test extends Specification {
+
+  "A case class with two Map[Int, String] fields" should {
+    "serialize and deserialize correctly" in {
+
+      val record = AvroTypeProviderTestMap05(Map("Havana"->"Cuba"), Map("Blue World"->"series"))
+
+      val file = File.createTempFile("AvroTypeProviderTestMap05", "avro")
+                file.deleteOnExit()
+
+
+      val userDatumWriter = new SpecificDatumWriter[AvroTypeProviderTestMap05]
+      val dataFileWriter = new DataFileWriter[AvroTypeProviderTestMap05](userDatumWriter)
+        dataFileWriter.create(record.getSchema(), file);
+        dataFileWriter.append(record);
+        dataFileWriter.close();
+
+      val userDatumReader = new SpecificDatumReader[AvroTypeProviderTestMap05](AvroTypeProviderTestMap05.SCHEMA$)
+      val dataFileReader = new DataFileReader[AvroTypeProviderTestMap05](file, userDatumReader)
+      val sameRecord = dataFileReader.next()
+
+      sameRecord must ===(record)
+    }
+  }
+}
+
+class SpecificMap06Test extends Specification {
+
+  "A case class with two Map[String, Option[List[Int]]] fields" should {
+    "serialize and deserialize correctly" in {
+
+      val record = AvroTypeProviderTestMap06(Map("Olala"->Some(List(1,4))), Map("Rumpole"->None))
+
+      val file = File.createTempFile("AvroTypeProviderTestMap06", "avro")
+                file.deleteOnExit()
+
+
+      val userDatumWriter = new SpecificDatumWriter[AvroTypeProviderTestMap06]
+      val dataFileWriter = new DataFileWriter[AvroTypeProviderTestMap06](userDatumWriter)
+        dataFileWriter.create(record.getSchema(), file);
+        dataFileWriter.append(record);
+        dataFileWriter.close();
+
+      val userDatumReader = new SpecificDatumReader[AvroTypeProviderTestMap06](AvroTypeProviderTestMap06.SCHEMA$)
+      val dataFileReader = new DataFileReader[AvroTypeProviderTestMap06](file, userDatumReader)
+      val sameRecord = dataFileReader.next()
+
+      sameRecord must ===(record)
+    }
+  }
+}

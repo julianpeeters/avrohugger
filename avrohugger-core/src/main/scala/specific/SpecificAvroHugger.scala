@@ -59,9 +59,8 @@ object SpecificAvroHugger {
     // generate companion object definition
     val objectDef = {
 
-      // register avro classes
+      // register avro class
       val ParserClass = RootClass.newClass("org.apache.avro.Schema.Parser")
-
 
       // new val 
       val valSchema = VAL(REF("SCHEMA$")) := (NEW(ParserClass)) APPLY() DOT "parse" APPLY(LIT(schema.toString))
@@ -76,7 +75,7 @@ object SpecificAvroHugger {
     // wrap the class definition in a block with a comment and a package
     val tree = {
       if (namespace.isDefined) BLOCK(classDef, objectDef).inPackage(namespace.get)
-      else classDef
+      else BLOCK(classDef, objectDef).withoutPackage
     }.withDoc("MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY")
 
     //write the tree

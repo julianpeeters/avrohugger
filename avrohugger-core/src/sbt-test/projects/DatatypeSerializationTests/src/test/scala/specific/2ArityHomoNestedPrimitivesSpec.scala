@@ -289,3 +289,28 @@ class Specific47Test extends Specification {
     }
   }
 }
+
+class SpecificMap10Test extends Specification {
+
+  "A case class with two Map[String, Map[String, Int]] fields" should {
+    "serialize and deserialize correctly" in {
+
+      val record = AvroTypeProviderTestMap10(Map("glory"->Map("kitty"->3)), Map("pride"->Map("doggy"->4)))
+
+      val file = File.createTempFile("SpecificTestMap10", "avro")
+        
+
+      val userDatumWriter = new SpecificDatumWriter[AvroTypeProviderTestMap10]
+      val dataFileWriter = new DataFileWriter[AvroTypeProviderTestMap10](userDatumWriter)
+        dataFileWriter.create(record.getSchema(), file);
+        dataFileWriter.append(record);
+        dataFileWriter.close();
+
+      val userDatumReader = new SpecificDatumReader[AvroTypeProviderTestMap10](AvroTypeProviderTestMap10.SCHEMA$)
+      val dataFileReader = new DataFileReader[AvroTypeProviderTestMap10](file, userDatumReader)
+      val sameRecord = dataFileReader.next()
+
+      sameRecord must ===(record)
+    }
+  }
+}
