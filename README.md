@@ -21,7 +21,7 @@ Supports generating case classes with arbitrary fields of the following datatype
 * STRING -> String
 * BOOLEAN -> Boolean
 * NULL  -> Null
-* MAP -> //TODO
+* MAP -> Map
 * ENUM -> //TODO
 * BYTES -> //TODO
 * FIXED -> //TODO
@@ -38,7 +38,7 @@ Supports generating case classes with arbitrary fields of the following datatype
 
 Get the dependency with:
 
-    "com.julianpeeters" % "avrohugger-core" %% "0.1.0"
+    "com.julianpeeters" % "avrohugger-core" %% "0.2.1"
 
 Then get a `Generator` or `specific.SpecificGenerator` and use `fromSchema` or `fromFile`:
 
@@ -53,15 +53,15 @@ Then get a `Generator` or `specific.SpecificGenerator` and use `fromSchema` or `
 ####`avrohugger-tools`
 
 
-Download the avrohugger-tools jar for Scala [2.10](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.10/0.1.0/avrohugger-tools_2.10-0.1.0-assembly.jar) or Scala [2.11](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.11/0.1.0/avrohugger-tools_2.11-0.1.0-assembly.jar)(20MB!) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
+Download the avrohugger-tools jar for Scala [2.10](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.10/0.2.1/avrohugger-tools_2.10-0.2.1-assembly.jar) or Scala [2.11](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.11/0.2.1/avrohugger-tools_2.11-0.2.1-assembly.jar)(20MB!) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
 
 
 - 'generate' generates Scala case class definitions
-    java -jar /path/to/avrohugger-tools_2.11-0.1.0-assembly.jar generate schema user.avsc . 
+    java -jar /path/to/avrohugger-tools_2.11-0.2.1-assembly.jar generate schema user.avsc . 
 
 
 - 'generate-specific' generates case class definitions that extend SpecificRecordBase
-    java -jar /path/to/avrohugger-tools_2.11-0.1.0-assembly.jar generate-specific schema user.avsc . 
+    java -jar /path/to/avrohugger-tools_2.11-0.2.1-assembly.jar generate-specific schema user.avsc . 
 
 
 ####`sbt-avrohugger`
@@ -71,7 +71,8 @@ Also available as an [sbt plugin](https://github.com/julianpeeters/sbt-avrohugge
 
 ## Future
 
-* Support more avro types: enum, fixed, bytes, map.
+* Support more avro types: enum, fixed, bytes.
+* Support for default values
 
 
 ## Testing
