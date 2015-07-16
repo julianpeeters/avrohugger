@@ -67,25 +67,84 @@ object Message {
 }"""
     }
 
-    "correctly generate enums that implement `SpecificRecord`" in {
+    "correctly generate enums with SCHEMA$" in {
       val infile = new java.io.File("avrohugger-core/src/test/avro/enums.avsc")
       val gen = new SpecificGenerator
-      gen.fromFile(infile)
+      val outDir = gen.defaultOutputDir + "specific/"
+      gen.fromFile(infile, outDir)
 
-      val source = scala.io.Source.fromFile("target/generated-sources/example/Suit.scala").mkString
+      val source = scala.io.Source.fromFile(s"$outDir/example/Suit.scala").mkString
       source ====
         """
           |/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
           |package example
           |
-          |object Suit extends Enumeration with SpecificRecord {
+          |object Suit extends Enumeration {
           |  type Suit = Value
           |  val SPADES, DIAMONDS, CLUBS, HEARTS = Value
-          |
-          |  ... TODO ...
+          |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"enum\",\"name\":\"Suit\",\"namespace\":\"example\",\"symbols\":[\"SPADES\",\"DIAMONDS\",\"CLUBS\",\"HEARTS\"]}")
           |}
-        """.stripMargin
-    }.pendingUntilFixed("Specific record not yet implemented")
+        """.stripMargin.trim
+    }
+
+    "correctly generate enums in AVDLs with `SpecificRecord`" in {
+      val infile = new java.io.File("avrohugger-core/src/test/avro/enums.avdl")
+      val gen = new SpecificGenerator
+      val outDir = gen.defaultOutputDir + "specific/"
+      gen.fromFile(infile, outDir)
+
+      val sourceEnum = scala.io.Source.fromFile(s"$outDir/example/idl/Suit.scala").mkString
+      sourceEnum ====
+        """
+          |/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
+          |package example.idl
+          |
+          |object Suit extends Enumeration {
+          |  type Suit = Value
+          |  val SPADES, DIAMONDS, CLUBS, HEARTS = Value
+          |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"enum\",\"name\":\"Suit\",\"namespace\":\"example.idl\",\"symbols\":[\"SPADES\",\"DIAMONDS\",\"CLUBS\",\"HEARTS\"]}")
+          |}
+        """.stripMargin.trim
+
+      val sourceRecord = scala.io.Source.fromFile(s"$outDir/example/idl/Card.scala").mkString
+      sourceRecord ====
+      """
+        |/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
+        |package example.idl
+        |
+        |case class Card(var suit: Suit, var number: Int) extends org.apache.avro.specific.SpecificRecordBase {
+        |  def this() = this(null, 1)
+        |  def get(field: Int): AnyRef = {
+        |    field match {
+        |      case pos if pos == 0 => {
+        |        suit
+        |      }.asInstanceOf[AnyRef]
+        |      case pos if pos == 1 => {
+        |        number
+        |      }.asInstanceOf[AnyRef]
+        |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+        |    }
+        |  }
+        |  def put(field: Int, value: Any): Unit = {
+        |    field match {
+        |      case pos if pos == 0 => this.suit = {
+        |        value
+        |      }.asInstanceOf[Suit]
+        |      case pos if pos == 1 => this.number = {
+        |        value
+        |      }.asInstanceOf[Int]
+        |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+        |    }
+        |    ()
+        |  }
+        |  def getSchema: org.apache.avro.Schema = Card.SCHEMA$
+        |}
+        |
+        |object Card {
+        |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Card\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"suit\",\"type\":{\"type\":\"enum\",\"name\":\"Suit\",\"symbols\":[\"SPADES\",\"DIAMONDS\",\"CLUBS\",\"HEARTS\"]}},{\"name\":\"number\",\"type\":\"int\"}]}")
+        |}
+      """.stripMargin.trim
+    }
   }
 
 }

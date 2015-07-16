@@ -2,5 +2,5 @@
   "namespace": "example",
   "name": "Suit",
   "type": "enum",
-  "symbols" : ["SPADES", "HEARTS", "DIAMONDS", "CLUBS"]
+  "symbols" : ["SPADES", "DIAMONDS", "CLUBS", "HEARTS"]
 }

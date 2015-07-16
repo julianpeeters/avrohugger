@@ -61,8 +61,8 @@ object PutGenerator {
                   // types that aren't yet supported
                   case Schema.Type.FIXED | 
                     Schema.Type.BYTES | 
-                    Schema.Type.MAP | 
-                    Schema.Type.ENUM => {
+                    Schema.Type.MAP /*|
+                    Schema.Type.ENUM*/ => {
                     sys.error("unsupported type")
                   }
                   case _ => { 
@@ -81,7 +81,7 @@ object PutGenerator {
               tree MATCH(nullConversion, arrayConversion)
             }
             case Schema.Type.FIXED    => sys.error("the FIXED datatype is not yet supported")
-            case Schema.Type.ENUM     => sys.error("the ENUM datatype is not yet supported")
+            /*case Schema.Type.ENUM     => sys.error("the ENUM datatype is not yet supported")*/
             case Schema.Type.MAP      => sys.error("the MAP datatype is not yet supported")
             case Schema.Type.BYTES    => sys.error("the BYTES datatype is not yet supported")
             case _ => tree

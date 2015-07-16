@@ -1,4 +1,6 @@
 package avrohugger
+
+import org.apache.avro.Schema.Type._
 import specific._
 import methods._
 
@@ -24,59 +26,74 @@ object SpecificAvroHugger {
     val classSymbol = RootClass.newClass(schema.getName)
     classStore.accept(schema, classSymbol)
 
-    // generate list of constructor parameters
-    val params: List[ValDef] = schema.getFields.toList.map { field =>
-      val fieldName = field.name
-      val fieldType = TypeMatcher.toType(classStore, namespace, field.schema)
-      VAR(fieldName, fieldType): ValDef 
-    }
- 
-    // generate class definition 
-    val classDef = {
+    val classOrEnumDef = schema.getType match {
+      case RECORD =>
+        // generate list of constructor parameters
+        val params: List[ValDef] = schema.getFields.toList.map { field =>
+          val fieldName = field.name
+          val fieldType = TypeMatcher.toType(classStore, namespace, field.schema)
+          VAR(fieldName, fieldType): ValDef
+        }
 
-      // extension
-      val baseClass = RootClass.newClass("org.apache.avro.specific.SpecificRecordBase")
+        // generate class definition
+        val classDef = {
 
-      // no-arg constructor
-      val defaultParams: List[Tree] = schema.getFields.toList.map(avroField => DefaultParamMatcher.asDefaultParam(classStore, avroField.schema))
-      val defThis = DEFTHIS.withParams(PARAM("")).tree := THIS APPLY(defaultParams:_*)
+          // extension
+          val baseClass = RootClass.newClass("org.apache.avro.specific.SpecificRecordBase")
 
-      // methods - first add an index the the fields
-      val indexedFields = schema.getFields.toList.zipWithIndex.map(p => IndexedField(p._1, p._2))
-      val defGet = GetGenerator.toDef(indexedFields)
-      val defPut = PutGenerator.toDef(classStore, namespace, indexedFields) 
-      val defGetSchema = GetSchemaGenerator(classSymbol).toDef 
+          // no-arg constructor
+          val defaultParams: List[Tree] = schema.getFields.toList.map(avroField => DefaultParamMatcher.asDefaultParam(classStore, avroField.schema))
+          val defThis = DEFTHIS.withParams(PARAM("")).tree := THIS APPLY(defaultParams:_*)
 
-      // define the class def with the members previously defined
-      CASECLASSDEF(classSymbol).withParams(params).withParents(baseClass) := BLOCK( 
-        defThis,
-        defGet,
-        defPut,
-        defGetSchema
-      )
-    }
+          // methods - first add an index the the fields
+          val indexedFields = schema.getFields.toList.zipWithIndex.map(p => IndexedField(p._1, p._2))
+          val defGet = GetGenerator.toDef(indexedFields)
+          val defPut = PutGenerator.toDef(classStore, namespace, indexedFields)
+          val defGetSchema = GetSchemaGenerator(classSymbol).toDef
 
-    // generate companion object definition
-    val objectDef = {
+          // define the class def with the members previously defined
+          CASECLASSDEF(classSymbol).withParams(params).withParents(baseClass) := BLOCK(
+            defThis,
+            defGet,
+            defPut,
+            defGetSchema
+          )
+        }
 
-      // register avro classes
-      val ParserClass = RootClass.newClass("org.apache.avro.Schema.Parser")
+        // generate companion object definition
+        val objectDef = {
+
+          // register avro classes
+          val ParserClass = RootClass.newClass("org.apache.avro.Schema.Parser")
 
 
-      // new val 
-      val valSchema = VAL(REF("SCHEMA$")) := (NEW(ParserClass)) APPLY() DOT "parse" APPLY(LIT(schema.toString))
+          // new val
+          val valSchema = VAL(REF("SCHEMA$")) := (NEW(ParserClass)) APPLY() DOT "parse" APPLY(LIT(schema.toString))
 
-      // companion object definion
-      OBJECTDEF(classSymbol) := BLOCK( 
-        valSchema
-      )
- 
+          // companion object definion
+          OBJECTDEF(classSymbol) := BLOCK(
+            valSchema
+          )
+
+        }
+
+        BLOCK(classDef, objectDef)
+
+      case ENUM =>
+        val ParserClass = RootClass.newClass("org.apache.avro.Schema.Parser")
+        val valSchema = VAL(REF("SCHEMA$")) := (NEW(ParserClass)) APPLY() DOT "parse" APPLY(LIT(schema.toString))
+
+        OBJECTDEF(schema.getName) withParents("Enumeration") := BLOCK(
+          TYPEVAR(schema.getName) := REF("Value"),
+          VAL(schema.getEnumSymbols.mkString(", ")) := REF("Value"),
+          valSchema
+        )
     }
 
     // wrap the class definition in a block with a comment and a package
     val tree = {
-      if (namespace.isDefined) BLOCK(classDef, objectDef).inPackage(namespace.get)
-      else classDef
+      if (namespace.isDefined) classOrEnumDef.inPackage(namespace.get)
+      else classOrEnumDef
     }.withDoc("MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY")
 
     //write the tree

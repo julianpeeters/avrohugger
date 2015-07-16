@@ -99,7 +99,7 @@ class GeneratorSpec extends mutable.Specification {
         |
         |object Suit extends Enumeration {
         |  type Suit = Value
-        |  val SPADES, HEARTS, DIAMONDS, CLUBS = Value
+        |  val SPADES, DIAMONDS, CLUBS, HEARTS = Value
         |}
       """.stripMargin.trim
   }
