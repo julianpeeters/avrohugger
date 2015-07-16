@@ -113,7 +113,7 @@ object Message {
         |/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
         |package example.idl
         |
-        |case class Card(var suit: Suit.Suit, var number: Int) extends org.apache.avro.specific.SpecificRecordBase {
+        |case class Card(var suit: Suit.Value, var number: Int) extends org.apache.avro.specific.SpecificRecordBase {
         |  def this() = this(null, 1)
         |  def get(field: Int): AnyRef = {
         |    field match {
@@ -130,7 +130,7 @@ object Message {
         |    field match {
         |      case pos if pos == 0 => this.suit = {
         |        value
-        |      }.asInstanceOf[Suit.Suit]
+        |      }.asInstanceOf[Suit.Value]
         |      case pos if pos == 1 => this.number = {
         |        value
         |      }.asInstanceOf[Int]
