@@ -48,30 +48,12 @@ object PutGenerator {
               val GenericDataArray = RootClass.newClass("org.apache.avro.generic.GenericData.Array[_]")
               val applyParam = REF("array") DOT("iterator")
               val resultExpr = {
-                schema.getElementType.getType match {
-                  // types that need converting
-                  case Schema.Type.STRING | Schema.Type.ARRAY | Schema.Type.UNION => {
-                    BLOCK(
-                      REF("scala.collection.JavaConversions.asScalaIterator")
-                      .APPLY(applyParam)
-                      .DOT("toList")
-                      .MAP(LAMBDA(PARAM("x")) ==> BLOCK(convertFromJava(schema.getElementType, REF("x"))))
-                    )
-                  }
-                  // types that aren't yet supported
-                  case Schema.Type.FIXED | 
-                    Schema.Type.BYTES | 
-                    Schema.Type.MAP => {
-                    sys.error("unsupported type")
-                  }
-                  case _ => { 
-                    BLOCK(
-                      REF("scala.collection.JavaConversions.asScalaIterator")
-                      .APPLY(applyParam)
-                      .DOT("toList")
-                    )
-                  }
-                }
+                BLOCK(
+                  REF("scala.collection.JavaConversions.asScalaIterator")
+                  .APPLY(applyParam)
+                  .DOT("toList")
+                  .MAP(LAMBDA(PARAM("x")) ==> BLOCK(convertFromJava(schema.getElementType, REF("x"))))
+                )
               }
 
               val nullConversion = CASE(NULL) ==> NULL
@@ -79,8 +61,29 @@ object PutGenerator {
 
               tree MATCH(nullConversion, arrayConversion)
             }
+            case Schema.Type.MAP      => {
+
+              val JavaMap = RootClass.newClass("java.util.Map[_,_]")
+
+              val resultExpr = {
+                BLOCK(
+                  REF("scala.collection.JavaConversions.mapAsScalaMap")
+                  .APPLY(REF("map"))
+                  .DOT("toMap")
+                  .MAP(LAMBDA(PARAM("kvp")) ==> BLOCK(
+                    VAL("key") := REF("kvp._1").DOT("toString"), 
+                    VAL("value") := REF("kvp._2"),
+                    PAREN(REF("key"), convertFromJava(schema.getValueType, REF("value"))))
+                  )
+                )
+              }
+
+              val nullConversion = CASE(NULL) ==> NULL
+              val mapConversion = CASE(ID("map") withType(JavaMap)) ==> resultExpr 
+
+              tree MATCH(nullConversion, mapConversion)
+            }
             case Schema.Type.FIXED    => sys.error("the FIXED datatype is not yet supported")
-            case Schema.Type.MAP      => sys.error("the MAP datatype is not yet supported")
             case Schema.Type.BYTES    => sys.error("the BYTES datatype is not yet supported")
             case _ => tree
           }

@@ -99,7 +99,7 @@ object SpecificAvroHugger {
     // wrap the class definition in a block with a comment and a package
     val tree = {
       if (namespace.isDefined) classOrEnumDef.inPackage(namespace.get)
-      else classOrEnumDef
+      else classOrEnumDef.withoutPackage
     }.withDoc("MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY")
 
     //write the tree
@@ -113,7 +113,14 @@ object SpecificAvroHugger {
       else outDir
     }
     if (!Files.exists(folderPath)) Files.createDirectories(folderPath)
-    try { Files.write( Paths.get(folderPath.toString + "/" + schema.getName + ".scala"), treeToString(tree).getBytes(), StandardOpenOption.CREATE); () } //finally pw.close() // create new, overwrite if exists
+    val filePath = { 
+      Paths.get(folderPath.toString + "/" + schema.getName + ".scala")
+    }
+    try { // delete old and/or create new
+      Files.deleteIfExists(filePath)
+      Files.write(filePath, treeToString(tree).getBytes(),  StandardOpenOption.CREATE) 
+      () 
+    }//finally pw.close()     
     catch {
       case ex: FileNotFoundException => sys.error("File not found:" + ex)
       case ex: IOException => sys.error("There was a problem using the file: " + ex)

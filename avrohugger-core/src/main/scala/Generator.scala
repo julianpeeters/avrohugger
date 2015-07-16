@@ -4,7 +4,7 @@ import org.apache.avro.Schema
 import java.io.{File, FileNotFoundException, IOException}
 
 
-class Generator  extends GeneratorBase {
+class Generator extends GeneratorBase {
 
   def fromSchema(schema: Schema, outDir: String = defaultOutputDir): Unit = {
     val namespace: Option[String] = parser.getNamespace(schema)

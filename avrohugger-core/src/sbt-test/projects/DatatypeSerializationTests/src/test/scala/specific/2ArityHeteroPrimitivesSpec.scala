@@ -269,3 +269,28 @@ class Specific57Test extends Specification {
     }
   }
 }
+
+class SpecificMap11Test extends Specification {
+
+  "A case class with two differing nested Map fields" should {
+    "serialize and deserialize correctly" in {
+
+      val record = AvroTypeProviderTestMap11(Map("one"->Map("two"->3)), List(Map("state"->Map("knowledge"->"power"))))
+
+      val file = File.createTempFile("AvroTypeProviderTestMap11", "avro")
+        
+
+      val userDatumWriter = new SpecificDatumWriter[AvroTypeProviderTestMap11]
+      val dataFileWriter = new DataFileWriter[AvroTypeProviderTestMap11](userDatumWriter)
+        dataFileWriter.create(record.getSchema(), file);
+        dataFileWriter.append(record);
+        dataFileWriter.close();
+
+      val userDatumReader = new SpecificDatumReader[AvroTypeProviderTestMap11](AvroTypeProviderTestMap11.SCHEMA$)
+      val dataFileReader = new DataFileReader[AvroTypeProviderTestMap11](file, userDatumReader)
+      val sameRecord = dataFileReader.next()
+
+      sameRecord must ===(record)
+    }
+  }
+}

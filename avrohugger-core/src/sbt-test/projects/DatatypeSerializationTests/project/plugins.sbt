@@ -1,4 +1,4 @@
-addSbtPlugin("com.julianpeeters" % "sbt-avrohugger" % "0.0.2")
+addSbtPlugin("com.julianpeeters" % "sbt-avrohugger" % "latest.integration")
 
 resolvers += Resolver.file("Local Ivy Repository", file("/home/julianpeeters/.ivy2/local/"))(Resolver.ivyStylePatterns)
 
