@@ -444,3 +444,33 @@ class SpecificMap03Test extends Specification {
   }
 }
 
+
+class SpecificEnum01Test extends Specification {
+
+  "A case class with a `Enumeration` field" should {
+    "serialize and deserialize correctly" in {
+
+      val record = Compass(Direction.NORTH)
+      println("NORTH " + record)
+      println("schema " + record.getSchema())
+      println("same s " + Compass.SCHEMA$)
+
+      val file = File.createTempFile("Compass", "avro")
+                file.deleteOnExit()
+
+
+      val userDatumWriter = new SpecificDatumWriter[Compass]
+      val dataFileWriter = new DataFileWriter[Compass](userDatumWriter)
+        dataFileWriter.create(record.getSchema(), file);
+        dataFileWriter.append(record);
+        dataFileWriter.close();
+
+      val userDatumReader = new SpecificDatumReader[Compass](Compass.SCHEMA$)
+      val dataFileReader = new DataFileReader[Compass](file, userDatumReader)
+      println("same d " + dataFileReader.getSchema)
+      val sameRecord = dataFileReader.next()
+
+      sameRecord must ===(record)
+    }
+  }
+}
