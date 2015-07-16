@@ -146,6 +146,60 @@ object Message {
         |}
       """.stripMargin.trim
     }
+
+
+    "correctly generate nested enums in AVSCs with `SpecificRecord`" in {
+      val infile = new java.io.File("avrohugger-core/src/test/avro/enums_nested.avsc")
+      val gen = new SpecificGenerator
+      val outDir = gen.defaultOutputDir + "specific/"
+      gen.fromFile(infile, outDir)
+
+      val sourceEnum = scala.io.Source.fromFile(s"$outDir/example/Direction.scala").mkString
+      sourceEnum ====
+      """
+        |/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
+        |package example
+        |
+        |object Direction extends Enumeration {
+        |  type Direction = Value
+        |  val NORTH, SOUTH, EAST, WEST = Value
+        |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"enum\",\"name\":\"Direction\",\"namespace\":\"example\",\"symbols\":[\"NORTH\",\"SOUTH\",\"EAST\",\"WEST\"]}")
+        |}
+      """.stripMargin.trim
+
+      val sourceRecord = scala.io.Source.fromFile(s"$outDir/example/Compass.scala").mkString
+      sourceRecord ====
+      """
+        |/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
+        |package example
+        |
+        |case class Compass(var direction: Direction.Value) extends org.apache.avro.specific.SpecificRecordBase {
+        |  def this() = this(null)
+        |  def get(field: Int): AnyRef = {
+        |    field match {
+        |      case pos if pos == 0 => {
+        |        direction
+        |      }.asInstanceOf[AnyRef]
+        |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+        |    }
+        |  }
+        |  def put(field: Int, value: Any): Unit = {
+        |    field match {
+        |      case pos if pos == 0 => this.direction = {
+        |        value
+        |      }.asInstanceOf[Direction.Value]
+        |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+        |    }
+        |    ()
+        |  }
+        |  def getSchema: org.apache.avro.Schema = Compass.SCHEMA$
+        |}
+        |
+        |object Compass {
+        |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Compass\",\"namespace\":\"example\",\"fields\":[{\"name\":\"direction\",\"type\":{\"type\":\"enum\",\"name\":\"Direction\",\"symbols\":[\"NORTH\",\"SOUTH\",\"EAST\",\"WEST\"]}}]}")
+        |}
+      """.stripMargin.trim
+    }
   }
 
 }
