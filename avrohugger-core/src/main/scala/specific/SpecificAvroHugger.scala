@@ -83,7 +83,7 @@ object SpecificAvroHugger {
       case ENUM =>
 
         // register new type
-        val classSymbol = RootClass.newClass(schema.getName + "." + schema.getName)
+        val classSymbol = RootClass.newClass(schema.getName + ".Value")
         classStore.accept(schema, classSymbol)
 
         val ParserClass = RootClass.newClass("org.apache.avro.Schema.Parser")
