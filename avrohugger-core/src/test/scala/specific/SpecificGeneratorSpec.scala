@@ -12,8 +12,9 @@ class SpecificGeneratorSpec extends mutable.Specification {
     "correctly generate a case class definition that extends `SpecificRecordBase` in a package" in {
       val infile = new java.io.File("avrohugger-core/src/test/avro/mail.avpr")
       val gen = new SpecificGenerator
-      gen.fromFile(infile)
-      val source = scala.io.Source.fromFile("target/generated-sources/example/proto/Message.scala").mkString
+      val outDir = gen.defaultOutputDir + "specific/"
+      gen.fromFile(infile, outDir)
+      val source = scala.io.Source.fromFile(s"$outDir/example/proto/Message.scala").mkString
       println(source)
        source === 
 """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
