@@ -22,12 +22,13 @@ object SpecificAvroHugger {
     schema: Schema, 
     outDir: String): Unit = {
 
-    // register new type
-    val classSymbol = RootClass.newClass(schema.getName)
-    classStore.accept(schema, classSymbol)
-
     val classOrEnumDef = schema.getType match {
       case RECORD =>
+
+        // register new type
+        val classSymbol = RootClass.newClass(schema.getName)
+        classStore.accept(schema, classSymbol)
+
         // generate list of constructor parameters
         val params: List[ValDef] = schema.getFields.toList.map { field =>
           val fieldName = field.name
@@ -80,6 +81,11 @@ object SpecificAvroHugger {
         BLOCK(classDef, objectDef)
 
       case ENUM =>
+
+        // register new type
+        val classSymbol = RootClass.newClass(schema.getName + "." + schema.getName)
+        classStore.accept(schema, classSymbol)
+
         val ParserClass = RootClass.newClass("org.apache.avro.Schema.Parser")
         val valSchema = VAL(REF("SCHEMA$")) := (NEW(ParserClass)) APPLY() DOT "parse" APPLY(LIT(schema.toString))
 
