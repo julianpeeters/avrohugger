@@ -60,9 +60,10 @@ class FileParser {
         }
       }
       val flatSchemas = fieldSchemas.flatMap(fieldSchema => flattenSchema(fieldSchema))
-      val nestedRecordSchemas = flatSchemas.filter(x => x.getType == RECORD)
+      def topLevelTypes(schema: Schema) = (schema.getType == RECORD | schema.getType == ENUM)
+      val nestedTopLevelSchemas = flatSchemas.filter(topLevelTypes)
 
-      nestedRecordSchemas
+      nestedTopLevelSchemas
     case _ => Nil
   }
 
