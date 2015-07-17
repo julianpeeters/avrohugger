@@ -61,6 +61,9 @@ object GetGenerator {
 	            REF("map")
             )
 		      }
+					case Schema.Type.ENUM =>
+						val enumSymbol = RootClass.newClass("org.apache.avro.generic.GenericData.EnumSymbol")
+						NEW(enumSymbol, REF(schema.getName + ".SCHEMA$"), REF(field.avroField.name).DOT("toString"))
 	        case Schema.Type.FIXED    => sys.error("the FIXED datatype is not yet supported")
           case Schema.Type.BYTES    => sys.error("the BYTES datatype is not yet supported")
 		      case _ => tree

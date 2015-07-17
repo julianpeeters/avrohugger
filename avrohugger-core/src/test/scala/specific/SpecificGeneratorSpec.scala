@@ -113,12 +113,12 @@ object Message {
         |/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
         |package example.idl
         |
-        |case class Card(var suit: Suit.Suit, var number: Int) extends org.apache.avro.specific.SpecificRecordBase {
+        |case class Card(var suit: Suit.Value, var number: Int) extends org.apache.avro.specific.SpecificRecordBase {
         |  def this() = this(null, 1)
         |  def get(field: Int): AnyRef = {
         |    field match {
         |      case pos if pos == 0 => {
-        |        suit
+        |        new org.apache.avro.generic.GenericData.EnumSymbol(Suit.SCHEMA$, suit.toString)
         |      }.asInstanceOf[AnyRef]
         |      case pos if pos == 1 => {
         |        number
@@ -129,8 +129,8 @@ object Message {
         |  def put(field: Int, value: Any): Unit = {
         |    field match {
         |      case pos if pos == 0 => this.suit = {
-        |        value
-        |      }.asInstanceOf[Suit.Suit]
+        |        Suit.withName(value.toString)
+        |      }.asInstanceOf[Suit.Value]
         |      case pos if pos == 1 => this.number = {
         |        value
         |      }.asInstanceOf[Int]
