@@ -178,7 +178,7 @@ object Message {
         |  def get(field: Int): AnyRef = {
         |    field match {
         |      case pos if pos == 0 => {
-        |        direction
+        |        new org.apache.avro.generic.GenericData.EnumSymbol(Direction.SCHEMA$, direction.toString)
         |      }.asInstanceOf[AnyRef]
         |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
         |    }
@@ -186,7 +186,7 @@ object Message {
         |  def put(field: Int, value: Any): Unit = {
         |    field match {
         |      case pos if pos == 0 => this.direction = {
-        |        value
+        |        Direction.withName(value.toString)
         |      }.asInstanceOf[Direction.Value]
         |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
         |    }
