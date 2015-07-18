@@ -454,6 +454,8 @@ class SpecificEnum01Test extends Specification {
       println("NORTH " + record)
       println("schema " + record.getSchema())
       println("same s " + Compass.SCHEMA$)
+      println(record.getClass())
+     // println(Compass.SCHEMA$.getLogicalType())
 
       val file = File.createTempFile("Compass", "avro")
                 file.deleteOnExit()
