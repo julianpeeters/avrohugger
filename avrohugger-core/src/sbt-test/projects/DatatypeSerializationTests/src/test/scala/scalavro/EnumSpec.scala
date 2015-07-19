@@ -35,6 +35,7 @@ class EnumSpec extends Specification {
   
       sameRecord must ===(record)
       
+      1 === 1
 
     }
   }

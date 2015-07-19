@@ -451,11 +451,6 @@ class SpecificEnum01Test extends Specification {
     "serialize and deserialize correctly" in {
 
       val record = Compass(Direction.NORTH)
-      println("NORTH " + record)
-      println("schema " + record.getSchema())
-      println("same s " + Compass.SCHEMA$)
-      println(record.getClass())
-     // println(Compass.SCHEMA$.getLogicalType())
 
       val file = File.createTempFile("Compass", "avro")
                 file.deleteOnExit()
@@ -469,7 +464,6 @@ class SpecificEnum01Test extends Specification {
 
       val userDatumReader = new SpecificDatumReader[Compass](Compass.SCHEMA$)
       val dataFileReader = new DataFileReader[Compass](file, userDatumReader)
-      println("same d " + dataFileReader.getSchema)
       val sameRecord = dataFileReader.next()
 
       sameRecord must ===(record)

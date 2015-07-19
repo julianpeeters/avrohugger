@@ -39,6 +39,8 @@ object AvroHugger {
           TYPEVAR(schema.getName) := REF("Value"),
           VAL(schema.getEnumSymbols.mkString(", ")) := REF("Value")
         )
+      case _ => sys.error("Only RECORD and ENUM can be top-level definitions")
+
     }
 
     // wrap the class definition in a block with a comment and a package

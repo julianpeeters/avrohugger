@@ -8,9 +8,10 @@ class SpecificGenerator extends GeneratorBase{
 
   override def fromSchema(schema: Schema, outDir: String = defaultOutputDir): Unit = {
     val namespace: Option[String] = parser.getNamespace(schema)
-    val recordSchemas: List[Schema] = schema::(parser.getNestedSchemas(schema))
+    // schemas that represent top-level Scala definitions such as RECORD and ENUM
+    val topLevelSchemas: List[Schema] = schema::(parser.getNestedSchemas(schema))
     // if a field's type is a record, the nested Schema has no namespace, but we need one for each file so we pass one
-    recordSchemas.reverse.foreach(schema => SpecificAvroHugger.write(classStore, namespace, schema, outDir))
+    topLevelSchemas.reverse.foreach(schema => SpecificAvroHugger.write(classStore, namespace, schema, outDir))
   }
 
 }

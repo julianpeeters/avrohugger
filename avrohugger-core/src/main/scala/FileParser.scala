@@ -47,6 +47,7 @@ class FileParser {
   }
 
   def getNestedSchemas(schema: Schema): List[Schema] = schema.getType match {
+    // if a record is found, check for and extract nested RECORDs and ENUMS (i.e. top-level types) 
     case RECORD =>
       val fields: List[org.apache.avro.Schema.Field] = schema.getFields.asScala.toList
       val fieldSchemas: List[org.apache.avro.Schema] = fields.map(field => field.schema())

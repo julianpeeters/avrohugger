@@ -59,7 +59,7 @@ class GeneratorToolSpec extends mutable.Specification {
     "match the expected single protocol file" in {
       doCompile(Array[String] ("protocol",
         Directory.TEST_INPUT_DIR.toString() + "/mail.avpr",
-        Directory.TEST_OUTPUT_DIR.getPath()
+        Directory.TEST_OUTPUT_SCALA_DIR.getPath()
       ));
       readFile(Directory.TEST_OUTPUT_MESSAGE) === readFile(Directory.TEST_EXPECTED_MESSAGE)
     }
@@ -67,7 +67,7 @@ class GeneratorToolSpec extends mutable.Specification {
     "match the expected single datafile file" in {
       doCompile(Array[String] ("datafile",
         Directory.TEST_INPUT_DIR.toString() + "/twitter.avro",
-        Directory.TEST_OUTPUT_DIR.getPath()
+        Directory.TEST_OUTPUT_BASE_DIR.getPath()
       ));
       readFile(Directory.TEST_OUTPUT_TWITTER) === readFile(Directory.TEST_EXPECTED_TWITTER)
     }
@@ -75,7 +75,7 @@ class GeneratorToolSpec extends mutable.Specification {
     "match the expected single schema file" in {
       doCompile(Array[String] ("schema",
         Directory.TEST_INPUT_DIR.toString() + "/nickname.avsc",
-        Directory.TEST_OUTPUT_DIR.getPath()
+        Directory.TEST_OUTPUT_BASE_DIR.getPath()
       ));
       readFile(Directory.TEST_OUTPUT_NICKNAME) === readFile(Directory.TEST_EXPECTED_NICKNAME)
     }
@@ -84,7 +84,7 @@ class GeneratorToolSpec extends mutable.Specification {
       doCompile(Array[String]("schema",
         Directory.TEST_INPUT_DIR.toString() + "/nickname.avsc",
         Directory.TEST_INPUT_DIR.toString() + "/player.avsc",
-        Directory.TEST_OUTPUT_DIR.getPath()
+        Directory.TEST_OUTPUT_BASE_DIR.getPath()
       ));
       readFile(Directory.TEST_OUTPUT_PLAYER)  === readFile(Directory.TEST_EXPECTED_PLAYER)   
     }
@@ -93,7 +93,7 @@ class GeneratorToolSpec extends mutable.Specification {
       doCompile(Array[String]("schema",
         Directory.TEST_INPUT_DIR.toString() + "/nickname.avsc",
         Directory.TEST_INPUT_DIR.toString(),
-        Directory.TEST_OUTPUT_DIR.getPath()
+        Directory.TEST_OUTPUT_BASE_DIR.getPath()
       ));
       readFile(Directory.TEST_OUTPUT_PLAYER)  === readFile(Directory.TEST_EXPECTED_PLAYER)
     }
@@ -103,7 +103,7 @@ class GeneratorToolSpec extends mutable.Specification {
         Directory.TEST_INPUT_DIR.toString() + "/nickname.avsc",
         Directory.TEST_INPUT_DIR.toString() + "/player.avsc",
         Directory.TEST_INPUT_DIR.toString() + "/twitter_schema.avro",
-        Directory.TEST_OUTPUT_STRING_DIR.getPath()
+        Directory.TEST_OUTPUT_STRING_BASE_DIR.getPath()
       ));
       readFile(Directory.TEST_OUTPUT_STRING_PLAYER) === readFile(Directory.TEST_EXPECTED_STRING_PLAYER)
     }

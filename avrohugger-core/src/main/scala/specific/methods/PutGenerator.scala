@@ -83,8 +83,6 @@ object PutGenerator {
 
               tree MATCH(nullConversion, mapConversion)
             }
-            case Schema.Type.ENUM =>
-              (REF(schema.getName) DOT("withName"))(REF("value") DOT ("toString"))
             case Schema.Type.FIXED    => sys.error("the FIXED datatype is not yet supported")
             case Schema.Type.BYTES    => sys.error("the BYTES datatype is not yet supported")
             case _ => tree

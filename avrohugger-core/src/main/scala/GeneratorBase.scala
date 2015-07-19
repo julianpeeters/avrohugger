@@ -4,7 +4,7 @@ import org.apache.avro.Schema
 import java.io.{File, FileNotFoundException, IOException}
 
 trait GeneratorBase {
-  val defaultOutputDir = "target/generated-sources/"
+  val defaultOutputDir = "target/generated-sources"
   val parser = new FileParser
   val classStore = new ClassStore
   def fromSchema(schema: Schema, outDir: String = defaultOutputDir): Unit 

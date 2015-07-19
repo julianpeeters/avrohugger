@@ -9,9 +9,11 @@ import definitions._
 import treehuggerDSL._
 
 import org.apache.avro.Schema
+import org.apache.avro.compiler.specific.SpecificCompiler
 
+//import java.nio.charset.StandardCharsets
 import java.nio.file.{Path, Paths, Files, StandardOpenOption}
-import java.io.{File, FileNotFoundException, IOException}
+import java.io.{File, FileNotFoundException, BufferedWriter, FileWriter, IOException}
 import scala.collection.JavaConversions._
 
 object SpecificAvroHugger {
@@ -22,8 +24,8 @@ object SpecificAvroHugger {
     schema: Schema, 
     outDir: String): Unit = {
 
-    val classOrEnumDef = schema.getType match {
-      case RECORD =>
+    schema.getType match {
+      case RECORD => {
 
         // register new type
         val classSymbol = RootClass.newClass(schema.getName)
@@ -67,7 +69,6 @@ object SpecificAvroHugger {
           // register avro classes
           val ParserClass = RootClass.newClass("org.apache.avro.Schema.Parser")
 
-
           // new val
           val valSchema = VAL(REF("SCHEMA$")) := (NEW(ParserClass)) APPLY() DOT "parse" APPLY(LIT(schema.toString))
 
@@ -78,36 +79,27 @@ object SpecificAvroHugger {
 
         }
 
-        BLOCK(classDef, objectDef)
+        // wrap the definitions in a block with a comment and a package
+        val tree = {
+          if (namespace.isDefined) BLOCK(classDef, objectDef).inPackage(namespace.get)
+          else BLOCK(classDef, objectDef).withoutPackage
+        }.withDoc("MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY")
 
-      case ENUM =>
-
-        // register new type
-        val classSymbol = RootClass.newClass(schema.getName + ".Value")
-        classStore.accept(schema, classSymbol)
-
-        val ParserClass = RootClass.newClass("org.apache.avro.Schema.Parser")
-        val valSchema = VAL(REF("SCHEMA$")) := (NEW(ParserClass)) APPLY() DOT "parse" APPLY(LIT(schema.toString))
-
-        OBJECTDEF(schema.getName) withParents("Enumeration") := BLOCK(
-          TYPEVAR(schema.getName) := REF("Value"),
-          VAL(schema.getEnumSymbols.mkString(", ")) := REF("Value"),
-          valSchema
-        )
+        //write the tree
+        writeCaseClassToFile(namespace, schema, tree, outDir)
+      }
+      // Avro ENUM is represented by Java enums instead of Scala, required by SpecificData.
+      case ENUM => {
+        val enumSymbol = RootClass.newClass(schema.getName)
+        classStore.accept(schema, enumSymbol)
+        writeJavaEnumToFile(namespace, schema, outDir)
+      }
+      case _ => sys.error("Only RECORD and ENUM can be top-level definitions")
     }
-
-    // wrap the class definition in a block with a comment and a package
-    val tree = {
-      if (namespace.isDefined) classOrEnumDef.inPackage(namespace.get)
-      else classOrEnumDef.withoutPackage
-    }.withDoc("MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY")
-
-    //write the tree
-    writeToFile(namespace, schema, tree, outDir)
   }
   
-  // write the definition to file
-  private def writeToFile(namespace: Option[String], schema: Schema, tree: Tree, outDir: String): Unit = {
+  // write scala definitions to file
+  private def writeCaseClassToFile(namespace: Option[String], schema: Schema, tree: Tree, outDir: String): Unit = {
     val folderPath: Path = Paths.get{
       if (namespace.isDefined) outDir + "/" + namespace.get.toString.replace('.','/')
       else outDir
@@ -125,5 +117,42 @@ object SpecificAvroHugger {
       case ex: FileNotFoundException => sys.error("File not found:" + ex)
       case ex: IOException => sys.error("There was a problem using the file: " + ex)
     }
+  }
+
+  private def writeJavaEnumToFile(namespace: Option[String], schema: Schema, outDir: String): Unit = {
+    // SpecificCompiler only compiles from files, so write the schema to a temp file
+    val tempFile = File.createTempFile(schema.getName, ".avsc");
+    tempFile.deleteOnExit();
+    val out = new BufferedWriter(new FileWriter(tempFile));
+    out.write(schema.toString);
+    out.close();
+
+/*
+    val folderPath: Path = Paths.get{
+      if (namespace.isDefined) outDir + "/scala/" + namespace.get.toString.replace('.','/')
+      else outDir
+    }
+    if (!Files.exists(folderPath)) Files.createDirectories(folderPath)
+    val filePath = { 
+      Paths.get(folderPath.toString + "/" + schema.getName + ".scala")
+    }
+    */
+    val folderPath = {
+      if (namespace.isDefined) outDir + "/" //+ namespace.get.toString.replace('.','/')
+      else outDir 
+    }
+   // val filePath = folderPath + "/" + schema.getName + ".java"
+    
+    try { // delete old and/or create new
+     // Files.deleteIfExists(filePath)
+
+    val outFile = new File(folderPath)
+    SpecificCompiler.compileSchema(tempFile, outFile);
+    }//finally pw.close()     
+    catch {
+      case ex: FileNotFoundException => sys.error("File not found:" + ex)
+      case ex: IOException => sys.error("There was a problem using the file: " + ex)
+    }
+
   }
 }

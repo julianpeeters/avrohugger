@@ -59,7 +59,7 @@ class SpecificGeneratorToolSpec extends mutable.Specification {
     "match the expected single protocol file" in {
       doCompile(Array[String] ("protocol",
         Directory.TEST_INPUT_DIR.toString() + "/mail.avpr",
-        Directory.TEST_OUTPUT_DIR.getPath()
+        Directory.TEST_OUTPUT_SCALA_DIR.getPath()
       ));
       readFile(Directory.TEST_OUTPUT_MESSAGE) === readFile(Directory.TEST_EXPECTED_MESSAGE)
     }
@@ -67,7 +67,7 @@ class SpecificGeneratorToolSpec extends mutable.Specification {
     "match the expected single datafile file" in {
       doCompile(Array[String] ("datafile",
         Directory.TEST_INPUT_DIR.toString() + "/twitter.avro",
-        Directory.TEST_OUTPUT_SPECIFIC_DIR.getPath()
+        Directory.TEST_OUTPUT_SPECIFIC_BASE_DIR.getPath()
       ));
       readFile(Directory.TEST_OUTPUT_SPECIFIC_TWITTER) === readFile(Directory.TEST_EXPECTED_SPECIFIC_TWITTER)
     }
@@ -75,7 +75,7 @@ class SpecificGeneratorToolSpec extends mutable.Specification {
     "match the expected single schema file" in {
       doCompile(Array[String] ("schema",
         Directory.TEST_INPUT_DIR.toString() + "/nickname.avsc",
-        Directory.TEST_OUTPUT_SPECIFIC_DIR.getPath()
+        Directory.TEST_OUTPUT_SPECIFIC_BASE_DIR.getPath()
       ));
       readFile(Directory.TEST_OUTPUT_SPECIFIC_NICKNAME) === readFile(Directory.TEST_EXPECTED_SPECIFIC_NICKNAME)
     }
@@ -84,7 +84,7 @@ class SpecificGeneratorToolSpec extends mutable.Specification {
       doCompile(Array[String]("schema",
         Directory.TEST_INPUT_DIR.toString() + "/nickname.avsc",
         Directory.TEST_INPUT_DIR.toString() + "/player.avsc",
-        Directory.TEST_OUTPUT_SPECIFIC_DIR.getPath()
+        Directory.TEST_OUTPUT_SPECIFIC_BASE_DIR.getPath()
       ));
       readFile(Directory.TEST_OUTPUT_SPECIFIC_PLAYER)  === readFile(Directory.TEST_EXPECTED_SPECIFIC_PLAYER)   
     }
@@ -93,7 +93,7 @@ class SpecificGeneratorToolSpec extends mutable.Specification {
       doCompile(Array[String]("schema",
         Directory.TEST_INPUT_DIR.toString() + "/nickname.avsc",
         Directory.TEST_INPUT_DIR.toString(),
-        Directory.TEST_OUTPUT_SPECIFIC_DIR.getPath()
+        Directory.TEST_OUTPUT_SPECIFIC_BASE_DIR.getPath()
       ));
       readFile(Directory.TEST_OUTPUT_SPECIFIC_PLAYER)  === readFile(Directory.TEST_EXPECTED_SPECIFIC_PLAYER)
     }
