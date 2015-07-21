@@ -1,5 +1,6 @@
+
 import avrohugger._
-import specific._
+import format.SpecificRecord
 
 import org.specs2._
 import mutable._
@@ -11,11 +12,10 @@ class SpecificGeneratorSpec extends mutable.Specification {
     
     "correctly generate a case class definition that extends `SpecificRecordBase` in a package" in {
       val infile = new java.io.File("avrohugger-core/src/test/avro/mail.avpr")
-      val gen = new SpecificGenerator
+      val gen = new Generator(SpecificRecord)
       val outDir = gen.defaultOutputDir + "/specific/"
-      gen.fromFile(infile, outDir)
+      gen.fileToFile(infile, outDir)
       val source = scala.io.Source.fromFile(s"$outDir/example/proto/Message.scala").mkString
-      println(source)
        source === 
 """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
 package example.proto
@@ -68,11 +68,53 @@ object Message {
 }"""
     }
 
+
+
+    "correctly generate a specific case class definition from a schema as a string" in {
+      val schemaString = """{"type":"record","name":"Person","namespace":"test","fields":[{"name":"name","type":"string"}],"doc:":"A basic schema for storing Twitter messages"}"""
+      val gen = new Generator(SpecificRecord)
+      val List(source) = gen.stringToStrings(schemaString)
+
+       
+      source ===
+        """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
+package test
+
+case class Person(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
+  def this() = this("")
+  def get(field: Int): AnyRef = {
+    field match {
+      case pos if pos == 0 => {
+        name
+      }.asInstanceOf[AnyRef]
+      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+    }
+  }
+  def put(field: Int, value: Any): Unit = {
+    field match {
+      case pos if pos == 0 => this.name = {
+        value match {
+          case (value: org.apache.avro.util.Utf8) => value.toString
+          case _ => value
+        }
+      }.asInstanceOf[String]
+      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+    }
+    ()
+  }
+  def getSchema: org.apache.avro.Schema = Person.SCHEMA$
+}
+
+object Person {
+  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Person\",\"namespace\":\"test\",\"fields\":[{\"name\":\"name\",\"type\":\"string\"}],\"doc:\":\"A basic schema for storing Twitter messages\"}")
+}""".stripMargin.trim
+    }
+
     "correctly generate enums with SCHEMA$" in {
       val infile = new java.io.File("avrohugger-core/src/test/avro/enums.avsc")
-      val gen = new SpecificGenerator
-      val outDir = gen.defaultOutputDir + "/specific"
-      gen.fromFile(infile, outDir)
+      val gen = new Generator(SpecificRecord)
+      val outDir = gen.defaultOutputDir + "/specific/"
+      gen.fileToFile(infile, outDir)
 
       val source = scala.io.Source.fromFile(s"$outDir/example/Suit.java").mkString
       source ====
@@ -94,9 +136,9 @@ public enum Suit {
 
     "correctly generate enums in AVDLs with `SpecificRecord`" in {
       val infile = new java.io.File("avrohugger-core/src/test/avro/enums.avdl")
-      val gen = new SpecificGenerator
+      val gen = new Generator(SpecificRecord)
       val outDir = gen.defaultOutputDir + "/specific/"
-      gen.fromFile(infile, outDir)
+      gen.fileToFile(infile, outDir)
 
       val sourceEnum = scala.io.Source.fromFile(s"$outDir/example/idl/Suit.java").mkString
       sourceEnum ====
@@ -155,9 +197,9 @@ public enum Suit {
 
     "correctly generate nested enums in AVSCs with `SpecificRecord`" in {
       val infile = new java.io.File("avrohugger-core/src/test/avro/enums_nested.avsc")
-      val gen = new SpecificGenerator
+      val gen = new Generator(SpecificRecord)
       val outDir = gen.defaultOutputDir + "/specific/"
-      gen.fromFile(infile, outDir)
+      gen.fileToFile(infile, outDir)
 
       val sourceEnum = scala.io.Source.fromFile(s"$outDir/example/Direction.java").mkString
       sourceEnum ====

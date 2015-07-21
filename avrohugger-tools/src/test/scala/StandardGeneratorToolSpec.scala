@@ -1,4 +1,5 @@
 
+import avrohugger.format.Standard
 
 import avrohugger.tool.{Main, Directory, GeneratorTool}
 import org.apache.avro.tool.Tool
@@ -20,12 +21,12 @@ import java.util.Arrays;
 /**
  * Verifies that the GeneratorTool generates Scala source properly
  */
-class GeneratorToolSpec extends mutable.Specification {
+class StandardGeneratorToolSpec extends mutable.Specification {
   
 
   // Runs the actual generator tool with the given input args
   private def doCompile(args: Array[String])  = {
-    val tool = new GeneratorTool();
+    val tool = new GeneratorTool(Standard);
     Try{
       tool.run(null, null, null, Arrays.asList((args:_*)));
     }

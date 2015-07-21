@@ -12,7 +12,7 @@ class MainSpec extends mutable.Specification {
   "tool descriptions" should {
     "fit in 80 characters" in {
       val r: Runner = new Runner()
-      val descResults = r.tools.values().toSeq.map(t => {
+      val descResults = r.toolsMap.values().toSeq.map(t => {
         if (r.maxLen + 2 + t.getShortDescription().length() > 80) true
         else false  
       }) 

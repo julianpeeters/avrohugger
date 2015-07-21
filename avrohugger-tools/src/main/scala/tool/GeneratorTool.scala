@@ -1,5 +1,6 @@
 package avrohugger
 package tool
+import format.SourceFormat
 
 import org.apache.avro.tool.Tool
 import org.apache.avro.generic.GenericData.StringType;
@@ -22,12 +23,12 @@ import scala.util.Try
 
 
 
-class GeneratorTool extends Tool {
+class GeneratorTool(sourceFormat: SourceFormat) extends Tool {
 /**
  * A Tool for generatign Scala case classes from schemas 
  * Adapted from https://github.com/apache/avro/blob/branch-1.7/lang/java/tools/src/main/java/org/apache/avro/tool/SpecificCompilerTool.java
  */
-  val generator = new Generator
+  val generator = new Generator(sourceFormat)
 
   @Override
   def run(in: InputStream, out: PrintStream, err: PrintStream, args: List[String]): Int = {
@@ -60,30 +61,30 @@ class GeneratorTool extends Tool {
     }
     if ("datafile".equals(method)) {
       for (src: File <- determineInputs(inputs, DATAFILE_FILTER)) {
-        generator.fromFile(src, args.last)
+        generator.fileToFile(src, args.last)
       }
     } else if ("schema".equals(method)) {
       for (src: File <- determineInputs(inputs, SCHEMA_FILTER)) {
-        generator.fromFile(src, args.last)
+        generator.fileToFile(src, args.last)
       }
     } 
     else if ("protocol".equals(method)) {
       for (src: File <- determineInputs(inputs, PROTOCOL_FILTER)) {
-        generator.fromFile(src, args.last)
+        generator.fileToFile(src, args.last)
       }
     } 
     else {
-      System.err.println("Expected \"schema\" or \"protocol\".");
+      sys.error("Expected \"datafile\", \"schema\" or \"protocol\".");
       1;
     }
     0;
   }
 
   @Override
-  def getName: String = "generate";
+  def getName: String = generator.sourceFormat.toolName;
 
   @Override
-  def getShortDescription: String = "Generates Scala code for the given schema.";
+  def getShortDescription: String = generator.sourceFormat.toolShortDescription;
 
   /**
    * For a List of files or directories, returns a File[] containing each file

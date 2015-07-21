@@ -1,6 +1,6 @@
 
-
-import avrohugger.tool.{Main, Directory, SpecificGeneratorTool}
+import avrohugger.format.SpecificRecord
+import avrohugger.tool.{Main, Directory, GeneratorTool}
 import org.apache.avro.tool.Tool
 
 import org.specs2._
@@ -25,7 +25,7 @@ class SpecificGeneratorToolSpec extends mutable.Specification {
 
   // Runs the actual generator tool with the given input args
   private def doCompile(args: Array[String])  = {
-    val tool = new SpecificGeneratorTool();
+    val tool = new GeneratorTool(SpecificRecord);
     Try{
       tool.run(null, null, null, Arrays.asList((args:_*)));
     }

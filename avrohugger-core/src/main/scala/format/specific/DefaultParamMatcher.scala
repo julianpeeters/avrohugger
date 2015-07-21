@@ -1,12 +1,14 @@
 package avrohugger
+package format
 package specific
 
 import org.apache.avro.Schema
-import org.apache.avro.Schema.Field
 import org.apache.avro.Schema.Type
+
 import treehugger.forest._
 import definitions._
 import treehuggerDSL._
+
 import scala.collection.JavaConversions._
 
 

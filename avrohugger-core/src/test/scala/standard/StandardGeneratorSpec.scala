@@ -1,16 +1,17 @@
+
 import avrohugger._
+import format.Standard
 import org.specs2._
 
-class GeneratorSpec extends mutable.Specification {
+class StandardGeneratorSpec extends mutable.Specification {
 
   "a Generator" should {
 
     "correctly generate a simple case class definition in a package" in {
       val infile = new java.io.File("avrohugger-core/src/test/avro/twitter.avro")
-      val gen = new Generator
-      gen.fromFile(infile)
+      val gen = new Generator(Standard)
+      gen.fileToFile(infile)
       val source = scala.io.Source.fromFile("target/generated-sources/com/miguno/avro/twitter_schema.scala").mkString
-      println(source)
       source ===
         """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
           |package com.miguno.avro
@@ -19,10 +20,22 @@ class GeneratorSpec extends mutable.Specification {
         """.stripMargin.trim
     }
 
+    "correctly generate a simple case class definition from a schema as a string" in {
+      val schemaString = """{"type":"record","name":"Animal","namespace":"test","fields":[{"name":"name","type":"string"}],"doc:":"A basic schema for storing Twitter messages"}"""
+      val gen = new Generator(Standard)
+      val List(source) = gen.stringToStrings(schemaString)
+      source ===
+        """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
+          |package test
+          |
+          |case class Animal(name: String)
+        """.stripMargin.trim
+    }
+
     "correctly generate a nested case class definition" in {
       val infile = new java.io.File("avrohugger-core/src/test/avro/nested.avsc")
-      val gen = new Generator
-      gen.fromFile(infile)
+      val gen = new Generator(Standard)
+      gen.fileToFile(infile)
 
       val source0 = scala.io.Source.fromFile("target/generated-sources/example/Level0.scala").mkString
       source0 ====
@@ -55,8 +68,8 @@ class GeneratorSpec extends mutable.Specification {
 
   "correctly generate a nested case class from IDL" in {
     val infile = new java.io.File("avrohugger-core/src/test/avro/nested.avdl")
-    val gen = new Generator
-    gen.fromFile(infile)
+    val gen = new Generator(Standard)
+    gen.fileToFile(infile)
 
     val source0 = scala.io.Source.fromFile("target/generated-sources/example/idl/Level0.scala").mkString
     source0 ====
@@ -88,8 +101,8 @@ class GeneratorSpec extends mutable.Specification {
 
   "correctly generate enums" in {
     val infile = new java.io.File("avrohugger-core/src/test/avro/enums.avsc")
-    val gen = new Generator
-    gen.fromFile(infile)
+    val gen = new Generator(Standard)
+    gen.fileToFile(infile)
 
     val sourceEnum = scala.io.Source.fromFile("target/generated-sources/example/Suit.scala").mkString
     sourceEnum ====
@@ -106,8 +119,8 @@ class GeneratorSpec extends mutable.Specification {
 
   "correctly generate enums from protocol files" in {
     val infile = new java.io.File("avrohugger-core/src/test/avro/enums.avpr")
-    val gen = new Generator
-    gen.fromFile(infile)
+    val gen = new Generator(Standard)
+    gen.fileToFile(infile)
 
     val sourceEnum = scala.io.Source.fromFile("target/generated-sources/example/proto/Suit.scala").mkString
     sourceEnum ====
@@ -133,8 +146,8 @@ class GeneratorSpec extends mutable.Specification {
 
   "correctly generate enums from IDL files" in {
     val infile = new java.io.File("avrohugger-core/src/test/avro/enums.avdl")
-    val gen = new Generator
-    gen.fromFile(infile)
+    val gen = new Generator(Standard)
+    gen.fileToFile(infile)
 
     val sourceEnum = scala.io.Source.fromFile("target/generated-sources/example/idl/Suit.scala").mkString
     sourceEnum ====

@@ -35,38 +35,8 @@ class FileParser {
       }
       case RECORD => s
       case ENUM => s
-      case _ => sys.error("Neither a record nor a union of records, nothing to map to case class.")
+      case _ => sys.error("Neither a record, enum nor a union of either. Nothing to map to a definition.")
     })
   }
-
-  def getNamespace(schema: Schema): Option[String] = {
-    schema.getNamespace match {
-      case null => None
-      case namespace => Some(namespace)
-    }
-  }
-
-  def getNestedSchemas(schema: Schema): List[Schema] = schema.getType match {
-    // if a record is found, check for and extract nested RECORDs and ENUMS (i.e. top-level types) 
-    case RECORD =>
-      val fields: List[org.apache.avro.Schema.Field] = schema.getFields.asScala.toList
-      val fieldSchemas: List[org.apache.avro.Schema] = fields.map(field => field.schema())
-
-      def flattenSchema(fieldSchema: Schema): List[Schema] = {
-        fieldSchema.getType match {
-          case ARRAY => flattenSchema(fieldSchema.getElementType)
-          case RECORD => fieldSchema :: getNestedSchemas(fieldSchema)
-          case UNION => fieldSchema.getTypes.asScala.toList.flatMap(x => flattenSchema(x))
-          case _ => List(fieldSchema)
-        }
-      }
-      val flatSchemas = fieldSchemas.flatMap(fieldSchema => flattenSchema(fieldSchema))
-      def topLevelTypes(schema: Schema) = (schema.getType == RECORD | schema.getType == ENUM)
-      val nestedTopLevelSchemas = flatSchemas.filter(topLevelTypes)
-
-      nestedTopLevelSchemas
-    case _ => Nil
-  }
-
 }
 
