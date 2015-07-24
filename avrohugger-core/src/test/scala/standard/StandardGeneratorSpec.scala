@@ -25,8 +25,7 @@ class StandardGeneratorSpec extends mutable.Specification {
       val gen = new Generator(Standard)
       val List(source) = gen.stringToStrings(schemaString)
       source ===
-        """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
-          |package test
+        """package test
           |
           |case class Animal(name: String)
         """.stripMargin.trim

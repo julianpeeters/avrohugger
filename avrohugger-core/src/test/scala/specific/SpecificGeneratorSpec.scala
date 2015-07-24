@@ -77,8 +77,7 @@ object Message {
 
        
       source ===
-        """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
-package test
+        """package test
 
 case class Person(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this("")

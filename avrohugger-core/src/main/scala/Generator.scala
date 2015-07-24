@@ -43,7 +43,9 @@ class Generator(format: SourceFormat) {
     val topLevelSchemas: List[Schema] = schema::getNestedSchemas(schema)
     // for nested records, the nested Schema has no namespace, so we pass one in
     topLevelSchemas.reverse.map(schema => {
-      sourceFormat.asDefinitionString(classStore, namespace, schema)
+      val codeString = sourceFormat.asDefinitionString(classStore, namespace, schema)
+      // drop the comment because it's not applicable outside of file writing/overwriting
+      codeString.replace("/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */\n", "")
     })
   }
 
