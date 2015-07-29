@@ -2,12 +2,11 @@ package avrohugger
 package format
 package standard
 
-import treehugger.forest._
-import definitions._
-import treehuggerDSL._
-
 import org.apache.avro.Schema
-import org.apache.avro.Schema.Type.{RECORD, ENUM}
+import org.apache.avro.Schema.Field
+import org.apache.avro.Schema.Type.{ENUM, RECORD}
+import treehugger.forest._
+import treehuggerDSL._
 
 import scala.collection.JavaConversions._
 
@@ -17,15 +16,23 @@ object StandardTreehugger {
 		classStore: ClassStore,
 		schema: Schema, 
 		namespace: Option[String]): String = {
+
     val topLevelDef = schema.getType match {
       case RECORD => StandardCaseClassTree.toCaseClassDef(classStore, namespace, schema)
       case ENUM => StandardObjectTree.toObjectDef(classStore, schema)
       case _ => sys.error("Only RECORD and ENUM can be top-level definitions")
     }
+
+    
+    val imports = if( isRecord(schema) ) getImports(schema, namespace) else List.empty
+      
+
     // wrap the class definition in a block with a comment and a package
     val tree = {
-      if (namespace.isDefined) BLOCK(topLevelDef).inPackage(namespace.get)
-      else topLevelDef
+      val blockContent = imports ++ List(topLevelDef)
+
+      if (namespace.isDefined) BLOCK(blockContent).inPackage(namespace.get)
+      else BLOCK(blockContent)
     }.withDoc("MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY")
 
     // SpecificCompiler can't return a tree for Java enums, so return
@@ -33,4 +40,22 @@ object StandardTreehugger {
     treeToString(tree)
   }
 
+  def isRecord(schema: Schema): Boolean = scala.util.Try( schema.getFields ).isSuccess
+
+  def getImports(schema: Schema, currentNamespace: Option[String]): Iterable[Import] = {
+    schema
+      .getFields.toList
+      .filter( getFieldNamespace(_).isDefined )
+      .filter { field => getFieldNamespace(field) != currentNamespace }
+      .distinct
+      .groupBy( getFieldNamespace(_).get )
+      .map { _ match { case(packageName, fields) =>
+        IMPORT(packageName, fields.map( _.schema.getName ) )
+      }
+    }
+  }
+  
+  def getFieldNamespace(field: Field): Option[String] = {
+    scala.util.Try(Option(field.schema.getNamespace)).getOrElse(None)
+  }
 }
