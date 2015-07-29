@@ -1,10 +1,9 @@
 
-import avrohugger._
-import format.SpecificRecord
+import java.io.File
 
+import avrohugger._
+import avrohugger.format.SpecificRecord
 import org.specs2._
-import mutable._
-import specification._
 
 class SpecificGeneratorSpec extends mutable.Specification {
 
@@ -359,4 +358,67 @@ public enum Suit {
     }
   }
 
+  "correctly generate records depending on others defined in a different AVDL file" in {
+    val importing = new java.io.File("avrohugger-core/src/test/avro/import.avdl")
+    val gen = new Generator(SpecificRecord)
+    val outDir = gen.defaultOutputDir + "/specific/"
+    gen.fileToFile(importing, outDir)
+
+    val sourceRecord = scala.io.Source.fromFile(s"$outDir/example/idl/DependentRecord.scala").mkString
+    sourceRecord ===
+    """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
+      |package example.idl
+      |
+      |import other.ns.ExternalDependency
+      |
+      |case class DependentRecord(var dependency: ExternalDependency, var number: Int) extends org.apache.avro.specific.SpecificRecordBase {
+      |  def this() = this(new ExternalDependency, 1)
+      |  def get(field: Int): AnyRef = {
+      |    field match {
+      |      case pos if pos == 0 => {
+      |        dependency
+      |      }.asInstanceOf[AnyRef]
+      |      case pos if pos == 1 => {
+      |        number
+      |      }.asInstanceOf[AnyRef]
+      |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      |    }
+      |  }
+      |  def put(field: Int, value: Any): Unit = {
+      |    field match {
+      |      case pos if pos == 0 => this.dependency = {
+      |        value
+      |      }.asInstanceOf[ExternalDependency]
+      |      case pos if pos == 1 => this.number = {
+      |        value
+      |      }.asInstanceOf[Int]
+      |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      |    }
+      |    ()
+      |  }
+      |  def getSchema: org.apache.avro.Schema = DependentRecord.SCHEMA$
+      |}
+      |
+      |object DependentRecord {
+      |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"DependentRecord\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"dependency\",\"type\":{\"type\":\"record\",\"name\":\"ExternalDependency\",\"namespace\":\"other.ns\",\"fields\":[{\"name\":\"number\",\"type\":\"int\"}]}},{\"name\":\"number\",\"type\":\"int\"}]}")
+      |}""".stripMargin
+  }
+
+  "not generate copy of imported classes in the importing package" in {
+    val importing = new java.io.File("avrohugger-core/src/test/avro/import.avdl")
+    val gen = new Generator(SpecificRecord)
+    val outDir = gen.defaultOutputDir + "/specific/"
+    gen.fileToFile(importing, outDir)
+
+    (new File(s"$outDir/example/idl/ExternalDependency.scala")).exists === false
+  }
+
+  "Generate imported classes in the declared package" in {
+    val importing = new java.io.File("avrohugger-core/src/test/avro/import.avdl")
+    val gen = new Generator(SpecificRecord)
+    val outDir = gen.defaultOutputDir + "/specific/"
+    gen.fileToFile(importing, outDir)
+
+    (new File(s"$outDir/other/ns/ExternalDependency.scala")).exists === true
+  }
 }

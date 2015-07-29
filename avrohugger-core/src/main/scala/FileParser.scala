@@ -23,7 +23,8 @@ class FileParser {
       case "avdl" =>
         val idlParser = new Idl(infile)
         val protocol = idlParser.CompilationUnit()
-        protocol.getTypes.asScala.toList
+        val types = protocol.getTypes
+        types.asScala.toList
       case _ => throw new Exception("File must end in .avsc for plain text json files, .avdl for IDL files, or .avro for binary.")
     }
     schemas.map(s => s.getType match {

@@ -1,6 +1,8 @@
 package avrohugger
 package format
 package specific
+
+import org.apache.avro.Schema.Field
 import trees._
 
 import treehugger.forest._
@@ -24,18 +26,37 @@ object SpecificScalaTreehugger {
 
     // class definition
     val classDef = SpecificCaseClassTree.toCaseClassDef(classStore, namespace, schema)
-  
+
+    val imports =
+      schema
+        .getFields.toList
+        .filter( getFieldNamespace(_).isDefined )
+        .filter { field => getFieldNamespace(field) != namespace }
+        .distinct
+        .groupBy( getFieldNamespace(_).get )
+        .map { _ match { case(packageName, fields) =>
+            IMPORT(packageName, fields.map( _.schema.getName ) )
+          }
+        }
+
     // companion object definition
     val objectDef = SpecificObjectTree.toObjectDef(classStore, schema)
 
     // wrap the definitions in a block with a comment and a package
     val tree = {
-      if (namespace.isDefined) BLOCK(classDef, objectDef).inPackage(namespace.get)
-      else BLOCK(classDef, objectDef).withoutPackage
+      val blockContent = imports ++ List(classDef, objectDef)
+
+      if (namespace.isDefined) BLOCK(blockContent:_*).inPackage(namespace.get)
+      else BLOCK(blockContent:_*).withoutPackage
     }.withDoc("MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY")
+
+
 
     val codeString = treeToString(tree)
     codeString
   }
 
+  def getFieldNamespace(field: Field): Option[String] = {
+    scala.util.Try(Option(field.schema.getNamespace)).getOrElse(None)
+  }
 }

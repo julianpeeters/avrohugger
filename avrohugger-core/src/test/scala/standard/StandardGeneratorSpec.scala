@@ -1,6 +1,8 @@
 
+import java.io.File
+
 import avrohugger._
-import format.Standard
+import avrohugger.format.Standard
 import org.specs2._
 
 class StandardGeneratorSpec extends mutable.Specification {
@@ -168,5 +170,25 @@ class StandardGeneratorSpec extends mutable.Specification {
         |
         |case class Card(suit: Suit, number: Int)
       """.stripMargin.trim
+  }
+
+  "correctly generate records depending on others defined in a different AVDL file" in {
+    todo
+  }
+
+  "not generate copy of imported classes in the importing package" in {
+    val importing = new java.io.File("avrohugger-core/src/test/avro/import.avdl")
+    val gen = new Generator(Standard)
+    gen.fileToFile(importing)
+
+    (new File(s"target/generated-sources/example/idl/ExternalDependency.scala")).exists === false
+  }
+
+  "Generate imported classes in the declared package" in {
+    val importing = new java.io.File("avrohugger-core/src/test/avro/import.avdl")
+    val gen = new Generator(Standard)
+    gen.fileToFile(importing)
+
+    (new File(s"target/generated-sources/other/ns/ExternalDependency.scala")).exists === true
   }
 }
