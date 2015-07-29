@@ -16,7 +16,7 @@ protocol Defaults {
     string str = "str";
     union {null, string} optionString = null;
     union {string, null} optionStringValue = "default";
-    Embedded embedded = "{\"inner\":1}";
+    Embedded embedded = {"inner":1};
     array<int> defaultArray = [1,3,4,5];
     union {null, DefaultEnum} optionalEnum = null;
   }

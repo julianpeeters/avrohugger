@@ -14,6 +14,8 @@ import org.apache.avro.compiler.specific.SpecificCompiler
 
 import scala.collection.JavaConversions._
 
+
+// Java Treehugger required for generating Enums (Specific API requires Java enums)
 object SpecificJavaTreehugger {
 
   def asJavaCodeString(classStore: ClassStore, namespace: Option[String], schema: Schema) = {

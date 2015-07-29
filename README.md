@@ -38,7 +38,7 @@ Supports generating case classes with arbitrary fields of the following datatype
 
 Get the dependency with:
 
-    "com.julianpeeters" % "avrohugger-core" %% "0.3.1"
+    "com.julianpeeters" % "avrohugger-core" %% "0.4.0"
 
 Instantiate a `Generator` with `Standard` or `SpecificRecord` source formats. Then use 
 
@@ -66,27 +66,25 @@ or
 ####`avrohugger-tools`
 
 
-Download the avrohugger-tools jar for Scala [2.10](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.10/0.3.1/avrohugger-tools_2.10-0.3.1-assembly.jar) or Scala [2.11](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.11/0.3.1/avrohugger-tools_2.11-0.3.1-assembly.jar)(20MB!) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
+Download the avrohugger-tools jar for Scala [2.10](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.10/0.4.0/avrohugger-tools_2.10-0.4.0-assembly.jar) or Scala [2.11](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.11/0.4.0/avrohugger-tools_2.11-0.4.0-assembly.jar)(20MB!) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
 
 
 - 'generate' generates Scala case class definitions
-    java -jar /path/to/avrohugger-tools_2.11-0.3.1-assembly.jar generate schema user.avsc . 
+    java -jar /path/to/avrohugger-tools_2.11-0.4.0-assembly.jar generate schema user.avsc . 
 
 
 - 'generate-specific' generates case class definitions that extend SpecificRecordBase
-    java -jar /path/to/avrohugger-tools_2.11-0.3.1-assembly.jar generate-specific schema user.avsc . 
+    java -jar /path/to/avrohugger-tools_2.11-0.4.0-assembly.jar generate-specific schema user.avsc . 
 
 
 ####`sbt-avrohugger`
 
-Also available as an [sbt plugin](https://github.com/julianpeeters/sbt-avrohugger) that adds a `generate` or `generate-specific` task to `compile` (an alternative to [macros](https://github.com/julianpeeters/avro-scala-macro-annotations)).
+Also available as an sbt plugin [found here](https://github.com/julianpeeters/sbt-avrohugger) that adds a `generate` or `generate-specific` task to `compile` (an alternative to [macros](https://github.com/julianpeeters/avro-scala-macro-annotations)).
 
 
 ## Future
 
 * Support more avro types: fixed, bytes.
-* Support for default values
-
 
 ## Testing
 
@@ -97,6 +95,11 @@ As per Doug Cutting's [recommendations](https://github.com/apache/avro/blob/trun
 
 #### Credits
 Depends on [Avro](https://github.com/apache/avro) and [Treehugger](https://github.com/eed3si9n/treehugger). `avrohugger-tools` is based on [avro-tools](http://avro.apache.org/docs/1.7.7/gettingstartedjava.html#Serializing+and+deserializing+with+code+generation).
+
+
+Contributors:
+- [Marius Soutier](https://github.com/mariussoutier)
+- [Paul Pearcy](https://github.com/ppearcy)
 
 
 #### Criticism is appreciated. Fork away, just make sure the tests pass before sending a pull request.
