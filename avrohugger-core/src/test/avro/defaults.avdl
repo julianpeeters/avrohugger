@@ -11,7 +11,7 @@ protocol Defaults {
   }
 
   record DefaultTest {
-    //DefaultEnum suit = "SPADES";
+    DefaultEnum suit = "SPADES";
     int number = 0;
     string str = "str";
     union {null, string} optionString = null;

@@ -33,7 +33,7 @@ object SpecificCaseClassTree {
         case Schema.Type.BOOLEAN => LIT(node.getBooleanValue)
         case Schema.Type.STRING => LIT(node.getTextValue)
 
-        //case Schema.Type.ENUM => LIT(node.getTextValue)
+        case Schema.Type.ENUM => (REF(schema.getName) DOT node.getTextValue)
         case Schema.Type.NULL => LIT(null)
         case Schema.Type.UNION => {
           val unionSchemas = schema.getTypes.toList
