@@ -248,6 +248,100 @@ public enum Suit {
         |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Compass\",\"namespace\":\"example\",\"fields\":[{\"name\":\"direction\",\"type\":{\"type\":\"enum\",\"name\":\"Direction\",\"symbols\":[\"NORTH\",\"SOUTH\",\"EAST\",\"WEST\"]}}]}")
         |}""".stripMargin.trim
     }
+
+    "correctly generate default values in AVDL with `SpecificRecord`" in {
+      val infile = new java.io.File("avrohugger-core/src/test/avro/defaults.avdl")
+      val gen = new Generator(SpecificRecord)
+      val outDir = gen.defaultOutputDir + "/specific/"
+      gen.fileToFile(infile, outDir)
+
+      val sourceRecord = scala.io.Source.fromFile(s"$outDir/example/idl/DefaultTest.scala").mkString
+      sourceRecord ====
+        """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
+          |package example.idl
+          |
+          |case class DefaultTest(var number: Int = 0, var str: String = "str", var optionString: Option[String] = Some(null), var optionStringValue: Option[String] = Some("default"), var embedded: Embedded = new Embedded(1), var defaultArray: List[Int] = List(1, 3, 4, 5)) extends org.apache.avro.specific.SpecificRecordBase {
+          |  def this() = this(1, "", Some(""), Some(""), new Embedded, List(1))
+          |  def get(field: Int): AnyRef = {
+          |    field match {
+          |      case pos if pos == 0 => {
+          |        number
+          |      }.asInstanceOf[AnyRef]
+          |      case pos if pos == 1 => {
+          |        str
+          |      }.asInstanceOf[AnyRef]
+          |      case pos if pos == 2 => {
+          |        optionString match {
+          |          case Some(x) => x
+          |          case None => null
+          |        }
+          |      }.asInstanceOf[AnyRef]
+          |      case pos if pos == 3 => {
+          |        optionStringValue match {
+          |          case Some(x) => x
+          |          case None => null
+          |        }
+          |      }.asInstanceOf[AnyRef]
+          |      case pos if pos == 4 => {
+          |        embedded
+          |      }.asInstanceOf[AnyRef]
+          |      case pos if pos == 5 => {
+          |        java.util.Arrays.asList(({
+          |          defaultArray map { x =>
+          |            x
+          |          }
+          |        }: _*))
+          |      }.asInstanceOf[AnyRef]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |  }
+          |  def put(field: Int, value: Any): Unit = {
+          |    field match {
+          |      case pos if pos == 0 => this.number = {
+          |        value
+          |      }.asInstanceOf[Int]
+          |      case pos if pos == 1 => this.str = {
+          |        value match {
+          |          case (value: org.apache.avro.util.Utf8) => value.toString
+          |          case _ => value
+          |        }
+          |      }.asInstanceOf[String]
+          |      case pos if pos == 2 => this.optionString = {
+          |        Option(value match {
+          |          case (value: org.apache.avro.util.Utf8) => value.toString
+          |          case _ => value
+          |        })
+          |      }.asInstanceOf[Option[String]]
+          |      case pos if pos == 3 => this.optionStringValue = {
+          |        Option(value match {
+          |          case (value: org.apache.avro.util.Utf8) => value.toString
+          |          case _ => value
+          |        })
+          |      }.asInstanceOf[Option[String]]
+          |      case pos if pos == 4 => this.embedded = {
+          |        value
+          |      }.asInstanceOf[Embedded]
+          |      case pos if pos == 5 => this.defaultArray = {
+          |        value match {
+          |          case null => null
+          |          case (array: org.apache.avro.generic.GenericData.Array[_]) => {
+          |            scala.collection.JavaConversions.asScalaIterator(array.iterator).toList map { x =>
+          |              x
+          |            }
+          |          }
+          |        }
+          |      }.asInstanceOf[List[Int]]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |    ()
+          |  }
+          |  def getSchema: org.apache.avro.Schema = DefaultTest.SCHEMA$
+          |}
+          |
+          |object DefaultTest {
+          |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"DefaultTest\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"number\",\"type\":\"int\",\"default\":0},{\"name\":\"str\",\"type\":\"string\",\"default\":\"str\"},{\"name\":\"optionString\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"optionStringValue\",\"type\":[\"string\",\"null\"],\"default\":\"default\"},{\"name\":\"embedded\",\"type\":{\"type\":\"record\",\"name\":\"Embedded\",\"fields\":[{\"name\":\"inner\",\"type\":\"int\"}]},\"default\":\"{\\\"inner\\\":1}\"},{\"name\":\"defaultArray\",\"type\":{\"type\":\"array\",\"items\":\"int\"},\"default\":[1,3,4,5]}]}")
+          |}""".stripMargin
+    }
   }
 
 }

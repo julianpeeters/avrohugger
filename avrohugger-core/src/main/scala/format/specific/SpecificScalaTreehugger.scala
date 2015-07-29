@@ -22,13 +22,6 @@ object SpecificScalaTreehugger {
     val classSymbol = RootClass.newClass(schema.getName)
     classStore.accept(schema, classSymbol)
 
-    // generate list of constructor parameters
-    val params: List[ValDef] = schema.getFields.toList.map { field =>
-      val fieldName = field.name
-      val fieldType = TypeMatcher.toType(classStore, namespace, field.schema)
-      VAR(fieldName, fieldType): ValDef
-    }
-
     // class definition
     val classDef = SpecificCaseClassTree.toCaseClassDef(classStore, namespace, schema)
   
