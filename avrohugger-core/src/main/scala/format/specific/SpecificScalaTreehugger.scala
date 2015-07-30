@@ -2,6 +2,7 @@ package avrohugger
 package format
 package specific
 
+import avrohugger.format.DependencyInspectionSupport._
 import org.apache.avro.Schema.Field
 import trees._
 
@@ -30,12 +31,12 @@ object SpecificScalaTreehugger {
     val imports =
       schema
         .getFields.toList
-        .filter( getFieldNamespace(_).isDefined )
-        .filter { field => getFieldNamespace(field) != namespace }
+        .filter( getFieldReferredNamespace(_).isDefined )
+        .filter { field => getFieldReferredNamespace(field) != namespace }
         .distinct
-        .groupBy( getFieldNamespace(_).get )
+        .groupBy( getFieldReferredNamespace(_).get )
         .map { _ match { case(packageName, fields) =>
-            IMPORT(packageName, fields.map( _.schema.getName ) )
+            IMPORT(packageName, fields.map( getReferredTypeName ) )
           }
         }
 
@@ -56,7 +57,7 @@ object SpecificScalaTreehugger {
     codeString
   }
 
-  def getFieldNamespace(field: Field): Option[String] = {
-    scala.util.Try(Option(field.schema.getNamespace)).getOrElse(None)
-  }
+
 }
+
+

@@ -1,13 +1,14 @@
 package avrohugger
 
-import format._
+import java.io.{File, FileNotFoundException, IOException}
 
+import avrohugger.format.DependencyInspectionSupport._
+import avrohugger.format._
 import org.apache.avro.Schema
-import org.apache.avro.Schema.Field
-import org.apache.avro.Schema.Type.{ARRAY, RECORD, UNION, ENUM}
+import org.apache.avro.Schema.Type.{ARRAY, ENUM, RECORD, UNION}
 
 import scala.collection.JavaConverters._
-import java.io.{File, FileNotFoundException, IOException}
+import DependencyInspectionSupport._
 
 class Generator(format: SourceFormat) {
   val sourceFormat = format
@@ -19,12 +20,12 @@ class Generator(format: SourceFormat) {
 
   // methods for writing definitions out to file 
   def schemaToFile(schema: Schema, outDir: String = defaultOutputDir): Unit = {
-    val namespace: Option[String] = getNamespace(schema)
+    val namespace: Option[String] = getSchemaReferredNamespace(schema)
     val topLevelSchemas: List[Schema] = schema::(getNestedSchemas(schema))
 
     // for nested records, when the nested Schema has no namespace, we pass one in otherwise we use its one
     topLevelSchemas.reverse.foreach { schema =>
-      sourceFormat.writeToFile(classStore, getSchemaNamespace(schema) orElse namespace, schema, outDir)
+      sourceFormat.writeToFile(classStore, getSchemaReferredNamespace(schema) orElse namespace, schema, outDir)
     }
   }
 
@@ -38,13 +39,10 @@ class Generator(format: SourceFormat) {
       schemas.foreach(schema => schemaToFile(schema, outDir))
   }
 
-  def getSchemaNamespace(schema: Schema): Option[String] = {
-    scala.util.Try(Option(schema.getNamespace)).getOrElse(None)
-  }
 
   // methods for writing definitions to a list of definitions in String format
   def schemaToStrings(schema: Schema): List[String] = {
-    val namespace: Option[String] = getNamespace(schema)
+    val namespace: Option[String] = getSchemaReferredNamespace(schema)
     val topLevelSchemas: List[Schema] = schema::getNestedSchemas(schema)
     // for nested records, the nested Schema has no namespace, so we pass one in
     topLevelSchemas.reverse.map(schema => {
@@ -93,14 +91,6 @@ class Generator(format: SourceFormat) {
 
       nestedTopLevelSchemas
     case _ => Nil
-  }
-
-
-def getNamespace(schema: Schema): Option[String] = {
-    schema.getNamespace match {
-      case null => None
-      case namespace => Some(namespace)
-    }
   }
 
 }

@@ -188,6 +188,22 @@ class StandardGeneratorSpec extends mutable.Specification {
         |""".stripMargin.trim
   }
 
+  "correctly generate records depending on others defined in a different AVDL file and in a nested field" in {
+    val importing = new java.io.File("avrohugger-core/src/test/avro/import-nested.avdl")
+    val gen = new Generator(Standard)
+    gen.fileToFile(importing)
+
+    val sourceEnum = scala.io.Source.fromFile("target/generated-sources/example/idl/DependentRecord.scala").mkString
+    sourceEnum ====
+      """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
+        |package example.idl
+        |
+        |import other.ns.ExternalDependency
+        |
+        |case class DependentRecord(dependency: Option[ExternalDependency], number: Int)
+        |""".stripMargin.trim
+  }
+
   "not generate copy of imported classes in the importing package" in {
     val importing = new java.io.File("avrohugger-core/src/test/avro/import.avdl")
     val gen = new Generator(Standard)

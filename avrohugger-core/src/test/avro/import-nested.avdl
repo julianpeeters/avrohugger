@@ -1,0 +1,10 @@
+@namespace("example.idl")
+
+protocol ImportProtocol {
+  import idl "imported.avdl";
+
+  record DependentRecord {
+    union {null, other.ns.ExternalDependency} dependency; // refers to the record defined in imported.avdl
+    int number;
+  }
+}

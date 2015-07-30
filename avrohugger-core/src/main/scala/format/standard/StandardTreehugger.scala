@@ -2,6 +2,7 @@ package avrohugger
 package format
 package standard
 
+import avrohugger.format.DependencyInspectionSupport._
 import org.apache.avro.Schema
 import org.apache.avro.Schema.Field
 import org.apache.avro.Schema.Type.{ENUM, RECORD}
@@ -45,17 +46,13 @@ object StandardTreehugger {
   def getImports(schema: Schema, currentNamespace: Option[String]): Iterable[Import] = {
     schema
       .getFields.toList
-      .filter( getFieldNamespace(_).isDefined )
-      .filter { field => getFieldNamespace(field) != currentNamespace }
+      .filter( getFieldReferredNamespace(_).isDefined )
+      .filter { field => getFieldReferredNamespace(field) != currentNamespace }
       .distinct
-      .groupBy( getFieldNamespace(_).get )
+      .groupBy( getFieldReferredNamespace(_).get )
       .map { _ match { case(packageName, fields) =>
-        IMPORT(packageName, fields.map( _.schema.getName ) )
+        IMPORT(packageName, fields.map( getReferredTypeName ) )
       }
     }
-  }
-  
-  def getFieldNamespace(field: Field): Option[String] = {
-    scala.util.Try(Option(field.schema.getNamespace)).getOrElse(None)
   }
 }
