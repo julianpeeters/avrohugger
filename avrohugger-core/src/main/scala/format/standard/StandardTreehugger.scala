@@ -18,20 +18,17 @@ object StandardTreehugger {
 		schema: Schema, 
 		namespace: Option[String]): String = {
 
+    val imports = if( isRecord(schema) ) getImports(schema, namespace) else List.empty
+
     val topLevelDef = schema.getType match {
       case RECORD => StandardCaseClassTree.toCaseClassDef(classStore, namespace, schema)
       case ENUM => StandardObjectTree.toObjectDef(classStore, schema)
       case _ => sys.error("Only RECORD and ENUM can be top-level definitions")
     }
 
-    
-    val imports = if( isRecord(schema) ) getImports(schema, namespace) else List.empty
-      
-
-    // wrap the class definition in a block with a comment and a package
+    // wrap the imports and class definition in a block with a comment and a package
     val tree = {
       val blockContent = imports ++ List(topLevelDef)
-
       if (namespace.isDefined) BLOCK(blockContent).inPackage(namespace.get)
       else BLOCK(blockContent)
     }.withDoc("MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY")
@@ -41,15 +38,15 @@ object StandardTreehugger {
     treeToString(tree)
   }
 
-  def isRecord(schema: Schema): Boolean = scala.util.Try( schema.getFields ).isSuccess
+  def isRecord(schema: Schema): Boolean = ( schema.getType == RECORD )
 
   def getImports(schema: Schema, currentNamespace: Option[String]): Iterable[Import] = {
     schema
       .getFields.toList
-      .filter( getFieldReferredNamespace(_).isDefined )
-      .filter { field => getFieldReferredNamespace(field) != currentNamespace }
+      .filter( field => getReferredNamespace(field.schema).isDefined )
+      .filter( field => getReferredNamespace(field.schema) != currentNamespace )
       .distinct
-      .groupBy( getFieldReferredNamespace(_).get )
+      .groupBy( field => getReferredNamespace(field.schema).get )
       .map { _ match { case(packageName, fields) =>
         IMPORT(packageName, fields.map( getReferredTypeName ) )
       }

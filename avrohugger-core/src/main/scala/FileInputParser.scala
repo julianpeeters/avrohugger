@@ -9,7 +9,7 @@ import org.apache.avro.generic.{GenericDatumReader, GenericRecord}
 import org.apache.avro.file.DataFileReader
 import scala.collection.JavaConverters._
 
-class FileParser {
+class FileInputParser {
   lazy val parser = new Parser()
 
   def getSchemas(infile: java.io.File): List[Schema] = {

@@ -9,21 +9,18 @@ import scala.collection.JavaConversions._
 
 object DependencyInspectionSupport {
   import Schema.Type._
-  def getSchemaReferredNamespace(schema: Schema): Option[String] = schema.getType match {
+  def getReferredNamespace(schema: Schema): Option[String] = schema.getType match {
     case ARRAY =>
-      getSchemaReferredNamespace(schema.getElementType)
+      getReferredNamespace(schema.getElementType)
     case UNION =>
-      schema.getTypes.find( innerType => innerType.getType != NULL ) flatMap getSchemaReferredNamespace
+      schema.getTypes.find( innerType => innerType.getType != NULL ) flatMap getReferredNamespace
     case MAP =>
-      getSchemaReferredNamespace(schema.getValueType)
-    case RECORD =>
+      getReferredNamespace(schema.getValueType)
+    case RECORD | ENUM =>
       Option(schema.getNamespace)
     case _ => None
 
   }
-
-
-  def getFieldReferredNamespace(field: Field): Option[String] = getSchemaReferredNamespace(field.schema)
 
   def getReferredTypeName(schema: Schema): String = schema.getType match {
     case ARRAY =>

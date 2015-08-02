@@ -38,7 +38,7 @@ Supports generating case classes with arbitrary fields of the following datatype
 
 Get the dependency with:
 
-    "com.julianpeeters" % "avrohugger-core" %% "0.4.0"
+    "com.julianpeeters" % "avrohugger-core" %% "0.4.1"
 
 Instantiate a `Generator` with `Standard` or `SpecificRecord` source formats. Then use 
 

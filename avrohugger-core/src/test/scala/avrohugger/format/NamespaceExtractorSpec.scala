@@ -1,6 +1,6 @@
 package avrohugger.format
 
-import avrohugger.format.DependencyInspectionSupport.getFieldReferredNamespace
+import avrohugger.format.DependencyInspectionSupport.getReferredNamespace
 import org.apache.avro.Schema
 import org.specs2.mutable.Specification
 
@@ -54,19 +54,19 @@ class NamespaceExtractorSpec extends Specification {
   "A NamespaceExtractor" should {
 
     "Return no namespace for basic types" in {
-      getFieldReferredNamespace( ownerSchema.getField("stringField") ) === None
+      getReferredNamespace( ownerSchema.getField("stringField").schema ) === None
     }
 
     "Return the namespace of the non null inner type for union types" in {
-      getFieldReferredNamespace( ownerSchema.getField("unionOfrecordWithNamespaceField") ) === Some("yet.another.namespace")
+      getReferredNamespace( ownerSchema.getField("unionOfrecordWithNamespaceField").schema ) === Some("yet.another.namespace")
     }
 
     "Return the namespace for record types" in {
-      getFieldReferredNamespace( ownerSchema.getField("recordWithNamespaceField") ) === Some("other.namespace")
+      getReferredNamespace( ownerSchema.getField("recordWithNamespaceField").schema ) === Some("other.namespace")
     }
 
     "Return the namespace for array types" in {
-      getFieldReferredNamespace( ownerSchema.getField("arrayOfrecordWithNamespaceField") ) === Some("and.yet.another.namespace")
+      getReferredNamespace( ownerSchema.getField("arrayOfrecordWithNamespaceField").schema ) === Some("and.yet.another.namespace")
     }
 
   }

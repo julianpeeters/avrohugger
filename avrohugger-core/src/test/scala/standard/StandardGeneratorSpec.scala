@@ -33,6 +33,59 @@ class StandardGeneratorSpec extends mutable.Specification {
         """.stripMargin.trim
     }
 
+    "correctly generate a simple case class definition from protocol as a string" in {
+      val schemaString = 
+        """
+          |{"namespace": "test.proto",
+          | "protocol": "Warning",
+          |
+          | "types": [
+          |     {"name": "Message", "type": "record",
+          |      "fields": [
+          |          {"name": "alert",   "type": "string"}
+          |      ]
+          |     }
+          | ],
+          |
+          | "messages": {
+          |     "send": {
+          |         "request": [{"name": "message", "type": "Message"}],
+          |         "response": "string"
+          |     }
+          | }
+          |}
+        """.stripMargin
+      val gen = new Generator(Standard)
+      val List(source) = gen.stringToStrings(schemaString)
+      source ===
+      """
+        |package test.proto
+        |
+        |case class Message(alert: String)
+      """.stripMargin.trim
+    }
+
+    "correctly generate a simple case class definition from idl as a string" in {
+      val schemaString = 
+        """
+          |@namespace("example.idl")
+          |
+          |protocol StringProtocol {
+          |
+          |  record Age {
+          |    int yearsOld = 0;
+          |  }
+          |}
+        """.stripMargin
+      val gen = new Generator(Standard)
+      val List(source) = gen.stringToStrings(schemaString)
+      source ===
+        """package example.idl
+          |
+          |case class Age(yearsOld: Int)
+        """.stripMargin.trim
+    }
+
     "correctly generate a nested case class definition" in {
       val infile = new java.io.File("avrohugger-core/src/test/avro/nested.avsc")
       val gen = new Generator(Standard)

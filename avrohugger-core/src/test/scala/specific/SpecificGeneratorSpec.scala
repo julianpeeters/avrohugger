@@ -15,56 +15,56 @@ class SpecificGeneratorSpec extends mutable.Specification {
       val outDir = gen.defaultOutputDir + "/specific/"
       gen.fileToFile(infile, outDir)
       val source = scala.io.Source.fromFile(s"$outDir/example/proto/Message.scala").mkString
-       source === 
-"""/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
-package example.proto
-
-case class Message(var to: String, var from: String, var body: String) extends org.apache.avro.specific.SpecificRecordBase {
-  def this() = this("", "", "")
-  def get(field: Int): AnyRef = {
-    field match {
-      case pos if pos == 0 => {
-        to
-      }.asInstanceOf[AnyRef]
-      case pos if pos == 1 => {
-        from
-      }.asInstanceOf[AnyRef]
-      case pos if pos == 2 => {
-        body
-      }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
-    }
-  }
-  def put(field: Int, value: Any): Unit = {
-    field match {
-      case pos if pos == 0 => this.to = {
-        value match {
-          case (value: org.apache.avro.util.Utf8) => value.toString
-          case _ => value
-        }
-      }.asInstanceOf[String]
-      case pos if pos == 1 => this.from = {
-        value match {
-          case (value: org.apache.avro.util.Utf8) => value.toString
-          case _ => value
-        }
-      }.asInstanceOf[String]
-      case pos if pos == 2 => this.body = {
-        value match {
-          case (value: org.apache.avro.util.Utf8) => value.toString
-          case _ => value
-        }
-      }.asInstanceOf[String]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
-    }
-    ()
-  }
-  def getSchema: org.apache.avro.Schema = Message.SCHEMA$
-}
-
-object Message {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Message\",\"namespace\":\"example.proto\",\"fields\":[{\"name\":\"to\",\"type\":\"string\"},{\"name\":\"from\",\"type\":\"string\"},{\"name\":\"body\",\"type\":\"string\"}]}")
-}"""
+      source === 
+        """|/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
+          |package example.proto
+          |
+          |case class Message(var to: String, var from: String, var body: String) extends org.apache.avro.specific.SpecificRecordBase {
+          |  def this() = this("", "", "")
+          |  def get(field: Int): AnyRef = {
+          |    field match {
+          |      case pos if pos == 0 => {
+          |        to
+          |      }.asInstanceOf[AnyRef]
+          |      case pos if pos == 1 => {
+          |        from
+          |      }.asInstanceOf[AnyRef]
+          |      case pos if pos == 2 => {
+          |        body
+          |      }.asInstanceOf[AnyRef]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |  }
+          |  def put(field: Int, value: Any): Unit = {
+          |    field match {
+          |      case pos if pos == 0 => this.to = {
+          |        value match {
+          |          case (value: org.apache.avro.util.Utf8) => value.toString
+          |          case _ => value
+          |        }
+          |      }.asInstanceOf[String]
+          |      case pos if pos == 1 => this.from = {
+          |        value match {
+          |          case (value: org.apache.avro.util.Utf8) => value.toString
+          |          case _ => value
+          |        }
+          |      }.asInstanceOf[String]
+          |      case pos if pos == 2 => this.body = {
+          |        value match {
+          |          case (value: org.apache.avro.util.Utf8) => value.toString
+          |          case _ => value
+          |        }
+          |      }.asInstanceOf[String]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |    ()
+          |  }
+          |  def getSchema: org.apache.avro.Schema = Message.SCHEMA$
+          |}
+          |
+          |object Message {
+          |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Message\",\"namespace\":\"example.proto\",\"fields\":[{\"name\":\"to\",\"type\":\"string\"},{\"name\":\"from\",\"type\":\"string\"},{\"name\":\"body\",\"type\":\"string\"}]}")
+          |}""".stripMargin
     }
 
 
@@ -77,35 +77,35 @@ object Message {
        
       source ===
         """package test
-
-case class Person(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
-  def this() = this("")
-  def get(field: Int): AnyRef = {
-    field match {
-      case pos if pos == 0 => {
-        name
-      }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
-    }
-  }
-  def put(field: Int, value: Any): Unit = {
-    field match {
-      case pos if pos == 0 => this.name = {
-        value match {
-          case (value: org.apache.avro.util.Utf8) => value.toString
-          case _ => value
-        }
-      }.asInstanceOf[String]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
-    }
-    ()
-  }
-  def getSchema: org.apache.avro.Schema = Person.SCHEMA$
-}
-
-object Person {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Person\",\"namespace\":\"test\",\"fields\":[{\"name\":\"name\",\"type\":\"string\"}],\"doc:\":\"A basic schema for storing Twitter messages\"}")
-}""".stripMargin.trim
+          |
+          |case class Person(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
+          |  def this() = this("")
+          |  def get(field: Int): AnyRef = {
+          |    field match {
+          |      case pos if pos == 0 => {
+          |        name
+          |      }.asInstanceOf[AnyRef]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |  }
+          |  def put(field: Int, value: Any): Unit = {
+          |    field match {
+          |      case pos if pos == 0 => this.name = {
+          |        value match {
+          |          case (value: org.apache.avro.util.Utf8) => value.toString
+          |          case _ => value
+          |        }
+          |      }.asInstanceOf[String]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |    ()
+          |  }
+          |  def getSchema: org.apache.avro.Schema = Person.SCHEMA$
+          |}
+          |
+          |object Person {
+          |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Person\",\"namespace\":\"test\",\"fields\":[{\"name\":\"name\",\"type\":\"string\"}],\"doc:\":\"A basic schema for storing Twitter messages\"}")
+          |}""".stripMargin.trim
     }
 
     "correctly generate enums with SCHEMA$" in {
@@ -117,19 +117,19 @@ object Person {
       val source = scala.io.Source.fromFile(s"$outDir/example/Suit.java").mkString
       source ====
         """/**
- * Autogenerated by Avro
- * 
- * DO NOT EDIT DIRECTLY
- */
-package example;  
-@SuppressWarnings("all")
-@org.apache.avro.specific.AvroGenerated
-public enum Suit { 
-  SPADES, DIAMONDS, CLUBS, HEARTS  ;
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"enum\",\"name\":\"Suit\",\"namespace\":\"example\",\"symbols\":[\"SPADES\",\"DIAMONDS\",\"CLUBS\",\"HEARTS\"]}");
-  public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
-}
-"""
+          | * Autogenerated by Avro
+          | * 
+          | * DO NOT EDIT DIRECTLY
+          | */
+          |package example;  
+          |@SuppressWarnings("all")
+          |@org.apache.avro.specific.AvroGenerated
+          |public enum Suit { 
+          |  SPADES, DIAMONDS, CLUBS, HEARTS  ;
+          |  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"enum\",\"name\":\"Suit\",\"namespace\":\"example\",\"symbols\":[\"SPADES\",\"DIAMONDS\",\"CLUBS\",\"HEARTS\"]}");
+          |  public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
+          |}
+          |""".stripMargin
     }
 
     "correctly generate enums in AVDLs with `SpecificRecord`" in {
@@ -141,19 +141,19 @@ public enum Suit {
       val sourceEnum = scala.io.Source.fromFile(s"$outDir/example/idl/Suit.java").mkString
       sourceEnum ====
         """/**
- * Autogenerated by Avro
- * 
- * DO NOT EDIT DIRECTLY
- */
-package example.idl;  
-@SuppressWarnings("all")
-@org.apache.avro.specific.AvroGenerated
-public enum Suit { 
-  SPADES, DIAMONDS, CLUBS, HEARTS  ;
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"enum\",\"name\":\"Suit\",\"namespace\":\"example.idl\",\"symbols\":[\"SPADES\",\"DIAMONDS\",\"CLUBS\",\"HEARTS\"]}");
-  public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
-}
-"""
+          | * Autogenerated by Avro
+          | * 
+          | * DO NOT EDIT DIRECTLY
+          | */
+          |package example.idl;  
+          |@SuppressWarnings("all")
+          |@org.apache.avro.specific.AvroGenerated
+          |public enum Suit { 
+          |  SPADES, DIAMONDS, CLUBS, HEARTS  ;
+          |  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"enum\",\"name\":\"Suit\",\"namespace\":\"example.idl\",\"symbols\":[\"SPADES\",\"DIAMONDS\",\"CLUBS\",\"HEARTS\"]}");
+          |  public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
+          |}
+          |""".stripMargin
       val sourceRecord = scala.io.Source.fromFile(s"$outDir/example/idl/Card.scala").mkString
       sourceRecord ====
         """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
