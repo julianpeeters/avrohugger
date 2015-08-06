@@ -52,7 +52,10 @@ or
 `tToStrings(input: T): List[String]`
 
 
- where 'T' can be `File`, `Schema`, or `String`:
+ where 'T' can be `File`, `Schema`, or `String`, 
+
+
+   e.g.:
 
 
     import avrohugger._
@@ -60,7 +63,14 @@ or
 
     val schemaFile = new File("path/to/schema")
     val generator = new Generator(SpecificRecord)
-    generator.fileToFile(schemaFile, "optional/path/to/output") // default output path = "target/generated-sources" 
+    generator.fileToFile(schemaFile, "optional/path/to/output") // default output path = "target/generated-sources"
+
+
+ where an input `File` can be `.avro`, `.avsc`, `.avpr`, or `.avdl`,
+
+
+ and where an input `String` can be the string representation of an Avro schema, protocol, IDL, or a vanilla case class that you'd like to have implement `SpecificRecordBase`.
+
 
 
 ####`avrohugger-tools`
@@ -69,17 +79,24 @@ or
 Download the avrohugger-tools jar for Scala [2.10](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.10/0.4.0/avrohugger-tools_2.10-0.4.0-assembly.jar) or Scala [2.11](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.11/0.4.0/avrohugger-tools_2.11-0.4.0-assembly.jar)(20MB!) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
 
 
-- 'generate' generates Scala case class definitions
+'generate' generates Scala case class definitions:
     java -jar /path/to/avrohugger-tools_2.11-0.4.0-assembly.jar generate schema user.avsc . 
 
 
-- 'generate-specific' generates case class definitions that extend SpecificRecordBase
+'generate-specific' generates case class definitions that extend SpecificRecordBase:
     java -jar /path/to/avrohugger-tools_2.11-0.4.0-assembly.jar generate-specific schema user.avsc . 
 
 
 ####`sbt-avrohugger`
 
 Also available as an sbt plugin [found here](https://github.com/julianpeeters/sbt-avrohugger) that adds a `generate` or `generate-specific` task to `compile` (an alternative to [macros](https://github.com/julianpeeters/avro-scala-macro-annotations)).
+
+
+## Warnings
+
+1) If your framework is one that relies on reflection to get the Schema, it will fail since Scala fields are private. Therefore preempt it by passing in a Schema to DatumReaders and DatumWriters (as in the Avro example above).
+
+2) Generated case class fields must be mutable (`var`) in order to be compatible with the SpecificRecord API.
 
 
 ## Future
@@ -100,6 +117,7 @@ Depends on [Avro](https://github.com/apache/avro) and [Treehugger](https://githu
 Contributors:
 - [Marius Soutier](https://github.com/mariussoutier)
 - [Paul Pearcy](https://github.com/ppearcy)
+- [Stefano Galarraga](https://github.com/galarragas)
 
 
 #### Criticism is appreciated. Fork away, just make sure the tests pass before sending a pull request.

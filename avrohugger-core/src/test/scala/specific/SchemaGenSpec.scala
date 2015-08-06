@@ -1,0 +1,706 @@
+
+import java.io.File
+
+import avrohugger._
+import avrohugger.format.SpecificRecord
+import org.specs2._
+
+class SchemaGenSpec extends mutable.Specification {
+
+  "Schema generation" should {
+    
+
+    "Expand a standard case class in the default package to implement SpecificRecord" in {
+      val schemaString = 
+        """case class Person(name: String)""".stripMargin
+      val gen = new Generator(SpecificRecord)
+      val List(source) = gen.stringToStrings(schemaString)
+
+       
+      source ===
+        """case class Person(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
+          |  def this() = this("")
+          |  def get(field: Int): AnyRef = {
+          |    field match {
+          |      case pos if pos == 0 => {
+          |        name
+          |      }.asInstanceOf[AnyRef]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |  }
+          |  def put(field: Int, value: Any): Unit = {
+          |    field match {
+          |      case pos if pos == 0 => this.name = {
+          |        value match {
+          |          case (value: org.apache.avro.util.Utf8) => value.toString
+          |          case _ => value
+          |        }
+          |      }.asInstanceOf[String]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |    ()
+          |  }
+          |  def getSchema: org.apache.avro.Schema = Person.SCHEMA$
+          |}
+          |
+          |object Person {
+          |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Person\",\"doc\":\"Auto-Generated Schema\",\"fields\":[{\"name\":\"name\",\"type\":\"string\",\"doc\":\"Auto-Generated Field\"}]}")
+          |}""".stripMargin.trim
+    }
+
+
+
+// Scala 2.10 can't parse package declarations, so rather than than maintain 
+// a separate branch, these tests (that pass for 2.11) get commented out until 
+// 2.10 is phased out.
+
+    "Expand a standard case class with immutable fields to implement SpecificRecord" in {
+      val schemaString = 
+        """package example
+          |
+          |case class Person(name: String)""".stripMargin
+      val gen = new Generator(SpecificRecord)
+      val List(source) = gen.stringToStrings(schemaString)
+
+       
+      source ===
+        """package example
+          |
+          |case class Person(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
+          |  def this() = this("")
+          |  def get(field: Int): AnyRef = {
+          |    field match {
+          |      case pos if pos == 0 => {
+          |        name
+          |      }.asInstanceOf[AnyRef]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |  }
+          |  def put(field: Int, value: Any): Unit = {
+          |    field match {
+          |      case pos if pos == 0 => this.name = {
+          |        value match {
+          |          case (value: org.apache.avro.util.Utf8) => value.toString
+          |          case _ => value
+          |        }
+          |      }.asInstanceOf[String]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |    ()
+          |  }
+          |  def getSchema: org.apache.avro.Schema = Person.SCHEMA$
+          |}
+          |
+          |object Person {
+          |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Person\",\"namespace\":\"example\",\"doc\":\"Auto-Generated Schema\",\"fields\":[{\"name\":\"name\",\"type\":\"string\",\"doc\":\"Auto-Generated Field\"}]}")
+          |}""".stripMargin.trim
+    }
+
+
+
+
+
+
+
+/*    
+      //TODO: handle imports a) overlook extraneous imports b) imported record types
+      //      need to be fully qualified, with schemas written using the right namespace
+
+    "Expand a standard case class with unknown imports to implement SpecificRecord" in {
+      val schemaString = 
+        """package example
+          |import unknown._;
+          |
+          |case class Person(name: String)""".stripMargin
+      val gen = new Generator(SpecificRecord)
+      val List(source) = gen.stringToStrings(schemaString)
+
+       
+      source ===
+        """package example
+          |import unknown._
+          |
+          |case class Person(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
+          |  def this() = this("")
+          |  def get(field: Int): AnyRef = {
+          |    field match {
+          |      case pos if pos == 0 => {
+          |        name
+          |      }.asInstanceOf[AnyRef]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |  }
+          |  def put(field: Int, value: Any): Unit = {
+          |    field match {
+          |      case pos if pos == 0 => this.name = {
+          |        value match {
+          |          case (value: org.apache.avro.util.Utf8) => value.toString
+          |          case _ => value
+          |        }
+          |      }.asInstanceOf[String]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |    ()
+          |  }
+          |  def getSchema: org.apache.avro.Schema = Person.SCHEMA$
+          |}
+          |
+          |object Person {
+          |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Person\",\"namespace\":\"example\",\"doc\":\"Auto-Generated Schema\",\"fields\":[{\"name\":\"name\",\"type\":\"string\",\"doc\":\"Auto-Generated Field\"}]}")
+          |}""".stripMargin.trim
+    }
+
+     */
+
+
+
+
+
+
+    "Expand a standard case class in more than one package to implement SpecificRecord" in {
+      val schemaString = 
+        """
+          |package test
+          |package testsub
+          |
+          |case class Person(name: String)""".stripMargin
+      val gen = new Generator(SpecificRecord)
+      val List(source) = gen.stringToStrings(schemaString)
+
+       
+      source ===
+        """package test.testsub
+          |
+          |case class Person(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
+          |  def this() = this("")
+          |  def get(field: Int): AnyRef = {
+          |    field match {
+          |      case pos if pos == 0 => {
+          |        name
+          |      }.asInstanceOf[AnyRef]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |  }
+          |  def put(field: Int, value: Any): Unit = {
+          |    field match {
+          |      case pos if pos == 0 => this.name = {
+          |        value match {
+          |          case (value: org.apache.avro.util.Utf8) => value.toString
+          |          case _ => value
+          |        }
+          |      }.asInstanceOf[String]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |    ()
+          |  }
+          |  def getSchema: org.apache.avro.Schema = Person.SCHEMA$
+          |}
+          |
+          |object Person {
+          |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Person\",\"namespace\":\"test.testsub\",\"doc\":\"Auto-Generated Schema\",\"fields\":[{\"name\":\"name\",\"type\":\"string\",\"doc\":\"Auto-Generated Field\"}]}")
+          |}""".stripMargin.trim
+    }
+
+
+    "Expand a standard case class in a package with dots to implement SpecificRecord" in {
+      val schemaString = 
+        """
+          |package test.example.testsub
+          |
+          |case class Person(name: String)""".stripMargin
+      val gen = new Generator(SpecificRecord)
+      val List(source) = gen.stringToStrings(schemaString)
+
+       
+      source ===
+        """package test.example.testsub
+          |
+          |case class Person(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
+          |  def this() = this("")
+          |  def get(field: Int): AnyRef = {
+          |    field match {
+          |      case pos if pos == 0 => {
+          |        name
+          |      }.asInstanceOf[AnyRef]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |  }
+          |  def put(field: Int, value: Any): Unit = {
+          |    field match {
+          |      case pos if pos == 0 => this.name = {
+          |        value match {
+          |          case (value: org.apache.avro.util.Utf8) => value.toString
+          |          case _ => value
+          |        }
+          |      }.asInstanceOf[String]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |    ()
+          |  }
+          |  def getSchema: org.apache.avro.Schema = Person.SCHEMA$
+          |}
+          |
+          |object Person {
+          |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Person\",\"namespace\":\"test.example.testsub\",\"doc\":\"Auto-Generated Schema\",\"fields\":[{\"name\":\"name\",\"type\":\"string\",\"doc\":\"Auto-Generated Field\"}]}")
+          |}""".stripMargin.trim
+    }
+
+    "Expand two case classes in the default package to implement SpecificRecord" in {
+      val schemaString = 
+        """case class Person(name: String)
+          |case class Pet(name: String)""".stripMargin
+      val gen = new Generator(SpecificRecord)
+      val List(source1, source2) = gen.stringToStrings(schemaString)
+
+       
+      source1 ===
+        """case class Person(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
+          |  def this() = this("")
+          |  def get(field: Int): AnyRef = {
+          |    field match {
+          |      case pos if pos == 0 => {
+          |        name
+          |      }.asInstanceOf[AnyRef]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |  }
+          |  def put(field: Int, value: Any): Unit = {
+          |    field match {
+          |      case pos if pos == 0 => this.name = {
+          |        value match {
+          |          case (value: org.apache.avro.util.Utf8) => value.toString
+          |          case _ => value
+          |        }
+          |      }.asInstanceOf[String]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |    ()
+          |  }
+          |  def getSchema: org.apache.avro.Schema = Person.SCHEMA$
+          |}
+          |
+          |object Person {
+          |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Person\",\"doc\":\"Auto-Generated Schema\",\"fields\":[{\"name\":\"name\",\"type\":\"string\",\"doc\":\"Auto-Generated Field\"}]}")
+          |}""".stripMargin.trim
+
+      source2 ===
+        """case class Pet(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
+          |  def this() = this("")
+          |  def get(field: Int): AnyRef = {
+          |    field match {
+          |      case pos if pos == 0 => {
+          |        name
+          |      }.asInstanceOf[AnyRef]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |  }
+          |  def put(field: Int, value: Any): Unit = {
+          |    field match {
+          |      case pos if pos == 0 => this.name = {
+          |        value match {
+          |          case (value: org.apache.avro.util.Utf8) => value.toString
+          |          case _ => value
+          |        }
+          |      }.asInstanceOf[String]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |    ()
+          |  }
+          |  def getSchema: org.apache.avro.Schema = Pet.SCHEMA$
+          |}
+          |
+          |object Pet {
+          |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Pet\",\"doc\":\"Auto-Generated Schema\",\"fields\":[{\"name\":\"name\",\"type\":\"string\",\"doc\":\"Auto-Generated Field\"}]}")
+          |}""".stripMargin.trim
+    }
+
+    "Expand two case classes with immutable fields to implement SpecificRecord" in {
+      val schemaString = 
+        """
+          |package example
+          |
+          |case class Person(name: String)
+          |case class Pet(name: String)""".stripMargin
+      val gen = new Generator(SpecificRecord)
+      val List(source1, source2) = gen.stringToStrings(schemaString)
+
+       
+      source1 ===
+        """package example
+          |
+          |case class Person(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
+          |  def this() = this("")
+          |  def get(field: Int): AnyRef = {
+          |    field match {
+          |      case pos if pos == 0 => {
+          |        name
+          |      }.asInstanceOf[AnyRef]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |  }
+          |  def put(field: Int, value: Any): Unit = {
+          |    field match {
+          |      case pos if pos == 0 => this.name = {
+          |        value match {
+          |          case (value: org.apache.avro.util.Utf8) => value.toString
+          |          case _ => value
+          |        }
+          |      }.asInstanceOf[String]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |    ()
+          |  }
+          |  def getSchema: org.apache.avro.Schema = Person.SCHEMA$
+          |}
+          |
+          |object Person {
+          |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Person\",\"namespace\":\"example\",\"doc\":\"Auto-Generated Schema\",\"fields\":[{\"name\":\"name\",\"type\":\"string\",\"doc\":\"Auto-Generated Field\"}]}")
+          |}""".stripMargin.trim
+
+      source2 ===
+        """package example
+          |
+          |case class Pet(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
+          |  def this() = this("")
+          |  def get(field: Int): AnyRef = {
+          |    field match {
+          |      case pos if pos == 0 => {
+          |        name
+          |      }.asInstanceOf[AnyRef]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |  }
+          |  def put(field: Int, value: Any): Unit = {
+          |    field match {
+          |      case pos if pos == 0 => this.name = {
+          |        value match {
+          |          case (value: org.apache.avro.util.Utf8) => value.toString
+          |          case _ => value
+          |        }
+          |      }.asInstanceOf[String]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |    ()
+          |  }
+          |  def getSchema: org.apache.avro.Schema = Pet.SCHEMA$
+          |}
+          |
+          |object Pet {
+          |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Pet\",\"namespace\":\"example\",\"doc\":\"Auto-Generated Schema\",\"fields\":[{\"name\":\"name\",\"type\":\"string\",\"doc\":\"Auto-Generated Field\"}]}")
+          |}""".stripMargin.trim
+    }
+
+
+    "Expand two dependent case classes in the default package to implement SpecificRecord" in {
+      val schemaString = 
+        """case class Person(pet: Pet)
+          |case class Pet(name: String)""".stripMargin
+      val gen = new Generator(SpecificRecord)
+      val List(source1,source2) = gen.stringToStrings(schemaString)
+
+       
+      source1 ===
+        """case class Person(var pet: Pet) extends org.apache.avro.specific.SpecificRecordBase {
+          |  def this() = this(new Pet)
+          |  def get(field: Int): AnyRef = {
+          |    field match {
+          |      case pos if pos == 0 => {
+          |        pet
+          |      }.asInstanceOf[AnyRef]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |  }
+          |  def put(field: Int, value: Any): Unit = {
+          |    field match {
+          |      case pos if pos == 0 => this.pet = {
+          |        value
+          |      }.asInstanceOf[Pet]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |    ()
+          |  }
+          |  def getSchema: org.apache.avro.Schema = Person.SCHEMA$
+          |}
+          |
+          |object Person {
+          |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Person\",\"doc\":\"Auto-Generated Schema\",\"fields\":[{\"name\":\"pet\",\"type\":{\"type\":\"record\",\"name\":\"Pet\",\"doc\":\"Auto-Generated Schema\",\"fields\":[{\"name\":\"name\",\"type\":\"string\",\"doc\":\"Auto-Generated Field\"}]},\"doc\":\"Auto-Generated Field\"}]}")
+          |}""".stripMargin.trim
+
+      source2 ===
+        """case class Pet(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
+          |  def this() = this("")
+          |  def get(field: Int): AnyRef = {
+          |    field match {
+          |      case pos if pos == 0 => {
+          |        name
+          |      }.asInstanceOf[AnyRef]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |  }
+          |  def put(field: Int, value: Any): Unit = {
+          |    field match {
+          |      case pos if pos == 0 => this.name = {
+          |        value match {
+          |          case (value: org.apache.avro.util.Utf8) => value.toString
+          |          case _ => value
+          |        }
+          |      }.asInstanceOf[String]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |    ()
+          |  }
+          |  def getSchema: org.apache.avro.Schema = Pet.SCHEMA$
+          |}
+          |
+          |object Pet {
+          |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Pet\",\"doc\":\"Auto-Generated Schema\",\"fields\":[{\"name\":\"name\",\"type\":\"string\",\"doc\":\"Auto-Generated Field\"}]}")
+          |}""".stripMargin.trim
+    }
+
+
+    "Expand two dependent case classes in a package to implement SpecificRecord" in {
+      val schemaString = 
+        """
+          |package test
+          |
+          |case class Person(pet: Pet)
+          |case class Pet(name: String)""".stripMargin
+      val gen = new Generator(SpecificRecord)
+      val List(source1,source2) = gen.stringToStrings(schemaString)
+
+       
+      source1 ===
+        """
+          |package test
+          |
+          |case class Person(var pet: Pet) extends org.apache.avro.specific.SpecificRecordBase {
+          |  def this() = this(new Pet)
+          |  def get(field: Int): AnyRef = {
+          |    field match {
+          |      case pos if pos == 0 => {
+          |        pet
+          |      }.asInstanceOf[AnyRef]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |  }
+          |  def put(field: Int, value: Any): Unit = {
+          |    field match {
+          |      case pos if pos == 0 => this.pet = {
+          |        value
+          |      }.asInstanceOf[Pet]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |    ()
+          |  }
+          |  def getSchema: org.apache.avro.Schema = Person.SCHEMA$
+          |}
+          |
+          |object Person {
+          |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Person\",\"namespace\":\"test\",\"doc\":\"Auto-Generated Schema\",\"fields\":[{\"name\":\"pet\",\"type\":{\"type\":\"record\",\"name\":\"Pet\",\"doc\":\"Auto-Generated Schema\",\"fields\":[{\"name\":\"name\",\"type\":\"string\",\"doc\":\"Auto-Generated Field\"}]},\"doc\":\"Auto-Generated Field\"}]}")
+          |}""".stripMargin.trim
+
+      source2 ===
+        """
+          |package test
+          |
+          |case class Pet(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
+          |  def this() = this("")
+          |  def get(field: Int): AnyRef = {
+          |    field match {
+          |      case pos if pos == 0 => {
+          |        name
+          |      }.asInstanceOf[AnyRef]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |  }
+          |  def put(field: Int, value: Any): Unit = {
+          |    field match {
+          |      case pos if pos == 0 => this.name = {
+          |        value match {
+          |          case (value: org.apache.avro.util.Utf8) => value.toString
+          |          case _ => value
+          |        }
+          |      }.asInstanceOf[String]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |    ()
+          |  }
+          |  def getSchema: org.apache.avro.Schema = Pet.SCHEMA$
+          |}
+          |
+          |object Pet {
+          |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Pet\",\"namespace\":\"test\",\"doc\":\"Auto-Generated Schema\",\"fields\":[{\"name\":\"name\",\"type\":\"string\",\"doc\":\"Auto-Generated Field\"}]}")
+          |}""".stripMargin.trim
+    }
+
+     "Expand two dependent case classes in a complext package to implement SpecificRecord" in {
+      val schemaString = 
+        """
+          |package test.one.a
+          |
+          |case class Person(pet: Pet)
+          |case class Pet(name: String)""".stripMargin
+      val gen = new Generator(SpecificRecord)
+      val List(source1,source2) = gen.stringToStrings(schemaString)
+
+       
+      source1 ===
+        """
+          |package test.one.a
+          |
+          |case class Person(var pet: Pet) extends org.apache.avro.specific.SpecificRecordBase {
+          |  def this() = this(new Pet)
+          |  def get(field: Int): AnyRef = {
+          |    field match {
+          |      case pos if pos == 0 => {
+          |        pet
+          |      }.asInstanceOf[AnyRef]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |  }
+          |  def put(field: Int, value: Any): Unit = {
+          |    field match {
+          |      case pos if pos == 0 => this.pet = {
+          |        value
+          |      }.asInstanceOf[Pet]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |    ()
+          |  }
+          |  def getSchema: org.apache.avro.Schema = Person.SCHEMA$
+          |}
+          |
+          |object Person {
+          |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Person\",\"namespace\":\"test.one.a\",\"doc\":\"Auto-Generated Schema\",\"fields\":[{\"name\":\"pet\",\"type\":{\"type\":\"record\",\"name\":\"Pet\",\"doc\":\"Auto-Generated Schema\",\"fields\":[{\"name\":\"name\",\"type\":\"string\",\"doc\":\"Auto-Generated Field\"}]},\"doc\":\"Auto-Generated Field\"}]}")
+          |}""".stripMargin.trim
+
+      source2 ===
+        """
+          |package test.one.a
+          |
+          |case class Pet(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
+          |  def this() = this("")
+          |  def get(field: Int): AnyRef = {
+          |    field match {
+          |      case pos if pos == 0 => {
+          |        name
+          |      }.asInstanceOf[AnyRef]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |  }
+          |  def put(field: Int, value: Any): Unit = {
+          |    field match {
+          |      case pos if pos == 0 => this.name = {
+          |        value match {
+          |          case (value: org.apache.avro.util.Utf8) => value.toString
+          |          case _ => value
+          |        }
+          |      }.asInstanceOf[String]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |    ()
+          |  }
+          |  def getSchema: org.apache.avro.Schema = Pet.SCHEMA$
+          |}
+          |
+          |object Pet {
+          |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Pet\",\"namespace\":\"test.one.a\",\"doc\":\"Auto-Generated Schema\",\"fields\":[{\"name\":\"name\",\"type\":\"string\",\"doc\":\"Auto-Generated Field\"}]}")
+          |}""".stripMargin.trim
+    }
+
+
+    "Expand a standard case class with mutable fields to implement SpecificRecord" in {
+      val schemaString = 
+        """
+          |package test
+          |
+          |case class Person(var name: String)""".stripMargin
+      val gen = new Generator(SpecificRecord)
+      val List(source) = gen.stringToStrings(schemaString)
+
+       
+      source ===
+        """package test
+          |
+          |case class Person(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
+          |  def this() = this("")
+          |  def get(field: Int): AnyRef = {
+          |    field match {
+          |      case pos if pos == 0 => {
+          |        name
+          |      }.asInstanceOf[AnyRef]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |  }
+          |  def put(field: Int, value: Any): Unit = {
+          |    field match {
+          |      case pos if pos == 0 => this.name = {
+          |        value match {
+          |          case (value: org.apache.avro.util.Utf8) => value.toString
+          |          case _ => value
+          |        }
+          |      }.asInstanceOf[String]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |    ()
+          |  }
+          |  def getSchema: org.apache.avro.Schema = Person.SCHEMA$
+          |}
+          |
+          |object Person {
+          |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Person\",\"namespace\":\"test\",\"doc\":\"Auto-Generated Schema\",\"fields\":[{\"name\":\"name\",\"type\":\"string\",\"doc\":\"Auto-Generated Field\"}]}")
+          |}""".stripMargin.trim
+    }
+
+
+
+  "Expand a case class with mixed mutable and immutable fields to implement SpecificRecord" in {
+      val schemaString = 
+        """
+          |package test
+          |
+          |case class Person(name: String, var age: Int)""".stripMargin
+      val gen = new Generator(SpecificRecord)
+      val List(source) = gen.stringToStrings(schemaString)
+
+      source ===
+        """package test
+          |
+          |case class Person(var name: String, var age: Int) extends org.apache.avro.specific.SpecificRecordBase {
+          |  def this() = this("", 1)
+          |  def get(field: Int): AnyRef = {
+          |    field match {
+          |      case pos if pos == 0 => {
+          |        name
+          |      }.asInstanceOf[AnyRef]
+          |      case pos if pos == 1 => {
+          |        age
+          |      }.asInstanceOf[AnyRef]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |  }
+          |  def put(field: Int, value: Any): Unit = {
+          |    field match {
+          |      case pos if pos == 0 => this.name = {
+          |        value match {
+          |          case (value: org.apache.avro.util.Utf8) => value.toString
+          |          case _ => value
+          |        }
+          |      }.asInstanceOf[String]
+          |      case pos if pos == 1 => this.age = {
+          |        value
+          |      }.asInstanceOf[Int]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |    ()
+          |  }
+          |  def getSchema: org.apache.avro.Schema = Person.SCHEMA$
+          |}
+          |
+          |object Person {
+          |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Person\",\"namespace\":\"test\",\"doc\":\"Auto-Generated Schema\",\"fields\":[{\"name\":\"name\",\"type\":\"string\",\"doc\":\"Auto-Generated Field\"},{\"name\":\"age\",\"type\":\"int\",\"doc\":\"Auto-Generated Field\"}]}")
+          |}""".stripMargin.trim
+    }
+
+  }
+}

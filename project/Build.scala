@@ -5,16 +5,33 @@ import sbtassembly.AssemblyPlugin.autoImport._
 
 object BuildSettings {
   private val avroVersion = "1.7.7"
+  private val scalaV = "2.11.7"
 
   val buildSettings = Defaults.defaultSettings ++ scriptedSettings ++ Seq(
     organization := "com.julianpeeters",
     version := "0.4.1-SNAPSHOT",
     scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-Ywarn-value-discard"),
-    scalaVersion := "2.11.7",
-    crossScalaVersions := Seq("2.10.5", "2.11.7"),
+    scalaVersion := scalaV,
+    crossScalaVersions := Seq("2.10.5", scalaVersion.value),
     resolvers += Resolver.typesafeIvyRepo("releases"),
     libraryDependencies += "org.apache.avro" % "avro" % avroVersion,
     libraryDependencies += "org.apache.avro" % "avro-compiler" % avroVersion,
+    // for implementing SpecificRecord from standard case class defs
+    addCompilerPlugin("org.scalamacros" % "paradise" % "2.0.1" cross CrossVersion.full),
+    libraryDependencies := {
+      CrossVersion.partialVersion(scalaVersion.value) match {
+        case Some((2, scalaMajor)) if scalaMajor == 10 =>
+          libraryDependencies.value ++ Seq (
+            "org.scalamacros" %% "quasiquotes" % "2.0.0" cross CrossVersion.binary
+          )
+        case Some((2, 11)) =>
+          libraryDependencies.value ++ Seq()
+      }
+    },
+    libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value,
+    libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value,
+    libraryDependencies += "org.codehaus.jackson" % "jackson-core-asl" % "1.9.13",
+    // for testing
     libraryDependencies += "org.specs2" %% "specs2" % "2.4" % "test",
     parallelExecution in Test := false,
     publishMavenStyle := true,

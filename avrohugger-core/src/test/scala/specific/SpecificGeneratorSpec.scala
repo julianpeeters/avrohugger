@@ -470,4 +470,8 @@ class SpecificGeneratorSpec extends mutable.Specification {
 
     (new File(s"$outDir/other/ns/ExternalDependency.scala")).exists === true
   }
+
+
+
+
 }

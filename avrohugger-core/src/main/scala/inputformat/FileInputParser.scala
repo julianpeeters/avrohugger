@@ -1,4 +1,5 @@
 package avrohugger
+package inputformat
 
 import org.apache.avro.Protocol
 import org.apache.avro.Schema
