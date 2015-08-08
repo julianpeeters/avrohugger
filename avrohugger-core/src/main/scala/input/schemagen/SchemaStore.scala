@@ -1,5 +1,5 @@
 package avrohugger
-package inputformat
+package input
 package schemagen
 
 import java.util.concurrent.ConcurrentHashMap

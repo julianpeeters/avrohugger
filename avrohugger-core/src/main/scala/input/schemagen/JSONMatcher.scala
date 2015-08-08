@@ -1,5 +1,5 @@
 package avrohugger
-package inputformat
+package input
 package schemagen
 
 import scala.reflect.runtime.universe._
@@ -63,6 +63,8 @@ object JsonMatcher {
         })
         jsonObject
       }
+      // enum
+      case Select(Ident(NameTag(enum)), NameTag(enumValue)) => jsonNodeFactory.textNode(enumValue.toString())
       case x => sys.error("Could not extract default value. Found: " + x + ", " + showRaw(x))
     }
   } 

@@ -1,7 +1,6 @@
 package avrohugger
-package inputformat
-
-import schemagen._
+package input
+package schemagen
 
 import java.util.{Arrays => JArrays}
 import org.apache.avro.Schema.Field
@@ -21,9 +20,10 @@ object RecordSchemaGenerator  {
   	fields: List[ValDef]): Schema = {
 
   	// Can't seem to typecheck packaged classes, so splice-in unpackaged versions
-	  // and later the typematcher must be passed the field's namespace explicitly.
-	  def typeCheck(t: Tree, dependencies: List[Tree]) = {
-	    Toolbox.toolBox.typecheck(q"..$dependencies; {type T = $t}") match {
+	  // and later the FieldSchemaGenerator's type matcher must be passed the field's 
+    // namespace explicitly.
+    def typeCheck(t: Tree, dependencies: List[Tree]) = {
+      Toolbox.toolBox.typeCheck(q"..$dependencies; {type T = $t}") match {
 	      case x @ Block(classDefs, Block(List(TypeDef(mods, name, tparams, rhs)), const)) => rhs.tpe
 	    }
 	  }
@@ -37,13 +37,13 @@ object RecordSchemaGenerator  {
       )
 	  }
 
-    val avroFields = fields.map(valDef => toAvroFieldSchema(valDef))
-
     // conversion from Option to String/null is for compatibility with Apache Avro
     val ns = namespace match {
     	case Some(n) => n.toString
     	case None => null
     }
+
+    val avroFields = fields.map(valDef => toAvroFieldSchema(valDef))
 
     val avroSchema = Schema.createRecord(className, "Auto-Generated Schema", ns, false)    
     avroSchema.setFields(JArrays.asList(avroFields.toArray:_*))

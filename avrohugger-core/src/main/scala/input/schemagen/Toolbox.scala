@@ -1,5 +1,5 @@
 package avrohugger
-package inputformat
+package input
 package schemagen
 
 import scala.reflect.runtime.universe._

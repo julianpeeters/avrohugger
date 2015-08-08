@@ -1,11 +1,15 @@
 package avrohugger
-package inputformat
+package input
 
 import schemagen._
 
 import collection.JavaConversions._
 
+import scala.reflect._
+
+import scala.reflect.api._
 import scala.reflect.runtime.universe._
+import scala.reflect.runtime.universe.Flag._
 import scala.tools.reflect.ToolBox
 
 import org.apache.avro.Schema
@@ -15,7 +19,7 @@ object TreeInputParser {
   def parse(tree: Tree, knownClasses: List[Tree] = List(EmptyTree)): List[Schema] = {
 
     //e.g. takes `package test.one; package dev.helper;`, returns `test.one.dev.helper`
-    def squashNamespace(pkgTrees: Seq[RefTree]): TermName = {
+    def squashNamespace(pkgTrees: Seq[RefTree]): Name = {
       def extractNamespace(pkgTree: RefTree) ={
         // necessary because just using `.name` results in `one.helper`
         val owner = pkgTree.name
@@ -32,12 +36,32 @@ object TreeInputParser {
 
     def generateSchema(namespace: Option[Name], classDefTree: Tree): List[Schema] = {
       classDefTree match {
-        case compilationUnit @ q"$mods class $className[..$tparams](..$fields)(...$rest) extends ..$parents { $self => ..$body }"  => {
+        // case classes get mapped to records
+        case t @ q"$mods class $className[..$tparams](..$fields)(...$rest) extends ..$parents { $self => ..$body }" => {
           List(RecordSchemaGenerator.generateSchema(knownClasses, className.toString, namespace, fields)) 
         }
-        case d => sys.error("Unsupported definition: " + showRaw(d))
+        // objects that extend Enumeration get mapped to enums
+        case t @ q"$mods object $objectName extends ..$parents { $self => ..$body }"  => {
+          val values = body.collect{ case ValDef(mods, NameTag(name), tpt, tpe) => name }
+          List(EnumSchemaGenerator.generateSchema(knownClasses, objectName.toString, namespace, values)) 
+        }
+        case definition => sys.error(s"""Unsupported definition. Expected case class or object defition, 
+          but found $definition with tree: ${showRaw(definition)}""")
       }
     } 
+    
+    // Reflective compilation can't seem to handle packages, so field types are typechecked
+    // against manually provided classes as dependencies. (Object defs alone won't suffice!)
+    def asDependencies(topLevelDefs: List[Tree]): List[Tree] = {
+      topLevelDefs.reverse.flatMap(topLevelDef => {
+        topLevelDef match {
+          case t @ q"$mods class $className[..$tparams](..$fields)(...$rest) extends ..$parents { $self => ..$body }" => List(q"case class $className()")
+          case t @ q"$mods object $objectName extends ..$parents { $self => ..$body }"  => {
+            List(t, q" case class ${objectName.toTypeName}();")
+          }
+        }
+      })
+    }
     
     // if multiple classes are found, each is wrapped in the package def and resubmitted
     tree match {
@@ -145,14 +169,14 @@ object TreeInputParser {
       // default package
       case compilationUnit @ q"""..$classDefs"""  => {
         val individuallyPackaged = classDefs.map(cd => q"""$cd""")
-        individuallyPackaged.reverse.map(tree => parse(tree, classDefs)).flatten
+        individuallyPackaged.reverse.map(tree => parse(tree, asDependencies(classDefs))).flatten
       }
       // one package
       case compilationUnit @ q"""
         package $packageName { ..$classDefs }"""  => {
         val individuallyPackaged = classDefs.map(cd => q"""
           package $packageName { $cd }""")
-        individuallyPackaged.reverse.map(tree => parse(tree, classDefs)).flatten
+        individuallyPackaged.reverse.map(tree => parse(tree, asDependencies(classDefs))).flatten
       }
       // two package
       case compilationUnit @ q"""
@@ -161,7 +185,7 @@ object TreeInputParser {
         val individuallyPackaged = classDefs.map(cd => q"""
           package $packageName2 {
           package $packageName1 { $cd }}""")
-        individuallyPackaged.reverse.map(tree => parse(tree, classDefs)).flatten
+        individuallyPackaged.reverse.map(tree => parse(tree, asDependencies(classDefs))).flatten
       }
       // three package
       case compilationUnit @ q"""
@@ -172,7 +196,7 @@ object TreeInputParser {
           package $packageName3 {
           package $packageName2 {
           package $packageName1 { $cd }}}""")
-        individuallyPackaged.reverse.map(tree => parse(tree, classDefs)).flatten
+        individuallyPackaged.reverse.map(tree => parse(tree, asDependencies(classDefs))).flatten
       }
       // four package
       case compilationUnit @ q"""
@@ -185,7 +209,7 @@ object TreeInputParser {
           package $packageName3 {
           package $packageName2 {
           package $packageName1 { $cd }}}}""")
-        individuallyPackaged.reverse.map(tree => parse(tree, classDefs)).flatten
+        individuallyPackaged.reverse.map(tree => parse(tree, asDependencies(classDefs))).flatten
       }
       // five package
       case compilationUnit @ q"""
@@ -200,7 +224,7 @@ object TreeInputParser {
           package $packageName3 {
           package $packageName2 {
           package $packageName1 { $cd }}}}}""")
-        individuallyPackaged.reverse.map(tree => parse(tree, classDefs)).flatten
+        individuallyPackaged.reverse.map(tree => parse(tree, asDependencies(classDefs))).flatten
       }
 
       // six package
@@ -218,7 +242,7 @@ object TreeInputParser {
           package $packageName3 {
           package $packageName2 {
           package $packageName1 { $cd }}}}}}""")
-        individuallyPackaged.reverse.map(tree => parse(tree, classDefs)).flatten
+        individuallyPackaged.reverse.map(tree => parse(tree, asDependencies(classDefs))).flatten
       }
 
       // seven package
@@ -238,7 +262,7 @@ object TreeInputParser {
           package $packageName3 {
           package $packageName2 {
           package $packageName1 { $cd }}}}}}}""")
-        individuallyPackaged.reverse.map(tree => parse(tree, classDefs)).flatten
+        individuallyPackaged.reverse.map(tree => parse(tree, asDependencies(classDefs))).flatten
       }
 
       // eight package
@@ -260,7 +284,7 @@ object TreeInputParser {
           package $packageName3 {
           package $packageName2 {
           package $packageName1 { $cd }}}}}}}}""")
-        individuallyPackaged.reverse.map(tree => parse(tree, classDefs)).flatten
+        individuallyPackaged.reverse.map(tree => parse(tree, asDependencies(classDefs))).flatten
       }
 
       case x => sys.error("Unsupported class definition format. 1) Imports not supported yet or 2) Package declerations cannot be more than eight levels deep.")

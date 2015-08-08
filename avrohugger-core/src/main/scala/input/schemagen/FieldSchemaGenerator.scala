@@ -1,5 +1,5 @@
 package avrohugger
-package inputformat
+package input
 package schemagen
 
 import collection.JavaConversions._
@@ -15,13 +15,13 @@ import scala.tools.reflect.ToolBox
 object FieldSchemaGenerator {
  
   def toAvroField(namespace: Option[Name], nme: TermName, tpe: Type, dv: Tree) = {
-
+/*
     // conversion from Option to String/null is for compatibility with Apache Avro
     val ns = namespace match {
       case Some(n) => n.toString
       case None => null
     } 
-
+*/
     //map is adapted from https://github.com/radlab/avro-scala-compiler-plugin/blob/master/src/main/scala/plugin/SchemaGen.scala
     def createSchema(tpe: Type) : Schema = {
 

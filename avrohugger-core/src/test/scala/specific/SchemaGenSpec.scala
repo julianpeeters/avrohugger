@@ -53,7 +53,7 @@ class SchemaGenSpec extends mutable.Specification {
 // Scala 2.10 can't parse package declarations, so rather than than maintain 
 // a separate branch, these tests (that pass for 2.11) get commented out until 
 // 2.10 is phased out.
-
+/*
     "Expand a standard case class with immutable fields to implement SpecificRecord" in {
       val schemaString = 
         """package example
@@ -702,5 +702,95 @@ class SchemaGenSpec extends mutable.Specification {
           |}""".stripMargin.trim
     }
 
+
+    "Expand a scala enum to implement SpecificRecord" in {
+      val codeString =
+      """package example
+        |
+        |object Suit extends Enumeration {
+        |  type Suit = Value
+        |  val SPADES, DIAMONDS, CLUBS, HEARTS = Value
+        |}
+      """.stripMargin.trim
+      val gen = new Generator(SpecificRecord)
+      val List(source) = gen.stringToStrings(codeString)
+
+      source ====
+        """package example;  
+          |@SuppressWarnings("all")
+          |/** Auto-Generated Schema */
+          |@org.apache.avro.specific.AvroGenerated
+          |public enum Suit { 
+          |  SPADES, DIAMONDS, CLUBS, HEARTS  ;
+          |  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"enum\",\"name\":\"Suit\",\"namespace\":\"example\",\"doc\":\"Auto-Generated Schema\",\"symbols\":[\"SPADES\",\"DIAMONDS\",\"CLUBS\",\"HEARTS\"]}");
+          |  public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
+          |}
+          |""".stripMargin
+    }
+
+    "Expand a case class with an enum field to implement SpecificRecord" in {
+      val codeString =
+        """
+          |package example
+          |
+          |case class Card(suit: Suit = Suit.SPADES, number: Int)
+          |
+          |object Suit extends Enumeration {
+          |  type Suit = Value
+          |  val SPADES, DIAMONDS, CLUBS, HEARTS = Value
+          |}
+        """.stripMargin.trim
+      val gen = new Generator(SpecificRecord)
+      val List(sourceRecord, sourceEnum) = gen.stringToStrings(codeString)
+
+      sourceRecord ====
+        """package example
+          |
+          |case class Card(var suit: Suit = Suit.SPADES, var number: Int) extends org.apache.avro.specific.SpecificRecordBase {
+          |  def this() = this(Suit.SPADES, 1)
+          |  def get(field: Int): AnyRef = {
+          |    field match {
+          |      case pos if pos == 0 => {
+          |        suit
+          |      }.asInstanceOf[AnyRef]
+          |      case pos if pos == 1 => {
+          |        number
+          |      }.asInstanceOf[AnyRef]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |  }
+          |  def put(field: Int, value: Any): Unit = {
+          |    field match {
+          |      case pos if pos == 0 => this.suit = {
+          |        value
+          |      }.asInstanceOf[Suit]
+          |      case pos if pos == 1 => this.number = {
+          |        value
+          |      }.asInstanceOf[Int]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |    ()
+          |  }
+          |  def getSchema: org.apache.avro.Schema = Card.SCHEMA$
+          |}
+          |
+          |object Card {
+          |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Card\",\"namespace\":\"example\",\"doc\":\"Auto-Generated Schema\",\"fields\":[{\"name\":\"suit\",\"type\":{\"type\":\"enum\",\"name\":\"Suit\",\"doc\":\"Auto-Generated Schema\",\"symbols\":[\"SPADES\",\"DIAMONDS\",\"CLUBS\",\"HEARTS\"]},\"doc\":\"Auto-Generated Field\",\"default\":\"SPADES\"},{\"name\":\"number\",\"type\":\"int\",\"doc\":\"Auto-Generated Field\"}]}")
+          |}""".stripMargin.trim
+
+
+      sourceEnum ====
+        """package example;  
+          |@SuppressWarnings("all")
+          |/** Auto-Generated Schema */
+          |@org.apache.avro.specific.AvroGenerated
+          |public enum Suit { 
+          |  SPADES, DIAMONDS, CLUBS, HEARTS  ;
+          |  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"enum\",\"name\":\"Suit\",\"namespace\":\"example\",\"doc\":\"Auto-Generated Schema\",\"symbols\":[\"SPADES\",\"DIAMONDS\",\"CLUBS\",\"HEARTS\"]}");
+          |  public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
+          |}
+          |""".stripMargin
+    }
+*/
   }
 }

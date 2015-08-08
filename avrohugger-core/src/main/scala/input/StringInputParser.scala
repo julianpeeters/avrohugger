@@ -1,5 +1,5 @@
 package avrohugger
-package inputformat
+package input
 
 import schemagen._
 
@@ -26,23 +26,17 @@ class StringInputParser {
 
     def trySchema(str: String) = {
       try {
-        List(parser.parse(inputString))
-      } 
+        List(parser.parse(inputString))} 
       catch {
         case notSchema: SchemaParseException => tryProtocol(inputString)
-        case unknown: Throwable => sys.error("Unexpected exception: " + unknown)
-      }
-    }
+        case unknown: Throwable => sys.error("Unexpected exception: " + unknown)}}
 
     def tryProtocol(protocolStr: String): List[Schema] = {
       try {
-        Protocol.parse(protocolStr).getTypes().asScala.toList
-      }
+        Protocol.parse(protocolStr).getTypes().asScala.toList}
       catch {
         case notProtocol: SchemaParseException => tryIDL(inputString)
-        case unknown: Throwable => sys.error("Unexpected exception: " + unknown)
-      }   
-    }
+        case unknown: Throwable => sys.error("Unexpected exception: " + unknown)}}
 
     def tryIDL(idlString: String): List[Schema] = {
       try {
@@ -51,16 +45,12 @@ class StringInputParser {
         val idlParser = new Idl(inStream)
         val protocol = idlParser.CompilationUnit()
         val types = protocol.getTypes
-        types.asScala.toList
-      }
+        types.asScala.toList}
       catch {
         case notIDL: ParseException => tryCaseClass(inputString)
-        case unknown: Throwable => sys.error("Unexpected exception: " + unknown)
-      }
-    }
+        case unknown: Throwable => sys.error("Unexpected exception: " + unknown)}}
 
     def tryCaseClass(codeStr: String): List[Schema] = {
-
       // the parser can only parse packages if their contents are within blocks
       def wrapPackages(code: String): String = {
         // match package definitions that don't already wrap their contents in { }
@@ -70,20 +60,15 @@ class StringInputParser {
             val openPackage = nonWrappedPackage + " {"
             val closePackage = "}"
             val wrappedPackage = nonWrappedRegEx.replaceFirstIn(code, openPackage) + closePackage
-            wrapPackages(wrappedPackage)
-          }
-          case None => code
-        } 
-      }
+            wrapPackages(wrappedPackage)}
+          case None => code}}
       val packaged = wrapPackages(codeStr)
       val tree = Toolbox.toolBox.parse(packaged)
-      TreeInputParser.parse(tree)
-    }
+      TreeInputParser.parse(tree)}
 
     // tries schema first, then protocol, then idl, then for case class defs
     val schemas: List[Schema] = trySchema(inputString)
     schemas
-
   }
 }
 
