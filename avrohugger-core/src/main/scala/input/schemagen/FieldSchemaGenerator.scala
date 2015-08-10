@@ -15,18 +15,9 @@ import scala.tools.reflect.ToolBox
 object FieldSchemaGenerator {
  
   def toAvroField(namespace: Option[Name], nme: TermName, tpe: Type, dv: Tree) = {
-/*
-    // conversion from Option to String/null is for compatibility with Apache Avro
-    val ns = namespace match {
-      case Some(n) => n.toString
-      case None => null
-    } 
-*/
+
     //map is adapted from https://github.com/radlab/avro-scala-compiler-plugin/blob/master/src/main/scala/plugin/SchemaGen.scala
     def createSchema(tpe: Type) : Schema = {
-
-      val typeOfMembers = typeOf[String].members.toList
-      val tpeMembers = tpe.members.toList
 
       tpe match {
         case x @ TypeRef(pre, symbol, args) if (x <:< typeOf[Int] && args.length == 0)  => {
@@ -79,7 +70,9 @@ object FieldSchemaGenerator {
           }
           catch {
             case t: Throwable => {
-              sys.error(s"""Found field with type $tpe, but $tpe has not yet been expanded. Due to limitations of reflective compilation, please define your top-level record""")
+              sys.error(s"""Found field with type $tpe, but $tpe has not yet been 
+                |expanded. Due to limitations of reflective compilation, please define 
+                |your top-level class first, nested records following.""".stripMargin)
             }
           }
         }

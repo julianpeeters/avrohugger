@@ -9,7 +9,7 @@ object BuildSettings {
 
   val buildSettings = Defaults.defaultSettings ++ scriptedSettings ++ Seq(
     organization := "com.julianpeeters",
-    version := "0.4.1-SNAPSHOT",
+    version := "0.5.0",
     scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-Ywarn-value-discard"),
     scalaVersion := scalaV,
     crossScalaVersions := Seq("2.10.5", scalaVersion.value),

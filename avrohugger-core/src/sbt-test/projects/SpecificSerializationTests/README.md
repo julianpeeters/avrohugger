@@ -1,0 +1,1 @@
+These tests are supplementary. Their goal is to test the methods necessary for de/serialation, however they assume that the correct fields have been added, along with corresponding schema. In other words, if the schema and feidls are missing, then these tests won't fail because they simply de/serialize no fields.

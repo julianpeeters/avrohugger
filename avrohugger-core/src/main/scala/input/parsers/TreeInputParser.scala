@@ -1,5 +1,6 @@
 package avrohugger
 package input
+package parsers
 
 import schemagen._
 
@@ -16,8 +17,7 @@ import org.apache.avro.Schema
 
 object TreeInputParser {
 
-  def parse(tree: Tree, knownClasses: List[Tree] = List(EmptyTree)): List[Schema] = {
-
+  def parse(tree: Tree): List[Schema] = {
     //e.g. takes `package test.one; package dev.helper;`, returns `test.one.dev.helper`
     def squashNamespace(pkgTrees: Seq[RefTree]): Name = {
       def extractNamespace(pkgTree: RefTree) ={
@@ -38,12 +38,12 @@ object TreeInputParser {
       classDefTree match {
         // case classes get mapped to records
         case t @ q"$mods class $className[..$tparams](..$fields)(...$rest) extends ..$parents { $self => ..$body }" => {
-          List(RecordSchemaGenerator.generateSchema(knownClasses, className.toString, namespace, fields)) 
+          List(RecordSchemaGenerator.generateSchema(className.toString, namespace, fields)) 
         }
         // objects that extend Enumeration get mapped to enums
         case t @ q"$mods object $objectName extends ..$parents { $self => ..$body }"  => {
           val values = body.collect{ case ValDef(mods, NameTag(name), tpt, tpe) => name }
-          List(EnumSchemaGenerator.generateSchema(knownClasses, objectName.toString, namespace, values)) 
+          List(EnumSchemaGenerator.generateSchema(objectName.toString, namespace, values)) 
         }
         case definition => sys.error(s"""Unsupported definition. Expected case class or object defition, 
           but found $definition with tree: ${showRaw(definition)}""")
@@ -52,12 +52,15 @@ object TreeInputParser {
     
     // Reflective compilation can't seem to handle packages, so field types are typechecked
     // against manually provided classes as dependencies. (Object defs alone won't suffice!)
-    def asDependencies(topLevelDefs: List[Tree]): List[Tree] = {
-      topLevelDefs.reverse.flatMap(topLevelDef => {
+    def storeAsDependencies(topLevelDefs: List[Tree]) = {
+      topLevelDefs.reverse.foreach(topLevelDef => {
         topLevelDef match {
-          case t @ q"$mods class $className[..$tparams](..$fields)(...$rest) extends ..$parents { $self => ..$body }" => List(q"case class $className()")
+          case t @ q"$mods class $className[..$tparams](..$fields)(...$rest) extends ..$parents { $self => ..$body }" => {
+            TypecheckDependencyStore.accept(q"case class $className()")
+          }
           case t @ q"$mods object $objectName extends ..$parents { $self => ..$body }"  => {
-            List(t, q" case class ${objectName.toTypeName}();")
+            TypecheckDependencyStore.accept(t)
+            TypecheckDependencyStore.accept(q" case class ${objectName.toTypeName}();")
           }
         }
       })
@@ -82,7 +85,8 @@ object TreeInputParser {
         package $packageName1 {
         $classDef}}}}}}}}"""  => {
         val packageTrees = Seq(packageName8, packageName7, packageName6, packageName5, packageName4, packageName3, packageName2, packageName1)
-        val namespace = Some(squashNamespace(packageTrees)) 
+        val namespace = Some(squashNamespace(packageTrees))
+        storeAsDependencies(List(classDef))
         generateSchema(namespace, classDef)
       }
       // seven packages
@@ -96,6 +100,7 @@ object TreeInputParser {
         $classDef}}}}}}}"""  => {
         val packageTrees = Seq(packageName7, packageName6, packageName5, packageName4, packageName3, packageName2, packageName1)
         val namespace = Some(squashNamespace(packageTrees))
+        storeAsDependencies(List(classDef))
         generateSchema(namespace, classDef)
       }
       // six packages
@@ -108,6 +113,7 @@ object TreeInputParser {
         $classDef}}}}}}"""  => {
         val packageTrees = Seq(packageName6, packageName5, packageName4, packageName3, packageName2, packageName1)
         val namespace = Some(squashNamespace(packageTrees))
+        storeAsDependencies(List(classDef))
         generateSchema(namespace, classDef)
       }
       // five packages
@@ -119,6 +125,7 @@ object TreeInputParser {
         $classDef}}}}}"""  => {
         val packageTrees = Seq(packageName5, packageName4, packageName3, packageName2, packageName1)
         val namespace = Some(squashNamespace(packageTrees))
+        storeAsDependencies(List(classDef))
         generateSchema(namespace, classDef)
       }
       // four packages
@@ -128,7 +135,8 @@ object TreeInputParser {
         package $packageName1 {
         $classDef}}}}"""  => {
         val packageTrees = Seq(packageName4, packageName3, packageName2, packageName1)
-        val namespace = Some(squashNamespace(packageTrees))        
+        val namespace = Some(squashNamespace(packageTrees))  
+        storeAsDependencies(List(classDef))      
         generateSchema(namespace, classDef)
       }
       // three packages
@@ -137,28 +145,38 @@ object TreeInputParser {
         package $packageName1 {
         $classDef}}}"""  => {
         val packageTrees = Seq(packageName3, packageName2, packageName1)
-        val namespace = Some(squashNamespace(packageTrees))        
+        val namespace = Some(squashNamespace(packageTrees)) 
+        storeAsDependencies(List(classDef))       
         generateSchema(namespace, classDef)
       }
       // two packages
       case compilationUnit @ q"""package $packageName2 {
         package $packageName1 {
         $classDef}}"""  => {
+
         val packageTrees = Seq(packageName2, packageName1)
         val namespace = Some(squashNamespace(packageTrees))
+        storeAsDependencies(List(classDef))
         generateSchema(namespace, classDef)
       }
       // single package
       case compilationUnit @ q"""package $packageName { $classDef }"""  => {
         val packageTrees = Seq(packageName)
         val namespace = Some(squashNamespace(packageTrees))
+        storeAsDependencies(List(classDef))
         generateSchema(namespace, classDef)
       }
       // default package
       case classDef @ q"$mods class $name[..$tparams](..$fields)(...$rest) extends ..$parents { $self => ..$body }"  => {
         val namespace = None
+        storeAsDependencies(List(classDef))
         generateSchema(namespace, classDef)
       }
+
+
+
+      // match list of classes in a package, wrap them each in the package and resubmit
+      // to be matched as a single class def in 0 or more packages.
 
       //TODO: So much hard-coding of the number of package levels. A better way?
       // multiple classes in the same package get reparsed as indidually packaged classDefs
@@ -169,14 +187,16 @@ object TreeInputParser {
       // default package
       case compilationUnit @ q"""..$classDefs"""  => {
         val individuallyPackaged = classDefs.map(cd => q"""$cd""")
-        individuallyPackaged.reverse.map(tree => parse(tree, asDependencies(classDefs))).flatten
+        storeAsDependencies(classDefs)
+        individuallyPackaged.reverse.map(tree => parse(tree)).flatten
       }
       // one package
       case compilationUnit @ q"""
         package $packageName { ..$classDefs }"""  => {
         val individuallyPackaged = classDefs.map(cd => q"""
           package $packageName { $cd }""")
-        individuallyPackaged.reverse.map(tree => parse(tree, asDependencies(classDefs))).flatten
+        storeAsDependencies(classDefs)
+        individuallyPackaged.reverse.map(tree => parse(tree)).flatten
       }
       // two package
       case compilationUnit @ q"""
@@ -185,7 +205,8 @@ object TreeInputParser {
         val individuallyPackaged = classDefs.map(cd => q"""
           package $packageName2 {
           package $packageName1 { $cd }}""")
-        individuallyPackaged.reverse.map(tree => parse(tree, asDependencies(classDefs))).flatten
+        storeAsDependencies(classDefs)
+        individuallyPackaged.reverse.map(tree => parse(tree)).flatten
       }
       // three package
       case compilationUnit @ q"""
@@ -196,7 +217,8 @@ object TreeInputParser {
           package $packageName3 {
           package $packageName2 {
           package $packageName1 { $cd }}}""")
-        individuallyPackaged.reverse.map(tree => parse(tree, asDependencies(classDefs))).flatten
+        storeAsDependencies(classDefs)
+        individuallyPackaged.reverse.map(tree => parse(tree)).flatten
       }
       // four package
       case compilationUnit @ q"""
@@ -209,7 +231,8 @@ object TreeInputParser {
           package $packageName3 {
           package $packageName2 {
           package $packageName1 { $cd }}}}""")
-        individuallyPackaged.reverse.map(tree => parse(tree, asDependencies(classDefs))).flatten
+        storeAsDependencies(classDefs)
+        individuallyPackaged.reverse.map(tree => parse(tree)).flatten
       }
       // five package
       case compilationUnit @ q"""
@@ -224,7 +247,8 @@ object TreeInputParser {
           package $packageName3 {
           package $packageName2 {
           package $packageName1 { $cd }}}}}""")
-        individuallyPackaged.reverse.map(tree => parse(tree, asDependencies(classDefs))).flatten
+        storeAsDependencies(classDefs)
+        individuallyPackaged.reverse.map(tree => parse(tree)).flatten
       }
 
       // six package
@@ -242,7 +266,8 @@ object TreeInputParser {
           package $packageName3 {
           package $packageName2 {
           package $packageName1 { $cd }}}}}}""")
-        individuallyPackaged.reverse.map(tree => parse(tree, asDependencies(classDefs))).flatten
+        storeAsDependencies(classDefs)
+        individuallyPackaged.reverse.map(tree => parse(tree)).flatten
       }
 
       // seven package
@@ -262,7 +287,8 @@ object TreeInputParser {
           package $packageName3 {
           package $packageName2 {
           package $packageName1 { $cd }}}}}}}""")
-        individuallyPackaged.reverse.map(tree => parse(tree, asDependencies(classDefs))).flatten
+        storeAsDependencies(classDefs)
+        individuallyPackaged.reverse.map(tree => parse(tree)).flatten
       }
 
       // eight package
@@ -284,10 +310,11 @@ object TreeInputParser {
           package $packageName3 {
           package $packageName2 {
           package $packageName1 { $cd }}}}}}}}""")
-        individuallyPackaged.reverse.map(tree => parse(tree, asDependencies(classDefs))).flatten
+        storeAsDependencies(classDefs)
+        individuallyPackaged.reverse.map(tree => parse(tree)).flatten
       }
-
-      case x => sys.error("Unsupported class definition format. 1) Imports not supported yet or 2) Package declerations cannot be more than eight levels deep.")
+      case EmptyTree=> List()
+      case x => sys.error(s"Unsupported class definition format: $x. 1) Imports not supported yet or 2) Package declerations cannot be more than eight levels deep.")
 
     }
     

@@ -38,7 +38,7 @@ Supports generating case classes with arbitrary fields of the following datatype
 
 Get the dependency with:
 
-    "com.julianpeeters" % "avrohugger-core" %% "0.4.1"
+    "com.julianpeeters" % "avrohugger-core" %% "0.5.0"
 
 Instantiate a `Generator` with `Standard` or `SpecificRecord` source formats. Then use 
 
@@ -69,22 +69,22 @@ or
  where an input `File` can be `.avro`, `.avsc`, `.avpr`, or `.avdl`,
 
 
- and where an input `String` can be the string representation of an Avro schema, protocol, IDL, or a vanilla case class that you'd like to have implement `SpecificRecordBase`.
+ and where an input `String` can be the string representation of an Avro schema, protocol, IDL, or a set of case classes that you'd like to have implement `SpecificRecordBase` (import statements not supported, please use fully qualified type names if needed).
 
 
 
 ####`avrohugger-tools`
 
 
-Download the avrohugger-tools jar for Scala [2.10](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.10/0.4.0/avrohugger-tools_2.10-0.4.0-assembly.jar) or Scala [2.11](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.11/0.4.0/avrohugger-tools_2.11-0.4.0-assembly.jar)(20MB!) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
+Download the avrohugger-tools jar for Scala [2.10](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.10/0.5.0/avrohugger-tools_2.10-0.5.0-assembly.jar) or Scala [2.11](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.11/0.5.0/avrohugger-tools_2.11-0.5.0-assembly.jar)(20MB!) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
 
 
 'generate' generates Scala case class definitions:
-    java -jar /path/to/avrohugger-tools_2.11-0.4.0-assembly.jar generate schema user.avsc . 
+    java -jar /path/to/avrohugger-tools_2.11-0.5.0-assembly.jar generate schema user.avsc . 
 
 
 'generate-specific' generates case class definitions that extend SpecificRecordBase:
-    java -jar /path/to/avrohugger-tools_2.11-0.4.0-assembly.jar generate-specific schema user.avsc . 
+    java -jar /path/to/avrohugger-tools_2.11-0.5.0-assembly.jar generate-specific schema user.avsc . 
 
 
 ####`sbt-avrohugger`

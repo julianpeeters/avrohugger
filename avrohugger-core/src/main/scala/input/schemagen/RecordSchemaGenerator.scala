@@ -14,7 +14,6 @@ import scala.reflect.runtime.currentMirror
 object RecordSchemaGenerator  {
 
   def generateSchema(
-  	dependencies: List[Tree],
   	className: String, 
   	namespace: Option[Name], 
   	fields: List[ValDef]): Schema = {
@@ -22,17 +21,23 @@ object RecordSchemaGenerator  {
   	// Can't seem to typecheck packaged classes, so splice-in unpackaged versions
 	  // and later the FieldSchemaGenerator's type matcher must be passed the field's 
     // namespace explicitly.
-    def typeCheck(t: Tree, dependencies: List[Tree]) = {
+    def typeCheck(t: Tree) = {
+      val dependencies = TypecheckDependencyStore.knownClasses.values.toList
       Toolbox.toolBox.typeCheck(q"..$dependencies; {type T = $t}") match {
 	      case x @ Block(classDefs, Block(List(TypeDef(mods, name, tparams, rhs)), const)) => rhs.tpe
 	    }
 	  }
 
 	  def toAvroFieldSchema(valDef: ValDef) = {
-	  	FieldSchemaGenerator.toAvroField(
-        namespace,
+      val (referredNamespace, fieldType) = valDef.tpt match {
+        case tq"$ns.$typeName" => (Some(newTermName(ns.toString)), tq"$typeName")
+        case t => (namespace, t)
+      }
+
+      FieldSchemaGenerator.toAvroField(
+        referredNamespace,
         valDef.name, 
-        typeCheck(valDef.tpt, dependencies),
+        typeCheck(fieldType),
         valDef.rhs
       )
 	  }
@@ -47,7 +52,6 @@ object RecordSchemaGenerator  {
 
     val avroSchema = Schema.createRecord(className, "Auto-Generated Schema", ns, false)    
     avroSchema.setFields(JArrays.asList(avroFields.toArray:_*))
-
     SchemaStore.accept(avroSchema)
     avroSchema
   }

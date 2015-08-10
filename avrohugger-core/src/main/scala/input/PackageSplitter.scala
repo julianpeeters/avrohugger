@@ -1,0 +1,55 @@
+package avrohugger
+package input
+
+import schemagen._
+
+import scala.collection.JavaConverters._
+
+object PackageSplitter {
+
+  def getCompilationUnits(code: String): List[String] = {
+
+    def getCompilationUnits(
+      lines : List[String], 
+      pkgResult: List[String]= List(),
+      compUnitResult: List[String]= List() ): List[String] = {
+
+      def getBody(code: List[String], bodyResult: List[String] = List()): List[String] = {
+        code match {
+          case head::tail if head.startsWith("package") => {
+            getCompilationUnits(code, List(), compUnitResult:+((pkgResult:::bodyResult).mkString("\n")))
+          }
+          case head::tail => getBody(tail, bodyResult:+head)
+          case Nil => compUnitResult:+((pkgResult:::bodyResult).mkString("\n"))
+        }
+      }
+      val compilationUnits = lines match {
+        case head::tail if head.startsWith("package") => getCompilationUnits(tail, pkgResult:+head, compUnitResult)
+        case ls => getBody(ls)
+      }
+      compilationUnits
+    }
+
+    // the parser can only parse packages if their contents are within explicit blocks
+    def wrapPackages(code: String): String = {
+      // match package definitions that don't already wrap their contents in { }
+      val nonWrappedRegEx = "(?!(package .*? \\{))(package ([a-zA-Z_$][a-zA-Z\\d_$]*\\.)*[a-zA-Z_$][a-zA-Z\\d_$]*)".r
+      nonWrappedRegEx.findFirstIn(code) match {
+        case Some(nonWrappedPackage) => {
+          val openPackage = nonWrappedPackage + " {"
+          val closePackage = "}"
+          val wrappedPackage = nonWrappedRegEx.replaceFirstIn(code, openPackage) + closePackage
+          wrapPackages(wrappedPackage)}
+        case None => code
+      }
+    }
+
+    val lines = code.split("\n").toList
+    val compilationUnits = getCompilationUnits(lines)
+    // reversed so the most nested classes need to be expanded first
+    val formatted = compilationUnits.map(compUnit => wrapPackages(compUnit)).reverse
+    formatted
+  }
+
+}
+

@@ -30,7 +30,7 @@ object StandardTreehugger {
     val tree = {
       val blockContent = imports ++ List(topLevelDef)
       if (namespace.isDefined) BLOCK(blockContent).inPackage(namespace.get)
-      else BLOCK(blockContent)
+      else topLevelDef
     }.withDoc("MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY")
 
     // SpecificCompiler can't return a tree for Java enums, so return

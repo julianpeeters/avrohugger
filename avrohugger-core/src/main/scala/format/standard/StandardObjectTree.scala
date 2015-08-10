@@ -17,7 +17,7 @@ object StandardObjectTree {
     schema: Schema) = {
 
     // register new type
-    val classSymbol = RootClass.newClass(schema.getName)
+    val classSymbol = RootClass.newClass(schema.getName + ".Value")
     classStore.accept(schema, classSymbol)
     OBJECTDEF(schema.getName) withParents("Enumeration") := BLOCK(
       TYPEVAR(schema.getName) := REF("Value"),

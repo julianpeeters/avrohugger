@@ -5,6 +5,8 @@ import avrohugger.format._
 import avrohugger.input._
 import avrohugger.input.NestedSchemaExtractor._
 import avrohugger.input.schemagen._
+import avrohugger.input.parsers._
+
 
 import java.io.{File, FileNotFoundException, IOException}
 
@@ -29,6 +31,7 @@ class Generator(format: SourceFormat) {
       // pass in the top-level schema's namespace if the nested schema has none
       val ns = getReferredNamespace(schema) orElse namespace
       sourceFormat.writeToFile(classStore, ns, schema, outDir)
+      SchemaStore.schemas.clear
     }
   }
 
@@ -45,9 +48,8 @@ class Generator(format: SourceFormat) {
   // methods for writing definitions to a list of definitions in String format
   def schemaToStrings(schema: Schema): List[String] = {
     val namespace: Option[String] = getReferredNamespace(schema)
-    val topLevelSchemas: List[Schema] = schema::getNestedSchemas(schema)
-
-    topLevelSchemas.reverse.map(schema => { // process most-nested classes first
+    val topLevelSchemas: List[Schema] = getNestedSchemas(schema)
+    topLevelSchemas.map(schema => { // process most-nested classes first
       // pass in the top-level schema's namespace if the nested schema has none
       val ns = getReferredNamespace(schema) orElse namespace
       val codeString = sourceFormat.asDefinitionString(classStore, ns, schema)
@@ -67,7 +69,10 @@ class Generator(format: SourceFormat) {
   def stringToStrings(schemaStr: String): List[String] = {
     val schemas = stringParser.getSchemas(schemaStr)
     // reverse to restore printing order after processing, top-level classes first 
-    schemas.flatMap(schema => schemaToStrings(schema)).reverse
+    val codeStrings = schemas.flatMap(schema => schemaToStrings(schema)).reverse
+    //reset the schema store after processing the whole submission
+    SchemaStore.schemas.clear
+    codeStrings
   }
 
   def fileToStrings(inFile: File): List[String] = {

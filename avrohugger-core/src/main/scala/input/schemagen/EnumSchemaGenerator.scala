@@ -14,7 +14,6 @@ import scala.reflect.runtime.currentMirror
 object EnumSchemaGenerator  {
 
   def generateSchema(
-  	dependencies: List[Tree],
   	className: String, 
   	namespace: Option[Name], 
   	values: List[Name]): Schema = {

@@ -22,6 +22,17 @@ class StandardGeneratorSpec extends mutable.Specification {
         """.stripMargin.trim
     }
 
+    "correctly generate a simple case class definition in the default package" in {
+      val infile = new java.io.File("avrohugger-core/src/test/avro/AvroTypeProviderTestNoNamespace.avro")
+      val gen = new Generator(Standard)
+      gen.fileToFile(infile)
+      val source = scala.io.Source.fromFile("target/generated-sources/AvroTypeProviderTestNoNamespace.scala").mkString
+      source ===
+        """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
+          |case class AvroTypeProviderTestNoNamespace(x: Int)
+        """.stripMargin.trim
+    }
+
     "correctly generate a simple case class definition from a schema as a string" in {
       val schemaString = """{"type":"record","name":"Animal","namespace":"test","fields":[{"name":"name","type":"string"}],"doc:":"A basic schema for storing Twitter messages"}"""
       val gen = new Generator(Standard)
@@ -194,7 +205,7 @@ class StandardGeneratorSpec extends mutable.Specification {
         |/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
         |package example.proto
         |
-        |case class Card(suit: Suit, number: Int)
+        |case class Card(suit: Suit.Value, number: Int)
       """.stripMargin.trim
   }
 
@@ -221,7 +232,7 @@ class StandardGeneratorSpec extends mutable.Specification {
         |/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
         |package example.idl
         |
-        |case class Card(suit: Suit, number: Int)
+        |case class Card(suit: Suit.Value, number: Int)
       """.stripMargin.trim
   }
 

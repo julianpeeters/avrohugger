@@ -12,7 +12,7 @@ import scala.util.{ Try, Success, Failure }
 
 import Direction._
 
-  import test._
+import test._
 
 
 class EnumSpec extends Specification {
@@ -35,8 +35,6 @@ class EnumSpec extends Specification {
   
       sameRecord must ===(record)
       
-      1 === 1
-
     }
   }
 }
