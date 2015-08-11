@@ -5,13 +5,12 @@ import sbtassembly.AssemblyPlugin.autoImport._
 
 object BuildSettings {
   private val avroVersion = "1.7.7"
-  private val scalaV = "2.11.7"
 
   val buildSettings = Defaults.defaultSettings ++ scriptedSettings ++ Seq(
     organization := "com.julianpeeters",
-    version := "0.5.0",
+    version := "0.5.1",
     scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-Ywarn-value-discard"),
-    scalaVersion := scalaV,
+    scalaVersion := "2.11.7",
     crossScalaVersions := Seq("2.10.5", scalaVersion.value),
     resolvers += Resolver.typesafeIvyRepo("releases"),
     libraryDependencies += "org.apache.avro" % "avro" % avroVersion,

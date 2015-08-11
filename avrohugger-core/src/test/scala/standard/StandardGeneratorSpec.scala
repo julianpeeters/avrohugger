@@ -44,6 +44,59 @@ class StandardGeneratorSpec extends mutable.Specification {
         """.stripMargin.trim
     }
 
+    "correctly generate a nested case class definition from a schema as a string" in {
+      val schemaString = """{
+        |  "namespace": "example",
+        |  "type": "record",
+        |  "name": "Level0",
+        |  "fields": [
+        |    {
+        |      "name": "level1",
+        |      "type": {
+        |        "name": "Level1",
+        |        "type": "record",
+        |        "fields": [
+        |          {
+        |            "name": "level2",
+        |            "type": {
+        |              "name": "Level2",
+        |              "type": "record",
+        |              "fields": [
+        |                {
+        |                  "name": "name",
+        |                  "type": "string"
+        |                }
+        |              ]
+        |            }
+        |          }
+        |        ]
+        |      }
+        |    }
+        |  ]
+        |}""".stripMargin
+      val gen = new Generator(Standard)
+      val List(source0, source1, source2) = gen.stringToStrings(schemaString)
+      source0 ===
+        """package example
+          |
+          |case class Level0(level1: Level1)
+        """.stripMargin.trim
+
+      source1 ===
+        """package example
+          |
+          |case class Level1(level2: Level2)
+        """.stripMargin.trim
+
+      source2 ===
+        """package example
+          |
+          |case class Level2(name: String)
+        """.stripMargin.trim
+    }
+    
+
+
     "correctly generate a simple case class definition from protocol as a string" in {
       val schemaString = 
         """
@@ -283,4 +336,6 @@ class StandardGeneratorSpec extends mutable.Specification {
 
     (new File(s"target/generated-sources/other/ns/ExternalDependency.scala")).exists === true
   }
+
+  
 }

@@ -23,7 +23,7 @@ class Generator(format: SourceFormat) {
   lazy val schemaParser = new Schema.Parser
   val classStore = new ClassStore
 
-  //methods for writing definitions out to file 
+  // #### methods for writing definitions out to file ####
   def schemaToFile(schema: Schema, outDir: String = defaultOutputDir): Unit = {
     val namespace: Option[String] = getReferredNamespace(schema)
     val topLevelSchemas: List[Schema] = schema::(getNestedSchemas(schema))
@@ -45,11 +45,13 @@ class Generator(format: SourceFormat) {
     schemas.foreach(schema => schemaToFile(schema, outDir))
   }
 
-  // methods for writing definitions to a list of definitions in String format
+
+
+  // #### methods for writing definitions to a list of definitions in String format ####
   def schemaToStrings(schema: Schema): List[String] = {
     val namespace: Option[String] = getReferredNamespace(schema)
     val topLevelSchemas: List[Schema] = getNestedSchemas(schema)
-    topLevelSchemas.map(schema => { // process most-nested classes first
+    topLevelSchemas.reverse.map(schema => { //reversed to process nested classes first
       // pass in the top-level schema's namespace if the nested schema has none
       val ns = getReferredNamespace(schema) orElse namespace
       val codeString = sourceFormat.asDefinitionString(classStore, ns, schema)

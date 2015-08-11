@@ -7,11 +7,9 @@ import java.io.File
 
 import org.apache.avro.generic._
 import org.apache.avro.specific._
-//import org.apache.avro.Schema
-//import org.apache.avro.Schema.{Type => AvroType}
 import org.apache.avro.file._
 
-  import test._
+import test._
 
 
 class Specific00Test extends Specification {
