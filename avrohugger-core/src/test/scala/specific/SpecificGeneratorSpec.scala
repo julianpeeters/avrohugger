@@ -259,8 +259,8 @@ class SpecificGeneratorSpec extends mutable.Specification {
         """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
           |package example.idl
           |
-          |case class DefaultTest(var suit: DefaultEnum = DefaultEnum.SPADES, var number: Int = 0, var str: String = "str", var optionString: Option[String] = None, var optionStringValue: Option[String] = Some("default"), var embedded: Embedded = new Embedded(1), var defaultArray: List[Int] = List(1, 3, 4, 5), var optionalEnum: Option[DefaultEnum] = None) extends org.apache.avro.specific.SpecificRecordBase {
-          |  def this() = this(DefaultEnum.SPADES, 0, "str", None, Some("default"), new Embedded(1), List(1, 3, 4, 5), None)
+          |case class DefaultTest(var suit: DefaultEnum = DefaultEnum.SPADES, var number: Int = 0, var str: String = "str", var optionString: Option[String] = None, var optionStringValue: Option[String] = Some("default"), var embedded: Embedded = new Embedded(1), var defaultArray: List[Int] = List(1, 3, 4, 5), var optionalEnum: Option[DefaultEnum] = None, var defaultMap: Map[String, String] = Map("Hello" -> "world", "Merry" -> "Christmas")) extends org.apache.avro.specific.SpecificRecordBase {
+          |  def this() = this(DefaultEnum.SPADES, 0, "str", None, Some("default"), new Embedded(1), List(1, 3, 4, 5), None, Map("Hello" -> "world", "Merry" -> "Christmas"))
           |  def get(field: Int): AnyRef = {
           |    field match {
           |      case pos if pos == 0 => {
@@ -299,6 +299,15 @@ class SpecificGeneratorSpec extends mutable.Specification {
           |          case Some(x) => x
           |          case None => null
           |        }
+          |      }.asInstanceOf[AnyRef]
+          |      case pos if pos == 8 => {
+          |        val map: java.util.HashMap[String, Any] = new java.util.HashMap[String, Any]
+          |        defaultMap foreach { kvp =>
+          |          val key = kvp._1
+          |          val value = kvp._2
+          |          map.put(key, value)
+          |        }
+          |        map
           |      }.asInstanceOf[AnyRef]
           |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
           |    }
@@ -345,6 +354,21 @@ class SpecificGeneratorSpec extends mutable.Specification {
           |      case pos if pos == 7 => this.optionalEnum = {
           |        Option(value)
           |      }.asInstanceOf[Option[DefaultEnum]]
+          |      case pos if pos == 8 => this.defaultMap = {
+          |        value match {
+          |          case null => null
+          |          case (map: java.util.Map[_,_]) => {
+          |            scala.collection.JavaConversions.mapAsScalaMap(map).toMap map { kvp =>
+          |              val key = kvp._1.toString
+          |              val value = kvp._2
+          |              (key, value match {
+          |                case (value: org.apache.avro.util.Utf8) => value.toString
+          |                case _ => value
+          |              })
+          |            }
+          |          }
+          |        }
+          |      }.asInstanceOf[Map[String, String]]
           |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
           |    }
           |    ()
@@ -353,7 +377,7 @@ class SpecificGeneratorSpec extends mutable.Specification {
           |}
           |
           |object DefaultTest {
-          |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"DefaultTest\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"suit\",\"type\":{\"type\":\"enum\",\"name\":\"DefaultEnum\",\"symbols\":[\"SPADES\",\"DIAMONDS\",\"CLUBS\",\"HEARTS\"]},\"default\":\"SPADES\"},{\"name\":\"number\",\"type\":\"int\",\"default\":0},{\"name\":\"str\",\"type\":\"string\",\"default\":\"str\"},{\"name\":\"optionString\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"optionStringValue\",\"type\":[\"string\",\"null\"],\"default\":\"default\"},{\"name\":\"embedded\",\"type\":{\"type\":\"record\",\"name\":\"Embedded\",\"fields\":[{\"name\":\"inner\",\"type\":\"int\"}]},\"default\":{\"inner\":1}},{\"name\":\"defaultArray\",\"type\":{\"type\":\"array\",\"items\":\"int\"},\"default\":[1,3,4,5]},{\"name\":\"optionalEnum\",\"type\":[\"null\",\"DefaultEnum\"],\"default\":null}]}")
+          |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"DefaultTest\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"suit\",\"type\":{\"type\":\"enum\",\"name\":\"DefaultEnum\",\"symbols\":[\"SPADES\",\"DIAMONDS\",\"CLUBS\",\"HEARTS\"]},\"default\":\"SPADES\"},{\"name\":\"number\",\"type\":\"int\",\"default\":0},{\"name\":\"str\",\"type\":\"string\",\"default\":\"str\"},{\"name\":\"optionString\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"optionStringValue\",\"type\":[\"string\",\"null\"],\"default\":\"default\"},{\"name\":\"embedded\",\"type\":{\"type\":\"record\",\"name\":\"Embedded\",\"fields\":[{\"name\":\"inner\",\"type\":\"int\"}]},\"default\":{\"inner\":1}},{\"name\":\"defaultArray\",\"type\":{\"type\":\"array\",\"items\":\"int\"},\"default\":[1,3,4,5]},{\"name\":\"optionalEnum\",\"type\":[\"null\",\"DefaultEnum\"],\"default\":null},{\"name\":\"defaultMap\",\"type\":{\"type\":\"map\",\"values\":\"string\"},\"default\":{\"Hello\":\"world\",\"Merry\":\"Christmas\"}}]}")
           |}""".stripMargin
     }
   }

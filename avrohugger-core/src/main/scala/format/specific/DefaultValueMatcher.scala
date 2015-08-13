@@ -57,7 +57,7 @@ object DefaultValueMatcher {
           LIST(node.getElements.toList.map(e => fromJsonNode(e, schema.getElementType)))
         }
         case Schema.Type.MAP => {
-          val kvps = LIST(node.getFields.toList.map(e => LIT(e.getKey) ANY_-> fromJsonNode(e.getValue, schema.getValueType)))
+          val kvps = node.getFields.toList.map(e => LIT(e.getKey) ANY_-> fromJsonNode(e.getValue, schema.getValueType))
           MAKE_MAP(kvps)
         }
         case Schema.Type.RECORD  => {
