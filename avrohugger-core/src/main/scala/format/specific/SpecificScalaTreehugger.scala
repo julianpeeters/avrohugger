@@ -2,7 +2,7 @@ package avrohugger
 package format
 package specific
 
-import avrohugger.format.DependencyInspectionSupport._
+import avrohugger.input.DependencyInspector._
 import org.apache.avro.Schema.Field
 import trees._
 

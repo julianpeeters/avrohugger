@@ -2,12 +2,11 @@ package avrohugger
 package input
 package parsers
 
-import schemagen._
+import reflectivecompilation.schemagen._
 
 import collection.JavaConversions._
 
 import scala.reflect._
-
 import scala.reflect.api._
 import scala.reflect.runtime.universe._
 import scala.reflect.runtime.universe.Flag._

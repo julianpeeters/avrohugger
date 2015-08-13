@@ -2,7 +2,8 @@ package avrohugger
 package input
 package parsers
 
-import schemagen._
+import reflectivecompilation._
+import reflectivecompilation.schemagen._
 
 import org.apache.avro.Protocol
 import org.apache.avro.Schema

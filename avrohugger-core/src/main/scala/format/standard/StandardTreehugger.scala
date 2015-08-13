@@ -2,7 +2,7 @@ package avrohugger
 package format
 package standard
 
-import avrohugger.format.DependencyInspectionSupport._
+import avrohugger.input.DependencyInspector._
 import org.apache.avro.Schema
 import org.apache.avro.Schema.Field
 import org.apache.avro.Schema.Type.{ENUM, RECORD}

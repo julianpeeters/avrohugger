@@ -1,5 +1,5 @@
 package avrohugger
-package format
+package input
 
 import org.apache.avro.Schema
 import org.apache.avro.Schema.Field
@@ -7,7 +7,7 @@ import org.apache.avro.Schema.Field
 import scala.collection.JavaConversions._
 
 
-object DependencyInspectionSupport {
+object DependencyInspector {
   import Schema.Type._
   def getReferredNamespace(schema: Schema): Option[String] = schema.getType match {
     case ARRAY =>

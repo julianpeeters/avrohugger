@@ -1,5 +1,6 @@
 package avrohugger
 package input
+package reflectivecompilation
 
 import schemagen._
 

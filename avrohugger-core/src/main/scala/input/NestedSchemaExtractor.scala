@@ -1,7 +1,7 @@
 package avrohugger
 package input
 
-import avrohugger.input.schemagen._
+import avrohugger.input.reflectivecompilation.schemagen._
 import org.apache.avro.Schema
 import org.apache.avro.Schema.Type.{ARRAY, ENUM, RECORD, UNION}
 

@@ -1,5 +1,6 @@
 package avrohugger
 package input
+package reflectivecompilation
 package schemagen
 
 import java.util.{Arrays => JArrays}

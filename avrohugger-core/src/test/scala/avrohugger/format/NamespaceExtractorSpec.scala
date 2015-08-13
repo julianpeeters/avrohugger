@@ -1,6 +1,6 @@
 package avrohugger.format
 
-import avrohugger.format.DependencyInspectionSupport.getReferredNamespace
+import avrohugger.input.DependencyInspector.getReferredNamespace
 import org.apache.avro.Schema
 import org.specs2.mutable.Specification
 
