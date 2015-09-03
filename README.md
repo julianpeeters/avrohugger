@@ -1,9 +1,10 @@
 # avrohugger
-Schema-to-case-class code generation for working with Avro in Scala. 
+Schema-to-case-class code generation for working with Avro in Scala.
 
 * `avrohugger-core`: Generate source code dynamically at runtime for evaluation at a later step
 * `avrohugger-tools`: Generate source code at the command line with the avrohugger-tools jar.
-* `sbt-avrohugger`: Generate source code at compile time with an [sbt plugin](https://github.com/julianpeeters/sbt-avrohugger).
+* `sbt-avrohugger`: Generate source code at compile time with an sbt plugin [found here](https://github.com/julianpeeters/sbt-avrohugger).
+* `avro2caseclass`: Generate source code from a web app, [found here](https://github.com/julianpeeters/avro2caseclass).
 
 Generates Scala case classes:
 
@@ -11,7 +12,7 @@ Generates Scala case classes:
 
 - Case classes that implement `SpecificRecordBase` (for use with the Avro Specific API - Scalding, Spark, Avro, etc.).
 
-Supports generating case classes with arbitrary fields of the following datatypes: 
+Supports generating case classes with arbitrary fields of the following datatypes:
 
 
 * INT -> Int
@@ -22,7 +23,7 @@ Supports generating case classes with arbitrary fields of the following datatype
 * BOOLEAN -> Boolean
 * NULL  -> Null
 * MAP -> Map
-* ENUM -> `generate`: scala.Enumeration, `generate-specific`: Java Enum 
+* ENUM -> `generate`: scala.Enumeration, `generate-specific`: Java Enum
 * BYTES -> //TODO
 * FIXED -> //TODO
 * ARRAY -> List
@@ -34,16 +35,16 @@ Supports generating case classes with arbitrary fields of the following datatype
 ## Usage (for Scala 2.10 and 2.11)
 
 
-####`avrohugger-core` 
+####`avrohugger-core`
 
 Get the dependency with:
 
     "com.julianpeeters" % "avrohugger-core" %% "0.5.2"
 
-Instantiate a `Generator` with `Standard` or `SpecificRecord` source formats. Then use 
+Instantiate a `Generator` with `Standard` or `SpecificRecord` source formats. Then use
 
 
-`tToFile(input: T, outputDir: String): Unit` 
+`tToFile(input: T, outputDir: String): Unit`
 
 
 or
@@ -52,7 +53,7 @@ or
 `tToStrings(input: T): List[String]`
 
 
- where 'T' can be `File`, `Schema`, or `String`, 
+ where 'T' can be `File`, `Schema`, or `String`,
 
 
    e.g.:
@@ -81,7 +82,7 @@ Download the avrohugger-tools jar for Scala [2.10](https://search.maven.org/remo
 
 'generate' generates Scala case class definitions:
 
-`java -jar /path/to/avrohugger-tools_2.11-0.5.2-assembly.jar generate schema user.avsc . ` 
+`java -jar /path/to/avrohugger-tools_2.11-0.5.2-assembly.jar generate schema user.avsc . `
 
 
 'generate-specific' generates case class definitions that extend SpecificRecordBase:
@@ -92,6 +93,11 @@ Download the avrohugger-tools jar for Scala [2.10](https://search.maven.org/remo
 ####`sbt-avrohugger`
 
 Also available as an sbt plugin [found here](https://github.com/julianpeeters/sbt-avrohugger) that adds a `generate` or `generate-specific` task to `compile` (an alternative to [macros](https://github.com/julianpeeters/avro-scala-macro-annotations)).
+
+
+####`avro2caseclass`
+
+Code generation is also available via a web app [found here](https://github.com/julianpeeters/avro2caseclass). Hosted at Heroku on a hobbyist account, so it may take ~20 seconds to fire up the first time.
 
 
 ## Warnings
@@ -109,7 +115,7 @@ Also available as an sbt plugin [found here](https://github.com/julianpeeters/sb
 
 ## Testing
 
-The `scripted` task runs all tests. 
+The `scripted` task runs all tests.
 
 As per Doug Cutting's [recommendations](https://github.com/apache/avro/blob/trunk/lang/java/tools/src/test/java/org/apache/avro/tool/TestSpecificCompilerTool.java#L130) in the avro compiler tests, the string-based tests in `test` are augmented by `scripted` tests that generate and compile source that is run in de/serialization tests.
 
