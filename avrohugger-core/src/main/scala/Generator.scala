@@ -6,7 +6,6 @@ import avrohugger.input.NestedSchemaExtractor._
 import avrohugger.input.reflectivecompilation.schemagen._
 import avrohugger.input.parsers._
 
-
 import java.io.{File, FileNotFoundException, IOException}
 
 import org.apache.avro.Schema
@@ -14,36 +13,46 @@ import org.apache.avro.Schema
 import scala.collection.JavaConverters._
 
 // Unable to overload the methods of this class because outDir uses a default value
-class Generator(format: SourceFormat) {
+class Generator(format: SourceFormat, 
+  scalaCustomTypes: Map[String, String] = Map.empty,
+  scalaCustomNamespace: Map[String, String] = Map.empty) {
   val sourceFormat = format
   val defaultOutputDir = "target/generated-sources"
   lazy val fileParser = new FileInputParser
   lazy val stringParser = new StringInputParser
   lazy val schemaParser = new Schema.Parser
   val classStore = new ClassStore
+  val typeMatcher = sourceFormat.typeMatcher
+  scalaCustomTypes.foreach(typeMatcher.updateTypeMap)
+  scalaCustomNamespace.foreach(typeMatcher.updateNamespaceMap)
 
   // #### methods for writing definitions out to file ####
-  def schemaToFile(schema: Schema, outDir: String = defaultOutputDir): Unit = {
-    val namespace: Option[String] = getReferredNamespace(schema)
+  def schemaToFile(
+    schema: Schema, 
+    outDir: String = defaultOutputDir): Unit = {
+    val topLevelNamespace: Option[String] = getReferredNamespace(schema)
     val topLevelSchemas: List[Schema] = schema::(getNestedSchemas(schema))
     topLevelSchemas.reverse.foreach { schema => // most-nested classes processed first
       // pass in the top-level schema's namespace if the nested schema has none
-      val ns = getReferredNamespace(schema) orElse namespace
+      val ns = getReferredNamespace(schema) orElse topLevelNamespace
       sourceFormat.writeToFile(classStore, ns, schema, outDir)
       SchemaStore.schemas.clear
     }
   }
 
-  def stringToFile(schemaStr: String, outDir: String = defaultOutputDir): Unit = {
+  def stringToFile(
+    schemaStr: String, 
+    outDir: String = defaultOutputDir): Unit = {
     val schemas = stringParser.getSchemas(schemaStr)
     schemas.foreach(schema => schemaToFile(schema, outDir))
   }
 
-  def fileToFile(inFile: File, outDir: String = defaultOutputDir): Unit = {
+  def fileToFile(
+    inFile: File, 
+    outDir: String = defaultOutputDir): Unit = {
     val schemas: List[Schema] = fileParser.getSchemas(inFile)
     schemas.foreach(schema => schemaToFile(schema, outDir))
   }
-
 
 
   // #### methods for writing definitions to a list of definitions in String format ####

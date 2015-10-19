@@ -24,11 +24,11 @@ object DependencyInspector {
 
   def getReferredTypeName(schema: Schema): String = schema.getType match {
     case ARRAY =>
-      schema.getElementType.getName
+      getReferredTypeName(schema.getElementType)
     case UNION =>
-      schema.getTypes.find( innerType => innerType.getType != NULL ).map( _.getName ).getOrElse("")
+      schema.getTypes.find( innerType => innerType.getType != NULL ).map( getReferredTypeName ).getOrElse("")
     case MAP =>
-      schema.getValueType.getName
+      getReferredTypeName(schema.getValueType)
     case _ =>
       schema.getName
   }

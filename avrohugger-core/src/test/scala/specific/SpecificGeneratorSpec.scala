@@ -38,22 +38,13 @@ class SpecificGeneratorSpec extends mutable.Specification {
           |  def put(field: Int, value: Any): Unit = {
           |    field match {
           |      case pos if pos == 0 => this.to = {
-          |        value match {
-          |          case (value: org.apache.avro.util.Utf8) => value.toString
-          |          case _ => value
-          |        }
+          |        value.toString
           |      }.asInstanceOf[String]
           |      case pos if pos == 1 => this.from = {
-          |        value match {
-          |          case (value: org.apache.avro.util.Utf8) => value.toString
-          |          case _ => value
-          |        }
+          |        value.toString
           |      }.asInstanceOf[String]
           |      case pos if pos == 2 => this.body = {
-          |        value match {
-          |          case (value: org.apache.avro.util.Utf8) => value.toString
-          |          case _ => value
-          |        }
+          |        value.toString
           |      }.asInstanceOf[String]
           |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
           |    }
@@ -91,10 +82,7 @@ class SpecificGeneratorSpec extends mutable.Specification {
           |  def put(field: Int, value: Any): Unit = {
           |    field match {
           |      case pos if pos == 0 => this.name = {
-          |        value match {
-          |          case (value: org.apache.avro.util.Utf8) => value.toString
-          |          case _ => value
-          |        }
+          |        value.toString
           |      }.asInstanceOf[String]
           |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
           |    }
@@ -321,29 +309,25 @@ class SpecificGeneratorSpec extends mutable.Specification {
           |        value
           |      }.asInstanceOf[Int]
           |      case pos if pos == 2 => this.str = {
-          |        value match {
-          |          case (value: org.apache.avro.util.Utf8) => value.toString
-          |          case _ => value
-          |        }
+          |        value.toString
           |      }.asInstanceOf[String]
           |      case pos if pos == 3 => this.optionString = {
-          |        Option(value match {
-          |          case (value: org.apache.avro.util.Utf8) => value.toString
-          |          case _ => value
-          |        })
+          |        value match {
+          |          case null => None
+          |          case _ => Some(value.toString)
+          |        }
           |      }.asInstanceOf[Option[String]]
           |      case pos if pos == 4 => this.optionStringValue = {
-          |        Option(value match {
-          |          case (value: org.apache.avro.util.Utf8) => value.toString
-          |          case _ => value
-          |        })
+          |        value match {
+          |          case null => None
+          |          case _ => Some(value.toString)
+          |        }
           |      }.asInstanceOf[Option[String]]
           |      case pos if pos == 5 => this.embedded = {
           |        value
           |      }.asInstanceOf[Embedded]
           |      case pos if pos == 6 => this.defaultArray = {
           |        value match {
-          |          case null => null
           |          case (array: org.apache.avro.generic.GenericData.Array[_]) => {
           |            scala.collection.JavaConversions.asScalaIterator(array.iterator).toList map { x =>
           |              x
@@ -352,19 +336,18 @@ class SpecificGeneratorSpec extends mutable.Specification {
           |        }
           |      }.asInstanceOf[List[Int]]
           |      case pos if pos == 7 => this.optionalEnum = {
-          |        Option(value)
+          |        value match {
+          |          case null => None
+          |          case _ => Some(value)
+          |        }
           |      }.asInstanceOf[Option[DefaultEnum]]
           |      case pos if pos == 8 => this.defaultMap = {
           |        value match {
-          |          case null => null
           |          case (map: java.util.Map[_,_]) => {
           |            scala.collection.JavaConversions.mapAsScalaMap(map).toMap map { kvp =>
           |              val key = kvp._1.toString
           |              val value = kvp._2
-          |              (key, value match {
-          |                case (value: org.apache.avro.util.Utf8) => value.toString
-          |                case _ => value
-          |              })
+          |              (key, value.toString)
           |            }
           |          }
           |        }
@@ -460,7 +443,10 @@ class SpecificGeneratorSpec extends mutable.Specification {
         |  def put(field: Int, value: Any): Unit = {
         |    field match {
         |      case pos if pos == 0 => this.dependency = {
-        |        Option(value)
+        |        value match {
+        |          case null => None
+        |          case _ => Some(value)
+        |        }
         |      }.asInstanceOf[Option[ExternalDependency]]
         |      case pos if pos == 1 => this.number = {
         |        value

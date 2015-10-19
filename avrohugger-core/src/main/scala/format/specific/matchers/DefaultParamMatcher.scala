@@ -1,6 +1,7 @@
 package avrohugger
 package format
 package specific
+package matchers
 
 import org.apache.avro.Schema
 import org.apache.avro.Schema.Type

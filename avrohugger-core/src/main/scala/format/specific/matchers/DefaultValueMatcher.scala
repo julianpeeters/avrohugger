@@ -1,6 +1,7 @@
 package avrohugger
 package format
 package specific
+package matchers
 
 import treehugger.forest._
 import definitions._

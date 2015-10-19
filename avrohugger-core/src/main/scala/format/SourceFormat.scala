@@ -16,6 +16,8 @@ trait SourceFormat {
 
   def fileExt(schema: Schema): String
 
+  val typeMatcher: TypeMatcher
+
   def asDefinitionString(
   	classStore: ClassStore, 
     namespace: Option[String], 
@@ -28,10 +30,30 @@ trait SourceFormat {
     schema: Schema, 
     outDir: String): Unit = {
 
-    val codeAsString = asDefinitionString(classStore, namespace, schema)
+
+    // Custom namespaces work for simple types, but seem to fail for records within unions, 
+    // see http://apache-avro.679487.n3.nabble.com/Deserialize-with-different-schema-td4032782.html
+    def checkCustomNamespace(namespace: Option[String]) = {
+      def queryNamespaceMap(schemaNamespace: String): Option[String] = {
+        typeMatcher.namespaceMap.get(schemaNamespace) match {
+          case Some(customNamespace) => Some(customNamespace)
+          case None => Some(schemaNamespace)
+        }
+      }
+      namespace match {
+        case Some(ns) => queryNamespaceMap(ns)
+        case None => None
+      }
+    }
+
+    val scalaNamespace = checkCustomNamespace(namespace)
+
+    val codeAsString = asDefinitionString(classStore, 
+      scalaNamespace, 
+      schema)
 
     val folderPath: Path = Paths.get{
-      if (namespace.isDefined) outDir + "/" + namespace.get.toString.replace('.','/')
+      if (scalaNamespace.isDefined) outDir + "/" + scalaNamespace.get.toString.replace('.','/')
       else outDir
     }
 

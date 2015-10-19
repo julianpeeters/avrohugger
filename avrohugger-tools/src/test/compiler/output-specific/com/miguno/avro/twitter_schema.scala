@@ -20,16 +20,10 @@ case class twitter_schema(var username: String, var tweet: String, var timestamp
   def put(field: Int, value: Any): Unit = {
     field match {
       case pos if pos == 0 => this.username = {
-        value match {
-          case (value: org.apache.avro.util.Utf8) => value.toString
-          case _ => value
-        }
+        value.toString
       }.asInstanceOf[String]
       case pos if pos == 1 => this.tweet = {
-        value match {
-          case (value: org.apache.avro.util.Utf8) => value.toString
-          case _ => value
-        }
+        value.toString
       }.asInstanceOf[String]
       case pos if pos == 2 => this.timestamp = {
         value

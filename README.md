@@ -6,11 +6,13 @@ Schema-to-case-class code generation for working with Avro in Scala.
 * `sbt-avrohugger`: Generate source code at compile time with an sbt plugin [found here](https://github.com/julianpeeters/sbt-avrohugger).
 * `avro2caseclass`: Generate source code from a web app, [found here](https://github.com/julianpeeters/avro2caseclass).
 
-Generates Scala case classes:
+Generates Scala case classes in various formats:
 
-- Vanilla case classes (for use with [Scalavro](https://github.com/GenslerAppsPod/scalavro), [Salat-Avro](https://github.com/julianpeeters/salat-avro), [gfc-avro](https://github.com/gilt/gfc-avro), etc.)
+-`Standard` Vanilla case classes (for use with [Scalavro](https://github.com/GenslerAppsPod/scalavro), [Salat-Avro](https://github.com/julianpeeters/salat-avro), [gfc-avro](https://github.com/gilt/gfc-avro), etc.)
 
-- Case classes that implement `SpecificRecordBase` (for use with the Avro Specific API - Scalding, Spark, Avro, etc.).
+-`SpecificRecord` Case classes that implement `SpecificRecordBase` and therefore have mutable `var` fields (for use with the Avro Specific API - Scalding, Spark, Avro, etc.).
+
+-`Scavro` Case classes with immutable fields, intended to wrap Java generated avro classes (for use with the [Scavro](https://github.com/oysterbooks/scavro) runtime).
 
 Supports generating case classes with arbitrary fields of the following datatypes:
 
@@ -21,12 +23,12 @@ Supports generating case classes with arbitrary fields of the following datatype
 * DOUBLE -> Double
 * STRING -> String
 * BOOLEAN -> Boolean
-* NULL  -> Null
+* NULL -> Null
 * MAP -> Map
-* ENUM -> `generate`: scala.Enumeration, `generate-specific`: Java Enum
+* ENUM -> scala.Enumeration (`generate-specific`: Java Enum)
 * BYTES -> //TODO
 * FIXED -> //TODO
-* ARRAY -> List
+* ARRAY -> List (`generate-scavro`: Array). Please see Customizable Type Mapping below.
 * UNION -> Option
 * RECORD -> case class
 
@@ -37,11 +39,14 @@ Supports generating case classes with arbitrary fields of the following datatype
 
 ####`avrohugger-core`
 
-Get the dependency with:
+#####Get the dependency with:
 
-    "com.julianpeeters" % "avrohugger-core" %% "0.5.2"
+    "com.julianpeeters" % "avrohugger-core" %% "0.6.0"
 
-Instantiate a `Generator` with `Standard` or `SpecificRecord` source formats. Then use
+
+#####Description:
+
+Instantiate a `Generator` with `Standard`, `Scavro`, or `SpecificRecord` source formats. Then use
 
 
 `tToFile(input: T, outputDir: String): Unit`
@@ -53,10 +58,10 @@ or
 `tToStrings(input: T): List[String]`
 
 
- where 'T' can be `File`, `Schema`, or `String`,
+where 'T' can be `File`, `Schema`, or `String`.
 
+#####Example
 
-   e.g.:
 
 
     import avrohugger._
@@ -67,28 +72,46 @@ or
     generator.fileToFile(schemaFile, "optional/path/to/output") // default output path = "target/generated-sources"
 
 
- where an input `File` can be `.avro`, `.avsc`, `.avpr`, or `.avdl`,
+where an input `File` can be `.avro`, `.avsc`, `.avpr`, or `.avdl`,
 
 
- and where an input `String` can be the string representation of an Avro schema, protocol, IDL, or a set of case classes that you'd like to have implement `SpecificRecordBase`.
+and where an input `String` can be the string representation of an Avro schema, protocol, IDL, or a set of case classes that you'd like to have implement `SpecificRecordBase`.
 
 
+#####Customizable Type Mapping: 
+
+Avro 'array' is represented by Scala `List` by default. `array` can be reassigned to either `Array` or `Seq` by instantiating a `Generator` with a custom type map:
+
+
+    val generator = new Generator(SpecificRecord, scalaCustomType = Map("array"->"Array"))
+
+
+#####Customizable Namespace Mapping: 
+
+Namespaces can be reassigned by instantiating a `Generator` with a custom namespace map (please see warnings below):
+
+
+    val generator = new Generator(SpecificRecord, scalaCustomType = Map("array"->"Array"))   
 
 ####`avrohugger-tools`
 
 
-Download the avrohugger-tools jar for Scala [2.10](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.10/0.5.2/avrohugger-tools_2.10-0.5.2-assembly.jar) or Scala [2.11](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.11/0.5.2/avrohugger-tools_2.11-0.5.2-assembly.jar)(20MB!) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
+Download the avrohugger-tools jar for Scala [2.10](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.10/0.6.0/avrohugger-tools_2.10-0.6.0-assembly.jar) or Scala [2.11](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.11/0.6.0/avrohugger-tools_2.11-0.6.0-assembly.jar)(20MB!) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
 
 
 'generate' generates Scala case class definitions:
 
-`java -jar /path/to/avrohugger-tools_2.11-0.5.2-assembly.jar generate schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.11-0.6.0-assembly.jar generate schema user.avsc . `
 
 
 'generate-specific' generates case class definitions that extend SpecificRecordBase:
 
-`java -jar /path/to/avrohugger-tools_2.11-0.5.2-assembly.jar generate-specific schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.11-0.6.0-assembly.jar generate-specific schema user.avsc . `
 
+
+'generate-scavro' generates case class definitions that extend Scavro's AvroSerializable:
+
+`java -jar /path/to/avrohugger-tools_2.11-0.6.0-assembly.jar generate-scavro schema user.avsc . `
 
 ####`sbt-avrohugger`
 
@@ -104,9 +127,14 @@ Code generation is also available via a web app [found here](https://github.com/
 
 1) If your framework is one that relies on reflection to get the Schema, it will fail since Scala fields are private. Therefore preempt it by passing in a Schema to DatumReaders and DatumWriters (as in the Avro example above).
 
-2) Generated case class fields must be mutable (`var`) in order to be compatible with the SpecificRecord API.
+2) For the `SpecificRecord` format, generated case class fields must be mutable (`var`) in order to be compatible with the SpecificRecord API.
 
-3) When the input is a case class definition string, import statements are not supported, please use fully qualified type names if using records from multiple namespaces.
+3) When the input is a case class definition string, import statements are not supported, please use fully qualified type names if using records/classes from multiple namespaces.
+
+4) By default, a schemas namespace is used as a package name. In the case of the Scavro output format, the default is the namespace with `model` appended. 
+
+5) While Scavro format uses custom namespaces in a way that leaves it unaffected, most formats fail on on schemas with records within unions (see [avro forum](see http://apache-avro.679487.n3.nabble.com/Deserialize-with-different-schema-td4032782.html)).
+
 
 
 ## Future
@@ -128,6 +156,7 @@ Contributors:
 - [Marius Soutier](https://github.com/mariussoutier)
 - [Paul Pearcy](https://github.com/ppearcy)
 - [Stefano Galarraga](https://github.com/galarragas)
+- [Brian London](https://github.com/BrianLondon)
 
 
 #### Criticism is appreciated. Fork away, just make sure the tests pass before sending a pull request.

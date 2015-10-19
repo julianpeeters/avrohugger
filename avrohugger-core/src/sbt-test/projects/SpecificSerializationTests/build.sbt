@@ -1,8 +1,8 @@
-seq( sbtavrohugger.SbtAvrohugger.specificAvroSettings : _*)
+sbtavrohugger.SbtAvrohugger.specificAvroSettings
 
 organization := "com.julianpeeters"
 
-name := "datatype-serializaton-tests"
+name := "datatype-specific-serializaton-tests"
 
 version := "0.2"
 

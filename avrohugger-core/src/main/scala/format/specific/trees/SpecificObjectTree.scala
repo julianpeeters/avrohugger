@@ -2,6 +2,7 @@ package avrohugger
 package format
 package specific
 package trees
+
 import methods._
 
 import treehugger.forest._
@@ -18,6 +19,7 @@ object SpecificObjectTree {
     // register  types
     val classSymbol = RootClass.newClass(schema.getName)
     classStore.accept(schema, classSymbol)
+
     val ParserClass = RootClass.newClass("org.apache.avro.Schema.Parser")
 
     // new val

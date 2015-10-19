@@ -3,6 +3,8 @@ package format
 package standard
 
 import avrohugger.input.DependencyInspector._
+import avrohugger.input.NestedSchemaExtractor._
+
 import org.apache.avro.Schema
 import org.apache.avro.Schema.Field
 import org.apache.avro.Schema.Type.{ENUM, RECORD}
@@ -16,12 +18,13 @@ object StandardTreehugger {
 	def asScalaCodeString(
 		classStore: ClassStore,
 		schema: Schema, 
-		namespace: Option[String]): String = {
+		namespace: Option[String],
+    typeMatcher: TypeMatcher): String = {
 
     val imports = if( isRecord(schema) ) getImports(schema, namespace) else List.empty
 
     val topLevelDef = schema.getType match {
-      case RECORD => StandardCaseClassTree.toCaseClassDef(classStore, namespace, schema)
+      case RECORD => StandardCaseClassTree.toCaseClassDef(classStore, namespace, schema, typeMatcher)
       case ENUM => StandardObjectTree.toObjectDef(classStore, schema)
       case _ => sys.error("Only RECORD and ENUM can be top-level definitions")
     }
@@ -41,15 +44,15 @@ object StandardTreehugger {
   def isRecord(schema: Schema): Boolean = ( schema.getType == RECORD )
 
   def getImports(schema: Schema, currentNamespace: Option[String]): Iterable[Import] = {
-    schema
-      .getFields.toList
-      .filter( field => getReferredNamespace(field.schema).isDefined )
-      .filter( field => getReferredNamespace(field.schema) != currentNamespace )
-      .distinct
-      .groupBy( field => getReferredNamespace(field.schema).get )
-      .map { _ match { case(packageName, fields) =>
-        IMPORT(packageName, fields.map( getReferredTypeName ) )
-      }
+    val topLevelSchemas: List[Schema] = schema::(getNestedSchemas(schema)) 
+      topLevelSchemas.filter(isRecord).flatMap(s => s.getFields)
+        .filter( field => getReferredNamespace(field.schema).isDefined )
+        .filter( field => getReferredNamespace(field.schema) != currentNamespace )
+        .distinct
+        .groupBy( field => getReferredNamespace(field.schema).get )
+        .map { _ match { case(packageName, fields) =>
+          IMPORT(packageName, fields.map( getReferredTypeName ).distinct )
+        }
     }
   }
 }

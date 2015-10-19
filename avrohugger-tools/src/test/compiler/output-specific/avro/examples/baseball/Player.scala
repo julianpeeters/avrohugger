@@ -30,20 +30,13 @@ case class Player(var number: Int, var first_name: String, var last_name: String
         value
       }.asInstanceOf[Int]
       case pos if pos == 1 => this.first_name = {
-        value match {
-          case (value: org.apache.avro.util.Utf8) => value.toString
-          case _ => value
-        }
+        value.toString
       }.asInstanceOf[String]
       case pos if pos == 2 => this.last_name = {
-        value match {
-          case (value: org.apache.avro.util.Utf8) => value.toString
-          case _ => value
-        }
+        value.toString
       }.asInstanceOf[String]
       case pos if pos == 3 => this.nicknames = {
         value match {
-          case null => null
           case (array: org.apache.avro.generic.GenericData.Array[_]) => {
             scala.collection.JavaConversions.asScalaIterator(array.iterator).toList map { x =>
               x

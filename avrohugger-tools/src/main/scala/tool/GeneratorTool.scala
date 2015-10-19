@@ -22,13 +22,15 @@ import scala.collection.JavaConversions._
 import scala.util.Try
 
 
-
-class GeneratorTool(sourceFormat: SourceFormat) extends Tool {
 /**
- * A Tool for generatign Scala case classes from schemas 
+ * A Tool for generating Scala case classes from schemas 
  * Adapted from https://github.com/apache/avro/blob/branch-1.7/lang/java/tools/src/main/java/org/apache/avro/tool/SpecificCompilerTool.java
  */
-  val generator = new Generator(sourceFormat)
+class GeneratorTool(sourceFormat: SourceFormat, 
+  scalaCustomTypes: Map[String, String] = Map.empty,
+  scalaCustomNamespace: Map[String, String] = Map.empty) extends Tool {
+
+  val generator = new Generator(sourceFormat, scalaCustomTypes, scalaCustomNamespace)
 
   @Override
   def run(in: InputStream, out: PrintStream, err: PrintStream, args: List[String]): Int = {

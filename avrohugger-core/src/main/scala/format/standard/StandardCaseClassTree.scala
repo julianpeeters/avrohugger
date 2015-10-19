@@ -15,13 +15,14 @@ object StandardCaseClassTree {
 	def toCaseClassDef(
     classStore: ClassStore, 
     namespace: Option[String], 
-    schema: Schema) = {
+    schema: Schema,
+    typeMatcher: TypeMatcher) = {
 		// register new type
     val classSymbol = RootClass.newClass(schema.getName)
     classStore.accept(schema, classSymbol)
     val params: List[ValDef] = schema.getFields.toList.map { field =>
       val fieldName = field.name
-      val fieldType = TypeMatcher.toType(classStore, namespace, field.schema)
+      val fieldType = typeMatcher.toScalaType(classStore, namespace, field.schema)
       PARAM(fieldName, fieldType): ValDef
     }
     // generate class definition

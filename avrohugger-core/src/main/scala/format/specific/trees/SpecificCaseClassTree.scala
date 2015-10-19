@@ -2,7 +2,9 @@ package avrohugger
 package format
 package specific
 package trees
-import methods._
+
+import matchers.{ DefaultParamMatcher, DefaultValueMatcher }
+import methods.{ GetGenerator, GetSchemaGenerator, PutGenerator }
 
 import treehugger.forest._
 import definitions._
@@ -17,7 +19,8 @@ object SpecificCaseClassTree {
 	def toCaseClassDef(
     classStore: ClassStore, 
     namespace: Option[String], 
-    schema: Schema) = {
+    schema: Schema,
+    typeMatcher: TypeMatcher) = {
 
     // register new type
     val classSymbol = RootClass.newClass(schema.getName)
@@ -26,7 +29,7 @@ object SpecificCaseClassTree {
     // generate list of constructor parameters
     val params: List[ValDef] = schema.getFields.toList.map { field =>
       val fieldName = field.name
-      val fieldType = TypeMatcher.toType(classStore, namespace, field.schema)
+      val fieldType = typeMatcher.toScalaType(classStore, namespace, field.schema)
       VAR(fieldName, fieldType) := DefaultValueMatcher.getDefaultValue(field)
     }
 
@@ -44,7 +47,7 @@ object SpecificCaseClassTree {
     // methods - first add an index the the schema's fields
     val indexedFields = schema.getFields.toList.zipWithIndex.map(p => IndexedField(p._1, p._2))
     val defGet = GetGenerator.toDef(indexedFields)
-    val defPut = PutGenerator.toDef(classStore, namespace, indexedFields)
+    val defPut = PutGenerator.toDef(classStore, namespace, indexedFields, typeMatcher)
     val defGetSchema = GetSchemaGenerator(classSymbol).toDef
 
     // define the class def with the members previously defined

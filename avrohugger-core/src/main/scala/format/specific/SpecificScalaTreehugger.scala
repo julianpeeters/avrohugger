@@ -3,6 +3,8 @@ package format
 package specific
 
 import avrohugger.input.DependencyInspector._
+import avrohugger.input.NestedSchemaExtractor._
+
 import org.apache.avro.Schema.Field
 import trees._
 
@@ -19,27 +21,31 @@ object SpecificScalaTreehugger {
   def asScalaCodeString(
     classStore: ClassStore, 
     namespace: Option[String], 
-    schema: Schema): String = {
+    schema: Schema,
+    typeMatcher: TypeMatcher): String = {
 
     // register new type
     val classSymbol = RootClass.newClass(schema.getName)
     classStore.accept(schema, classSymbol)
 
+    def isRecord(schema: Schema): Boolean = ( schema.getType == Schema.Type.RECORD )
+
     // imports in case a field type is from a different namespace
-    val imports =
-      schema
-        .getFields.toList
+    val imports = {
+      val topLevelSchemas: List[Schema] = schema::(getNestedSchemas(schema)) 
+      topLevelSchemas.filter(isRecord).flatMap(s => s.getFields)
         .filter(field => getReferredNamespace(field.schema).isDefined )
         .filter(field => getReferredNamespace(field.schema) != namespace)
         .distinct
         .groupBy(field => getReferredNamespace(field.schema).get )
         .map { _ match { case(packageName, fields) =>
-            IMPORT(packageName, fields.map( getReferredTypeName ) )
+            IMPORT(packageName, fields.map( getReferredTypeName ).distinct )
           }
         }
+    }
 
     // class definition
-    val classDef = SpecificCaseClassTree.toCaseClassDef(classStore, namespace, schema)
+    val classDef = SpecificCaseClassTree.toCaseClassDef(classStore, namespace, schema, typeMatcher)
 
     // companion object definition
     val objectDef = SpecificObjectTree.toObjectDef(classStore, schema)

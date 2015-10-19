@@ -19,10 +19,12 @@ object StandardObjectTree {
     // register new type
     val classSymbol = RootClass.newClass(schema.getName + ".Value")
     classStore.accept(schema, classSymbol)
+
     OBJECTDEF(schema.getName) withParents("Enumeration") := BLOCK(
       TYPEVAR(schema.getName) := REF("Value"),
       VAL(schema.getEnumSymbols.mkString(", ")) := REF("Value")
     )
+    
   }
   
 }
