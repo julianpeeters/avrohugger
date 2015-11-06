@@ -8,7 +8,7 @@ object BuildSettings {
 
   val buildSettings = Defaults.defaultSettings ++ scriptedSettings ++ Seq(
     organization := "com.julianpeeters",
-    version := "0.6.0",
+    version := "0.6.1",
     scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-Ywarn-value-discard"),
     scalaVersion := "2.11.7",
     crossScalaVersions := Seq("2.10.5", scalaVersion.value),
@@ -72,7 +72,7 @@ object MyBuild extends Build {
   lazy val avrohugger: Project = Project(
     "avrohugger",
     file("."),
-    settings = buildSettings 
+    settings = buildSettings
   ) aggregate(core, tools)
 
   lazy val core: Project = Project(
@@ -84,7 +84,7 @@ object MyBuild extends Build {
 
   lazy val tools: Project = Project(
     "avrohugger-tools",
-    file("avrohugger-tools"), 
+    file("avrohugger-tools"),
     settings = buildSettings)
     .settings(artifact in (Compile, assembly) := {
       val art = (artifact in (Compile, assembly)).value
@@ -95,7 +95,5 @@ object MyBuild extends Build {
       libraryDependencies += "org.apache.avro" % "avro-tools" % "1.7.7"
      )
     .dependsOn(core)
-     
+
 }
-
-

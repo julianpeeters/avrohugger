@@ -2,7 +2,7 @@
 package com.miguno.avro
 
 case class twitter_schema(var username: String, var tweet: String, var timestamp: Long) extends org.apache.avro.specific.SpecificRecordBase {
-  def this() = this("", "", 1L)
+  def this() = this("", "", 0L)
   def get(field: Int): AnyRef = {
     field match {
       case pos if pos == 0 => {

@@ -19,29 +19,20 @@ object DefaultParamMatcher {
 
     avroSchema.getType match {
 
-      case Type.BOOLEAN => TRUE
-      case Type.INT     => LIT(1)
-      case Type.LONG    => LIT(1L)
-      case Type.FLOAT   => LIT(1F)
-      case Type.DOUBLE  => LIT(1D)
+      case Type.BOOLEAN => FALSE
+      case Type.INT     => LIT(0)
+      case Type.LONG    => LIT(0L)
+      case Type.FLOAT   => LIT(0F)
+      case Type.DOUBLE  => LIT(0D)
       case Type.STRING  => LIT("")
       case Type.NULL    => NULL
-      case Type.ARRAY   => LIST(asDefaultParam(classStore, avroSchema.getElementType))
+      case Type.ARRAY   => NIL
       case Type.MAP     => MAKE_MAP(LIT("") ANY_-> asDefaultParam(classStore, avroSchema.getValueType))
       case Type.FIXED   => sys.error("the FIXED datatype is not yet supported")
       case Type.ENUM    => NULL // TODO Take first enum value?
       case Type.BYTES   => sys.error("the BYTES datatype is not yet supported")
       case Type.RECORD  => NEW(classStore.generatedClasses(avroSchema))
-      case Type.UNION   => {
-        val unionSchemas = avroSchema.getTypes.toList
-        // unions are represented as Scala Option[T], and thus unions must be of two types, one of them NULL
-          if (unionSchemas.length == 2 && unionSchemas.exists(schema => schema.getType == Type.NULL)) {
-            val maybeSchema = unionSchemas.find(schema => schema.getType != Type.NULL)
-            if (maybeSchema.isDefined ) SOME(asDefaultParam(classStore, maybeSchema.get))
-            else sys.error("no avro type found in this union")  
-          }
-          else sys.error("unions not yet supported beyond nullable fields")
-      }
+      case Type.UNION   => NONE
     }
   }
 

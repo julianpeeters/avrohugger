@@ -2,7 +2,7 @@
 package avro.examples.baseball
 
 case class Player(var number: Int, var first_name: String, var last_name: String, var nicknames: List[Nickname]) extends org.apache.avro.specific.SpecificRecordBase {
-  def this() = this(1, "", "", List(new Nickname))
+  def this() = this(0, "", "", Nil)
   def get(field: Int): AnyRef = {
     field match {
       case pos if pos == 0 => {
