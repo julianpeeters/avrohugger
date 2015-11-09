@@ -1,0 +1,8 @@
+@namespace("example.idl")
+protocol RecursiveProtocol {
+
+  record Recursive {
+    string name;
+    union {null, Recursive} recursive;
+  }
+}
