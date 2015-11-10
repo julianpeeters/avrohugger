@@ -41,7 +41,7 @@ Supports generating case classes with arbitrary fields of the following datatype
 
 #####Get the dependency with:
 
-    "com.julianpeeters" % "avrohugger-core" %% "0.6.1"
+    "com.julianpeeters" % "avrohugger-core" %% "0.7.0"
 
 
 #####Description:
@@ -96,22 +96,22 @@ Namespaces can be reassigned by instantiating a `Generator` with a custom namesp
 ####`avrohugger-tools`
 
 
-Download the avrohugger-tools jar for Scala [2.10](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.10/0.6.1/avrohugger-tools_2.10-0.6.1-assembly.jar) or Scala [2.11](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.11/0.6.1/avrohugger-tools_2.11-0.6.1-assembly.jar)(20MB!) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
+Download the avrohugger-tools jar for Scala [2.10](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.10/0.7.0/avrohugger-tools_2.10-0.7.0-assembly.jar) or Scala [2.11](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.11/0.7.0/avrohugger-tools_2.11-0.7.0-assembly.jar)(20MB!) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
 
 
 'generate' generates Scala case class definitions:
 
-`java -jar /path/to/avrohugger-tools_2.11-0.6.1-assembly.jar generate schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.11-0.7.0-assembly.jar generate schema user.avsc . `
 
 
 'generate-specific' generates case class definitions that extend SpecificRecordBase:
 
-`java -jar /path/to/avrohugger-tools_2.11-0.6.1-assembly.jar generate-specific schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.11-0.7.0-assembly.jar generate-specific schema user.avsc . `
 
 
 'generate-scavro' generates case class definitions that extend Scavro's AvroSerializable:
 
-`java -jar /path/to/avrohugger-tools_2.11-0.6.1-assembly.jar generate-scavro schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.11-0.7.0-assembly.jar generate-scavro schema user.avsc . `
 
 ####`sbt-avrohugger`
 
@@ -135,6 +135,12 @@ Code generation is also available via a web app [found here](https://github.com/
 
 5) While Scavro format uses custom namespaces in a way that leaves it unaffected, most formats fail on on schemas with records within unions (see [avro forum](see http://apache-avro.679487.n3.nabble.com/Deserialize-with-different-schema-td4032782.html)).
 
+
+## "Best Practices"
+
+1) Avoid recursive schemas since they can cause compatibility issues if trying to flow data into a system that doesn't support them (e.g., Hive).
+2) Use namespaces to ensure compatibility when importing into Java/Scala.
+3) Use default field values in case of future schema evolution.
 
 
 ## Future
