@@ -217,6 +217,22 @@ class StandardGeneratorSpec extends mutable.Specification {
       """.stripMargin.trim
   }
 
+
+  "correctly generate a recursive case class from IDL" in {
+    val infile = new java.io.File("avrohugger-core/src/test/avro/recursive.avdl")
+    val gen = new Generator(Standard)
+    gen.fileToFile(infile)
+
+    val source = scala.io.Source.fromFile("target/generated-sources/example/idl/Recursive.scala").mkString
+    source ====
+      """
+        |/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
+        |package example.idl
+        |
+        |case class Recursive(name: String, recursive: Option[Recursive])
+      """.stripMargin.trim
+  }
+
   "correctly generate enums" in {
     val infile = new java.io.File("avrohugger-core/src/test/avro/enums.avsc")
     val gen = new Generator(Standard)

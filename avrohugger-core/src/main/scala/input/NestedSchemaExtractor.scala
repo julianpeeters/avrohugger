@@ -11,7 +11,7 @@ object NestedSchemaExtractor {
   // if a record is found, extract nested RECORDs and ENUMS (i.e. top-level types) 
   def getNestedSchemas(schema: Schema): List[Schema] = {
 
-    def extract(schema: Schema): List[Schema] = {
+    def extract(schema: Schema, fieldPath: List[String] = List.empty): List[Schema] = {
     schema.getType match {
 
       case RECORD =>
@@ -24,7 +24,9 @@ object NestedSchemaExtractor {
             case RECORD => {
               // if the field schema is one that has already been stored, use that one
               if (SchemaStore.schemas.contains(fieldSchema.getFullName)) List()
-              else fieldSchema :: extract(fieldSchema)
+              // if we've already seen this schema (recursive schemas) don't traverse further
+              else if (fieldPath.contains(fieldSchema.getFullName)) List()
+              else fieldSchema :: extract(fieldSchema, fieldSchema.getFullName :: fieldPath)
             }
             case UNION => fieldSchema.getTypes.asScala.toList.flatMap(x => flattenSchema(x))
             case ENUM => { //List(fieldSchema)
