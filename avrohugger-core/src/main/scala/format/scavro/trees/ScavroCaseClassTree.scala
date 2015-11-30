@@ -15,8 +15,8 @@ import scala.collection.JavaConversions._
 import scala.language.postfixOps
 
 object ScavroCaseClassTree {
-
-	def toCaseClassDef(
+  
+  def toCaseClassDef(
     classStore: ClassStore, 
     namespace: Option[String], 
     schema: Schema,
@@ -49,7 +49,8 @@ object ScavroCaseClassTree {
       )
     ) : Tree
 
-    caseClassTree
-	}
+    val treeWithScalaDoc = ScalaDocGen.docToScalaDoc(schema, caseClassTree)
+    treeWithScalaDoc
+  }
 
 }

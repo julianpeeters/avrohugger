@@ -50,7 +50,7 @@ object ScavroObjectTree {
     })
 
     // adapted from https://github.com/oysterbooks/scavro/blob/code_generation/src/main/scala/oyster/scavro/plugin/ScalaCodegen.scala
-    OBJECTDEF(ScalaClass) := BLOCK (
+    val objectTree = OBJECTDEF(ScalaClass) := BLOCK (
       DEF("reader") withFlags(Flags.IMPLICIT) := NEW(ANONDEF(AvroReader) := BLOCK(
         TYPEVAR("J") withFlags(Flags.OVERRIDE) := REF(JavaClass)
       )),
@@ -67,6 +67,9 @@ object ScavroObjectTree {
         )
       )
     )
+
+    val treeWithScalaDoc = ScalaDocGen.docToScalaDoc(schema, objectTree)
+    treeWithScalaDoc
   
   }
   

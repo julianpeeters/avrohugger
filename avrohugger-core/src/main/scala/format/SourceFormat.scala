@@ -23,7 +23,7 @@ trait SourceFormat {
     namespace: Option[String], 
     schema: Schema): String
 
-  // concrete member takes a schema and writes the definition to a file
+  // concrete member takes a schema and writes the definition to a fil
   def writeToFile(
     classStore: ClassStore, 
     namespace: Option[String], 

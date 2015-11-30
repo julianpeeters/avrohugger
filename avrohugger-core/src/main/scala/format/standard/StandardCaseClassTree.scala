@@ -12,7 +12,7 @@ import scala.collection.JavaConversions._
 
 object StandardCaseClassTree {
 
-	def toCaseClassDef(
+  def toCaseClassDef(
     classStore: ClassStore, 
     namespace: Option[String], 
     schema: Schema,
@@ -26,7 +26,11 @@ object StandardCaseClassTree {
       PARAM(fieldName, fieldType): ValDef
     }
     // generate class definition
-    CASECLASSDEF(classSymbol).withParams(params).tree
-	}
+    val caseClassTree = CASECLASSDEF(classSymbol).withParams(params).tree
+
+
+    val treeWithScalaDoc = ScalaDocGen.docToScalaDoc(schema, caseClassTree)
+    treeWithScalaDoc
+  }
 
 }

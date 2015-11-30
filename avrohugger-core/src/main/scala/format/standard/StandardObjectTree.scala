@@ -20,10 +20,13 @@ object StandardObjectTree {
     val classSymbol = RootClass.newClass(schema.getName + ".Value")
     classStore.accept(schema, classSymbol)
 
-    OBJECTDEF(schema.getName) withParents("Enumeration") := BLOCK(
+    val objectTree = OBJECTDEF(schema.getName) withParents("Enumeration") := BLOCK(
       TYPEVAR(schema.getName) := REF("Value"),
       VAL(schema.getEnumSymbols.mkString(", ")) := REF("Value")
     )
+
+    val treeWithScalaDoc = ScalaDocGen.docToScalaDoc(schema, objectTree)
+    treeWithScalaDoc
     
   }
   

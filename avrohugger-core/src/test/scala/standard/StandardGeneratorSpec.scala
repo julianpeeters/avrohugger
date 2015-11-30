@@ -29,6 +29,10 @@ class StandardGeneratorSpec extends mutable.Specification {
       val source = scala.io.Source.fromFile("target/generated-sources/AvroTypeProviderTestNoNamespace.scala").mkString
       source ===
         """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
+          |/**
+          | * Auto-generated schema
+          | * @param x Auto-Generated Field
+          | */
           |case class AvroTypeProviderTestNoNamespace(x: Int)
         """.stripMargin.trim
     }

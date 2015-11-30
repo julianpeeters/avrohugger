@@ -16,7 +16,7 @@ import scala.collection.JavaConversions._
 
 object SpecificCaseClassTree {
 
-	def toCaseClassDef(
+  def toCaseClassDef(
     classStore: ClassStore, 
     namespace: Option[String], 
     schema: Schema,
@@ -51,12 +51,16 @@ object SpecificCaseClassTree {
     val defGetSchema = GetSchemaGenerator(classSymbol).toDef
 
     // define the class def with the members previously defined
-    CASECLASSDEF(classSymbol).withParams(params).withParents(baseClass) := BLOCK(
+    val caseClassTree = CASECLASSDEF(classSymbol).withParams(params).withParents(baseClass) := BLOCK(
       defThis,
       defGet,
       defPut,
       defGetSchema
     )
-	}
+
+    val treeWithScalaDoc = ScalaDocGen.docToScalaDoc(schema, caseClassTree)
+    treeWithScalaDoc
+
+  }
 
 }

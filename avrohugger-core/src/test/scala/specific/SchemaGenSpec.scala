@@ -18,7 +18,11 @@ class SchemaGenSpec extends mutable.Specification {
 
        
       source ===
-        """case class Person(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
+        """/**
+          | * Auto-Generated Schema
+          | * @param name Auto-Generated Field
+          | */
+          |case class Person(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this("")
           |  def get(field: Int): AnyRef = {
           |    field match {
