@@ -78,6 +78,14 @@ where an input `File` can be `.avro`, `.avsc`, `.avpr`, or `.avdl`,
 and where an input `String` can be the string representation of an Avro schema, protocol, IDL, or a set of case classes that you'd like to have implement `SpecificRecordBase`.
 
 
+#####Doc Support:
+
+*`.avdl`: Comments that begin with `/**` are used as the documentation string for the type or field definition that follows the comment.
+
+*`.avsc`, `.avpr`, and `.avro`: Docs in Avro schemas are used to define a case class' ScalaDoc
+
+*`.scala`: ScalaDocs of case class definitions are used to define record and field docs
+
 #####Customizable Type Mapping: 
 
 Avro 'array' is represented by Scala `List` by default. `array` can be reassigned to either `Array` or `Seq` by instantiating a `Generator` with a custom type map:
