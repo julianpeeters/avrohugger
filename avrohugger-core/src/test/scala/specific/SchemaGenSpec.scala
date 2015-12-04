@@ -12,7 +12,11 @@ class SchemaGenSpec extends mutable.Specification {
 
     "Expand a standard case class in the default package to implement SpecificRecord" in {
       val schemaString = 
-        """case class Person(name: String)""".stripMargin
+        """/**
+          | * Auto-Generated Schema
+          | * @param name Auto-Generated Field
+          | */
+          |case class Person(name: String)""".stripMargin
       val gen = new Generator(SpecificRecord)
       val List(source) = gen.stringToStrings(schemaString)
 
@@ -49,12 +53,12 @@ class SchemaGenSpec extends mutable.Specification {
           |}""".stripMargin.trim
     }
 
-
+/*
 
 // Scala 2.10 can't parse package declarations, so rather than than maintain 
 // a separate branch, these tests (that pass for 2.11) get commented out until 
 // 2.10 is phased out.
-/*
+
     "Expand a standard case class with immutable fields to implement SpecificRecord" in {
       val schemaString = 
         """package example
@@ -67,6 +71,10 @@ class SchemaGenSpec extends mutable.Specification {
       source ===
         """package example
           |
+          |/**
+          | * Auto-Generated Schema
+          | * @param name Auto-Generated Field
+          | */
           |case class Person(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this("")
           |  def get(field: Int): AnyRef = {
@@ -95,15 +103,22 @@ class SchemaGenSpec extends mutable.Specification {
     }
 
 
-
     "Expand a two packages to implement SpecificRecord" in {
       val schemaString = 
         """package example
           |
+          |/**
+          | * Auto-Generated Schema
+          | * @param name Auto-Generated Field
+          | */
           |case class Person(name: String)
           |
           |package test
           |
+          |/**
+          | * Auto-Generated Schema
+          | * @param name Auto-Generated Field
+          | */
           |case class Vehicle(name: String)""".stripMargin
       val gen = new Generator(SpecificRecord)
       val List(sourcePerson, sourceVehicle) = gen.stringToStrings(schemaString)
@@ -112,6 +127,10 @@ class SchemaGenSpec extends mutable.Specification {
       sourcePerson ===
         """package example
           |
+          |/**
+          | * Auto-Generated Schema
+          | * @param name Auto-Generated Field
+          | */
           |case class Person(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this("")
           |  def get(field: Int): AnyRef = {
@@ -141,6 +160,10 @@ class SchemaGenSpec extends mutable.Specification {
       sourceVehicle ===
         """package test
           |
+          |/**
+          | * Auto-Generated Schema
+          | * @param name Auto-Generated Field
+          | */
           |case class Vehicle(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this("")
           |  def get(field: Int): AnyRef = {
@@ -168,6 +191,7 @@ class SchemaGenSpec extends mutable.Specification {
           |}""".stripMargin.trim
           
     }
+
 
 
     "Expand a two dependent packages to implement SpecificRecord" in {
@@ -484,13 +508,21 @@ class SchemaGenSpec extends mutable.Specification {
           |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Pet\",\"doc\":\"Auto-Generated Schema\",\"fields\":[{\"name\":\"name\",\"type\":\"string\",\"doc\":\"Auto-Generated Field\"}]}")
           |}""".stripMargin.trim
     }
-
+*/
     "Expand two case classes with immutable fields to implement SpecificRecord" in {
       val schemaString = 
         """
           |package example
           |
+          |/**
+          | * Auto-Generated Schema
+          | * @param name Auto-Generated Field
+          | */
           |case class Person(name: String)
+          |/**
+          | * Auto-Generated Schema
+          | * @param name Auto-Generated Field
+          | */
           |case class Pet(name: String)""".stripMargin
       val gen = new Generator(SpecificRecord)
       val List(source1, source2) = gen.stringToStrings(schemaString)
@@ -499,6 +531,10 @@ class SchemaGenSpec extends mutable.Specification {
       source1 ===
         """package example
           |
+          |/**
+          | * Auto-Generated Schema
+          | * @param name Auto-Generated Field
+          | */
           |case class Person(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this("")
           |  def get(field: Int): AnyRef = {
@@ -528,6 +564,10 @@ class SchemaGenSpec extends mutable.Specification {
       source2 ===
         """package example
           |
+          |/**
+          | * Auto-Generated Schema
+          | * @param name Auto-Generated Field
+          | */
           |case class Pet(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this("")
           |  def get(field: Int): AnyRef = {
@@ -588,7 +628,7 @@ class SchemaGenSpec extends mutable.Specification {
           |}
           |
           |object Person {
-          |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Person\",\"doc\":\"Auto-Generated Schema\",\"fields\":[{\"name\":\"pet\",\"type\":{\"type\":\"record\",\"name\":\"Pet\",\"doc\":\"Auto-Generated Schema\",\"fields\":[{\"name\":\"name\",\"type\":\"string\",\"doc\":\"Auto-Generated Field\"}]},\"doc\":\"Auto-Generated Field\"}]}")
+          |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Person\",\"fields\":[{\"name\":\"pet\",\"type\":{\"type\":\"record\",\"name\":\"Pet\",\"fields\":[{\"name\":\"name\",\"type\":\"string\"}]}}]}")
           |}""".stripMargin.trim
 
       source2 ===
@@ -615,10 +655,10 @@ class SchemaGenSpec extends mutable.Specification {
           |}
           |
           |object Pet {
-          |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Pet\",\"doc\":\"Auto-Generated Schema\",\"fields\":[{\"name\":\"name\",\"type\":\"string\",\"doc\":\"Auto-Generated Field\"}]}")
+          |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Pet\",\"fields\":[{\"name\":\"name\",\"type\":\"string\"}]}")
           |}""".stripMargin.trim
     }
-
+/*
 
     "Expand two dependent case classes in a package to implement SpecificRecord" in {
       val schemaString = 

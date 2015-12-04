@@ -59,8 +59,14 @@ class StringInputParser {
 
     def tryCaseClass(codeStr: String): List[Schema] = {
       val compilationUnits = PackageSplitter.getCompilationUnits(codeStr)
-      val trees = compilationUnits.map(compUnit => Toolbox.toolBox.parse(compUnit))
-      val schemas = trees.flatMap(tree => TreeInputParser.parse(tree))
+      val scalaDocs = ScalaDocParser.getScalaDocs(compilationUnits)
+      val trees = compilationUnits.map(src => Toolbox.toolBox.parse(src))
+      val treesZippedWithDocs = trees.zip(scalaDocs)
+      val schemas = treesZippedWithDocs.flatMap(treeAndDocs => {
+        val tree = treeAndDocs._1
+        val docs = treeAndDocs._2
+        TreeInputParser.parse(tree, docs)
+      })
       TypecheckDependencyStore.knownClasses.clear
       schemas
     }

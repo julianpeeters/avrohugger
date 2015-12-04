@@ -16,7 +16,8 @@ import org.apache.avro.Schema
 
 object TreeInputParser {
 
-  def parse(tree: Tree): List[Schema] = {
+  def parse(tree: Tree, maybeScalaDocs: List[Option[String]]): List[Schema] = {
+
     //e.g. takes `package test.one; package dev.helper;`, returns `test.one.dev.helper`
     def squashNamespace(pkgTrees: Seq[RefTree]): Name = {
       def extractNamespace(pkgTree: RefTree) ={
@@ -33,21 +34,40 @@ object TreeInputParser {
       newTermName(packageString)
     }
 
-    def generateSchema(namespace: Option[Name], classDefTree: Tree): List[Schema] = {
+    def enforceSingleScalaDoc(className: String, maybeScalaDoc: List[Option[String]]) = {
+      maybeScalaDoc match {
+        case List(doc) => doc
+        case x => sys.error("Expected single ScalaDoc, found " + x)
+       }
+    }
+
+    def generateSchema(namespace: Option[Name], classDefTree: Tree, maybeScalaDocs: List[Option[String]]): List[Schema] = {
       classDefTree match {
         // case classes get mapped to records
         case t @ q"$mods class $className[..$tparams](..$fields)(...$rest) extends ..$parents { $self => ..$body }" => {
-          List(RecordSchemaGenerator.generateSchema(className.toString, namespace, fields)) 
+          val maybeScalaDoc = enforceSingleScalaDoc(className.toString, maybeScalaDocs)
+          List(RecordSchemaGenerator.generateSchema(className.toString, namespace, fields, maybeScalaDoc)) 
         }
         // objects that extend Enumeration get mapped to enums
         case t @ q"$mods object $objectName extends ..$parents { $self => ..$body }"  => {
           val values = body.collect{ case ValDef(mods, NameTag(name), tpt, tpe) => name }
-          List(EnumSchemaGenerator.generateSchema(objectName.toString, namespace, values)) 
+          val maybeScalaDoc = enforceSingleScalaDoc(objectName.toString, maybeScalaDocs)
+          List(EnumSchemaGenerator.generateSchema(objectName.toString, namespace, values, maybeScalaDoc)) 
         }
-        case definition => sys.error(s"""Unsupported definition. Expected case class or object defition, 
+        case definition => sys.error(s"""Unsupported definition. Expected case class or object definition, 
           but found $definition with tree: ${showRaw(definition)}""")
       }
-    } 
+    }
+
+    def resubmit(classDefs: List[Tree], individuallyPackaged: List[Tree], maybeScalaDocs: List[Option[String]]) = {
+      storeAsDependencies(classDefs)
+      val individuallyPackagedZippedWithmaybeScalaDocs = individuallyPackaged.zip(maybeScalaDocs)
+      individuallyPackagedZippedWithmaybeScalaDocs.reverse.map(treeWithDocs => {
+        val tree = treeWithDocs._1
+        val scalaDoc = List(treeWithDocs._2)
+        parse(tree, scalaDoc)
+      }).flatten
+    }
     
     // Reflective compilation can't seem to handle packages, so field types are typechecked
     // against manually provided classes as dependencies. (Object defs alone won't suffice!)
@@ -86,7 +106,7 @@ object TreeInputParser {
         val packageTrees = Seq(packageName8, packageName7, packageName6, packageName5, packageName4, packageName3, packageName2, packageName1)
         val namespace = Some(squashNamespace(packageTrees))
         storeAsDependencies(List(classDef))
-        generateSchema(namespace, classDef)
+        generateSchema(namespace, classDef, maybeScalaDocs)
       }
       // seven packages
       case compilationUnit @ q"""package $packageName7 {
@@ -100,7 +120,7 @@ object TreeInputParser {
         val packageTrees = Seq(packageName7, packageName6, packageName5, packageName4, packageName3, packageName2, packageName1)
         val namespace = Some(squashNamespace(packageTrees))
         storeAsDependencies(List(classDef))
-        generateSchema(namespace, classDef)
+        generateSchema(namespace, classDef, maybeScalaDocs)
       }
       // six packages
       case compilationUnit @ q"""package $packageName6 {
@@ -113,7 +133,7 @@ object TreeInputParser {
         val packageTrees = Seq(packageName6, packageName5, packageName4, packageName3, packageName2, packageName1)
         val namespace = Some(squashNamespace(packageTrees))
         storeAsDependencies(List(classDef))
-        generateSchema(namespace, classDef)
+        generateSchema(namespace, classDef, maybeScalaDocs)
       }
       // five packages
       case compilationUnit @ q"""package $packageName5 {
@@ -125,7 +145,7 @@ object TreeInputParser {
         val packageTrees = Seq(packageName5, packageName4, packageName3, packageName2, packageName1)
         val namespace = Some(squashNamespace(packageTrees))
         storeAsDependencies(List(classDef))
-        generateSchema(namespace, classDef)
+        generateSchema(namespace, classDef, maybeScalaDocs)
       }
       // four packages
       case compilationUnit @ q"""package $packageName4 {
@@ -136,7 +156,7 @@ object TreeInputParser {
         val packageTrees = Seq(packageName4, packageName3, packageName2, packageName1)
         val namespace = Some(squashNamespace(packageTrees))  
         storeAsDependencies(List(classDef))      
-        generateSchema(namespace, classDef)
+        generateSchema(namespace, classDef, maybeScalaDocs)
       }
       // three packages
       case compilationUnit @ q"""package $packageName3 {
@@ -146,7 +166,7 @@ object TreeInputParser {
         val packageTrees = Seq(packageName3, packageName2, packageName1)
         val namespace = Some(squashNamespace(packageTrees)) 
         storeAsDependencies(List(classDef))       
-        generateSchema(namespace, classDef)
+        generateSchema(namespace, classDef, maybeScalaDocs)
       }
       // two packages
       case compilationUnit @ q"""package $packageName2 {
@@ -156,20 +176,20 @@ object TreeInputParser {
         val packageTrees = Seq(packageName2, packageName1)
         val namespace = Some(squashNamespace(packageTrees))
         storeAsDependencies(List(classDef))
-        generateSchema(namespace, classDef)
+        generateSchema(namespace, classDef, maybeScalaDocs)
       }
       // single package
       case compilationUnit @ q"""package $packageName { $classDef }"""  => {
         val packageTrees = Seq(packageName)
         val namespace = Some(squashNamespace(packageTrees))
         storeAsDependencies(List(classDef))
-        generateSchema(namespace, classDef)
+        generateSchema(namespace, classDef, maybeScalaDocs)
       }
       // default package
       case classDef @ q"$mods class $name[..$tparams](..$fields)(...$rest) extends ..$parents { $self => ..$body }"  => {
         val namespace = None
         storeAsDependencies(List(classDef))
-        generateSchema(namespace, classDef)
+        generateSchema(namespace, classDef, maybeScalaDocs)
       }
 
 
@@ -186,16 +206,14 @@ object TreeInputParser {
       // default package
       case compilationUnit @ q"""..$classDefs"""  => {
         val individuallyPackaged = classDefs.map(cd => q"""$cd""")
-        storeAsDependencies(classDefs)
-        individuallyPackaged.reverse.map(tree => parse(tree)).flatten
+        resubmit(classDefs, individuallyPackaged, maybeScalaDocs)
       }
       // one package
       case compilationUnit @ q"""
         package $packageName { ..$classDefs }"""  => {
         val individuallyPackaged = classDefs.map(cd => q"""
           package $packageName { $cd }""")
-        storeAsDependencies(classDefs)
-        individuallyPackaged.reverse.map(tree => parse(tree)).flatten
+        resubmit(classDefs, individuallyPackaged, maybeScalaDocs)
       }
       // two package
       case compilationUnit @ q"""
@@ -204,8 +222,7 @@ object TreeInputParser {
         val individuallyPackaged = classDefs.map(cd => q"""
           package $packageName2 {
           package $packageName1 { $cd }}""")
-        storeAsDependencies(classDefs)
-        individuallyPackaged.reverse.map(tree => parse(tree)).flatten
+        resubmit(classDefs, individuallyPackaged, maybeScalaDocs)
       }
       // three package
       case compilationUnit @ q"""
@@ -216,8 +233,7 @@ object TreeInputParser {
           package $packageName3 {
           package $packageName2 {
           package $packageName1 { $cd }}}""")
-        storeAsDependencies(classDefs)
-        individuallyPackaged.reverse.map(tree => parse(tree)).flatten
+        resubmit(classDefs, individuallyPackaged, maybeScalaDocs)
       }
       // four package
       case compilationUnit @ q"""
@@ -230,8 +246,7 @@ object TreeInputParser {
           package $packageName3 {
           package $packageName2 {
           package $packageName1 { $cd }}}}""")
-        storeAsDependencies(classDefs)
-        individuallyPackaged.reverse.map(tree => parse(tree)).flatten
+        resubmit(classDefs, individuallyPackaged, maybeScalaDocs)
       }
       // five package
       case compilationUnit @ q"""
@@ -246,8 +261,7 @@ object TreeInputParser {
           package $packageName3 {
           package $packageName2 {
           package $packageName1 { $cd }}}}}""")
-        storeAsDependencies(classDefs)
-        individuallyPackaged.reverse.map(tree => parse(tree)).flatten
+        resubmit(classDefs, individuallyPackaged, maybeScalaDocs)
       }
 
       // six package
@@ -265,8 +279,7 @@ object TreeInputParser {
           package $packageName3 {
           package $packageName2 {
           package $packageName1 { $cd }}}}}}""")
-        storeAsDependencies(classDefs)
-        individuallyPackaged.reverse.map(tree => parse(tree)).flatten
+        resubmit(classDefs, individuallyPackaged, maybeScalaDocs)
       }
 
       // seven package
@@ -286,8 +299,7 @@ object TreeInputParser {
           package $packageName3 {
           package $packageName2 {
           package $packageName1 { $cd }}}}}}}""")
-        storeAsDependencies(classDefs)
-        individuallyPackaged.reverse.map(tree => parse(tree)).flatten
+        resubmit(classDefs, individuallyPackaged, maybeScalaDocs)
       }
 
       // eight package
@@ -309,16 +321,13 @@ object TreeInputParser {
           package $packageName3 {
           package $packageName2 {
           package $packageName1 { $cd }}}}}}}}""")
-        storeAsDependencies(classDefs)
-        individuallyPackaged.reverse.map(tree => parse(tree)).flatten
+        resubmit(classDefs, individuallyPackaged, maybeScalaDocs)
       }
       case EmptyTree=> List()
-      case x => sys.error(s"Unsupported class definition format: $x. 1) Imports not supported yet or 2) Package declerations cannot be more than eight levels deep.")
+      case x => sys.error(s"Unsupported class definition format: $x. 1) Imports not supported yet or 2) Package declarations cannot be more than eight levels deep.")
 
     }
     
-
-
 
   } 
 }

@@ -15,7 +15,11 @@ import scala.tools.reflect.ToolBox
 
 object FieldSchemaGenerator {
  
-  def toAvroField(namespace: Option[Name], nme: TermName, tpe: Type, dv: Tree) = {
+  def toAvroField(namespace: Option[Name], 
+    nme: TermName, 
+    tpe: Type, 
+    dv: Tree, 
+    maybeFieldDoc: Option[String]) = {
 
     //map is adapted from https://github.com/radlab/avro-scala-compiler-plugin/blob/master/src/main/scala/plugin/SchemaGen.scala
     def createSchema(tpe: Type) : Schema = {
@@ -79,12 +83,17 @@ object FieldSchemaGenerator {
         }
         case x => throw new UnsupportedOperationException("Could not generate schema. Cannot support yet: " + x )
       }
-    } 
+    }
+
+    val fieldDoc = maybeFieldDoc match {
+      case Some(doc) => doc
+      case None => null
+    }
 
     new Field(
       nme.toString.trim, 
       createSchema(tpe),
-      "Auto-Generated Field", 
+      fieldDoc, 
       JsonMatcher.toJsonNode(namespace, dv)
     )
   }
