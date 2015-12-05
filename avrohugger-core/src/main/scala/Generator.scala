@@ -60,7 +60,7 @@ class Generator(format: SourceFormat,
     val namespace: Option[String] = getReferredNamespace(schema)
     val topLevelSchemas: List[Schema] = getNestedSchemas(schema)
     //reversed to process nested classes first
-    topLevelSchemas.reverse.map(schema => { 
+    topLevelSchemas.distinct.reverse.map(schema => { 
       // pass in the top-level schema's namespace if the nested schema has none
       val ns = getReferredNamespace(schema) orElse namespace
       val codeString = sourceFormat.asDefinitionString(classStore, ns, schema)
