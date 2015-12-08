@@ -14,7 +14,7 @@ import scala.collection.JavaConversions._
 
 class JavaConverter(classStore: ClassStore, namespace: Option[String], typeMatcher: TypeMatcher) {
   
-  def checkCustomNumberType(maybeCustomNumber: Option[String], tree: Tree, nativeType: String): Tree = {
+  def checkCustomNumberType(maybeCustomNumber: Option[Class[_]], tree: Tree, nativeType: String): Tree = {
     maybeCustomNumber match {
       case Some(x) => tree DOT nativeType
       case None    => tree

@@ -55,9 +55,9 @@ class ScalaConverter(typeMatcher: TypeMatcher) {
       case Schema.Type.ARRAY => {
         val seqArgs = SEQARG(tree)
         val collection = typeMatcher.typeMap.get("array") match {
-          case Some("Array") => ARRAY(seqArgs)
-          case Some("List")  => LIST(seqArgs)
-          case Some("Seq")   => SEQ(seqArgs)
+          case Some(c) if c == classOf[Array[_]] => ARRAY(seqArgs)
+          case Some(c) if c == classOf[List[_]]  => LIST(seqArgs)
+          case Some(c) if c == classOf[Seq[_]]   => SEQ(seqArgs)
           // default array mapping is currently List, but only for historical reasons
           case _             => LIST(seqArgs) 
         }

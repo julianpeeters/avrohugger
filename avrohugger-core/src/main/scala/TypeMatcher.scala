@@ -13,35 +13,34 @@ import scala.collection.JavaConversions._
 
 class TypeMatcher {
 
-  // holds user-defined custom type mappings, e.g. ("array"->"Seq")
-  val typeMap: scala.collection.concurrent.Map[String, String] = {
-    JConcurrentMapWrapper(new ConcurrentHashMap[String, String]())
+  // holds user-defined custom type mappings, e.g. ("array"->classOf[Seq[_]])
+  val typeMap: scala.collection.concurrent.Map[String, Class[_]] = {
+    JConcurrentMapWrapper(new ConcurrentHashMap[String, Class[_]]())
   }
 
   // updates the type map to allow for custom avro to scala mappings
-  def updateTypeMap(avroToScalaMapEntry: (String, String)) {
+  def updateTypeMap(avroToScalaMapEntry: (String, Class[_])) {
     val _ = typeMap += avroToScalaMapEntry
   }
 
-  def checkCustomArrayType(maybeCustomArray: Option[String], elementType: Type) = {
+  def checkCustomArrayType(maybeCustomArray: Option[Class[_]], elementType: Type) = {
     maybeCustomArray match {
-      case Some("Array") => TYPE_ARRAY(elementType)
-      case Some("List")  => listType(elementType)
-      case Some("Seq")   => TYPE_SEQ(elementType)
+      case Some(c) if c == classOf[Array[_]] => TYPE_ARRAY(elementType)
+      case Some(c) if c == classOf[List[_]]  => listType(elementType)
+      case Some(c) if c == classOf[Seq[_]]   => TYPE_SEQ(elementType)
       // default array mapping is currently List, but only for historical reasons
       case _             => listType(elementType) 
     }
   }
 
-
   // Scavro allows number types to be remapped.
-  def checkCustomNumberType(maybeCustomNumber: Option[String], defaultClass: Symbol) = {
+  def checkCustomNumberType(maybeCustomNumber: Option[Class[_]], defaultClass: Symbol) = {
     maybeCustomNumber match {
-      case Some("Double") => DoubleClass
-      case Some("Float")  => FloatClass
-      case Some("Long")   => LongClass
-      case Some("Int")    => IntClass
-      case _              => defaultClass
+      case Some(c) if c == classOf[Double] => DoubleClass
+      case Some(c) if c == classOf[Float]  => FloatClass
+      case Some(c) if c == classOf[Long]   => LongClass
+      case Some(c) if c == classOf[Int]    => IntClass
+      case _                               => defaultClass
     }
   }
 

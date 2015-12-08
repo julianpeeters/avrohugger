@@ -19,7 +19,6 @@ object Standard extends SourceFormat {
     classStore: ClassStore, 
     namespace: Option[String], 
     schema: Schema): String = {
-
     val tree = StandardTreehugger.asScalaCodeString(classStore, schema, namespace, typeMatcher)
     treeToString(tree)
   }

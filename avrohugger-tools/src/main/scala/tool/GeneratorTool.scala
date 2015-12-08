@@ -27,10 +27,10 @@ import scala.util.Try
  * Adapted from https://github.com/apache/avro/blob/branch-1.7/lang/java/tools/src/main/java/org/apache/avro/tool/SpecificCompilerTool.java
  */
 class GeneratorTool(sourceFormat: SourceFormat, 
-  scalaCustomTypes: Map[String, String] = Map.empty,
-  scalaCustomNamespace: Map[String, String] = Map.empty) extends Tool {
+  avroScalaCustomTypes: Map[String, Class[_]] = Map.empty,
+  avroScalaCustomNamespace: Map[String, String] = Map.empty) extends Tool {
 
-  val generator = new Generator(sourceFormat, scalaCustomTypes, scalaCustomNamespace)
+  val generator = new Generator(sourceFormat, avroScalaCustomTypes, avroScalaCustomNamespace)
 
   @Override
   def run(in: InputStream, out: PrintStream, err: PrintStream, args: List[String]): Int = {

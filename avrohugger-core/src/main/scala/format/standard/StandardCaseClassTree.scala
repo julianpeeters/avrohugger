@@ -17,7 +17,9 @@ object StandardCaseClassTree {
     namespace: Option[String], 
     schema: Schema,
     typeMatcher: TypeMatcher) = {
-		// register new type
+    // register new type
+
+
     val classSymbol = RootClass.newClass(schema.getName)
     classStore.accept(schema, classSymbol)
     val params: List[ValDef] = schema.getFields.toList.map { field =>

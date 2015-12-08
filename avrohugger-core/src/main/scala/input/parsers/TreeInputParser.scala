@@ -52,8 +52,6 @@ object TreeInputParser {
         case t @ q"$mods object $objectName extends ..$parents { $self => ..$body }"  => {
           val values = body.collect{ case ValDef(mods, NameTag(name), tpt, tpe) => name }
           val maybeScalaDoc = enforceSingleScalaDoc(objectName.toString, maybeScalaDocs)
-println(values)
-println(maybeScalaDoc)
           List(EnumSchemaGenerator.generateSchema(objectName.toString, namespace, values, maybeScalaDoc)) 
         }
         case definition => sys.error(s"""Unsupported definition. Expected case class or object definition, 
@@ -80,7 +78,7 @@ println(maybeScalaDoc)
             TypecheckDependencyStore.accept(q"case class $className()")
           }
           case t @ q"$mods object $objectName extends ..$parents { $self => ..$body }"  => {
-            TypecheckDependencyStore.accept(t)
+            //Store as a class otherwise typecheck won't see it as a type
             TypecheckDependencyStore.accept(q" case class ${objectName.toTypeName}();")
           }
         }

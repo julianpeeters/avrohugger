@@ -14,8 +14,8 @@ import scala.collection.JavaConverters._
 
 // Unable to overload the methods of this class because outDir uses a default value
 class Generator(format: SourceFormat, 
-  scalaCustomTypes: Map[String, String] = Map.empty,
-  scalaCustomNamespace: Map[String, String] = Map.empty) {
+  avroSclalaCustomTypes: Map[String, Class[_]] = Map.empty,
+  avroScalaCustomNamespace: Map[String, String] = Map.empty) {
   val sourceFormat = format
   val defaultOutputDir = "target/generated-sources"
   lazy val fileParser = new FileInputParser
@@ -23,20 +23,23 @@ class Generator(format: SourceFormat,
   lazy val schemaParser = new Schema.Parser
   val classStore = new ClassStore
   val typeMatcher = sourceFormat.typeMatcher
-  scalaCustomTypes.foreach(typeMatcher.updateTypeMap)
-  scalaCustomNamespace.foreach(typeMatcher.updateNamespaceMap)
+  avroSclalaCustomTypes.foreach(typeMatcher.updateTypeMap)
+  avroScalaCustomNamespace.foreach(typeMatcher.updateNamespaceMap)
+
 
   // #### methods for writing definitions out to file ####
   def schemaToFile(
     schema: Schema, 
     outDir: String = defaultOutputDir): Unit = {
+
     val topLevelNamespace: Option[String] = getReferredNamespace(schema)
-    val topLevelSchemas: List[Schema] = schema::(getNestedSchemas(schema))
-    topLevelSchemas.reverse.foreach { schema => // most-nested classes processed first
+//    val topLevelSchemas: List[Schema] = schema::(getNestedSchemas(schema))
+    val topLevelSchemas: List[Schema] = getNestedSchemas(schema)
+    // most-nested classes processed first
+    topLevelSchemas.reverse.distinct.foreach { schema =>
       // pass in the top-level schema's namespace if the nested schema has none
       val ns = getReferredNamespace(schema) orElse topLevelNamespace
       sourceFormat.writeToFile(classStore, ns, schema, outDir)
-      SchemaStore.schemas.clear
     }
   }
 
@@ -60,7 +63,7 @@ class Generator(format: SourceFormat,
     val namespace: Option[String] = getReferredNamespace(schema)
     val topLevelSchemas: List[Schema] = getNestedSchemas(schema)
     //reversed to process nested classes first
-    topLevelSchemas.distinct.reverse.map(schema => { 
+    topLevelSchemas.reverse.distinct.map(schema => {
       // pass in the top-level schema's namespace if the nested schema has none
       val ns = getReferredNamespace(schema) orElse namespace
       val codeString = sourceFormat.asDefinitionString(classStore, ns, schema)
@@ -72,7 +75,7 @@ class Generator(format: SourceFormat,
   def stringToStrings(schemaStr: String): List[String] = {
     val schemas = stringParser.getSchemas(schemaStr)
     // reverse to restore printing order after processing, top-level classes first 
-    val codeStrings = schemas.flatMap(schema => schemaToStrings(schema)).reverse
+    val codeStrings = schemas.flatMap(schema => schemaToStrings(schema)).reverse.distinct
     //reset the schema store after processing the whole submission
     SchemaStore.schemas.clear
     codeStrings

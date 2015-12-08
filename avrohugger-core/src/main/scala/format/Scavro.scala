@@ -20,7 +20,7 @@ object Scavro extends SourceFormat {
   override def fileExt(schema: Schema) = ".scala"
 
   val typeMatcher = new TypeMatcher
-  typeMatcher.updateTypeMap("array"->"Array")
+  typeMatcher.updateTypeMap("array"-> classOf[Array[_]])
 
   override def asDefinitionString(
     classStore: ClassStore, 

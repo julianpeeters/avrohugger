@@ -25,6 +25,7 @@ object RecordSchemaGenerator  {
     // and later the FieldSchemaGenerator's type matcher must be passed the field's 
     // namespace explicitly.
     def typeCheck(t: Tree) = {
+
       val dependencies = TypecheckDependencyStore.knownClasses.values.toList
       Toolbox.toolBox.typeCheck(q"..$dependencies; {type T = $t}") match {
 	case x @ Block(classDefs, Block(List(TypeDef(mods, name, tparams, rhs)), const)) => rhs.tpe

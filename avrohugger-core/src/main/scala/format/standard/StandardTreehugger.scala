@@ -15,7 +15,7 @@ import scala.collection.JavaConversions._
 
 object StandardTreehugger {
 
-	def asScalaCodeString(
+  def asScalaCodeString(
 		classStore: ClassStore,
 		schema: Schema, 
 		namespace: Option[String],
