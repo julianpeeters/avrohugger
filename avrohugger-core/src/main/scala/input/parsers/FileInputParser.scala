@@ -34,7 +34,7 @@ class FileInputParser {
       case UNION => {
         val types = s.getTypes.asScala.toList
         if (types.length == 1) types.head
-        else sys.error("Expected a single top-level record, found a union of more than one type: " + types)
+        else sys.error("Unions, beyond nullable fields, are not supported. Found a union of more than one type: " + types)
       }
       case RECORD => s
       case ENUM => s
@@ -42,4 +42,3 @@ class FileInputParser {
     })
   }
 }
-
