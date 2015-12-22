@@ -13,12 +13,12 @@ Schema-to-case-class code generation for working with Avro in Scala.
 
 -`Standard` Vanilla case classes (for use with [Scalavro](https://github.com/GenslerAppsPod/scalavro), [Salat-Avro](https://github.com/julianpeeters/salat-avro), [gfc-avro](https://github.com/gilt/gfc-avro), etc.)
 
--`SpecificRecord` Case classes that implement `SpecificRecordBase` and 
-therefore have mutable `var` fields (for use with the Avro Specific API - 
+-`SpecificRecord` Case classes that implement `SpecificRecordBase` and
+therefore have mutable `var` fields (for use with the Avro Specific API -
 Scalding, Spark, Avro, etc.).
 
--`Scavro` Case classes with immutable fields, intended to wrap Java generated 
-avro classes (for use with the [Scavro](https://github.com/oysterbooks/scavro) 
+-`Scavro` Case classes with immutable fields, intended to wrap Java generated
+avro classes (for use with the [Scavro](https://github.com/oysterbooks/scavro)
 runtime).
 
 #####Supports generating case classes with arbitrary fields of the following datatypes:
@@ -48,12 +48,12 @@ runtime).
 
 #####Get the dependency with:
 
-    "com.julianpeeters" % "avrohugger-core" %% "0.8.0"
+    "com.julianpeeters" % "avrohugger-core" %% "0.8.1"
 
 
 #####Description:
 
-Instantiate a `Generator` with `Standard`, `Scavro`, or `SpecificRecord` source 
+Instantiate a `Generator` with `Standard`, `Scavro`, or `SpecificRecord` source
 formats. Then use
 
 
@@ -83,8 +83,8 @@ where 'T' can be `File`, `Schema`, or `String`.
 where an input `File` can be `.avro`, `.avsc`, `.avpr`, or `.avdl`,
 
 
-and where an input `String` can be the string representation of an Avro schema, 
-protocol, IDL, or a set of case classes that you'd like to have implement 
+and where an input `String` can be the string representation of an Avro schema,
+protocol, IDL, or a set of case classes that you'd like to have implement
 `SpecificRecordBase`.
 
 
@@ -96,19 +96,23 @@ protocol, IDL, or a set of case classes that you'd like to have implement
 
 *`.scala`: ScalaDocs of case class definitions are used to define record and field docs
 
-#####Customizable Type Mapping: 
 
-Avro 'array' is represented by Scala `List` by default. `array` can be 
-reassigned to either `Array` or `Seq` by instantiating a `Generator` with a 
+_Note:_ Currently [Treehugger](http://eed3si9n.com/treehugger/comments.html#Scaladoc+style+comments) appears to generate Javadoc style docs (thus compatible with ScalaDoc style).
+
+
+#####Customizable Type Mapping:
+
+Avro 'array' is represented by Scala `List` by default. `array` can be
+reassigned to either `Array` or `Seq` by instantiating a `Generator` with a
 custom type map:
 
 
-    val generator = new Generator(SpecificRecord, scalaCustomType = Map("array"->"Array"))
+    val generator = new Generator(SpecificRecord, scalaCustomType = Map("array"->classOf[Array[_]]))
 
 
-#####Customizable Namespace Mapping: 
+#####Customizable Namespace Mapping:
 
-Namespaces can be reassigned by instantiating a `Generator` with a custom 
+Namespaces can be reassigned by instantiating a `Generator` with a custom
 namespace map (please see warnings below):
 
 
@@ -117,62 +121,62 @@ namespace map (please see warnings below):
 ####`avrohugger-tools`
 
 
-Download the avrohugger-tools jar for Scala [2.10](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.10/0.8.0/avrohugger-tools_2.10-0.8.0-assembly.jar) or Scala [2.11](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.11/0.8.0/avrohugger-tools_2.11-0.8.0-assembly.jar)(20MB!) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
+Download the avrohugger-tools jar for Scala [2.10](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.10/0.8.1/avrohugger-tools_2.10-0.8.1-assembly.jar) or Scala [2.11](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.11/0.8.1/avrohugger-tools_2.11-0.8.1-assembly.jar)(20MB!) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
 
 
 'generate' generates Scala case class definitions:
 
-`java -jar /path/to/avrohugger-tools_2.11-0.8.0-assembly.jar generate schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.11-0.8.1-assembly.jar generate schema user.avsc . `
 
 
 'generate-specific' generates definitions that extend SpecificRecordBase:
 
-`java -jar /path/to/avrohugger-tools_2.11-0.8.0-assembly.jar generate-specific schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.11-0.8.1-assembly.jar generate-specific schema user.avsc . `
 
 
 'generate-scavro' generates definitions that extend Scavro's AvroSerializable:
 
-`java -jar /path/to/avrohugger-tools_2.11-0.8.0-assembly.jar generate-scavro schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.11-0.8.1-assembly.jar generate-scavro schema user.avsc . `
 
 ####`sbt-avrohugger`
 
-Also available as an sbt plugin [found here](https://github.com/julianpeeters/sbt-avrohugger) 
-that adds a `generate` or `generate-specific` task to `compile` (an alternative 
+Also available as an sbt plugin [found here](https://github.com/julianpeeters/sbt-avrohugger)
+that adds a `generate` or `generate-specific` task to `compile` (an alternative
 to [macros](https://github.com/julianpeeters/avro-scala-macro-annotations)).
 
 
 ####`avro2caseclass`
 
-Code generation is also available via a web app 
-[found here](https://github.com/julianpeeters/avro2caseclass). Hosted at 
-Heroku on a hobbyist account, so it may take ~20 seconds to fire up the first 
+Code generation is also available via a web app
+[found here](https://github.com/julianpeeters/avro2caseclass). Hosted at
+Heroku on a hobbyist account, so it may take ~20 seconds to fire up the first
 time.
 
 
 ## Warnings
 
-1) If your framework is one that relies on reflection to get the Schema, it 
-will fail since Scala fields are private. Therefore preempt it by passing in 
+1) If your framework is one that relies on reflection to get the Schema, it
+will fail since Scala fields are private. Therefore preempt it by passing in
 a Schema to DatumReaders and DatumWriters (as in the Avro example above).
 
-2) For the `SpecificRecord` format, generated case class fields must be 
+2) For the `SpecificRecord` format, generated case class fields must be
 mutable (`var`) in order to be compatible with the SpecificRecord API.
 
-3) When the input is a case class definition string, import statements are 
-not supported, please use fully qualified type names if using records/classes 
+3) When the input is a case class definition string, import statements are
+not supported, please use fully qualified type names if using records/classes
 from multiple namespaces.
 
-4) By default, a schemas namespace is used as a package name. In the case of 
+4) By default, a schemas namespace is used as a package name. In the case of
 the Scavro output format, the default is the namespace with `model` appended.
 
-5) While Scavro format uses custom namespaces in a way that leaves it 
-unaffected, most formats fail on on schemas with records within unions 
+5) While Scavro format uses custom namespaces in a way that leaves it
+unaffected, most formats fail on schemas with records within unions
 (see [avro forum](see http://apache-avro.679487.n3.nabble.com/Deserialize-with-different-schema-td4032782.html)).
 
 
 ## "Best Practices"
 
-1) Avoid recursive schemas since they can cause compatibility issues if trying 
+1) Avoid recursive schemas since they can cause compatibility issues if trying
 to flow data into a system that doesn't support them (e.g., Hive).
 
 2) Use namespaces to ensure compatibility when importing into Java/Scala.
@@ -188,8 +192,8 @@ to flow data into a system that doesn't support them (e.g., Hive).
 
 The `scripted` task runs all tests.
 
-As per Doug Cutting's [recommendations](https://github.com/apache/avro/blob/trunk/lang/java/tools/src/test/java/org/apache/avro/tool/TestSpecificCompilerTool.java#L130) in the avro compiler tests, 
-the string-based tests in `test` are augmented by `scripted` tests that 
+As per Doug Cutting's [recommendations](https://github.com/apache/avro/blob/trunk/lang/java/tools/src/test/java/org/apache/avro/tool/TestSpecificCompilerTool.java#L130) in the avro compiler tests,
+the string-based tests in `test` are augmented by `scripted` tests that
 generate and compile source that is run in de/serialization tests.
 
 
