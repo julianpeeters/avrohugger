@@ -31,22 +31,36 @@ object ScalaDocGen {
       }
     }
 
+    def avroDocToScalaString(doc: String) = doc match {
+      case null => ""
+      case docString => docString
+    }
+
     // Need arbitrary number of fields, so can't use DocTags, must return String
     def getFieldFauxDocTags(schema: Schema): List[String] = {
       val docStrings = schema.getFields.toList.map(field => {
-        s"@param ${field.name} ${field.doc}"
+        val fieldName = field.name
+        val fieldDoc = avroDocToScalaString(field.doc)
+        s"@param $fieldName $fieldDoc"
       })
       docStrings
     }
 
-    def wrapWithDoc(schema: Schema, tree: Tree, docs: List[String]) = {
+    def wrapClassWithDoc(schema: Schema, tree: Tree, docs: List[String]) = {
+      if (topLevelHasDoc(schema) || aFieldHasDoc(schema)) tree.withDoc(docs)
+      else tree
+    }
+
+    def wrapEnumWithDoc(schema: Schema, tree: Tree, docs: List[String]) = {
       if (topLevelHasDoc(schema)) tree.withDoc(docs)
       else tree
     }
 
+    val schemaDocString = avroDocToScalaString(schema.getDoc)
+
     schema.getType match {
-      case RECORD => wrapWithDoc(schema, tree, schema.getDoc::getFieldFauxDocTags(schema))
-      case ENUM => wrapWithDoc(schema, tree, List(schema.getDoc))
+      case RECORD => wrapClassWithDoc(schema, tree, schemaDocString::getFieldFauxDocTags(schema))
+      case ENUM => wrapEnumWithDoc(schema, tree, List(schemaDocString))
       case _ => sys.error("Error generating ScalaDoc from Avro doc. Not an ENUM or RECORD")
     }
 

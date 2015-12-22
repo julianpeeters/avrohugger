@@ -1,0 +1,16 @@
+@namespace("com.example")
+/**
+Example courtesy https://github.com/delagoya. This is a comment for the whole protocol
+*/
+
+protocol Example3 {
+
+/**
+
+The comment applies to the `NoSpaces3` record, but is not indented to the
+level of the record specification.
+*/
+  record NoSpaces3 {
+    string comment_property;
+  }
+}

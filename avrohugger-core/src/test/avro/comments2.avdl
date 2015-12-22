@@ -1,0 +1,12 @@
+@namespace("com.example")
+/**
+Example adapted from https://github.com/delagoya. This is a comment for the whole protocol
+*/
+
+protocol Example2 {
+
+  record NoSpaces2 {
+    /** This is a single line comment on a field, in a record that has no comment. */
+    string comment_property;
+  }
+}
