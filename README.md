@@ -90,11 +90,11 @@ protocol, IDL, or a set of case classes that you'd like to have implement
 
 #####Doc Support:
 
-*`.avdl`: Comments that begin with `/**` are used as the documentation string for the type or field definition that follows the comment.
+* `.avdl`: Comments that begin with `/**` are used as the documentation string for the type or field definition that follows the comment.
 
-*`.avsc`, `.avpr`, and `.avro`: Docs in Avro schemas are used to define a case class' ScalaDoc
+* `.avsc`, `.avpr`, and `.avro`: Docs in Avro schemas are used to define a case class' ScalaDoc
 
-*`.scala`: ScalaDocs of case class definitions are used to define record and field docs
+* `.scala`: ScalaDocs of case class definitions are used to define record and field docs
 
 
 _Note:_ Currently [Treehugger](http://eed3si9n.com/treehugger/comments.html#Scaladoc+style+comments) appears to generate Javadoc style docs (thus compatible with ScalaDoc style).
@@ -116,7 +116,7 @@ Namespaces can be reassigned by instantiating a `Generator` with a custom
 namespace map (please see warnings below):
 
 
-    val generator = new Generator(SpecificRecord, scalaCustomType = Map("array"->"Array"))   
+    val generator = new Generator(SpecificRecord, scalaCustomNamespace = Map("oldnamespace"->"newnamespace"))   
 
 ####`avrohugger-tools`
 
