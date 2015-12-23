@@ -107,7 +107,7 @@ reassigned to either `Array` or `Seq` by instantiating a `Generator` with a
 custom type map:
 
 
-    val generator = new Generator(SpecificRecord, scalaCustomType = Map("array"->classOf[Array[_]]))
+    val generator = new Generator(SpecificRecord, avroScalaCustomType = Map("array"->classOf[Array[_]]))
 
 
 #####Customizable Namespace Mapping:
@@ -116,7 +116,7 @@ Namespaces can be reassigned by instantiating a `Generator` with a custom
 namespace map (please see warnings below):
 
 
-    val generator = new Generator(SpecificRecord, scalaCustomNamespace = Map("oldnamespace"->"newnamespace"))   
+    val generator = new Generator(SpecificRecord, avroScalaCustomNamespace = Map("oldnamespace"->"newnamespace"))   
 
 ####`avrohugger-tools`
 
