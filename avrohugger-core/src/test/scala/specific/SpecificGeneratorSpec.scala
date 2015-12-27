@@ -195,10 +195,10 @@ class SpecificGeneratorSpec extends mutable.Specification {
         | * 
         | * DO NOT EDIT DIRECTLY
         | */
-        |package example;  
+        |package example;
         |@SuppressWarnings("all")
         |@org.apache.avro.specific.AvroGenerated
-        |public enum Direction { 
+        |public enum Direction {
         |  NORTH, SOUTH, EAST, WEST  ;
         |  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"enum\",\"name\":\"Direction\",\"namespace\":\"example\",\"symbols\":[\"NORTH\",\"SOUTH\",\"EAST\",\"WEST\"]}");
         |  public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
@@ -278,11 +278,11 @@ class SpecificGeneratorSpec extends mutable.Specification {
           |        embedded
           |      }.asInstanceOf[AnyRef]
           |      case pos if pos == 6 => {
-          |        java.util.Arrays.asList(({
+          |        scala.collection.JavaConversions.bufferAsJavaList({
           |          defaultArray map { x =>
           |            x
           |          }
-          |        }: _*))
+          |        }.toBuffer)
           |      }.asInstanceOf[AnyRef]
           |      case pos if pos == 7 => {
           |        optionalEnum match {
@@ -330,7 +330,7 @@ class SpecificGeneratorSpec extends mutable.Specification {
           |      }.asInstanceOf[Embedded]
           |      case pos if pos == 6 => this.defaultArray = {
           |        value match {
-          |          case (array: org.apache.avro.generic.GenericData.Array[_]) => {
+          |          case (array: java.util.List[_]) => {
           |            scala.collection.JavaConversions.asScalaIterator(array.iterator).toList map { x =>
           |              x
           |            }
