@@ -16,32 +16,40 @@ import org.specs2.mutable.Specification
 
 object SpecificTestUtil extends Specification {
 
-  def write[T <: SpecificRecordBase](file: File, record: T ) = {
+  def write[T <: SpecificRecordBase](file: File, records: List[T]) = {
     val userDatumWriter = new SpecificDatumWriter[T]
     val dataFileWriter = new DataFileWriter[T](userDatumWriter)
-      dataFileWriter.create(record.getSchema(), file);
-      dataFileWriter.append(record);
-      dataFileWriter.close();
+    dataFileWriter.create(records.head.getSchema, file);
+    records.foreach(record => dataFileWriter.append(record))
+    dataFileWriter.close();
   }
 
-  def writeThenRead[T <: SpecificRecordBase](record: T) = {
-    val fileName = s"${record.getClass.getName}"
-    val fileEnding = "avro"
-    val file = File.createTempFile(fileName, fileEnding)
-    file.deleteOnExit()
-
-    write(file, record)
-
+  def read[T <: SpecificRecordBase](file: File, records: List[T]) = {
     val dummyRecord = new GenericDatumReader[GenericRecord]
     val schema = new DataFileReader(file, dummyRecord).getSchema
     val userDatumReader = new SpecificDatumReader[T](schema)
     val dataFileReader = new DataFileReader[T](file, userDatumReader)
-    dataFileReader.next()
+    // Adapted from: https://github.com/tackley/avrohugger-list-issue/blob/master/src/main/scala/net/tackley/Reader.scala
+    // This isn't great scala, but represents how org.apache.avro.mapred.AvroInputFormat
+    // (via org.apache.avro.file.DataFileStream) interacts with the SpecificDatumReader.
+    var record: T = null.asInstanceOf[T]
+    var sameRecord: T = null.asInstanceOf[T]
+    val recordIter = records.iterator
+    while (dataFileReader.hasNext) {
+      sameRecord = dataFileReader.next(sameRecord)
+      record = recordIter.next
+    }
+    dataFileReader.close()
+    sameRecord must ===(record)
   }
 
-  def verifyWriteAndRead[T <: SpecificRecordBase](record: T) = {
-    val sameRecord = writeThenRead(record)
-    sameRecord must ===(record)
+  def verifyWriteAndRead[T <: SpecificRecordBase](records: List[T]) = {
+    val fileName = s"${records.head.getClass.getName}"
+    val fileEnding = "avro"
+    val file = File.createTempFile(fileName, fileEnding)
+    file.deleteOnExit()
+    write(file, records)
+    read(file, records)
   }
 
   def verifyEncodeDecode[T <: SpecificRecordBase](record: T) = {
