@@ -1,0 +1,8 @@
+@namespace("example.idl")
+
+protocol BinaryProtocol {
+
+  record Binary {
+    bytes data;
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "namespace": "example.proto",
+  "protocol": "BinaryProtocol",
+  "types": [
+    {"name": "Binary", "type": "record",
+      "fields": [
+        {"name": "data",   "type": "bytes"}
+      ]
+    }
+  ],
+  "messages": []
+}

@@ -314,6 +314,52 @@ class StandardGeneratorSpec extends mutable.Specification {
       """.stripMargin.trim
   }
 
+    "correctly generate bytes" in {
+    val infile = new java.io.File("avrohugger-core/src/test/avro/bytes.avsc")
+    val gen = new Generator(Standard)
+    gen.fileToFile(infile)
+
+    val sourceBytes = scala.io.Source.fromFile("target/generated-sources/example/Binary.scala").mkString
+    sourceBytes ====
+      """
+        |/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
+        |package example
+        |
+        |case class Binary(data: Array[Byte])
+      """.stripMargin.trim
+  }
+
+  "correctly generate bytes from protocol files" in {
+    val infile = new java.io.File("avrohugger-core/src/test/avro/bytes.avpr")
+    val gen = new Generator(Standard)
+    gen.fileToFile(infile)
+
+    val sourceBytes = scala.io.Source.fromFile("target/generated-sources/example/proto/Binary.scala").mkString
+    sourceBytes ====
+      """
+        |/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
+        |package example.proto
+        |
+        |case class Binary(data: Array[Byte])
+      """.stripMargin.trim
+  }
+
+  "correctly generate bytes from IDL files" in {
+    val infile = new java.io.File("avrohugger-core/src/test/avro/bytes.avdl")
+    val gen = new Generator(Standard)
+    gen.fileToFile(infile)
+
+    val sourceBytes = scala.io.Source.fromFile("target/generated-sources/example/idl/Binary.scala").mkString
+    sourceBytes ====
+      """
+        |/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
+        |package example.idl
+        |
+        |case class Binary(data: Array[Byte])
+      """.stripMargin.trim
+  }
+
+
   "correctly generate records depending on others defined in a different AVDL file" in {
     val importing = new java.io.File("avrohugger-core/src/test/avro/import.avdl")
     val gen = new Generator(Standard)
