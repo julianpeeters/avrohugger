@@ -180,6 +180,83 @@ class SpecificGeneratorSpec extends mutable.Specification {
           |}""".stripMargin.trim
     }
 
+    "correctly generate bytes with SCHEMA$" in {
+      val infile = new java.io.File("avrohugger-core/src/test/avro/bytes.avsc")
+      val gen = new Generator(SpecificRecord)
+      val outDir = gen.defaultOutputDir + "/specific/"
+      gen.fileToFile(infile, outDir)
+
+      val source = scala.io.Source.fromFile(s"$outDir/example/Binary.scala").mkString
+      source ====
+        """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
+          |package example
+          |
+          |case class Binary(var data: Array[Byte]) extends org.apache.avro.specific.SpecificRecordBase {
+          |  def this() = this(null)
+          |  def get(field: Int): AnyRef = {
+          |    field match {
+          |      case pos if pos == 0 => {
+          |        data
+          |      }.asInstanceOf[AnyRef]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |  }
+          |  def put(field: Int, value: Any): Unit = {
+          |    field match {
+          |      case pos if pos == 0 => this.data = {
+          |        value
+          |      }.asInstanceOf[Array[Byte]]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |    ()
+          |  }
+          |  def getSchema: org.apache.avro.Schema = Binary.SCHEMA$
+          |}
+          |
+          |object Binary {
+          |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Binary\",\"namespace\":\"example\",\"fields\":[{\"name\":\"data\",\"type\":\"bytes\"}]}")
+          |}""".stripMargin.trim
+    }
+
+    "correctly generate bytes in AVDLs with `SpecificRecord`" in {
+      val infile = new java.io.File("avrohugger-core/src/test/avro/bytes.avdl")
+      val gen = new Generator(SpecificRecord)
+      val outDir = gen.defaultOutputDir + "/specific/"
+      gen.fileToFile(infile, outDir)
+
+      val sourceRecord = scala.io.Source.fromFile(s"$outDir/example/idl/Binary.scala").mkString
+      sourceRecord ====
+        """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
+          |package example.idl
+          |
+          |case class Binary(var data: Array[Byte]) extends org.apache.avro.specific.SpecificRecordBase {
+          |  def this() = this(null)
+          |  def get(field: Int): AnyRef = {
+          |    field match {
+          |      case pos if pos == 0 => {
+          |        data
+          |      }.asInstanceOf[AnyRef]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |  }
+          |  def put(field: Int, value: Any): Unit = {
+          |    field match {
+          |      case pos if pos == 0 => this.data = {
+          |        value
+          |      }.asInstanceOf[Array[Byte]]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |    ()
+          |  }
+          |  def getSchema: org.apache.avro.Schema = Binary.SCHEMA$
+          |}
+          |
+          |object Binary {
+          |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Binary\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"data\",\"type\":\"bytes\"}]}")
+          |}""".stripMargin.trim
+    }
+
+
 
     "correctly generate nested enums in AVSCs with `SpecificRecord`" in {
       val infile = new java.io.File("avrohugger-core/src/test/avro/enums_nested.avsc")

@@ -68,7 +68,6 @@ object ScalaConverter {
         tree MATCH(mapConversion)
       }
       case Schema.Type.FIXED    => sys.error("the FIXED datatype is not yet supported")
-      case Schema.Type.BYTES    => sys.error("the BYTES datatype is not yet supported")
       case _ => tree
     }
   }

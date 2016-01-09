@@ -30,7 +30,7 @@ object DefaultParamMatcher {
       case Type.MAP     => MAKE_MAP(LIT("") ANY_-> asDefaultParam(classStore, avroSchema.getValueType))
       case Type.FIXED   => sys.error("the FIXED datatype is not yet supported")
       case Type.ENUM    => NULL // TODO Take first enum value?
-      case Type.BYTES   => sys.error("the BYTES datatype is not yet supported")
+      case Type.BYTES   => NULL
       case Type.RECORD  => NEW(classStore.generatedClasses(avroSchema))
       case Type.UNION   => NONE
     }

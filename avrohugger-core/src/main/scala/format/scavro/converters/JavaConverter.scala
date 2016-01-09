@@ -103,7 +103,6 @@ class JavaConverter(classStore: ClassStore, namespace: Option[String], typeMatch
       case Schema.Type.DOUBLE => checkCustomNumberType(typeMatcher.typeMap.get("double"), tree, "toDouble")
       case Schema.Type.LONG   => checkCustomNumberType(typeMatcher.typeMap.get("long"), tree, "toLong")
       case Schema.Type.FIXED  => sys.error("the FIXED datatype is not yet supported")
-      case Schema.Type.BYTES  => sys.error("the BYTES datatype is not yet supported")
       case _ => tree
     }
   }
