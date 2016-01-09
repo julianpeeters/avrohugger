@@ -44,7 +44,7 @@ object JavaConverter {
       			convertToJava(schema.getElementType, REF("x"))
       		)))
         }
-      	REF("java.util.Arrays.asList") APPLY(applyParam withType(TYPE_REF(SEQ_WILDCARD)))
+      	REF("scala.collection.JavaConversions.bufferAsJavaList") APPLY(applyParam DOT "toBuffer")
       }
       case Schema.Type.MAP      => {
         val HashMapClass = RootClass.newClass("java.util.HashMap[String, Any]")

@@ -36,7 +36,7 @@ object ScalaConverter {
       }
       case Schema.Type.STRING => tree TOSTRING
       case Schema.Type.ARRAY => {
-        val GenericDataArray = RootClass.newClass("org.apache.avro.generic.GenericData.Array[_]")
+        val JavaList = RootClass.newClass("java.util.List[_]")
         val applyParam = REF("array") DOT("iterator")
         val resultExpr = {
           BLOCK(
@@ -46,7 +46,7 @@ object ScalaConverter {
             .MAP(LAMBDA(PARAM("x")) ==> BLOCK(convertFromJava(schema.getElementType, REF("x"))))
           )
         }
-        val arrayConversion = CASE(ID("array") withType(GenericDataArray)) ==> resultExpr
+        val arrayConversion = CASE(ID("array") withType(JavaList)) ==> resultExpr
         tree MATCH(arrayConversion)
       }
       case Schema.Type.MAP => {
