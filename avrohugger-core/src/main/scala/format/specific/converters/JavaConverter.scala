@@ -21,8 +21,8 @@ object JavaConverter {
     schema.getType match {
       case Schema.Type.UNION => {
         // check if it's the kind of union that we support (i.e. nullable fields)
-        if (schema.getTypes.length != 2 || 
-           !schema.getTypes.map(x => x.getType).contains(Schema.Type.NULL) || 
+        if (schema.getTypes.length != 2 ||
+           !schema.getTypes.map(x => x.getType).contains(Schema.Type.NULL) ||
             schema.getTypes.filterNot(x => x.getType == Schema.Type.NULL).length != 1) {
           sys.error("Unions beyond nullable fields are not supported")
         }
@@ -44,13 +44,13 @@ object JavaConverter {
       			convertToJava(schema.getElementType, REF("x"))
       		)))
         }
-      	REF("java.util.Arrays.asList") APPLY(applyParam withType(TYPE_REF(SEQ_WILDCARD)))
+      	REF("scala.collection.JavaConversions.bufferAsJavaList") APPLY(applyParam DOT "toBuffer")
       }
       case Schema.Type.MAP      => {
         val HashMapClass = RootClass.newClass("java.util.HashMap[String, Any]")
-        BLOCK( 
+        BLOCK(
           VAL("map", HashMapClass) := NEW(HashMapClass),
-	        tree FOREACH( LAMBDA(PARAM("kvp")) ==> 
+	        tree FOREACH( LAMBDA(PARAM("kvp")) ==>
 	        	BLOCK(
 	        	  VAL("key") := REF("kvp._1"),
 	        	  VAL("value") := REF("kvp._2"),
@@ -64,5 +64,5 @@ object JavaConverter {
       case _ => tree
     }
   }
-  
+
 }

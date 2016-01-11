@@ -12,15 +12,11 @@ import scala.util.{ Try, Success, Failure }
 
 import Direction._
 
-  import test._
-
+import test._
 
 class EnumSpec extends Specification {
   "A generated case class with an `scala.Enumeration` field" should {
     "serialize and deserialize correctly" in {
-
-
-      println(AvroType[Direction].schema)
 
       val compassIO = AvroType[Compass].io
 
@@ -32,9 +28,8 @@ class EnumSpec extends Specification {
       val inputStream = new java.io.ByteArrayInputStream(bytes)
       val Success(sameRecord) = compassIO.read(inputStream)
 
-  
       sameRecord must ===(record)
-      
+
     }
   }
 }

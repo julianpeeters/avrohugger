@@ -4,7 +4,7 @@ Schema-to-case-class code generation for working with Avro in Scala.
 * `avrohugger-core`: Generate source code dynamically at runtime for evaluation at a later step
 * `avrohugger-tools`: Generate source code at the command line with the avrohugger-tools jar.
 
-#####Alternative Distributions:
+Alternative Distributions:
 
 * `sbt-avrohugger`: Generate source code at compile time with an sbt plugin [found here](https://github.com/julianpeeters/sbt-avrohugger).
 * `avro2caseclass`: Generate source code from a web app, [found here](https://github.com/julianpeeters/avro2caseclass).
@@ -48,7 +48,7 @@ runtime).
 
 #####Get the dependency with:
 
-    "com.julianpeeters" % "avrohugger-core" %% "0.8.1"
+    "com.julianpeeters" % "avrohugger-core" %% "0.8.2"
 
 
 #####Description:
@@ -90,11 +90,11 @@ protocol, IDL, or a set of case classes that you'd like to have implement
 
 #####Doc Support:
 
-*`.avdl`: Comments that begin with `/**` are used as the documentation string for the type or field definition that follows the comment.
+* `.avdl`: Comments that begin with `/**` are used as the documentation string for the type or field definition that follows the comment.
 
-*`.avsc`, `.avpr`, and `.avro`: Docs in Avro schemas are used to define a case class' ScalaDoc
+* `.avsc`, `.avpr`, and `.avro`: Docs in Avro schemas are used to define a case class' ScalaDoc
 
-*`.scala`: ScalaDocs of case class definitions are used to define record and field docs
+* `.scala`: ScalaDocs of case class definitions are used to define record and field docs
 
 
 _Note:_ Currently [Treehugger](http://eed3si9n.com/treehugger/comments.html#Scaladoc+style+comments) appears to generate Javadoc style docs (thus compatible with ScalaDoc style).
@@ -107,7 +107,7 @@ reassigned to either `Array` or `Seq` by instantiating a `Generator` with a
 custom type map:
 
 
-    val generator = new Generator(SpecificRecord, scalaCustomType = Map("array"->classOf[Array[_]]))
+    val generator = new Generator(SpecificRecord, avroScalaCustomType = Map("array"->classOf[Array[_]]))
 
 
 #####Customizable Namespace Mapping:
@@ -116,27 +116,27 @@ Namespaces can be reassigned by instantiating a `Generator` with a custom
 namespace map (please see warnings below):
 
 
-    val generator = new Generator(SpecificRecord, scalaCustomType = Map("array"->"Array"))   
+    val generator = new Generator(SpecificRecord, avroScalaCustomNamespace = Map("oldnamespace"->"newnamespace"))   
 
 ####`avrohugger-tools`
 
 
-Download the avrohugger-tools jar for Scala [2.10](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.10/0.8.1/avrohugger-tools_2.10-0.8.1-assembly.jar) or Scala [2.11](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.11/0.8.1/avrohugger-tools_2.11-0.8.1-assembly.jar)(20MB!) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
+Download the avrohugger-tools jar for Scala [2.10](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.10/0.8.2/avrohugger-tools_2.10-0.8.2-assembly.jar) or Scala [2.11](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.11/0.8.2/avrohugger-tools_2.11-0.8.2-assembly.jar)(20MB!) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
 
 
 'generate' generates Scala case class definitions:
 
-`java -jar /path/to/avrohugger-tools_2.11-0.8.1-assembly.jar generate schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.11-0.8.2-assembly.jar generate schema user.avsc . `
 
 
 'generate-specific' generates definitions that extend SpecificRecordBase:
 
-`java -jar /path/to/avrohugger-tools_2.11-0.8.1-assembly.jar generate-specific schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.11-0.8.2-assembly.jar generate-specific schema user.avsc . `
 
 
 'generate-scavro' generates definitions that extend Scavro's AvroSerializable:
 
-`java -jar /path/to/avrohugger-tools_2.11-0.8.1-assembly.jar generate-scavro schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.11-0.8.2-assembly.jar generate-scavro schema user.avsc . `
 
 ####`sbt-avrohugger`
 
