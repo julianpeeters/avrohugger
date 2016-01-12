@@ -356,7 +356,7 @@ class StandardGeneratorSpec extends mutable.Specification {
         |package example.idl
         |
         |case class Binary(data: Array[Byte])
-      """.stripMargin.trim
+        |""".stripMargin.trim
   }
 
 

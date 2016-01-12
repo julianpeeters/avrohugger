@@ -196,7 +196,7 @@ class SpecificGeneratorSpec extends mutable.Specification {
           |  def get(field: Int): AnyRef = {
           |    field match {
           |      case pos if pos == 0 => {
-          |        data
+          |        java.nio.ByteBuffer.wrap(data)
           |      }.asInstanceOf[AnyRef]
           |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
           |    }
@@ -204,7 +204,11 @@ class SpecificGeneratorSpec extends mutable.Specification {
           |  def put(field: Int, value: Any): Unit = {
           |    field match {
           |      case pos if pos == 0 => this.data = {
-          |        value
+          |        value match {
+          |          case (buffer: java.nio.ByteBuffer) => {
+          |            buffer.array()
+          |          }
+          |        }
           |      }.asInstanceOf[Array[Byte]]
           |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
           |    }
@@ -234,7 +238,7 @@ class SpecificGeneratorSpec extends mutable.Specification {
           |  def get(field: Int): AnyRef = {
           |    field match {
           |      case pos if pos == 0 => {
-          |        data
+          |        java.nio.ByteBuffer.wrap(data)
           |      }.asInstanceOf[AnyRef]
           |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
           |    }
@@ -242,7 +246,11 @@ class SpecificGeneratorSpec extends mutable.Specification {
           |  def put(field: Int, value: Any): Unit = {
           |    field match {
           |      case pos if pos == 0 => this.data = {
-          |        value
+          |        value match {
+          |          case (buffer: java.nio.ByteBuffer) => {
+          |            buffer.array()
+          |          }
+          |        }
           |      }.asInstanceOf[Array[Byte]]
           |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
           |    }

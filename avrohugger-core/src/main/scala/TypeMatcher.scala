@@ -129,7 +129,7 @@ class TypeMatcher {
         }
         case Schema.Type.NULL     => TYPE_REF("java.lang.Void")
         case Schema.Type.FIXED    => sys.error("the FIXED datatype is not yet supported")
-        case Schema.Type.BYTES    => sys.error("the BYTES datatype is not yet supported")
+        case Schema.Type.BYTES    => TYPE_REF("[]java.lang.Byte")
         case Schema.Type.RECORD   => TYPE_REF("J" + classStore.generatedClasses(schema))
         case Schema.Type.ENUM     => TYPE_REF("J" + classStore.generatedClasses(schema))
         case Schema.Type.UNION    => { 

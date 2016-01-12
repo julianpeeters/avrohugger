@@ -61,6 +61,9 @@ object JavaConverter {
         )
       }
       case Schema.Type.FIXED    => sys.error("the FIXED datatype is not yet supported")
+      case Schema.Type.BYTES => {
+        REF("java.nio.ByteBuffer") DOT "wrap" APPLY tree
+      }
       case _ => tree
     }
   }
