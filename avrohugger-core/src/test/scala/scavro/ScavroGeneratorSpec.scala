@@ -45,6 +45,48 @@ class ScavroGeneratorSpec extends mutable.Specification {
             |  }
             |}""".stripMargin
     }
+
+    "correctly generate a case class with bytes" in {
+      val infile = new java.io.File("avrohugger-core/src/test/avro/bytes.avpr")
+      val gen = new Generator(Scavro)
+      val outDir = gen.defaultOutputDir + "/scavro/"
+      gen.fileToFile(infile, outDir)
+      val source = scala.io.Source.fromFile(s"$outDir/example/proto/model/Binary.scala").mkString
+      source ===
+        """|/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
+            |package example.proto.model
+            |
+            |import org.apache.avro.Schema
+            |
+            |import com.scavro.{AvroMetadata, AvroReader, AvroSerializeable}
+            |
+            |import example.proto.{Binary => JBinary}
+            |
+            |case class Binary(data: Array[Byte]) extends AvroSerializeable {
+            |  type J = JBinary
+            |  override def toAvro: JBinary = {
+            |    new JBinary(java.nio.ByteBuffer.wrap(data))
+            |  }
+            |}
+            |
+            |object Binary {
+            |  implicit def reader = new AvroReader[Binary] {
+            |    override type J = JBinary
+            |  }
+            |  implicit val metadata: AvroMetadata[Binary, JBinary] = new AvroMetadata[Binary, JBinary] {
+            |    override val avroClass: Class[JBinary] = classOf[JBinary]
+            |    override val schema: Schema = JBinary.getClassSchema()
+            |    override val fromAvro: (JBinary) => Binary = {
+            |      (j: JBinary) => Binary(j.getData match {
+            |        case (buffer: java.nio.ByteBuffer) => {
+            |          buffer.array()
+            |        }
+            |      })
+            |    }
+            |  }
+            |}""".stripMargin
+    }
+
   }
 
 }
