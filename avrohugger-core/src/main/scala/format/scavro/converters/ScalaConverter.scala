@@ -81,7 +81,12 @@ class ScalaConverter(typeMatcher: TypeMatcher) {
         tree MATCH(mapConversion)
       }
       case Schema.Type.FIXED    => sys.error("the FIXED datatype is not yet supported")
-      case Schema.Type.BYTES    => sys.error("the BYTES datatype is not yet supported")
+      case Schema.Type.BYTES    => {
+        val JavaBuffer = RootClass.newClass("java.nio.ByteBuffer")
+        tree MATCH CASE(ID("buffer") withType(JavaBuffer)) ==> Block(
+          REF("buffer") DOT "array" APPLY()
+        )
+      }
       case _ => tree
     }
   }

@@ -66,4 +66,13 @@ class SpecificPrimitivesSpec extends Specification {
     }
   }
 
+  "A case class with an `Array[Bytes]` field" should {
+    "deserialize correctly" in {
+      val record1 = AvroTypeProviderTest69("hello world".getBytes)
+      val record2 = AvroTypeProviderTest69("hello galaxy".getBytes)
+      val records = List(record1, record2)
+      SpecificTestUtil.verifyWriteAndRead(records)
+    }
+  }
+
 }

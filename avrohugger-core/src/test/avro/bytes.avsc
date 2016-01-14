@@ -1,0 +1,8 @@
+{
+ "namespace": "example",
+ "type": "record",
+ "name": "Binary",
+ "fields": [
+     {"name": "data", "type": "bytes"}
+ ]
+}

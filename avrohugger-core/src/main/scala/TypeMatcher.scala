@@ -23,13 +23,12 @@ class TypeMatcher {
     val _ = typeMap += avroToScalaMapEntry
   }
 
-  def checkCustomArrayType(maybeCustomArray: Option[Class[_]], elementType: Type) = {
+  def checkCustomArrayType(maybeCustomArray: Option[Class[_]], elementType: Type, defaultType: Type => Type) = {
     maybeCustomArray match {
       case Some(c) if c == classOf[Array[_]] => TYPE_ARRAY(elementType)
       case Some(c) if c == classOf[List[_]]  => listType(elementType)
       case Some(c) if c == classOf[Seq[_]]   => TYPE_SEQ(elementType)
-      // default array mapping is currently List, but only for historical reasons
-      case _             => listType(elementType) 
+      case _             => defaultType(elementType)
     }
   }
 
@@ -65,7 +64,8 @@ class TypeMatcher {
       schema.getType match { 
         case Schema.Type.ARRAY    => {
           val elementType = toScalaType(classStore, namespace, schema.getElementType)
-          checkCustomArrayType(typeMap.get("array"), elementType)
+          // default array mapping is currently List, but only for historical reasons
+          checkCustomArrayType(typeMap.get("array"), elementType, listType)
         }
         case Schema.Type.MAP      => {
           val keyType = StringClass
@@ -80,7 +80,7 @@ class TypeMatcher {
         case Schema.Type.NULL     => NullClass
         case Schema.Type.STRING   => StringClass
         case Schema.Type.FIXED    => sys.error("the FIXED datatype is not yet supported")
-        case Schema.Type.BYTES    => sys.error("the BYTES datatype is not yet supported")
+        case Schema.Type.BYTES    => checkCustomArrayType(typeMap.get("bytes"), ByteClass, TYPE_ARRAY)
         case Schema.Type.RECORD   => classStore.generatedClasses(schema)
         case Schema.Type.ENUM     => classStore.generatedClasses(schema)
         case Schema.Type.UNION    => { 
@@ -129,7 +129,7 @@ class TypeMatcher {
         }
         case Schema.Type.NULL     => TYPE_REF("java.lang.Void")
         case Schema.Type.FIXED    => sys.error("the FIXED datatype is not yet supported")
-        case Schema.Type.BYTES    => sys.error("the BYTES datatype is not yet supported")
+        case Schema.Type.BYTES    => TYPE_REF("java.nio.ByteBuffer")
         case Schema.Type.RECORD   => TYPE_REF("J" + classStore.generatedClasses(schema))
         case Schema.Type.ENUM     => TYPE_REF("J" + classStore.generatedClasses(schema))
         case Schema.Type.UNION    => { 
