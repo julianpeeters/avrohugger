@@ -32,7 +32,7 @@ object ScavroTreehugger {
     val JavaClass = RootClass.newClass(javaClassRename)
 
     val schemaImport = IMPORT("org.apache.avro.Schema")
-    val scavroImport = IMPORT("com.oedura.scavro", "AvroMetadata", "AvroReader", "AvroSerializeable")
+    val scavroImport = IMPORT("org.oedura.scavro", "AvroMetadata", "AvroReader", "AvroSerializeable")
     val renameImport = schema.getNamespace match {
       case null => sys.error("Scavro does not currently support schemas without namespaces.")
       case _ => IMPORT(schema.getNamespace, RENAME(schema.getName) ==> javaClassRename)

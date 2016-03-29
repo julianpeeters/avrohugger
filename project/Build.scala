@@ -8,14 +8,14 @@ object BuildSettings {
 
   val buildSettings = Defaults.defaultSettings ++ scriptedSettings ++ Seq(
     organization := "com.julianpeeters",
-    version := "0.9.1",
+    version := "0.9.2",
     scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-Ywarn-value-discard"),
     scalaVersion := "2.11.8",
     crossScalaVersions := Seq("2.10.6", scalaVersion.value),
     resolvers += Resolver.typesafeIvyRepo("releases"),
     libraryDependencies += "org.apache.avro" % "avro" % avroVersion,
     libraryDependencies += "org.apache.avro" % "avro-compiler" % avroVersion,
-    // for implementing SpecificRecord from standard case class defs
+    // for implementing SpecificRecord from standard case class definitions
     addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full),
     libraryDependencies := {
       CrossVersion.partialVersion(scalaVersion.value) match {

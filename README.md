@@ -1,7 +1,7 @@
 # avrohugger
 Schema-to-case-class code generation for working with Avro in Scala.
 
-* `avrohugger-core`: Generate source code dynamically at runtime for evaluation at a later step
+* `avrohugger-core`: Generate source code at runtime for evaluation at a later step.
 * `avrohugger-tools`: Generate source code at the command line with the avrohugger-tools jar.
 
 Alternative Distributions:
@@ -11,14 +11,14 @@ Alternative Distributions:
 
 #####Generates Scala case classes in various formats:
 
--`Standard` Vanilla case classes (for use with [Scalavro](https://github.com/GenslerAppsPod/scalavro), [Salat-Avro](https://github.com/julianpeeters/salat-avro), [gfc-avro](https://github.com/gilt/gfc-avro), etc.)
+* `Standard` Vanilla case classes (for use with [Scalavro](https://github.com/GenslerAppsPod/scalavro), [Salat-Avro](https://github.com/julianpeeters/salat-avro), [gfc-avro](https://github.com/gilt/gfc-avro), etc.)
 
--`SpecificRecord` Case classes that implement `SpecificRecordBase` and
+* `SpecificRecord` Case classes that implement `SpecificRecordBase` and
 therefore have mutable `var` fields (for use with the Avro Specific API -
 Scalding, Spark, Avro, etc.).
 
--`Scavro` Case classes with immutable fields, intended to wrap Java generated
-avro classes (for use with the [Scavro](https://github.com/oedura/scavro)
+* `Scavro` Case classes with immutable fields, intended to wrap Java generated
+Avro classes (for use with the [Scavro](https://github.com/oedura/scavro)
 runtime).
 
 #####Supports generating case classes with arbitrary fields of the following datatypes:
@@ -48,7 +48,7 @@ runtime).
 
 #####Get the dependency with:
 
-    "com.julianpeeters" % "avrohugger-core" %% "0.9.1"
+    "com.julianpeeters" % "avrohugger-core" %% "0.9.2"
 
 
 #####Description:
@@ -125,22 +125,22 @@ _Note:_ Currently [Treehugger](http://eed3si9n.com/treehugger/comments.html#Scal
 ####`avrohugger-tools`
 
 
-Download the avrohugger-tools jar for Scala [2.10](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.10/0.9.1/avrohugger-tools_2.10-0.9.1-assembly.jar) or Scala [2.11](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.11/0.9.1/avrohugger-tools_2.11-0.9.1-assembly.jar)(20MB!) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
+Download the avrohugger-tools jar for Scala [2.10](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.10/0.9.2/avrohugger-tools_2.10-0.9.2-assembly.jar) or Scala [2.11](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.11/0.9.2/avrohugger-tools_2.11-0.9.2-assembly.jar)(20MB!) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
 
 
 'generate' generates Scala case class definitions:
 
-`java -jar /path/to/avrohugger-tools_2.11-0.9.1-assembly.jar generate schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.11-0.9.2-assembly.jar generate schema user.avsc . `
 
 
 'generate-specific' generates definitions that extend SpecificRecordBase:
 
-`java -jar /path/to/avrohugger-tools_2.11-0.9.1-assembly.jar generate-specific schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.11-0.9.2-assembly.jar generate-specific schema user.avsc . `
 
 
 'generate-scavro' generates definitions that extend Scavro's AvroSerializable:
 
-`java -jar /path/to/avrohugger-tools_2.11-0.9.1-assembly.jar generate-scavro schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.11-0.9.2-assembly.jar generate-scavro schema user.avsc . `
 
 ####`sbt-avrohugger`
 
@@ -170,7 +170,7 @@ mutable (`var`) in order to be compatible with the SpecificRecord API.
 not supported, please use fully qualified type names if using records/classes
 from multiple namespaces.
 
-4) By default, a schemas namespace is used as a package name. In the case of
+4) By default, a schema's namespace is used as a package name. In the case of
 the Scavro output format, the default is the namespace with `model` appended.
 
 5) While Scavro format uses custom namespaces in a way that leaves it
@@ -190,7 +190,7 @@ to flow data into a system that doesn't support them (e.g., Hive).
 
 ## Future
 
-* Support more avro types: fixed, bytes.
+* Support more Avro types: fixed, decimal via logical types.
 
 ## Testing
 
@@ -210,6 +210,7 @@ Contributors:
 - [Paul Pearcy](https://github.com/ppearcy)
 - [Stefano Galarraga](https://github.com/galarragas)
 - [Brian London](https://github.com/BrianLondon)
+- [Matt Allen](https://github.com/Matt343)
 
 
 ##### Criticism is appreciated.
