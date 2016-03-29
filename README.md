@@ -18,7 +18,7 @@ therefore have mutable `var` fields (for use with the Avro Specific API -
 Scalding, Spark, Avro, etc.).
 
 -`Scavro` Case classes with immutable fields, intended to wrap Java generated
-avro classes (for use with the [Scavro](https://github.com/oysterbooks/scavro)
+avro classes (for use with the [Scavro](https://github.com/oedura/scavro)
 runtime).
 
 #####Supports generating case classes with arbitrary fields of the following datatypes:
@@ -48,7 +48,7 @@ runtime).
 
 #####Get the dependency with:
 
-    "com.julianpeeters" % "avrohugger-core" %% "0.9.0"
+    "com.julianpeeters" % "avrohugger-core" %% "0.9.1"
 
 
 #####Description:
@@ -88,18 +88,6 @@ protocol, IDL, or a set of case classes that you'd like to have implement
 `SpecificRecordBase`.
 
 
-#####Doc Support:
-
-* `.avdl`: Comments that begin with `/**` are used as the documentation string for the type or field definition that follows the comment.
-
-* `.avsc`, `.avpr`, and `.avro`: Docs in Avro schemas are used to define a case class' ScalaDoc
-
-* `.scala`: ScalaDocs of case class definitions are used to define record and field docs
-
-
-_Note:_ Currently [Treehugger](http://eed3si9n.com/treehugger/comments.html#Scaladoc+style+comments) appears to generate Javadoc style docs (thus compatible with ScalaDoc style).
-
-
 #####Customizable Type Mapping:
 
 Avro 'array' is represented by Scala `List` by default. `array` can be
@@ -116,27 +104,43 @@ Namespaces can be reassigned by instantiating a `Generator` with a custom
 namespace map (please see warnings below):
 
 
-    val generator = new Generator(SpecificRecord, avroScalaCustomNamespace = Map("oldnamespace"->"newnamespace"))   
+    val generator = new Generator(SpecificRecord, avroScalaCustomNamespace = Map("oldnamespace"->"newnamespace"))  
+
+
+
+#####Doc Support:
+
+* `.avdl`: Comments that begin with `/**` are used as the documentation string for the type or field definition that follows the comment.
+
+* `.avsc`, `.avpr`, and `.avro`: Docs in Avro schemas are used to define a case class' ScalaDoc
+
+* `.scala`: ScalaDocs of case class definitions are used to define record and field docs
+
+
+_Note:_ Currently [Treehugger](http://eed3si9n.com/treehugger/comments.html#Scaladoc+style+comments) appears to generate Javadoc style docs (thus compatible with ScalaDoc style).
+
+
+
 
 ####`avrohugger-tools`
 
 
-Download the avrohugger-tools jar for Scala [2.10](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.10/0.9.0/avrohugger-tools_2.10-0.9.0-assembly.jar) or Scala [2.11](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.11/0.9.0/avrohugger-tools_2.11-0.9.0-assembly.jar)(20MB!) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
+Download the avrohugger-tools jar for Scala [2.10](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.10/0.9.1/avrohugger-tools_2.10-0.9.1-assembly.jar) or Scala [2.11](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.11/0.9.1/avrohugger-tools_2.11-0.9.1-assembly.jar)(20MB!) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
 
 
 'generate' generates Scala case class definitions:
 
-`java -jar /path/to/avrohugger-tools_2.11-0.9.0-assembly.jar generate schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.11-0.9.1-assembly.jar generate schema user.avsc . `
 
 
 'generate-specific' generates definitions that extend SpecificRecordBase:
 
-`java -jar /path/to/avrohugger-tools_2.11-0.9.0-assembly.jar generate-specific schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.11-0.9.1-assembly.jar generate-specific schema user.avsc . `
 
 
 'generate-scavro' generates definitions that extend Scavro's AvroSerializable:
 
-`java -jar /path/to/avrohugger-tools_2.11-0.9.0-assembly.jar generate-scavro schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.11-0.9.1-assembly.jar generate-scavro schema user.avsc . `
 
 ####`sbt-avrohugger`
 

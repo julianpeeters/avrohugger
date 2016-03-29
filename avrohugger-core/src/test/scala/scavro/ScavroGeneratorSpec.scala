@@ -8,20 +8,20 @@ import org.specs2._
 class ScavroGeneratorSpec extends mutable.Specification {
 
   "a ScavroGenerator" should {
-    
+
     "correctly generate a case class definition in a package" in {
       val infile = new java.io.File("avrohugger-core/src/test/avro/mail.avpr")
       val gen = new Generator(Scavro)
       val outDir = gen.defaultOutputDir + "/scavro/"
       gen.fileToFile(infile, outDir)
       val source = scala.io.Source.fromFile(s"$outDir/example/proto/model/Message.scala").mkString
-      source === 
+      source ===
         """|/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
             |package example.proto.model
             |
             |import org.apache.avro.Schema
             |
-            |import com.oysterbooks.scavro.{AvroMetadata, AvroReader, AvroSerializeable}
+            |import com.oedura.scavro.{AvroMetadata, AvroReader, AvroSerializeable}
             |
             |import example.proto.{Message => JMessage}
             |
@@ -58,7 +58,7 @@ class ScavroGeneratorSpec extends mutable.Specification {
             |
             |import org.apache.avro.Schema
             |
-            |import com.scavro.{AvroMetadata, AvroReader, AvroSerializeable}
+            |import com.oedura.scavro.{AvroMetadata, AvroReader, AvroSerializeable}
             |
             |import example.proto.{Binary => JBinary}
             |

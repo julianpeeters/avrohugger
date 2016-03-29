@@ -21,8 +21,8 @@ object ScavroTreehugger {
 
 	def asScalaCodeString(
 		classStore: ClassStore,
-		schema: Schema, 
-		namespace: Option[String], 
+		schema: Schema,
+		namespace: Option[String],
     typeMatcher: TypeMatcher): String = {
 
     // register new type
@@ -32,33 +32,33 @@ object ScavroTreehugger {
     val JavaClass = RootClass.newClass(javaClassRename)
 
     val schemaImport = IMPORT("org.apache.avro.Schema")
-    val scavroImport = IMPORT("com.oysterbooks.scavro", "AvroMetadata", "AvroReader", "AvroSerializeable")
+    val scavroImport = IMPORT("com.oedura.scavro", "AvroMetadata", "AvroReader", "AvroSerializeable")
     val renameImport = schema.getNamespace match {
       case null => sys.error("Scavro does not currently support schemas without namespaces.")
       case _ => IMPORT(schema.getNamespace, RENAME(schema.getName) ==> javaClassRename)
-    } 
+    }
     val javaConversionsImport = IMPORT("scala.collection.JavaConversions._")
 
     val imports: List[Import] = {
-      
+
       if( isRecord(schema) ) {
         val fieldTypes = schema.getFields.map(f => f.schema.getType)
         val hasArrayField = fieldTypes.contains(Schema.Type.ARRAY)
         val hasMapField = fieldTypes.contains(Schema.Type.MAP)
         val hasUnionField = fieldTypes.contains(Schema.Type.UNION)
 
-        // if the record has an array, or a map or union that may have an array value type, 
+        // if the record has an array, or a map or union that may have an array value type,
         // we need an extra javaConversions import
         if( hasArrayField || hasMapField || hasUnionField) {
-          List(schemaImport, 
-            scavroImport, 
+          List(schemaImport,
+            scavroImport,
             renameImport,
-            javaConversionsImport) ++ getImports(schema, namespace) 
+            javaConversionsImport) ++ getImports(schema, namespace)
         }
         else {
-          List(schemaImport, 
-            scavroImport, 
-            renameImport) ++ getImports(schema, namespace) 
+          List(schemaImport,
+            scavroImport,
+            renameImport) ++ getImports(schema, namespace)
         }
       }
       else List(schemaImport, scavroImport)
@@ -92,9 +92,8 @@ object ScavroTreehugger {
   def isRecord(schema: Schema): Boolean = ( schema.getType == RECORD )
 
   def getImports(schema: Schema, currentNamespace: Option[String]): Iterable[Import] = {
-    val topLevelSchemas: List[Schema] = schema::(getNestedSchemas(schema)) 
+    val topLevelSchemas: List[Schema] = schema::(getNestedSchemas(schema))
     topLevelSchemas.filter(isRecord).flatMap(s => s.getFields)
-    //schema.getFields.toList
       .filter( field => getReferredNamespace(field.schema).isDefined )
       .filter( field => getReferredNamespace(field.schema) != currentNamespace )
       .distinct
