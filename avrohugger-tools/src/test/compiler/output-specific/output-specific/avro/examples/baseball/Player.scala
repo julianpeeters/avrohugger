@@ -1,0 +1,56 @@
+/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
+package avro.examples.baseball
+
+case class Player(var number: Int, var first_name: String, var last_name: String, var nicknames: List[Nickname]) extends org.apache.avro.specific.SpecificRecordBase {
+  def this() = this(0, "", "", Nil)
+  def get(field: Int): AnyRef = {
+    field match {
+      case pos if pos == 0 => {
+        number
+      }.asInstanceOf[AnyRef]
+      case pos if pos == 1 => {
+        first_name
+      }.asInstanceOf[AnyRef]
+      case pos if pos == 2 => {
+        last_name
+      }.asInstanceOf[AnyRef]
+      case pos if pos == 3 => {
+        scala.collection.JavaConversions.bufferAsJavaList({
+          nicknames map { x =>
+            x
+          }
+        }.toBuffer)
+      }.asInstanceOf[AnyRef]
+      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+    }
+  }
+  def put(field: Int, value: Any): Unit = {
+    field match {
+      case pos if pos == 0 => this.number = {
+        value
+      }.asInstanceOf[Int]
+      case pos if pos == 1 => this.first_name = {
+        value.toString
+      }.asInstanceOf[String]
+      case pos if pos == 2 => this.last_name = {
+        value.toString
+      }.asInstanceOf[String]
+      case pos if pos == 3 => this.nicknames = {
+        value match {
+          case (array: java.util.List[_]) => {
+            scala.collection.JavaConversions.asScalaIterator(array.iterator).toList map { x =>
+              x
+            }
+          }
+        }
+      }.asInstanceOf[List[Nickname]]
+      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+    }
+    ()
+  }
+  def getSchema: org.apache.avro.Schema = Player.SCHEMA$
+}
+
+object Player {
+  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Player\",\"namespace\":\"avro.examples.baseball\",\"fields\":[{\"name\":\"number\",\"type\":\"int\"},{\"name\":\"first_name\",\"type\":\"string\"},{\"name\":\"last_name\",\"type\":\"string\"},{\"name\":\"nicknames\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"Nickname\",\"fields\":[{\"name\":\"name\",\"type\":\"string\"}]}}}]}")
+}

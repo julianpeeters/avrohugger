@@ -1,6 +1,5 @@
 
-import avrohugger.format.Standard
-
+import avrohugger.format.Scavro
 import avrohugger.tool.{Main, Directory, GeneratorTool}
 import org.apache.avro.tool.Tool
 
@@ -21,12 +20,12 @@ import java.util.Arrays;
 /**
  * Verifies that the GeneratorTool generates Scala source properly
  */
-class StandardGeneratorToolSpec extends mutable.Specification {
+class ScavroGeneratorToolSpec extends mutable.Specification {
 
 
   // Runs the actual generator tool with the given input args
   private def doCompile(args: Array[String])  = {
-    val tool = new GeneratorTool(Standard);
+    val tool = new GeneratorTool(Scavro);
     Try{
       tool.run(null, null, null, Arrays.asList((args:_*)));
     }
@@ -68,45 +67,35 @@ class StandardGeneratorToolSpec extends mutable.Specification {
     "match the expected single datafile file" in {
       doCompile(Array[String] ("datafile",
         Directory.TEST_INPUT_DIR.toString() + "/twitter.avro",
-        Directory.TEST_OUTPUT_BASE_DIR.getPath()
+        Directory.TEST_OUTPUT_SCAVRO_BASE_DIR.getPath()
       ));
-      readFile(Directory.TEST_OUTPUT_TWITTER) === readFile(Directory.TEST_EXPECTED_TWITTER)
+      readFile(Directory.TEST_OUTPUT_SCAVRO_TWITTER) === readFile(Directory.TEST_EXPECTED_SCAVRO_TWITTER)
     }
 
     "match the expected single schema file" in {
       doCompile(Array[String] ("schema",
         Directory.TEST_INPUT_DIR.toString() + "/nickname.avsc",
-        Directory.TEST_OUTPUT_BASE_DIR.getPath()
+        Directory.TEST_OUTPUT_SCAVRO_BASE_DIR.getPath()
       ));
-      readFile(Directory.TEST_OUTPUT_NICKNAME) === readFile(Directory.TEST_EXPECTED_NICKNAME)
+      readFile(Directory.TEST_OUTPUT_SCAVRO_NICKNAME) === readFile(Directory.TEST_EXPECTED_SCAVRO_NICKNAME)
     }
 
     "match the expected dependent files" in {
       doCompile(Array[String]("schema",
         Directory.TEST_INPUT_DIR.toString() + "/nickname.avsc",
         Directory.TEST_INPUT_DIR.toString() + "/player.avsc",
-        Directory.TEST_OUTPUT_BASE_DIR.getPath()
+        Directory.TEST_OUTPUT_SCAVRO_BASE_DIR.getPath()
       ));
-      readFile(Directory.TEST_OUTPUT_PLAYER)  === readFile(Directory.TEST_EXPECTED_PLAYER)
+      readFile(Directory.TEST_OUTPUT_SCAVRO_PLAYER)  === readFile(Directory.TEST_EXPECTED_SCAVRO_PLAYER)
     }
 
     "match the expected file and directory" in {
       doCompile(Array[String]("schema",
         Directory.TEST_INPUT_DIR.toString() + "/nickname.avsc",
         Directory.TEST_INPUT_DIR.toString(),
-        Directory.TEST_OUTPUT_BASE_DIR.getPath()
+        Directory.TEST_OUTPUT_SCAVRO_BASE_DIR.getPath()
       ));
-      readFile(Directory.TEST_OUTPUT_PLAYER)  === readFile(Directory.TEST_EXPECTED_PLAYER)
-    }
-
-    "match the expected using the -string option" in {
-      doCompile(Array[String]("-string", "schema",
-        Directory.TEST_INPUT_DIR.toString() + "/nickname.avsc",
-        Directory.TEST_INPUT_DIR.toString() + "/player.avsc",
-        Directory.TEST_INPUT_DIR.toString() + "/twitter_schema.avro",
-        Directory.TEST_OUTPUT_STRING_BASE_DIR.getPath()
-      ));
-      readFile(Directory.TEST_OUTPUT_STRING_PLAYER) === readFile(Directory.TEST_EXPECTED_STRING_PLAYER)
+      readFile(Directory.TEST_OUTPUT_SCAVRO_PLAYER)  === readFile(Directory.TEST_EXPECTED_SCAVRO_PLAYER)
     }
 
   }

@@ -1,6 +1,6 @@
 package avrohugger
 package tool
-import format.{ SourceFormat, Standard, SpecificRecord }
+import format.{ Scavro, SourceFormat, Standard, SpecificRecord }
 
 import java.util.Arrays;
 import java.util.Map;
@@ -22,7 +22,7 @@ class Runner {
    * Available tools, initialized in constructor.
    */
   val toolsMap = new TreeMap[String, Tool]();
-  val formats = Array[SourceFormat](Standard, SpecificRecord)
+  val formats = Array[SourceFormat](Standard, SpecificRecord, Scavro)
   val tools = formats.map(format => new GeneratorTool(format))
   for (tool <- Array[Tool](tools:_*)) {
     var prev: Tool = toolsMap.put(tool.getName(), tool);
@@ -46,7 +46,7 @@ class Runner {
         }
       }
     }
-   
+
     System.err.println("----------------");
 
     System.err.println("Available tools:");
@@ -57,4 +57,3 @@ class Runner {
     1;
   }
 }
-
