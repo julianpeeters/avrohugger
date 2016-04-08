@@ -21,8 +21,8 @@ class SpecificGeneratorSpec extends mutable.Specification {
           |
           |case class Message(var to: String, var from: String, var body: String) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this("", "", "")
-          |  def get(field: Int): AnyRef = {
-          |    field match {
+          |  def get(field$: Int): AnyRef = {
+          |    field$ match {
           |      case pos if pos == 0 => {
           |        to
           |      }.asInstanceOf[AnyRef]
@@ -35,8 +35,8 @@ class SpecificGeneratorSpec extends mutable.Specification {
           |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
           |    }
           |  }
-          |  def put(field: Int, value: Any): Unit = {
-          |    field match {
+          |  def put(field$: Int, value: Any): Unit = {
+          |    field$ match {
           |      case pos if pos == 0 => this.to = {
           |        value.toString
           |      }.asInstanceOf[String]
@@ -71,16 +71,16 @@ class SpecificGeneratorSpec extends mutable.Specification {
           |
           |case class Person(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this("")
-          |  def get(field: Int): AnyRef = {
-          |    field match {
+          |  def get(field$: Int): AnyRef = {
+          |    field$ match {
           |      case pos if pos == 0 => {
           |        name
           |      }.asInstanceOf[AnyRef]
           |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
           |    }
           |  }
-          |  def put(field: Int, value: Any): Unit = {
-          |    field match {
+          |  def put(field$: Int, value: Any): Unit = {
+          |    field$ match {
           |      case pos if pos == 0 => this.name = {
           |        value.toString
           |      }.asInstanceOf[String]
@@ -149,8 +149,8 @@ class SpecificGeneratorSpec extends mutable.Specification {
           |
           |case class Card(var suit: Suit, var number: Int) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this(null, 0)
-          |  def get(field: Int): AnyRef = {
-          |    field match {
+          |  def get(field$: Int): AnyRef = {
+          |    field$ match {
           |      case pos if pos == 0 => {
           |        suit
           |      }.asInstanceOf[AnyRef]
@@ -160,8 +160,8 @@ class SpecificGeneratorSpec extends mutable.Specification {
           |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
           |    }
           |  }
-          |  def put(field: Int, value: Any): Unit = {
-          |    field match {
+          |  def put(field$: Int, value: Any): Unit = {
+          |    field$ match {
           |      case pos if pos == 0 => this.suit = {
           |        value
           |      }.asInstanceOf[Suit]
@@ -193,16 +193,16 @@ class SpecificGeneratorSpec extends mutable.Specification {
           |
           |case class Binary(var data: Array[Byte]) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this(null)
-          |  def get(field: Int): AnyRef = {
-          |    field match {
+          |  def get(field$: Int): AnyRef = {
+          |    field$ match {
           |      case pos if pos == 0 => {
           |        java.nio.ByteBuffer.wrap(data)
           |      }.asInstanceOf[AnyRef]
           |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
           |    }
           |  }
-          |  def put(field: Int, value: Any): Unit = {
-          |    field match {
+          |  def put(field$: Int, value: Any): Unit = {
+          |    field$ match {
           |      case pos if pos == 0 => this.data = {
           |        value match {
           |          case (buffer: java.nio.ByteBuffer) => {
@@ -235,16 +235,16 @@ class SpecificGeneratorSpec extends mutable.Specification {
           |
           |case class Binary(var data: Array[Byte]) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this(null)
-          |  def get(field: Int): AnyRef = {
-          |    field match {
+          |  def get(field$: Int): AnyRef = {
+          |    field$ match {
           |      case pos if pos == 0 => {
           |        java.nio.ByteBuffer.wrap(data)
           |      }.asInstanceOf[AnyRef]
           |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
           |    }
           |  }
-          |  def put(field: Int, value: Any): Unit = {
-          |    field match {
+          |  def put(field$: Int, value: Any): Unit = {
+          |    field$ match {
           |      case pos if pos == 0 => this.data = {
           |        value match {
           |          case (buffer: java.nio.ByteBuffer) => {
@@ -298,16 +298,16 @@ class SpecificGeneratorSpec extends mutable.Specification {
         |
         |case class Compass(var direction: Direction) extends org.apache.avro.specific.SpecificRecordBase {
         |  def this() = this(null)
-        |  def get(field: Int): AnyRef = {
-        |    field match {
+        |  def get(field$: Int): AnyRef = {
+        |    field$ match {
         |      case pos if pos == 0 => {
         |        direction
         |      }.asInstanceOf[AnyRef]
         |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
         |    }
         |  }
-        |  def put(field: Int, value: Any): Unit = {
-        |    field match {
+        |  def put(field$: Int, value: Any): Unit = {
+        |    field$ match {
         |      case pos if pos == 0 => this.direction = {
         |        value
         |      }.asInstanceOf[Direction]
@@ -336,8 +336,8 @@ class SpecificGeneratorSpec extends mutable.Specification {
           |
           |case class DefaultTest(var suit: DefaultEnum = DefaultEnum.SPADES, var number: Int = 0, var str: String = "str", var optionString: Option[String] = None, var optionStringValue: Option[String] = Some("default"), var embedded: Embedded = new Embedded(1), var defaultArray: List[Int] = List(1, 3, 4, 5), var optionalEnum: Option[DefaultEnum] = None, var defaultMap: Map[String, String] = Map("Hello" -> "world", "Merry" -> "Christmas")) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this(DefaultEnum.SPADES, 0, "str", None, Some("default"), new Embedded(1), List(1, 3, 4, 5), None, Map("Hello" -> "world", "Merry" -> "Christmas"))
-          |  def get(field: Int): AnyRef = {
-          |    field match {
+          |  def get(field$: Int): AnyRef = {
+          |    field$ match {
           |      case pos if pos == 0 => {
           |        suit
           |      }.asInstanceOf[AnyRef]
@@ -387,8 +387,8 @@ class SpecificGeneratorSpec extends mutable.Specification {
           |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
           |    }
           |  }
-          |  def put(field: Int, value: Any): Unit = {
-          |    field match {
+          |  def put(field$: Int, value: Any): Unit = {
+          |    field$ match {
           |      case pos if pos == 0 => this.suit = {
           |        value
           |      }.asInstanceOf[DefaultEnum]
@@ -467,8 +467,8 @@ class SpecificGeneratorSpec extends mutable.Specification {
       |
       |case class DependentRecord(var dependency: ExternalDependency, var number: Int) extends org.apache.avro.specific.SpecificRecordBase {
       |  def this() = this(new ExternalDependency, 0)
-      |  def get(field: Int): AnyRef = {
-      |    field match {
+      |  def get(field$: Int): AnyRef = {
+      |    field$ match {
       |      case pos if pos == 0 => {
       |        dependency
       |      }.asInstanceOf[AnyRef]
@@ -478,8 +478,8 @@ class SpecificGeneratorSpec extends mutable.Specification {
       |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
       |    }
       |  }
-      |  def put(field: Int, value: Any): Unit = {
-      |    field match {
+      |  def put(field$: Int, value: Any): Unit = {
+      |    field$ match {
       |      case pos if pos == 0 => this.dependency = {
       |        value
       |      }.asInstanceOf[ExternalDependency]
@@ -513,8 +513,8 @@ class SpecificGeneratorSpec extends mutable.Specification {
         |
         |case class DependentRecord(var dependency: Option[ExternalDependency], var number: Int) extends org.apache.avro.specific.SpecificRecordBase {
         |  def this() = this(None, 0)
-        |  def get(field: Int): AnyRef = {
-        |    field match {
+        |  def get(field$: Int): AnyRef = {
+        |    field$ match {
         |      case pos if pos == 0 => {
         |        dependency match {
         |          case Some(x) => x
@@ -527,8 +527,8 @@ class SpecificGeneratorSpec extends mutable.Specification {
         |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
         |    }
         |  }
-        |  def put(field: Int, value: Any): Unit = {
-        |    field match {
+        |  def put(field$: Int, value: Any): Unit = {
+        |    field$ match {
         |      case pos if pos == 0 => this.dependency = {
         |        value match {
         |          case null => None

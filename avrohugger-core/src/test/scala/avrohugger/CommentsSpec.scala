@@ -44,8 +44,8 @@ class CommentsSpec extends mutable.Specification {
           | */
           |case class NoSpaces(var single_line_comment_property: String, var multi_line_property: String) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this("", "")
-          |  def get(field: Int): AnyRef = {
-          |    field match {
+          |  def get(field$: Int): AnyRef = {
+          |    field$ match {
           |      case pos if pos == 0 => {
           |        single_line_comment_property
           |      }.asInstanceOf[AnyRef]
@@ -55,8 +55,8 @@ class CommentsSpec extends mutable.Specification {
           |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
           |    }
           |  }
-          |  def put(field: Int, value: Any): Unit = {
-          |    field match {
+          |  def put(field$: Int, value: Any): Unit = {
+          |    field$ match {
           |      case pos if pos == 0 => this.single_line_comment_property = {
           |        value.toString
           |      }.asInstanceOf[String]
@@ -91,16 +91,16 @@ class CommentsSpec extends mutable.Specification {
               |/** @param comment_property This is a single line comment on a field, in a record that has no comment. */
               |case class NoSpaces2(var comment_property: String) extends org.apache.avro.specific.SpecificRecordBase {
               |  def this() = this("")
-              |  def get(field: Int): AnyRef = {
-              |    field match {
+              |  def get(field$: Int): AnyRef = {
+              |    field$ match {
               |      case pos if pos == 0 => {
               |        comment_property
               |      }.asInstanceOf[AnyRef]
               |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
               |    }
               |  }
-              |  def put(field: Int, value: Any): Unit = {
-              |    field match {
+              |  def put(field$: Int, value: Any): Unit = {
+              |    field$ match {
               |      case pos if pos == 0 => this.comment_property = {
               |        value.toString
               |      }.asInstanceOf[String]
@@ -136,16 +136,16 @@ class CommentsSpec extends mutable.Specification {
               | */
               |case class NoSpaces3(var comment_property: String) extends org.apache.avro.specific.SpecificRecordBase {
               |  def this() = this("")
-              |  def get(field: Int): AnyRef = {
-              |    field match {
+              |  def get(field$: Int): AnyRef = {
+              |    field$ match {
               |      case pos if pos == 0 => {
               |        comment_property
               |      }.asInstanceOf[AnyRef]
               |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
               |    }
               |  }
-              |  def put(field: Int, value: Any): Unit = {
-              |    field match {
+              |  def put(field$: Int, value: Any): Unit = {
+              |    field$ match {
               |      case pos if pos == 0 => this.comment_property = {
               |        value.toString
               |      }.asInstanceOf[String]

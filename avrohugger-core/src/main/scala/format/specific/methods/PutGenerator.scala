@@ -32,8 +32,8 @@ object PutGenerator {
       val errorCase = CASE(WILDCARD) ==> NEW("org.apache.avro.AvroRuntimeException", LIT("Bad index"))
       val casesPut = indexedFields.map(field => asPutCase(field)):+ errorCase
 
-      DEF("put", UnitClass) withParams(PARAM("field", IntClass), PARAM("value", AnyClass)) := BLOCK(
-        REF("field") MATCH(casesPut:_*), UNIT
+      DEF("put", UnitClass) withParams(PARAM("field$", IntClass), PARAM("value", AnyClass)) := BLOCK(
+        REF("field$") MATCH(casesPut:_*), UNIT
       ) 
     }
 

@@ -28,16 +28,16 @@ class SchemaGenSpec extends mutable.Specification {
           | */
           |case class Person(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this("")
-          |  def get(field: Int): AnyRef = {
-          |    field match {
+          |  def get(field$: Int): AnyRef = {
+          |    field$ match {
           |      case pos if pos == 0 => {
           |        name
           |      }.asInstanceOf[AnyRef]
           |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
           |    }
           |  }
-          |  def put(field: Int, value: Any): Unit = {
-          |    field match {
+          |  def put(field$: Int, value: Any): Unit = {
+          |    field$ match {
           |      case pos if pos == 0 => this.name = {
           |        value.toString
           |      }.asInstanceOf[String]
@@ -81,16 +81,16 @@ class SchemaGenSpec extends mutable.Specification {
           | */
           |case class Person(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this("")
-          |  def get(field: Int): AnyRef = {
-          |    field match {
+          |  def get(field$: Int): AnyRef = {
+          |    field$ match {
           |      case pos if pos == 0 => {
           |        name
           |      }.asInstanceOf[AnyRef]
           |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
           |    }
           |  }
-          |  def put(field: Int, value: Any): Unit = {
-          |    field match {
+          |  def put(field$: Int, value: Any): Unit = {
+          |    field$ match {
           |      case pos if pos == 0 => this.name = {
           |        value.toString
           |      }.asInstanceOf[String]
@@ -137,16 +137,16 @@ class SchemaGenSpec extends mutable.Specification {
           | */
           |case class Person(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this("")
-          |  def get(field: Int): AnyRef = {
-          |    field match {
+          |  def get(field$: Int): AnyRef = {
+          |    field$ match {
           |      case pos if pos == 0 => {
           |        name
           |      }.asInstanceOf[AnyRef]
           |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
           |    }
           |  }
-          |  def put(field: Int, value: Any): Unit = {
-          |    field match {
+          |  def put(field$: Int, value: Any): Unit = {
+          |    field$ match {
           |      case pos if pos == 0 => this.name = {
           |        value.toString
           |      }.asInstanceOf[String]
@@ -170,16 +170,16 @@ class SchemaGenSpec extends mutable.Specification {
           | */
           |case class Vehicle(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this("")
-          |  def get(field: Int): AnyRef = {
-          |    field match {
+          |  def get(field$: Int): AnyRef = {
+          |    field$ match {
           |      case pos if pos == 0 => {
           |        name
           |      }.asInstanceOf[AnyRef]
           |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
           |    }
           |  }
-          |  def put(field: Int, value: Any): Unit = {
-          |    field match {
+          |  def put(field$: Int, value: Any): Unit = {
+          |    field$ match {
           |      case pos if pos == 0 => this.name = {
           |        value.toString
           |      }.asInstanceOf[String]
@@ -230,16 +230,16 @@ class SchemaGenSpec extends mutable.Specification {
           | */
           |case class Person(var vehicle: Vehicle) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this(new Vehicle)
-          |  def get(field: Int): AnyRef = {
-          |    field match {
+          |  def get(field$: Int): AnyRef = {
+          |    field$ match {
           |      case pos if pos == 0 => {
           |        vehicle
           |      }.asInstanceOf[AnyRef]
           |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
           |    }
           |  }
-          |  def put(field: Int, value: Any): Unit = {
-          |    field match {
+          |  def put(field$: Int, value: Any): Unit = {
+          |    field$ match {
           |      case pos if pos == 0 => this.vehicle = {
           |        value
           |      }.asInstanceOf[Vehicle]
@@ -263,16 +263,16 @@ class SchemaGenSpec extends mutable.Specification {
           | */
           |case class Vehicle(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this("")
-          |  def get(field: Int): AnyRef = {
-          |    field match {
+          |  def get(field$: Int): AnyRef = {
+          |    field$ match {
           |      case pos if pos == 0 => {
           |        name
           |      }.asInstanceOf[AnyRef]
           |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
           |    }
           |  }
-          |  def put(field: Int, value: Any): Unit = {
-          |    field match {
+          |  def put(field$: Int, value: Any): Unit = {
+          |    field$ match {
           |      case pos if pos == 0 => this.name = {
           |        value.toString
           |      }.asInstanceOf[String]
@@ -332,16 +332,16 @@ class SchemaGenSpec extends mutable.Specification {
           | */
           |case class Person(var vehicle: Vehicle) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this(new Vehicle)
-          |  def get(field: Int): AnyRef = {
-          |    field match {
+          |  def get(field$: Int): AnyRef = {
+          |    field$ match {
           |      case pos if pos == 0 => {
           |        vehicle
           |      }.asInstanceOf[AnyRef]
           |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
           |    }
           |  }
-          |  def put(field: Int, value: Any): Unit = {
-          |    field match {
+          |  def put(field$: Int, value: Any): Unit = {
+          |    field$ match {
           |      case pos if pos == 0 => this.vehicle = {
           |        value
           |      }.asInstanceOf[Vehicle]
@@ -365,16 +365,16 @@ class SchemaGenSpec extends mutable.Specification {
           | */
           |case class Vehicle(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this("")
-          |  def get(field: Int): AnyRef = {
-          |    field match {
+          |  def get(field$: Int): AnyRef = {
+          |    field$ match {
           |      case pos if pos == 0 => {
           |        name
           |      }.asInstanceOf[AnyRef]
           |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
           |    }
           |  }
-          |  def put(field: Int, value: Any): Unit = {
-          |    field match {
+          |  def put(field$: Int, value: Any): Unit = {
+          |    field$ match {
           |      case pos if pos == 0 => this.name = {
           |        value.toString
           |      }.asInstanceOf[String]
@@ -417,16 +417,16 @@ class SchemaGenSpec extends mutable.Specification {
           | */
           |case class Person(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this("")
-          |  def get(field: Int): AnyRef = {
-          |    field match {
+          |  def get(field$: Int): AnyRef = {
+          |    field$ match {
           |      case pos if pos == 0 => {
           |        name
           |      }.asInstanceOf[AnyRef]
           |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
           |    }
           |  }
-          |  def put(field: Int, value: Any): Unit = {
-          |    field match {
+          |  def put(field$: Int, value: Any): Unit = {
+          |    field$ match {
           |      case pos if pos == 0 => this.name = {
           |        value.toString
           |      }.asInstanceOf[String]
@@ -465,16 +465,16 @@ class SchemaGenSpec extends mutable.Specification {
           | */
           |case class Person(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this("")
-          |  def get(field: Int): AnyRef = {
-          |    field match {
+          |  def get(field$: Int): AnyRef = {
+          |    field$ match {
           |      case pos if pos == 0 => {
           |        name
           |      }.asInstanceOf[AnyRef]
           |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
           |    }
           |  }
-          |  def put(field: Int, value: Any): Unit = {
-          |    field match {
+          |  def put(field$: Int, value: Any): Unit = {
+          |    field$ match {
           |      case pos if pos == 0 => this.name = {
           |        value.toString
           |      }.asInstanceOf[String]
@@ -501,16 +501,16 @@ class SchemaGenSpec extends mutable.Specification {
       source1 ===
         """case class Person(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this("")
-          |  def get(field: Int): AnyRef = {
-          |    field match {
+          |  def get(field$: Int): AnyRef = {
+          |    field$ match {
           |      case pos if pos == 0 => {
           |        name
           |      }.asInstanceOf[AnyRef]
           |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
           |    }
           |  }
-          |  def put(field: Int, value: Any): Unit = {
-          |    field match {
+          |  def put(field$: Int, value: Any): Unit = {
+          |    field$ match {
           |      case pos if pos == 0 => this.name = {
           |        value.toString
           |      }.asInstanceOf[String]
@@ -528,16 +528,16 @@ class SchemaGenSpec extends mutable.Specification {
       source2 ===
         """case class Pet(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this("")
-          |  def get(field: Int): AnyRef = {
-          |    field match {
+          |  def get(field$: Int): AnyRef = {
+          |    field$ match {
           |      case pos if pos == 0 => {
           |        name
           |      }.asInstanceOf[AnyRef]
           |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
           |    }
           |  }
-          |  def put(field: Int, value: Any): Unit = {
-          |    field match {
+          |  def put(field$: Int, value: Any): Unit = {
+          |    field$ match {
           |      case pos if pos == 0 => this.name = {
           |        value.toString
           |      }.asInstanceOf[String]
@@ -581,16 +581,16 @@ class SchemaGenSpec extends mutable.Specification {
           | */
           |case class Person(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this("")
-          |  def get(field: Int): AnyRef = {
-          |    field match {
+          |  def get(field$: Int): AnyRef = {
+          |    field$ match {
           |      case pos if pos == 0 => {
           |        name
           |      }.asInstanceOf[AnyRef]
           |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
           |    }
           |  }
-          |  def put(field: Int, value: Any): Unit = {
-          |    field match {
+          |  def put(field$: Int, value: Any): Unit = {
+          |    field$ match {
           |      case pos if pos == 0 => this.name = {
           |        value.toString
           |      }.asInstanceOf[String]
@@ -614,16 +614,16 @@ class SchemaGenSpec extends mutable.Specification {
           | */
           |case class Pet(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this("")
-          |  def get(field: Int): AnyRef = {
-          |    field match {
+          |  def get(field$: Int): AnyRef = {
+          |    field$ match {
           |      case pos if pos == 0 => {
           |        name
           |      }.asInstanceOf[AnyRef]
           |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
           |    }
           |  }
-          |  def put(field: Int, value: Any): Unit = {
-          |    field match {
+          |  def put(field$: Int, value: Any): Unit = {
+          |    field$ match {
           |      case pos if pos == 0 => this.name = {
           |        value.toString
           |      }.asInstanceOf[String]
@@ -651,16 +651,16 @@ class SchemaGenSpec extends mutable.Specification {
       source1 ===
         """case class Person(var pet: Pet) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this(new Pet)
-          |  def get(field: Int): AnyRef = {
-          |    field match {
+          |  def get(field$: Int): AnyRef = {
+          |    field$ match {
           |      case pos if pos == 0 => {
           |        pet
           |      }.asInstanceOf[AnyRef]
           |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
           |    }
           |  }
-          |  def put(field: Int, value: Any): Unit = {
-          |    field match {
+          |  def put(field$: Int, value: Any): Unit = {
+          |    field$ match {
           |      case pos if pos == 0 => this.pet = {
           |        value
           |      }.asInstanceOf[Pet]
@@ -678,16 +678,16 @@ class SchemaGenSpec extends mutable.Specification {
       source2 ===
         """case class Pet(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this("")
-          |  def get(field: Int): AnyRef = {
-          |    field match {
+          |  def get(field$: Int): AnyRef = {
+          |    field$ match {
           |      case pos if pos == 0 => {
           |        name
           |      }.asInstanceOf[AnyRef]
           |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
           |    }
           |  }
-          |  def put(field: Int, value: Any): Unit = {
-          |    field match {
+          |  def put(field$: Int, value: Any): Unit = {
+          |    field$ match {
           |      case pos if pos == 0 => this.name = {
           |        value.toString
           |      }.asInstanceOf[String]
@@ -732,16 +732,16 @@ class SchemaGenSpec extends mutable.Specification {
           | */
           |case class Person(var pet: Pet) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this(new Pet)
-          |  def get(field: Int): AnyRef = {
-          |    field match {
+          |  def get(field$: Int): AnyRef = {
+          |    field$ match {
           |      case pos if pos == 0 => {
           |        pet
           |      }.asInstanceOf[AnyRef]
           |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
           |    }
           |  }
-          |  def put(field: Int, value: Any): Unit = {
-          |    field match {
+          |  def put(field$: Int, value: Any): Unit = {
+          |    field$ match {
           |      case pos if pos == 0 => this.pet = {
           |        value
           |      }.asInstanceOf[Pet]
@@ -766,16 +766,16 @@ class SchemaGenSpec extends mutable.Specification {
           | */
           |case class Pet(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this("")
-          |  def get(field: Int): AnyRef = {
-          |    field match {
+          |  def get(field$: Int): AnyRef = {
+          |    field$ match {
           |      case pos if pos == 0 => {
           |        name
           |      }.asInstanceOf[AnyRef]
           |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
           |    }
           |  }
-          |  def put(field: Int, value: Any): Unit = {
-          |    field match {
+          |  def put(field$: Int, value: Any): Unit = {
+          |    field$ match {
           |      case pos if pos == 0 => this.name = {
           |        value.toString
           |      }.asInstanceOf[String]
@@ -820,16 +820,16 @@ class SchemaGenSpec extends mutable.Specification {
           | */
           |case class Person(var pet: Pet) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this(new Pet)
-          |  def get(field: Int): AnyRef = {
-          |    field match {
+          |  def get(field$: Int): AnyRef = {
+          |    field$ match {
           |      case pos if pos == 0 => {
           |        pet
           |      }.asInstanceOf[AnyRef]
           |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
           |    }
           |  }
-          |  def put(field: Int, value: Any): Unit = {
-          |    field match {
+          |  def put(field$: Int, value: Any): Unit = {
+          |    field$ match {
           |      case pos if pos == 0 => this.pet = {
           |        value
           |      }.asInstanceOf[Pet]
@@ -854,16 +854,16 @@ class SchemaGenSpec extends mutable.Specification {
           | */
           |case class Pet(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this("")
-          |  def get(field: Int): AnyRef = {
-          |    field match {
+          |  def get(field$: Int): AnyRef = {
+          |    field$ match {
           |      case pos if pos == 0 => {
           |        name
           |      }.asInstanceOf[AnyRef]
           |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
           |    }
           |  }
-          |  def put(field: Int, value: Any): Unit = {
-          |    field match {
+          |  def put(field$: Int, value: Any): Unit = {
+          |    field$ match {
           |      case pos if pos == 0 => this.name = {
           |        value.toString
           |      }.asInstanceOf[String]
@@ -903,16 +903,16 @@ class SchemaGenSpec extends mutable.Specification {
           | */
           |case class Person(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this("")
-          |  def get(field: Int): AnyRef = {
-          |    field match {
+          |  def get(field$: Int): AnyRef = {
+          |    field$ match {
           |      case pos if pos == 0 => {
           |        name
           |      }.asInstanceOf[AnyRef]
           |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
           |    }
           |  }
-          |  def put(field: Int, value: Any): Unit = {
-          |    field match {
+          |  def put(field$: Int, value: Any): Unit = {
+          |    field$ match {
           |      case pos if pos == 0 => this.name = {
           |        value.toString
           |      }.asInstanceOf[String]
@@ -954,8 +954,8 @@ class SchemaGenSpec extends mutable.Specification {
           | */
           |case class Person(var name: String, var age: Int) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this("", 0)
-          |  def get(field: Int): AnyRef = {
-          |    field match {
+          |  def get(field$: Int): AnyRef = {
+          |    field$ match {
           |      case pos if pos == 0 => {
           |        name
           |      }.asInstanceOf[AnyRef]
@@ -965,8 +965,8 @@ class SchemaGenSpec extends mutable.Specification {
           |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
           |    }
           |  }
-          |  def put(field: Int, value: Any): Unit = {
-          |    field match {
+          |  def put(field$: Int, value: Any): Unit = {
+          |    field$ match {
           |      case pos if pos == 0 => this.name = {
           |        value.toString
           |      }.asInstanceOf[String]
@@ -1030,8 +1030,8 @@ class SchemaGenSpec extends mutable.Specification {
           |
           |case class Card(var suit: Suit = Suit.SPADES, var number: Int) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this(Suit.SPADES, 0)
-          |  def get(field: Int): AnyRef = {
-          |    field match {
+          |  def get(field$: Int): AnyRef = {
+          |    field$ match {
           |      case pos if pos == 0 => {
           |        suit
           |      }.asInstanceOf[AnyRef]
@@ -1041,8 +1041,8 @@ class SchemaGenSpec extends mutable.Specification {
           |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
           |    }
           |  }
-          |  def put(field: Int, value: Any): Unit = {
-          |    field match {
+          |  def put(field$: Int, value: Any): Unit = {
+          |    field$ match {
           |      case pos if pos == 0 => this.suit = {
           |        value
           |      }.asInstanceOf[Suit]

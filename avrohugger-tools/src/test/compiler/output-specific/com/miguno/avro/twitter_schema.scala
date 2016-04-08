@@ -8,8 +8,8 @@ package com.miguno.avro
 */
 case class twitter_schema(var username: String, var tweet: String, var timestamp: Long) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this("", "", 0L)
-  def get(field: Int): AnyRef = {
-    field match {
+  def get(field$: Int): AnyRef = {
+    field$ match {
       case pos if pos == 0 => {
         username
       }.asInstanceOf[AnyRef]
@@ -22,8 +22,8 @@ case class twitter_schema(var username: String, var tweet: String, var timestamp
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
-  def put(field: Int, value: Any): Unit = {
-    field match {
+  def put(field$: Int, value: Any): Unit = {
+    field$ match {
       case pos if pos == 0 => this.username = {
         value.toString
       }.asInstanceOf[String]

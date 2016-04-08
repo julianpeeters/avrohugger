@@ -25,8 +25,8 @@ object GetGenerator {
 		val errorCase = CASE(WILDCARD) ==> NEW("org.apache.avro.AvroRuntimeException", LIT("Bad index"))
     val casesGet = indexedFields.map(field => asGetCase(field)):+errorCase
 
-    DEF("get", AnyRefClass) withParams(PARAM("field", IntClass)) := BLOCK(
-      REF("field") MATCH(casesGet:_*)
+    DEF("get", AnyRefClass) withParams(PARAM("field$", IntClass)) := BLOCK(
+      REF("field$") MATCH(casesGet:_*)
     )  
   }
 }
