@@ -54,6 +54,38 @@ class SchemaGenSpec extends mutable.Specification {
     }
 
 
+    "Expand an empty case class in the default package to implement SpecificRecord" in {
+      val schemaString = 
+        """/** Auto-Generated Schema */
+          |case class Result()""".stripMargin
+      val gen = new Generator(SpecificRecord)
+      val List(source) = gen.stringToStrings(schemaString)
+
+       
+      source ===
+        """/** Auto-Generated Schema */
+          |case class Result() extends org.apache.avro.specific.SpecificRecordBase {
+          |  def get(field$: Int): AnyRef = {
+          |    field$ match {
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |  }
+          |  def put(field$: Int, value: Any): Unit = {
+          |    field$ match {
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |    ()
+          |  }
+          |  def getSchema: org.apache.avro.Schema = Result.SCHEMA$
+          |}
+          |
+          |object Result {
+          |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Result\",\"doc\":\"Auto-Generated Schema\",\"fields\":[]}")
+          |}""".stripMargin.trim
+    }
+
+
+
 
 // Scala 2.10 can't parse package declarations, so rather than than maintain 
 // a separate branch, these tests (that pass for 2.11) get commented out until 
