@@ -51,12 +51,27 @@ object SpecificCaseClassTree {
     val defGetSchema = GetSchemaGenerator(classSymbol).toDef
 
     // define the class def with the members previously defined
-    val caseClassTree = CASECLASSDEF(classSymbol).withParams(params).withParents(baseClass) := BLOCK(
-      defThis,
-      defGet,
-      defPut,
-      defGetSchema
-    )
+    val caseClassTree = {
+      if (!schema.getFields.toList.isEmpty) {
+        CASECLASSDEF(classSymbol)
+          .withParams(params)
+          .withParents(baseClass) := BLOCK(
+            defThis,
+            defGet,
+            defPut,
+            defGetSchema
+        )
+      }
+      else { // for "empty" records: empty params and no no-arg ctor
+        CASECLASSDEF(classSymbol)
+          .withParams(PARAM(""))
+          .withParents(baseClass) := BLOCK(
+            defGet,
+            defPut,
+            defGetSchema
+        )
+      }
+    }
 
     val treeWithScalaDoc = ScalaDocGen.docToScalaDoc(schema, caseClassTree)
     treeWithScalaDoc

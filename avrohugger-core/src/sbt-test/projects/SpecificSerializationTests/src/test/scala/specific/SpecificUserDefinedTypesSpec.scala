@@ -108,4 +108,13 @@ class SpecificUserDefinedTypesSpec extends Specification {
       SpecificTestUtil.verifyWriteAndRead(records)
     }
   }
+  
+  "A case object that represents an empty record" should {
+    "serialize and deserialize correctly" in {
+      val record1 = Reset()
+      val records = List(record1)
+      SpecificTestUtil.verifyWriteAndRead(records)
+    }
+  }
+  
 }

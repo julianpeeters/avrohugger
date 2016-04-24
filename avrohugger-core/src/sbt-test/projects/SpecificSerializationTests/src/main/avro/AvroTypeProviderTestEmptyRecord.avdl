@@ -1,0 +1,20 @@
+@namespace("test")
+protocol MyApplication {
+    record Added {
+        int value;
+    }
+
+    record Subtracted {
+        int value;
+    }
+
+    record Divided {
+        int value;
+    }
+
+    record Multiplied {
+        int value;
+    }
+
+    record Reset {}
+}

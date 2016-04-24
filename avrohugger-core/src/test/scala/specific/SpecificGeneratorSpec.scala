@@ -568,7 +568,34 @@ class SpecificGeneratorSpec extends mutable.Specification {
     (new File(s"$outDir/other/ns/ExternalDependency.scala")).exists === true
   }
 
-
-
+  "correctly generate an empty case class definition from an empty record" in {
+    val infile = new java.io.File("avrohugger-core/src/test/avro/AvroTypeProviderTestEmptyRecord.avdl")
+    val gen = new Generator(SpecificRecord)
+    val outDir = gen.defaultOutputDir + "/specific/"
+    gen.fileToFile(infile, outDir)
+    val source = scala.io.Source.fromFile(s"$outDir/test/Reset.scala").mkString
+    source ===
+      """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
+        |package test
+        |
+        |case class Reset() extends org.apache.avro.specific.SpecificRecordBase {
+        |  def get(field$: Int): AnyRef = {
+        |    field$ match {
+        |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+        |    }
+        |  }
+        |  def put(field$: Int, value: Any): Unit = {
+        |    field$ match {
+        |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+        |    }
+        |    ()
+        |  }
+        |  def getSchema: org.apache.avro.Schema = Reset.SCHEMA$
+        |}
+        |
+        |object Reset {
+        |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Reset\",\"namespace\":\"test\",\"fields\":[]}")
+        |}""".stripMargin
+  }
 
 }
