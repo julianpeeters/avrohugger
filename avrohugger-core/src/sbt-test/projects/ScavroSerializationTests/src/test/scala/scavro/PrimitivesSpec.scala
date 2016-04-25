@@ -472,7 +472,7 @@ class ScavroMap03Test extends Specification {
 }
 
 
-class ScavroEnum01Test extends Specification {
+class ScavroEmptyRecordTest extends Specification {
 
   "A case class with a `Enumeration` field" should {
     "serialize and deserialize correctly" in {
@@ -498,4 +498,36 @@ class ScavroEnum01Test extends Specification {
 
     }
   }
+}
+
+
+class ScavroEnum01Test extends Specification {
+
+  "A case object that represents an empty record" should {
+    "serialize and deserialize correctly" in {
+    //  val record1 = Reset()
+    //  val records = List(record1)
+    //  SpecificTestUtil.verifyWriteAndRead(records)
+    
+      val record = Reset()
+
+      val filename = "Reset.avro"
+      val records = record :: Nil
+
+      // Convert to json
+      records.foreach(f => println(f.toJson))
+
+      // Write the avro file
+      val writer = AvroWriter[Reset](filename)
+      writer.write(records)
+
+      // Read the avro file and do some processing
+      val reader: AvroReader[Reset] =
+        AvroReader[Reset]
+      val sameRecords = reader.read(filename)
+
+      sameRecords must ===(records)
+    }
+  }
+  
 }
