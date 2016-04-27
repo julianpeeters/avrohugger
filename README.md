@@ -11,7 +11,7 @@ Alternative Distributions:
 
 #####Generates Scala case classes in various formats:
 
-* `Standard` Vanilla case classes (for use with [Scalavro](https://github.com/GenslerAppsPod/scalavro), [Salat-Avro](https://github.com/julianpeeters/salat-avro), [gfc-avro](https://github.com/gilt/gfc-avro), etc.)
+* `Standard` Vanilla case classes and case objects (for use with [Scalavro](https://github.com/GenslerAppsPod/scalavro), [Salat-Avro](https://github.com/julianpeeters/salat-avro), [gfc-avro](https://github.com/gilt/gfc-avro), etc.)
 
 * `SpecificRecord` Case classes that implement `SpecificRecordBase` and
 therefore have mutable `var` fields (for use with the Avro Specific API -
@@ -48,7 +48,7 @@ runtime).
 
 #####Get the dependency with:
 
-    "com.julianpeeters" % "avrohugger-core" %% "0.9.3"
+    "com.julianpeeters" % "avrohugger-core" %% "0.9.4"
 
 
 #####Description:
@@ -125,22 +125,22 @@ _Note:_ Currently [Treehugger](http://eed3si9n.com/treehugger/comments.html#Scal
 ####`avrohugger-tools`
 
 
-Download the avrohugger-tools jar for Scala [2.10](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.10/0.9.3/avrohugger-tools_2.10-0.9.3-assembly.jar) or Scala [2.11](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.11/0.9.3/avrohugger-tools_2.11-0.9.3-assembly.jar)(20MB!) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
+Download the avrohugger-tools jar for Scala [2.10](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.10/0.9.4/avrohugger-tools_2.10-0.9.4-assembly.jar) or Scala [2.11](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.11/0.9.4/avrohugger-tools_2.11-0.9.4-assembly.jar)(20MB!) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
 
 
 'generate' generates Scala case class definitions:
 
-`java -jar /path/to/avrohugger-tools_2.11-0.9.3-assembly.jar generate schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.11-0.9.4-assembly.jar generate schema user.avsc . `
 
 
 'generate-specific' generates definitions that extend SpecificRecordBase:
 
-`java -jar /path/to/avrohugger-tools_2.11-0.9.3-assembly.jar generate-specific schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.11-0.9.4-assembly.jar generate-specific schema user.avsc . `
 
 
 'generate-scavro' generates definitions that extend Scavro's AvroSerializable:
 
-`java -jar /path/to/avrohugger-tools_2.11-0.9.3-assembly.jar generate-scavro schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.11-0.9.4-assembly.jar generate-scavro schema user.avsc . `
 
 ####`sbt-avrohugger`
 
