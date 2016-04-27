@@ -9,7 +9,7 @@ import scala.collection.JavaConverters._
 
 object NestedSchemaExtractor {
   // if a record is found, extract nested RECORDs and ENUMS (i.e. top-level types) 
-  def getNestedSchemas(schema: Schema): List[Schema] = {
+  def getNestedSchemas(schema: Schema, schemaStore: SchemaStore): List[Schema] = {
     def extract(schema: Schema, fieldPath: List[String] = List.empty): List[Schema] = {
 
       schema.getType match {
@@ -22,7 +22,7 @@ object NestedSchemaExtractor {
               case MAP => flattenSchema(fieldSchema.getValueType)
               case RECORD => {
                 // if the field schema is one that has already been stored, use that one
-                if (SchemaStore.schemas.contains(fieldSchema.getFullName)) List()
+                if (schemaStore.schemas.contains(fieldSchema.getFullName)) List()
                 // if we've already seen this schema (recursive schemas) don't traverse further
                 else if (fieldPath.contains(fieldSchema.getFullName)) List()
                 else fieldSchema :: extract(fieldSchema, fieldSchema.getFullName :: fieldPath)
@@ -30,7 +30,7 @@ object NestedSchemaExtractor {
               case UNION => fieldSchema.getTypes.asScala.toList.flatMap(x => flattenSchema(x))
               case ENUM => { //List(fieldSchema)
                 // if the field schema is one that has already been stored, use that one
-                if (SchemaStore.schemas.contains(fieldSchema.getFullName)) List()
+                if (schemaStore.schemas.contains(fieldSchema.getFullName)) List()
                 else List(fieldSchema)
               }
               case _ => List(fieldSchema)

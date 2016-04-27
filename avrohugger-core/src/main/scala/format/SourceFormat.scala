@@ -1,6 +1,8 @@
 package avrohugger
 package format
 
+import avrohugger.input.reflectivecompilation.schemagen.SchemaStore
+
 import org.apache.avro.Schema
 
 import java.nio.file.{Path, Paths, Files, StandardOpenOption}
@@ -21,14 +23,16 @@ trait SourceFormat {
   def asDefinitionString(
   	classStore: ClassStore, 
     namespace: Option[String], 
-    schema: Schema): String
+    schema: Schema,
+    schemaStore: SchemaStore): String
 
-  // concrete member takes a schema and writes the definition to a fil
+  // concrete member takes a schema and writes the definition to a file
   def writeToFile(
     classStore: ClassStore, 
     namespace: Option[String], 
     schema: Schema, 
-    outDir: String): Unit = {
+    outDir: String,
+    schemaStore: SchemaStore): Unit = {
 
 
     // Custom namespaces work for simple types, but seem to fail for records within unions, 
@@ -48,9 +52,11 @@ trait SourceFormat {
 
     val scalaNamespace = checkCustomNamespace(namespace)
 
-    val codeAsString = asDefinitionString(classStore, 
+    val codeAsString = asDefinitionString(
+      classStore, 
       scalaNamespace, 
-      schema)
+      schema,
+      schemaStore)
 
     val folderPath: Path = Paths.get{
       if (scalaNamespace.isDefined) outDir + "/" + scalaNamespace.get.toString.replace('.','/')

@@ -504,14 +504,14 @@ class SpecificGeneratorSpec extends mutable.Specification {
     val outDir = gen.defaultOutputDir + "/specific/"
     gen.fileToFile(importing, outDir)
 
-    val sourceRecord = scala.io.Source.fromFile(s"$outDir/example/idl/DependentRecord.scala").mkString
+    val sourceRecord = scala.io.Source.fromFile(s"$outDir/example/idl/DependentOptionalRecord.scala").mkString
     sourceRecord ===
       """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
         |package example.idl
         |
         |import other.ns.ExternalDependency
         |
-        |case class DependentRecord(var dependency: Option[ExternalDependency], var number: Int) extends org.apache.avro.specific.SpecificRecordBase {
+        |case class DependentOptionalRecord(var dependency: Option[ExternalDependency], var number: Int) extends org.apache.avro.specific.SpecificRecordBase {
         |  def this() = this(None, 0)
         |  def get(field$: Int): AnyRef = {
         |    field$ match {
@@ -542,11 +542,11 @@ class SpecificGeneratorSpec extends mutable.Specification {
         |    }
         |    ()
         |  }
-        |  def getSchema: org.apache.avro.Schema = DependentRecord.SCHEMA$
+        |  def getSchema: org.apache.avro.Schema = DependentOptionalRecord.SCHEMA$
         |}
         |
-        |object DependentRecord {
-        |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"DependentRecord\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"dependency\",\"type\":[\"null\",{\"type\":\"record\",\"name\":\"ExternalDependency\",\"namespace\":\"other.ns\",\"fields\":[{\"name\":\"number\",\"type\":\"int\"}]}]},{\"name\":\"number\",\"type\":\"int\"}]}")
+        |object DependentOptionalRecord {
+        |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"DependentOptionalRecord\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"dependency\",\"type\":[\"null\",{\"type\":\"record\",\"name\":\"ExternalDependency\",\"namespace\":\"other.ns\",\"fields\":[{\"name\":\"number\",\"type\":\"int\"}]}]},{\"name\":\"number\",\"type\":\"int\"}]}")
         |}""".stripMargin
   }
 

@@ -15,10 +15,10 @@ object Directory {
   // where test expected output comes from
   val TEST_EXPECTED_OUTPUT_BASE_DIR =
     new File(TEST_DIR, "output");
-  val TEST_EXPECTED_NICKNAME =
-    new File(TEST_EXPECTED_OUTPUT_BASE_DIR, "Nickname.scala");
-  val TEST_EXPECTED_PLAYER =
-    new File(TEST_EXPECTED_OUTPUT_BASE_DIR, "Player.scala");
+  val TEST_EXPECTED_HANDLE =
+    new File(TEST_EXPECTED_OUTPUT_BASE_DIR, "Handle.scala");
+  val TEST_EXPECTED_PILOT =
+    new File(TEST_EXPECTED_OUTPUT_BASE_DIR, "Pilot.scala");
   val TEST_EXPECTED_TWITTER =
     new File(TEST_EXPECTED_OUTPUT_BASE_DIR, "com/miguno/avro/twitter_schema.scala");
   val TEST_EXPECTED_MESSAGE =
@@ -74,10 +74,10 @@ object Directory {
   // where test output goes
   val TEST_OUTPUT_BASE_DIR =
     new File("avrohugger-tools/target/compiler/output");
-  val TEST_OUTPUT_PLAYER =
-    new File(TEST_OUTPUT_BASE_DIR, "avro/examples/baseball/Player.scala");
-  val TEST_OUTPUT_NICKNAME =
-    new File(TEST_OUTPUT_BASE_DIR, "avro/examples/baseball/Nickname.scala");
+  val TEST_OUTPUT_PILOT =
+    new File(TEST_OUTPUT_BASE_DIR, "avro/examples/flight/Pilot.scala");
+  val TEST_OUTPUT_HANDLE =
+    new File(TEST_OUTPUT_BASE_DIR, "avro/examples/flight/Handle.scala");
   val TEST_OUTPUT_TWITTER =
     new File(TEST_OUTPUT_BASE_DIR, "com/miguno/avro/twitter_schema.scala");
       val TEST_OUTPUT_MESSAGE =

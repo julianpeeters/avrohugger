@@ -13,7 +13,7 @@ import collection.JavaConversions._
  
 object JsonMatcher {
 
-  def toJsonNode(namespace: Option[Name], dv: Tree) : JsonNode = {
+  def toJsonNode(namespace: Option[Name], dv: Tree, schemaStore: SchemaStore) : JsonNode = {
 
     def getFullName(nme: String): String = {
       namespace match {
@@ -36,31 +36,31 @@ object JsonMatcher {
       case Literal(Constant(x: String))                => jsonNodeFactory.textNode(x)
       case Literal(Constant(null))                     => jsonNodeFactory.nullNode
       case Ident(NameTag("None"))                      => jsonNodeFactory.nullNode
-      case Apply(Ident(NameTag("Some")), List(x))      => toJsonNode(namespace, x)
+      case Apply(Ident(NameTag("Some")), List(x))      => toJsonNode(namespace, x, schemaStore)
       case Apply(Ident(NameTag("List")), xs)           => {
         val jsonArray = jsonNodeFactory.arrayNode
-        xs.map(x => toJsonNode(namespace, x)).map(v => jsonArray.add(v))
+        xs.map(x => toJsonNode(namespace, x, schemaStore)).map(v => jsonArray.add(v))
         jsonArray
       }
       case Apply(Ident(NameTag("Map")), kvps)          => {
         val jsonObject = jsonNodeFactory.objectNode
         kvps.foreach(kvp => kvp match {
           case Apply(Select(Literal(Constant(key: String)), NameTag(tn)), List(x)) =>  {
-            jsonObject.put(key, toJsonNode(namespace, x))
+            jsonObject.put(key, toJsonNode(namespace, x, schemaStore))
           }
         })
         jsonObject
       }
       // if the default value is another (i.e. nested) record/case class
-      case Apply(Ident(NameTag(name)), xs) if SchemaStore.schemas.contains(getFullName(name.toString)) => {
+      case Apply(Ident(NameTag(name)), xs) if schemaStore.schemas.contains(getFullName(name.toString)) => {
         val jsonObject = jsonNodeFactory.objectNode
         xs.zipWithIndex.map( x => {
           val value = x._1
           val index = x._2
-          val nestedRecordField = SchemaStore.schemas(getFullName(name.toString)).getFields()(index)
+          val nestedRecordField = schemaStore.schemas(getFullName(name.toString)).getFields()(index)
           // values from the tree, field names from cross referencing tree's pos with schema field pos
           // (they always correspond since the schema is defined based on the fields in a class def)
-          jsonObject.put(nestedRecordField.name, toJsonNode(namespace, value))
+          jsonObject.put(nestedRecordField.name, toJsonNode(namespace, value, schemaStore))
         })
         jsonObject
       }

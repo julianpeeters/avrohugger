@@ -18,7 +18,8 @@ object EnumSchemaGenerator  {
     className: String, 
     namespace: Option[Name], 
     values: List[Name],
-    maybeScalaDoc: Option[String]): Schema = {
+    maybeScalaDoc: Option[String],
+    schemaStore: SchemaStore): Schema = {
 
     // conversion from Option to String/null is for compatibility with Apache Avro
     val ns = namespace match {
@@ -32,7 +33,7 @@ object EnumSchemaGenerator  {
 
     val avroSchema = Schema.createEnum(className, doc, ns, vals)    
 
-    SchemaStore.accept(avroSchema)
+    schemaStore.accept(avroSchema)
     avroSchema
   }
 

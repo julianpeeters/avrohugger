@@ -23,7 +23,7 @@ class StringInputParser {
 
   lazy val schemaParser = new Parser()
 
-  def getSchemas(inputString: String): List[Schema] = {
+  def getSchemas(inputString: String, schemaStore: SchemaStore): List[Schema] = {
 
     def trySchema(str: String) = {
       try {
@@ -52,12 +52,13 @@ class StringInputParser {
         val types = protocol.getTypes
         types.asScala.toList}
       catch {
-        case notIDL: ParseException => tryCaseClass(inputString)
+        case notIDL: ParseException => tryCaseClass(inputString, schemaStore)
         case unknown: Throwable => sys.error("Unexpected exception: " + unknown)
         }
       }
 
-    def tryCaseClass(codeStr: String): List[Schema] = {
+    def tryCaseClass(codeStr: String, schemaStore: SchemaStore): List[Schema] = {
+      val typecheckDependencyStore = new TypecheckDependencyStore
       val compilationUnits = PackageSplitter.getCompilationUnits(codeStr)
       val scalaDocs = ScalaDocParser.getScalaDocs(compilationUnits)
       val trees = compilationUnits.map(src => Toolbox.toolBox.parse(src))
@@ -65,9 +66,8 @@ class StringInputParser {
       val schemas = treesZippedWithDocs.flatMap(treeAndDocs => {
         val tree = treeAndDocs._1
         val docs = treeAndDocs._2
-        TreeInputParser.parse(tree, docs)
+        TreeInputParser.parse(tree, docs, schemaStore, typecheckDependencyStore)
       })
-      TypecheckDependencyStore.knownClasses.clear
       schemas
     }
 

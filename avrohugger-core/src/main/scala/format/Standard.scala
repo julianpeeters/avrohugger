@@ -2,6 +2,8 @@ package avrohugger
 package format
 
 import standard._
+import avrohugger.input.reflectivecompilation.schemagen.SchemaStore
+
 
 import treehugger.forest._
 import org.apache.avro.Schema
@@ -18,8 +20,10 @@ object Standard extends SourceFormat {
   override def asDefinitionString(
     classStore: ClassStore, 
     namespace: Option[String], 
-    schema: Schema): String = {
-    val tree = StandardTreehugger.asScalaCodeString(classStore, schema, namespace, typeMatcher)
+    schema: Schema,
+    schemaStore: SchemaStore): String = {
+      
+    val tree = StandardTreehugger.asScalaCodeString(classStore, schema, namespace, typeMatcher, schemaStore)
     treeToString(tree)
   }
 

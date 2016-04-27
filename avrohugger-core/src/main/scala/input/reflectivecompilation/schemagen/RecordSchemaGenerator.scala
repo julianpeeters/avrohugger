@@ -19,16 +19,18 @@ object RecordSchemaGenerator  {
     className: String, 
     namespace: Option[Name], 
     fields: List[ValDef],
-    maybeScalaDoc: Option[String]): Schema = {
+    maybeScalaDoc: Option[String],
+    schemaStore: SchemaStore, 
+    typecheckDependencyStore: TypecheckDependencyStore): Schema = {
 
     // Can't seem to typecheck packaged classes, so splice-in unpackaged versions
     // and later the FieldSchemaGenerator's type matcher must be passed the field's 
     // namespace explicitly.
     def typeCheck(t: Tree) = {
-
-      val dependencies = TypecheckDependencyStore.knownClasses.values.toList
+      val dependencies = typecheckDependencyStore.knownClasses.values.toList
       Toolbox.toolBox.typeCheck(q"..$dependencies; {type T = $t}") match {
-	case x @ Block(classDefs, Block(List(TypeDef(mods, name, tparams, rhs)), const)) => rhs.tpe
+	      case x @ Block(classDefs, Block(List(TypeDef(mods, name, tparams, rhs)), const)) => rhs.tpe
+        case _ => t.tpe // if there are no fields, then no dependencies either
       }
     }
 
@@ -40,12 +42,13 @@ object RecordSchemaGenerator  {
 
       val maybeFieldDoc = ScalaDocParser.fieldDocsMap(maybeScalaDoc).get(valDef.name.toString)
 
-      FieldSchemaGenerator.toAvroField(
+      new FieldSchemaGenerator().toAvroField(
         referredNamespace,
         valDef.name, 
         typeCheck(fieldType),
         valDef.rhs,
-        maybeFieldDoc
+        maybeFieldDoc,
+        schemaStore
       )
     }
 
@@ -64,7 +67,7 @@ object RecordSchemaGenerator  {
 
     val avroSchema = Schema.createRecord(className, recordDoc, ns, false)    
     avroSchema.setFields(JArrays.asList(avroFields.toArray:_*))
-    SchemaStore.accept(avroSchema)
+    schemaStore.accept(avroSchema)
     avroSchema
   }
 

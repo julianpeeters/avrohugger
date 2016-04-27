@@ -2,6 +2,7 @@ package avrohugger
 package format
 
 import specific._
+import avrohugger.input.reflectivecompilation.schemagen.SchemaStore
 
 import org.apache.avro.Schema.Type._
 
@@ -22,7 +23,6 @@ object SpecificRecord extends SourceFormat{
   override def fileExt(schema: Schema) = schema.getType match {
     case RECORD => ".scala"
     case ENUM => ".java" // Avro's SpecificData requires enums be Java Enum
-
     case _ => sys.error("Only RECORD and ENUM can be top-level definitions")
   }
 
@@ -31,10 +31,11 @@ object SpecificRecord extends SourceFormat{
   override def asDefinitionString(
     classStore: ClassStore, 
     namespace: Option[String], 
-    schema: Schema): String = {
+    schema: Schema, 
+    schemaStore: SchemaStore): String = {
 
     schema.getType match {
-      case RECORD => SpecificScalaTreehugger.asScalaCodeString(classStore, namespace, schema, typeMatcher)
+      case RECORD => SpecificScalaTreehugger.asScalaCodeString(classStore, namespace, schema, typeMatcher, schemaStore)
       case ENUM => SpecificJavaTreehugger.asJavaCodeString(classStore, namespace, schema)
       case _ => sys.error("Only RECORD and ENUM can be top-level definitions")
     }

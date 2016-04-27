@@ -1,0 +1,5 @@
+{"type":"record", "name":"Handle", "namespace": "avro.examples.flight",
+  "fields": [
+   {"name": "name", "type": "string"}
+  ]
+}

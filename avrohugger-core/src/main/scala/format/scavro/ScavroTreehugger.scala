@@ -4,6 +4,7 @@ package scavro
 
 import scavro.trees.ScavroCaseClassTree.toCaseClassDef
 import scavro.trees.ScavroObjectTree.{ toCompanionDef, toObjectDef }
+import input.reflectivecompilation.schemagen._
 
 import avrohugger.input.DependencyInspector._
 import avrohugger.input.NestedSchemaExtractor._
@@ -23,7 +24,8 @@ object ScavroTreehugger {
 		classStore: ClassStore,
 		schema: Schema,
 		namespace: Option[String],
-    typeMatcher: TypeMatcher): String = {
+    typeMatcher: TypeMatcher,
+	  schemaStore: SchemaStore): String = {
 
     // register new type
     val ScalaClass = RootClass.newClass(schema.getName)
@@ -53,12 +55,12 @@ object ScavroTreehugger {
           List(schemaImport,
             scavroImport,
             renameImport,
-            javaConversionsImport) ++ getImports(schema, namespace)
+            javaConversionsImport) ++ getImports(schema, namespace, schemaStore)
         }
         else {
           List(schemaImport,
             scavroImport,
-            renameImport) ++ getImports(schema, namespace)
+            renameImport) ++ getImports(schema, namespace, schemaStore)
         }
       }
       else List(schemaImport, scavroImport)
@@ -91,8 +93,8 @@ object ScavroTreehugger {
 
   def isRecord(schema: Schema): Boolean = ( schema.getType == RECORD )
 
-  def getImports(schema: Schema, currentNamespace: Option[String]): Iterable[Import] = {
-    val topLevelSchemas: List[Schema] = schema::(getNestedSchemas(schema))
+  def getImports(schema: Schema, currentNamespace: Option[String], schemaStore: SchemaStore): Iterable[Import] = {
+    val topLevelSchemas: List[Schema] = schema::(getNestedSchemas(schema, schemaStore))
     topLevelSchemas.filter(isRecord).flatMap(s => s.getFields)
       .filter( field => getReferredNamespace(field.schema).isDefined )
       .filter( field => getReferredNamespace(field.schema) != currentNamespace )

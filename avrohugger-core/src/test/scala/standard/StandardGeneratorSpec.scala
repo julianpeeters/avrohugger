@@ -381,14 +381,14 @@ class StandardGeneratorSpec extends mutable.Specification {
     val gen = new Generator(Standard)
     gen.fileToFile(importing)
 
-    val sourceEnum = scala.io.Source.fromFile("target/generated-sources/example/idl/DependentRecord.scala").mkString
+    val sourceEnum = scala.io.Source.fromFile("target/generated-sources/example/idl/DependentOptionalRecord.scala").mkString
     sourceEnum ====
       """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
         |package example.idl
         |
         |import other.ns.ExternalDependency
         |
-        |case class DependentRecord(dependency: Option[ExternalDependency], number: Int)
+        |case class DependentOptionalRecord(dependency: Option[ExternalDependency], number: Int)
         |""".stripMargin.trim
   }
 
@@ -408,5 +408,17 @@ class StandardGeneratorSpec extends mutable.Specification {
     (new File(s"target/generated-sources/other/ns/ExternalDependency.scala")).exists === true
   }
 
+  "correctly generate an empty case class definition" in {
+    val infile = new java.io.File("avrohugger-core/src/test/avro/AvroTypeProviderTestEmptyRecord.avdl")
+    val gen = new Generator(Standard)
+    gen.fileToFile(infile)
+    val source = scala.io.Source.fromFile("target/generated-sources/test/Reset.scala").mkString
+    source ===
+      """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
+        |package test
+        |
+        |case object Reset
+      """.stripMargin.trim
+  }
   
 }

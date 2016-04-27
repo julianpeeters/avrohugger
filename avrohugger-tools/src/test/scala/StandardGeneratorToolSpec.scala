@@ -14,7 +14,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Arrays;
+//import java.util.Arrays;
 
 
 
@@ -25,10 +25,10 @@ class StandardGeneratorToolSpec extends mutable.Specification {
 
 
   // Runs the actual generator tool with the given input args
-  private def doCompile(args: Array[String])  = {
+  private def doCompile(args: List[String])  = {
     val tool = new GeneratorTool(Standard);
     Try{
-      tool.run(null, null, null, Arrays.asList((args:_*)));
+      tool.run(null, null, null, Seq(args:_*));
     }
   }
 
@@ -58,7 +58,7 @@ class StandardGeneratorToolSpec extends mutable.Specification {
   "the generated Scala files" should {
 /* //TODO in Java an interface is generated in addition to the types, how to represent in Scala? Trait?
     "match the expected single protocol file" in {
-      doCompile(Array[String] ("protocol",
+      doCompile(List[String] ("protocol",
         Directory.TEST_INPUT_DIR.toString() + "/mail.avpr",
         Directory.TEST_OUTPUT_SCALA_DIR.getPath()
       ));
@@ -66,7 +66,7 @@ class StandardGeneratorToolSpec extends mutable.Specification {
     }
 */
     "match the expected single datafile file" in {
-      doCompile(Array[String] ("datafile",
+      doCompile(List[String] ("datafile",
         Directory.TEST_INPUT_DIR.toString() + "/twitter.avro",
         Directory.TEST_OUTPUT_BASE_DIR.getPath()
       ));
@@ -74,33 +74,33 @@ class StandardGeneratorToolSpec extends mutable.Specification {
     }
 
     "match the expected single schema file" in {
-      doCompile(Array[String] ("schema",
-        Directory.TEST_INPUT_DIR.toString() + "/nickname.avsc",
+      doCompile(List[String] ("schema",
+        Directory.TEST_INPUT_DIR.toString() + "/handle.avsc",
         Directory.TEST_OUTPUT_BASE_DIR.getPath()
       ));
-      readFile(Directory.TEST_OUTPUT_NICKNAME) === readFile(Directory.TEST_EXPECTED_NICKNAME)
+      readFile(Directory.TEST_OUTPUT_HANDLE) === readFile(Directory.TEST_EXPECTED_HANDLE)
     }
 
     "match the expected dependent files" in {
-      doCompile(Array[String]("schema",
-        Directory.TEST_INPUT_DIR.toString() + "/nickname.avsc",
-        Directory.TEST_INPUT_DIR.toString() + "/player.avsc",
+      doCompile(List[String]("schema",
+        Directory.TEST_INPUT_DIR.toString() + "/handle.avsc",
+        Directory.TEST_INPUT_DIR.toString() + "/pilot.avsc",
         Directory.TEST_OUTPUT_BASE_DIR.getPath()
       ));
-      readFile(Directory.TEST_OUTPUT_PLAYER)  === readFile(Directory.TEST_EXPECTED_PLAYER)
+      readFile(Directory.TEST_OUTPUT_PILOT)  === readFile(Directory.TEST_EXPECTED_PILOT)
     }
 
     "match the expected file and directory" in {
-      doCompile(Array[String]("schema",
-        Directory.TEST_INPUT_DIR.toString() + "/nickname.avsc",
+      doCompile(List[String]("schema",
+        Directory.TEST_INPUT_DIR.toString() + "/handle.avsc",
         Directory.TEST_INPUT_DIR.toString(),
         Directory.TEST_OUTPUT_BASE_DIR.getPath()
       ));
-      readFile(Directory.TEST_OUTPUT_PLAYER)  === readFile(Directory.TEST_EXPECTED_PLAYER)
+      readFile(Directory.TEST_OUTPUT_PILOT)  === readFile(Directory.TEST_EXPECTED_PILOT)
     }
 
     "match the expected using the -string option" in {
-      doCompile(Array[String]("-string", "schema",
+      doCompile(List[String]("-string", "schema",
         Directory.TEST_INPUT_DIR.toString() + "/nickname.avsc",
         Directory.TEST_INPUT_DIR.toString() + "/player.avsc",
         Directory.TEST_INPUT_DIR.toString() + "/twitter_schema.avro",

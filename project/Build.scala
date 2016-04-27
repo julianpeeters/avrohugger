@@ -32,7 +32,6 @@ object BuildSettings {
     libraryDependencies += "org.codehaus.jackson" % "jackson-core-asl" % "1.9.13",
     // for testing
     libraryDependencies += "org.specs2" %% "specs2" % "2.4" % "test",
-    parallelExecution in Test := false,
     publishMavenStyle := true,
     publishArtifact in Test := false,
     publishTo <<= version { (v: String) =>

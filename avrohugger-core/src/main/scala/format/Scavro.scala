@@ -3,6 +3,7 @@ package format
 
 import scavro._
 import scavro.ScavroTreehugger
+import avrohugger.input.reflectivecompilation.schemagen.SchemaStore
 
 import treehugger.forest._
 
@@ -25,12 +26,15 @@ object Scavro extends SourceFormat {
   override def asDefinitionString(
     classStore: ClassStore, 
     namespace: Option[String], 
-    schema: Schema): String = {
+    schema: Schema,
+    schemaStore: SchemaStore): String = {
     
-    val tree = ScavroTreehugger.asScalaCodeString(classStore, 
+    val tree = ScavroTreehugger.asScalaCodeString(
+      classStore, 
       schema, 
       namespace, 
-      typeMatcher)
+      typeMatcher,
+      schemaStore)
     // SpecificCompiler can't return a tree for Java enums, so return
     // a string here for a consistent api vis a vis *ToFile and *ToStrings
     treeToString(tree)
@@ -40,7 +44,8 @@ object Scavro extends SourceFormat {
     classStore: ClassStore, 
     namespace: Option[String], 
     schema: Schema, 
-    outDir: String): Unit = {
+    outDir: String,
+    schemaStore: SchemaStore): Unit = {
 
     // By default, Scavro generates Scala classes in packages that are the same as the 
     // Java package with `model` appended. 
@@ -62,7 +67,11 @@ object Scavro extends SourceFormat {
       case schemaNamespace => getCustomNamespace(schemaNamespace) 
     }
 
-    val codeAsString = asDefinitionString(classStore, scavroModelNamespace, schema)
+    val codeAsString = asDefinitionString(
+      classStore,
+      scavroModelNamespace,
+      schema,
+      schemaStore)
 
     val folderPath: Path = Paths.get{
       outDir + "/" + scavroModelNamespace.get.toString.replace('.','/')

@@ -4,6 +4,7 @@ package standard
 
 import avrohugger.input.DependencyInspector._
 import avrohugger.input.NestedSchemaExtractor._
+import avrohugger.input.reflectivecompilation.schemagen.SchemaStore
 
 import org.apache.avro.Schema
 import org.apache.avro.Schema.Field
@@ -19,9 +20,10 @@ object StandardTreehugger {
 		classStore: ClassStore,
 		schema: Schema, 
 		namespace: Option[String],
-    typeMatcher: TypeMatcher): String = {
+    typeMatcher: TypeMatcher,
+    schemaStore: SchemaStore): String = {
 
-    val imports = if( isRecord(schema) ) getImports(schema, namespace) else List.empty
+    val imports = if( isRecord(schema) ) getImports(schema, namespace, schemaStore) else List.empty
 
     val topLevelDef = schema.getType match {
       case RECORD => StandardCaseClassTree.toCaseClassDef(classStore, namespace, schema, typeMatcher)
@@ -43,8 +45,8 @@ object StandardTreehugger {
 
   def isRecord(schema: Schema): Boolean = ( schema.getType == RECORD )
 
-  def getImports(schema: Schema, currentNamespace: Option[String]): Iterable[Import] = {
-    val topLevelSchemas: List[Schema] = schema::(getNestedSchemas(schema)) 
+  def getImports(schema: Schema, currentNamespace: Option[String], schemaStore: SchemaStore): Iterable[Import] = {
+    val topLevelSchemas: List[Schema] = schema::(getNestedSchemas(schema, schemaStore)) 
       topLevelSchemas.filter(isRecord).flatMap(s => s.getFields)
         .filter( field => getReferredNamespace(field.schema).isDefined )
         .filter( field => getReferredNamespace(field.schema) != currentNamespace )

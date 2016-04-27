@@ -1,0 +1,8 @@
+{"type":"record", "name":"Pilot", "namespace": "avro.examples.flight",
+  "fields": [
+   {"name": "number", "type": "int"},
+   {"name": "first_name", "type": "string"},
+   {"name": "last_name", "type": "string"},
+   {"name": "nicknames", "type": {"type": "array", "items": "Handle"} }
+  ]
+}

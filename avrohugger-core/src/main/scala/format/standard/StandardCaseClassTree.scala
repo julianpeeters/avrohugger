@@ -17,19 +17,25 @@ object StandardCaseClassTree {
     namespace: Option[String], 
     schema: Schema,
     typeMatcher: TypeMatcher) = {
+      
     // register new type
-
-
     val classSymbol = RootClass.newClass(schema.getName)
     classStore.accept(schema, classSymbol)
+    
     val params: List[ValDef] = schema.getFields.toList.map { field =>
       val fieldName = field.name
       val fieldType = typeMatcher.toScalaType(classStore, namespace, field.schema)
       PARAM(fieldName, fieldType): ValDef
     }
-    // generate class definition
-    val caseClassTree = CASECLASSDEF(classSymbol).withParams(params).tree
-
+    
+    val caseClassTree = { // generate class definition
+      if (!schema.getFields.toList.isEmpty) {
+        CASECLASSDEF(classSymbol).withParams(params).tree
+      }
+      else { // in case of empty record
+        CASEOBJECTDEF(classSymbol).tree
+      }
+    }
 
     val treeWithScalaDoc = ScalaDocGen.docToScalaDoc(schema, caseClassTree)
     treeWithScalaDoc

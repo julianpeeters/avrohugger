@@ -13,13 +13,15 @@ import org.apache.avro.util.Utf8
 import reflect.runtime.universe._
 import scala.tools.reflect.ToolBox
 
-object FieldSchemaGenerator {
+class FieldSchemaGenerator() {
  
-  def toAvroField(namespace: Option[Name], 
+  def toAvroField(
+    namespace: Option[Name], 
     nme: TermName, 
     tpe: Type, 
     dv: Tree, 
-    maybeFieldDoc: Option[String]) = {
+    maybeFieldDoc: Option[String],
+    schemaStore: SchemaStore): Field = {
 
     //map is adapted from https://github.com/radlab/avro-scala-compiler-plugin/blob/master/src/main/scala/plugin/SchemaGen.scala
     def createSchema(tpe: Type) : Schema = {
@@ -69,8 +71,8 @@ object FieldSchemaGenerator {
           try {
             // reflective compilation can't see the package name, so we add it explicitly
             namespace match {
-              case Some(ns) => SchemaStore.schemas(s"$ns.${x.toString}")
-              case None => SchemaStore.schemas(x.toString)
+              case Some(ns) => schemaStore.schemas(s"$ns.${x.toString}")
+              case None => schemaStore.schemas(x.toString)
             }
           }
           catch {
@@ -94,7 +96,7 @@ object FieldSchemaGenerator {
       nme.toString.trim, 
       createSchema(tpe),
       fieldDoc, 
-      JsonMatcher.toJsonNode(namespace, dv)
+      JsonMatcher.toJsonNode(namespace, dv, schemaStore)
     )
   }
 }

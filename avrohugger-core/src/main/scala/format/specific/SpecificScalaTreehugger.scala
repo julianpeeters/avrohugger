@@ -4,6 +4,7 @@ package specific
 
 import avrohugger.input.DependencyInspector._
 import avrohugger.input.NestedSchemaExtractor._
+import avrohugger.input.reflectivecompilation.schemagen.SchemaStore
 
 import org.apache.avro.Schema.Field
 import trees._
@@ -22,7 +23,8 @@ object SpecificScalaTreehugger {
     classStore: ClassStore, 
     namespace: Option[String], 
     schema: Schema,
-    typeMatcher: TypeMatcher): String = {
+    typeMatcher: TypeMatcher,
+    schemaStore: SchemaStore): String = {
 
     // register new type
     val classSymbol = RootClass.newClass(schema.getName)
@@ -32,7 +34,7 @@ object SpecificScalaTreehugger {
 
     // imports in case a field type is from a different namespace
     val imports = {
-      val topLevelSchemas: List[Schema] = schema::(getNestedSchemas(schema)) 
+      val topLevelSchemas: List[Schema] = schema::(getNestedSchemas(schema, schemaStore)) 
       topLevelSchemas.filter(isRecord).flatMap(s => s.getFields)
         .filter(field => getReferredNamespace(field.schema).isDefined )
         .filter(field => getReferredNamespace(field.schema) != namespace)
