@@ -33,7 +33,7 @@ object StandardCaseClassTree {
         CASECLASSDEF(classSymbol).withParams(params).tree
       }
       else { // in case of empty record
-        CASEOBJECTDEF(classSymbol).tree
+        CASECLASSDEF(classSymbol).withParams(PARAM("")).tree
       }
     }
 

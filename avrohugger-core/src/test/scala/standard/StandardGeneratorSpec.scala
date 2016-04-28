@@ -417,7 +417,7 @@ class StandardGeneratorSpec extends mutable.Specification {
       """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
         |package test
         |
-        |case object Reset
+        |case class Reset()
       """.stripMargin.trim
   }
   

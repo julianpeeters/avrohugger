@@ -11,7 +11,7 @@ Alternative Distributions:
 
 #####Generates Scala case classes in various formats:
 
-* `Standard` Vanilla case classes and case objects (for use with [Scalavro](https://github.com/GenslerAppsPod/scalavro), [Salat-Avro](https://github.com/julianpeeters/salat-avro), [gfc-avro](https://github.com/gilt/gfc-avro), etc.)
+* `Standard` Vanilla case classes (for use with [Scalavro](https://github.com/GenslerAppsPod/scalavro), [Salat-Avro](https://github.com/julianpeeters/salat-avro), [gfc-avro](https://github.com/gilt/gfc-avro), etc.)
 
 * `SpecificRecord` Case classes that implement `SpecificRecordBase` and
 therefore have mutable `var` fields (for use with the Avro Specific API -
