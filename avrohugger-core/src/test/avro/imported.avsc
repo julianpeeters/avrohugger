@@ -1,0 +1,8 @@
+{
+ "namespace": "other.ns",
+ "type": "record",
+ "name": "ImportedSchema",
+ "fields": [
+     {"name": "name", "type": "string"}
+ ]
+}

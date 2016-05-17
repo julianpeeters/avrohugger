@@ -18,26 +18,26 @@ therefore have mutable `var` fields (for use with the Avro Specific API -
 Scalding, Spark, Avro, etc.).
 
 * `Scavro` Case classes with immutable fields, intended to wrap Java generated
-Avro classes (for use with the [Scavro](https://github.com/oedura/scavro)
-runtime).
+Avro classes (for use with the [Scavro](https://github.com/oedura/scavro#scavro-reader-and-writer)
+runtime, Java classes provided separately (see [Scavro Plugin](https://github.com/oedura/scavro#scavro-plugin) or [sbt-avro](https://github.com/sbt/sbt-avro))).
 
 #####Supports generating case classes with arbitrary fields of the following datatypes:
 
 
-* INT -> Int
-* LONG -> Long
-* FLOAT -> Float
-* DOUBLE -> Double
-* STRING -> String
-* BOOLEAN -> Boolean
-* NULL -> Null
-* MAP -> Map
-* ENUM -> scala.Enumeration (`generate-specific`: Java Enum)
-* BYTES -> Array[Byte]
-* FIXED -> //TODO
-* ARRAY -> List (`generate-scavro`: Array). See Customizable Type Mapping below.
-* UNION -> Option
-* RECORD -> case class
+* INT &rarr; Int
+* LONG &rarr; Long
+* FLOAT &rarr; Float
+* DOUBLE &rarr; Double
+* STRING &rarr; String
+* BOOLEAN &rarr; Boolean
+* NULL &rarr; Null
+* MAP &rarr; Map
+* ENUM &rarr; scala.Enumeration (`generate-specific`: Java Enum)
+* BYTES &rarr; Array[Byte]
+* FIXED &rarr; //TODO
+* ARRAY &rarr; List (`generate-scavro`: Array). See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping).
+* UNION &rarr; Option
+* RECORD &rarr; case class
 
 
 
@@ -48,7 +48,7 @@ runtime).
 
 #####Get the dependency with:
 
-    "com.julianpeeters" % "avrohugger-core" %% "0.9.5"
+    "com.julianpeeters" % "avrohugger-core" %% "0.10.0-SNAPSHOT"
 
 
 #####Description:
@@ -107,6 +107,12 @@ namespace map (please see warnings below):
     val generator = new Generator(SpecificRecord, avroScalaCustomNamespace = Map("oldnamespace"->"newnamespace"))  
 
 
+#####Protocol Support:
+
+* `.avdl`, `.avpr`, and json protocol strings are generated as ADTs.
+
+* For `SpecificRecord`, if the protocol contains messages then no ADT is generated, and an RPC trait is generated instead. 
+
 
 #####Doc Support:
 
@@ -125,22 +131,22 @@ _Note:_ Currently [Treehugger](http://eed3si9n.com/treehugger/comments.html#Scal
 ####`avrohugger-tools`
 
 
-Download the avrohugger-tools jar for Scala [2.10](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.10/0.9.5/avrohugger-tools_2.10-0.9.5-assembly.jar) or Scala [2.11](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.11/0.9.5/avrohugger-tools_2.11-0.9.5-assembly.jar)(20MB!) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
+Download the avrohugger-tools jar for Scala [2.10](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.10/0.10.0-SNAPSHOT/avrohugger-tools_2.10-0.10.0-SNAPSHOT-assembly.jar) or Scala [2.11](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.11/0.10.0-SNAPSHOT/avrohugger-tools_2.11-0.10.0-SNAPSHOT-assembly.jar)(>20MB!) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
 
 
 'generate' generates Scala case class definitions:
 
-`java -jar /path/to/avrohugger-tools_2.11-0.9.5-assembly.jar generate schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.11-0.10.0-SNAPSHOT-assembly.jar generate schema user.avsc . `
 
 
 'generate-specific' generates definitions that extend SpecificRecordBase:
 
-`java -jar /path/to/avrohugger-tools_2.11-0.9.5-assembly.jar generate-specific schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.11-0.10.0-SNAPSHOT-assembly.jar generate-specific schema user.avsc . `
 
 
 'generate-scavro' generates definitions that extend Scavro's AvroSerializable:
 
-`java -jar /path/to/avrohugger-tools_2.11-0.9.5-assembly.jar generate-scavro schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.11-0.10.0-SNAPSHOT-assembly.jar generate-scavro schema user.avsc . `
 
 ####`sbt-avrohugger`
 
@@ -185,19 +191,20 @@ to flow data into a system that doesn't support them (e.g., Hive).
 
 2) Use namespaces to ensure compatibility when importing into Java/Scala.
 
-3) Use default field values in case of future schema evolution.
+3) Use default field values in case of future schema evolution ([further reading](https://github.com/julianpeeters/avrohugger/issues/23)). 
 
 
 ## Future
 
 * Support more Avro types: fixed, decimal via logical types.
+* Support for RPC using the Scavro format.
 
 ## Testing
 
 The `scripted` task runs all tests.
 
-As per Doug Cutting's [recommendations](https://github.com/apache/avro/blob/trunk/lang/java/tools/src/test/java/org/apache/avro/tool/TestSpecificCompilerTool.java#L130) in the avro compiler tests,
-the string-based tests in `test` are augmented by `scripted` tests that
+As per Doug Cutting's [recommendations](https://github.com/apache/avro/blob/trunk/lang/java/tools/src/test/java/org/apache/avro/tool/TestSpecificCompilerTool.java#L130) in the avro compiler 
+tests, the string-based tests in `test` are augmented by `scripted` tests that
 generate and compile source that is run in de/serialization tests.
 
 

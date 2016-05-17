@@ -9,13 +9,14 @@ class SpecificGeneratorSpec extends mutable.Specification {
 
   "a SpecificGenerator" should {
 
-    "correctly generate a case class definition that extends `SpecificRecordBase` in a package" in {
+    "correctly generate from a protocol with messages" in {
       val infile = new java.io.File("avrohugger-core/src/test/avro/mail.avpr")
       val gen = new Generator(SpecificRecord)
       val outDir = gen.defaultOutputDir + "/specific/"
       gen.fileToFile(infile, outDir)
-      val source = scala.io.Source.fromFile(s"$outDir/example/proto/Message.scala").mkString
-      source ===
+      val sourceClass = scala.io.Source.fromFile(s"$outDir/example/proto/Message.scala").mkString
+      val sourceTrait = scala.io.Source.fromFile(s"$outDir/example/proto/Mail.scala").mkString
+      sourceClass ===
         """|/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
           |package example.proto
           |
@@ -56,6 +57,23 @@ class SpecificGeneratorSpec extends mutable.Specification {
           |object Message {
           |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Message\",\"namespace\":\"example.proto\",\"fields\":[{\"name\":\"to\",\"type\":\"string\"},{\"name\":\"from\",\"type\":\"string\"},{\"name\":\"body\",\"type\":\"string\"}]}")
           |}""".stripMargin
+          
+      sourceTrait ===
+        """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
+          |package example.proto
+          |
+          |@SuppressWarnings(Array("all")) @org.apache.avro.specific.AvroGenerated trait Mail {
+          |  def send(message: example.proto.Message): java.lang.CharSequence
+          |  @SuppressWarnings(Array("all")) trait Callback extends Mail {
+          |    final val PROTOCOL: org.apache.avro.Protocol = example.proto.Mail.PROTOCOL
+          |    /** @throws java.io.IOException The async call could not be completed. */
+          |    def send(message: example.proto.Message, callback: org.apache.avro.ipc.Callback[java.lang.CharSequence]): Unit
+          |  }
+          |}
+          |
+          |object Mail {
+          |  final val PROTOCOL: org.apache.avro.Protocol = org.apache.avro.Protocol.parse("{\"protocol\":\"Mail\",\"namespace\":\"example.proto\",\"types\":[{\"type\":\"record\",\"name\":\"Message\",\"fields\":[{\"name\":\"to\",\"type\":\"string\"},{\"name\":\"from\",\"type\":\"string\"},{\"name\":\"body\",\"type\":\"string\"}]}],\"messages\":{\"send\":{\"request\":[{\"name\":\"message\",\"type\":\"Message\"}],\"response\":\"string\"}}}")
+          |}""".stripMargin
     }
 
 
@@ -64,7 +82,6 @@ class SpecificGeneratorSpec extends mutable.Specification {
       val schemaString = """{"type":"record","name":"Person","namespace":"test","fields":[{"name":"name","type":"string"}],"doc:":"A basic schema for storing Twitter messages"}"""
       val gen = new Generator(SpecificRecord)
       val List(source) = gen.stringToStrings(schemaString)
-
 
       source ===
         """package test
@@ -142,12 +159,15 @@ class SpecificGeneratorSpec extends mutable.Specification {
           |  public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
           |}
           |""".stripMargin
-      val sourceRecord = scala.io.Source.fromFile(s"$outDir/example/idl/Card.scala").mkString
+  
+      val sourceRecord = scala.io.Source.fromFile(s"$outDir/example/idl/EnumProtocol.scala").mkString
       sourceRecord ====
         """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
           |package example.idl
           |
-          |case class Card(var suit: Suit, var number: Int) extends org.apache.avro.specific.SpecificRecordBase {
+          |sealed trait EnumProtocol extends Product with Serializable
+          |
+          |final case class Card(var suit: Suit, var number: Int) extends org.apache.avro.specific.SpecificRecordBase with EnumProtocol {
           |  def this() = this(null, 0)
           |  def get(field$: Int): AnyRef = {
           |    field$ match {
@@ -175,7 +195,7 @@ class SpecificGeneratorSpec extends mutable.Specification {
           |  def getSchema: org.apache.avro.Schema = Card.SCHEMA$
           |}
           |
-          |object Card {
+          |final object Card {
           |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Card\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"suit\",\"type\":{\"type\":\"enum\",\"name\":\"Suit\",\"symbols\":[\"SPADES\",\"DIAMONDS\",\"CLUBS\",\"HEARTS\"]}},{\"name\":\"number\",\"type\":\"int\"}]}")
           |}""".stripMargin.trim
     }
@@ -228,12 +248,14 @@ class SpecificGeneratorSpec extends mutable.Specification {
       val outDir = gen.defaultOutputDir + "/specific/"
       gen.fileToFile(infile, outDir)
 
-      val sourceRecord = scala.io.Source.fromFile(s"$outDir/example/idl/Binary.scala").mkString
+      val sourceRecord = scala.io.Source.fromFile(s"$outDir/example/idl/BinaryIDL.scala").mkString
       sourceRecord ====
         """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
           |package example.idl
           |
-          |case class Binary(var data: Array[Byte]) extends org.apache.avro.specific.SpecificRecordBase {
+          |sealed trait BinaryIDL extends Product with Serializable
+          |
+          |final case class Binary(var data: Array[Byte]) extends org.apache.avro.specific.SpecificRecordBase with BinaryIDL {
           |  def this() = this(null)
           |  def get(field$: Int): AnyRef = {
           |    field$ match {
@@ -259,7 +281,7 @@ class SpecificGeneratorSpec extends mutable.Specification {
           |  def getSchema: org.apache.avro.Schema = Binary.SCHEMA$
           |}
           |
-          |object Binary {
+          |final object Binary {
           |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Binary\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"data\",\"type\":\"bytes\"}]}")
           |}""".stripMargin.trim
     }
@@ -272,7 +294,6 @@ class SpecificGeneratorSpec extends mutable.Specification {
       val outDir = gen.defaultOutputDir + "/specific/"
       gen.fileToFile(infile, outDir)
 
-/* For some reason I can't get this test to pass because the last newline fails to be recognized.
       val sourceEnum = scala.io.Source.fromFile(s"$outDir/example/Direction.java").mkString
       sourceEnum ====
       """/**
@@ -280,16 +301,15 @@ class SpecificGeneratorSpec extends mutable.Specification {
         | * 
         | * DO NOT EDIT DIRECTLY
         | */
-        |package example;
+        |package example;  
         |@SuppressWarnings("all")
         |@org.apache.avro.specific.AvroGenerated
-        |public enum Direction {
+        |public enum Direction { 
         |  NORTH, SOUTH, EAST, WEST  ;
         |  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"enum\",\"name\":\"Direction\",\"namespace\":\"example\",\"symbols\":[\"NORTH\",\"SOUTH\",\"EAST\",\"WEST\"]}");
         |  public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
         |}
         |""".stripMargin
-*/
 
       val sourceRecord = scala.io.Source.fromFile(s"$outDir/example/Compass.scala").mkString
       sourceRecord ====
@@ -323,18 +343,47 @@ class SpecificGeneratorSpec extends mutable.Specification {
         |}""".stripMargin
     }
 
+
     "correctly generate default values in AVDL with `SpecificRecord`" in {
       val infile = new java.io.File("avrohugger-core/src/test/avro/defaults.avdl")
       val gen = new Generator(SpecificRecord)
       val outDir = gen.defaultOutputDir + "/specific/"
       gen.fileToFile(infile, outDir)
 
-      val sourceRecord = scala.io.Source.fromFile(s"$outDir/example/idl/DefaultTest.scala").mkString
+      val sourceRecord = scala.io.Source.fromFile(s"$outDir/example/idl/Defaults.scala").mkString
       sourceRecord ====
         """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
           |package example.idl
           |
-          |case class DefaultTest(var suit: DefaultEnum = DefaultEnum.SPADES, var number: Int = 0, var str: String = "str", var optionString: Option[String] = None, var optionStringValue: Option[String] = Some("default"), var embedded: Embedded = new Embedded(1), var defaultArray: List[Int] = List(1, 3, 4, 5), var optionalEnum: Option[DefaultEnum] = None, var defaultMap: Map[String, String] = Map("Hello" -> "world", "Merry" -> "Christmas")) extends org.apache.avro.specific.SpecificRecordBase {
+          |sealed trait Defaults extends Product with Serializable
+          |
+          |final case class Embedded(var inner: Int) extends org.apache.avro.specific.SpecificRecordBase with Defaults {
+          |  def this() = this(0)
+          |  def get(field$: Int): AnyRef = {
+          |    field$ match {
+          |      case pos if pos == 0 => {
+          |        inner
+          |      }.asInstanceOf[AnyRef]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |  }
+          |  def put(field$: Int, value: Any): Unit = {
+          |    field$ match {
+          |      case pos if pos == 0 => this.inner = {
+          |        value
+          |      }.asInstanceOf[Int]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |    ()
+          |  }
+          |  def getSchema: org.apache.avro.Schema = Embedded.SCHEMA$
+          |}
+          |
+          |final object Embedded {
+          |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Embedded\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"inner\",\"type\":\"int\"}]}")
+          |}
+          |
+          |final case class DefaultTest(var suit: DefaultEnum = DefaultEnum.SPADES, var number: Int = 0, var str: String = "str", var optionString: Option[String] = None, var optionStringValue: Option[String] = Some("default"), var embedded: Embedded = new Embedded(1), var defaultArray: List[Int] = List(1, 3, 4, 5), var optionalEnum: Option[DefaultEnum] = None, var defaultMap: Map[String, String] = Map("Hello" -> "world", "Merry" -> "Christmas")) extends org.apache.avro.specific.SpecificRecordBase with Defaults {
           |  def this() = this(DefaultEnum.SPADES, 0, "str", None, Some("default"), new Embedded(1), List(1, 3, 4, 5), None, Map("Hello" -> "world", "Merry" -> "Christmas"))
           |  def get(field$: Int): AnyRef = {
           |    field$ match {
@@ -446,80 +495,34 @@ class SpecificGeneratorSpec extends mutable.Specification {
           |  def getSchema: org.apache.avro.Schema = DefaultTest.SCHEMA$
           |}
           |
-          |object DefaultTest {
+          |final object DefaultTest {
           |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"DefaultTest\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"suit\",\"type\":{\"type\":\"enum\",\"name\":\"DefaultEnum\",\"symbols\":[\"SPADES\",\"DIAMONDS\",\"CLUBS\",\"HEARTS\"]},\"default\":\"SPADES\"},{\"name\":\"number\",\"type\":\"int\",\"default\":0},{\"name\":\"str\",\"type\":\"string\",\"default\":\"str\"},{\"name\":\"optionString\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"optionStringValue\",\"type\":[\"string\",\"null\"],\"default\":\"default\"},{\"name\":\"embedded\",\"type\":{\"type\":\"record\",\"name\":\"Embedded\",\"fields\":[{\"name\":\"inner\",\"type\":\"int\"}]},\"default\":{\"inner\":1}},{\"name\":\"defaultArray\",\"type\":{\"type\":\"array\",\"items\":\"int\"},\"default\":[1,3,4,5]},{\"name\":\"optionalEnum\",\"type\":[\"null\",\"DefaultEnum\"],\"default\":null},{\"name\":\"defaultMap\",\"type\":{\"type\":\"map\",\"values\":\"string\"},\"default\":{\"Hello\":\"world\",\"Merry\":\"Christmas\"}}]}")
           |}""".stripMargin
     }
-  }
 
-  "correctly generate records depending on others defined in a different AVDL file" in {
-    val importing = new java.io.File("avrohugger-core/src/test/avro/import.avdl")
-    val gen = new Generator(SpecificRecord)
-    val outDir = gen.defaultOutputDir + "/specific/"
-    gen.fileToFile(importing, outDir)
+    "correctly generate records depending on others defined in different AVDL and AVSC files" in {
+      val importing = new java.io.File("avrohugger-core/src/test/avro/import.avdl")
+      val gen = new Generator(SpecificRecord)
+      val outDir = gen.defaultOutputDir + "/specific/"
+      gen.fileToFile(importing, outDir)
 
-    val sourceRecord = scala.io.Source.fromFile(s"$outDir/example/idl/DependentRecord.scala").mkString
-    sourceRecord ===
-    """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
-      |package example.idl
-      |
-      |import other.ns.ExternalDependency
-      |
-      |case class DependentRecord(var dependency: ExternalDependency, var number: Int) extends org.apache.avro.specific.SpecificRecordBase {
-      |  def this() = this(new ExternalDependency, 0)
-      |  def get(field$: Int): AnyRef = {
-      |    field$ match {
-      |      case pos if pos == 0 => {
-      |        dependency
-      |      }.asInstanceOf[AnyRef]
-      |      case pos if pos == 1 => {
-      |        number
-      |      }.asInstanceOf[AnyRef]
-      |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
-      |    }
-      |  }
-      |  def put(field$: Int, value: Any): Unit = {
-      |    field$ match {
-      |      case pos if pos == 0 => this.dependency = {
-      |        value
-      |      }.asInstanceOf[ExternalDependency]
-      |      case pos if pos == 1 => this.number = {
-      |        value
-      |      }.asInstanceOf[Int]
-      |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
-      |    }
-      |    ()
-      |  }
-      |  def getSchema: org.apache.avro.Schema = DependentRecord.SCHEMA$
-      |}
-      |
-      |object DependentRecord {
-      |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"DependentRecord\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"dependency\",\"type\":{\"type\":\"record\",\"name\":\"ExternalDependency\",\"namespace\":\"other.ns\",\"fields\":[{\"name\":\"number\",\"type\":\"int\"}]}},{\"name\":\"number\",\"type\":\"int\"}]}")
-      |}""".stripMargin
-  }
-
-  "correctly generate records depending on others defined in a different AVDL file and in a nested field" in {
-    val importing = new java.io.File("avrohugger-core/src/test/avro/import-nested.avdl")
-    val gen = new Generator(SpecificRecord)
-    val outDir = gen.defaultOutputDir + "/specific/"
-    gen.fileToFile(importing, outDir)
-
-    val sourceRecord = scala.io.Source.fromFile(s"$outDir/example/idl/DependentOptionalRecord.scala").mkString
-    sourceRecord ===
+      val sourceRecord = scala.io.Source.fromFile(s"$outDir/example/idl/ImportProtocol.scala").mkString
+      sourceRecord ===
       """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
         |package example.idl
         |
         |import other.ns.ExternalDependency
         |
-        |case class DependentOptionalRecord(var dependency: Option[ExternalDependency], var number: Int) extends org.apache.avro.specific.SpecificRecordBase {
-        |  def this() = this(None, 0)
+        |import other.ns.ImportedSchema
+        |
+        |sealed trait ImportProtocol extends Product with Serializable
+        |
+        |final case class DependentRecord(var dependency: ExternalDependency, var number: Int) extends org.apache.avro.specific.SpecificRecordBase with ImportProtocol {
+        |  def this() = this(new ExternalDependency, 0)
         |  def get(field$: Int): AnyRef = {
         |    field$ match {
         |      case pos if pos == 0 => {
-        |        dependency match {
-        |          case Some(x) => x
-        |          case None => null
-        |        }
+        |        dependency
         |      }.asInstanceOf[AnyRef]
         |      case pos if pos == 1 => {
         |        number
@@ -530,11 +533,8 @@ class SpecificGeneratorSpec extends mutable.Specification {
         |  def put(field$: Int, value: Any): Unit = {
         |    field$ match {
         |      case pos if pos == 0 => this.dependency = {
-        |        value match {
-        |          case null => None
-        |          case _ => Some(value)
-        |        }
-        |      }.asInstanceOf[Option[ExternalDependency]]
+        |        value
+        |      }.asInstanceOf[ExternalDependency]
         |      case pos if pos == 1 => this.number = {
         |        value
         |      }.asInstanceOf[Int]
@@ -542,60 +542,255 @@ class SpecificGeneratorSpec extends mutable.Specification {
         |    }
         |    ()
         |  }
-        |  def getSchema: org.apache.avro.Schema = DependentOptionalRecord.SCHEMA$
+        |  def getSchema: org.apache.avro.Schema = DependentRecord.SCHEMA$
         |}
         |
-        |object DependentOptionalRecord {
-        |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"DependentOptionalRecord\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"dependency\",\"type\":[\"null\",{\"type\":\"record\",\"name\":\"ExternalDependency\",\"namespace\":\"other.ns\",\"fields\":[{\"name\":\"number\",\"type\":\"int\"}]}]},{\"name\":\"number\",\"type\":\"int\"}]}")
-        |}""".stripMargin
-  }
-
-  "not generate copy of imported classes in the importing package" in {
-    val importing = new java.io.File("avrohugger-core/src/test/avro/import.avdl")
-    val gen = new Generator(SpecificRecord)
-    val outDir = gen.defaultOutputDir + "/specific/"
-    gen.fileToFile(importing, outDir)
-
-    (new File(s"$outDir/example/idl/ExternalDependency.scala")).exists === false
-  }
-
-  "Generate imported classes in the declared package" in {
-    val importing = new java.io.File("avrohugger-core/src/test/avro/import.avdl")
-    val gen = new Generator(SpecificRecord)
-    val outDir = gen.defaultOutputDir + "/specific/"
-    gen.fileToFile(importing, outDir)
-
-    (new File(s"$outDir/other/ns/ExternalDependency.scala")).exists === true
-  }
-
-  "correctly generate an empty case class definition from an empty record" in {
-    val infile = new java.io.File("avrohugger-core/src/test/avro/AvroTypeProviderTestEmptyRecord.avdl")
-    val gen = new Generator(SpecificRecord)
-    val outDir = gen.defaultOutputDir + "/specific/"
-    gen.fileToFile(infile, outDir)
-    val source = scala.io.Source.fromFile(s"$outDir/test/Reset.scala").mkString
-    source ===
-      """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
-        |package test
+        |final object DependentRecord {
+        |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"DependentRecord\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"dependency\",\"type\":{\"type\":\"record\",\"name\":\"ExternalDependency\",\"namespace\":\"other.ns\",\"fields\":[{\"name\":\"number\",\"type\":\"int\"}]}},{\"name\":\"number\",\"type\":\"int\"}]}")
+        |}
         |
-        |case class Reset() extends org.apache.avro.specific.SpecificRecordBase {
+        |final case class DependentRecord2(var dependency: ImportedSchema, var name: String) extends org.apache.avro.specific.SpecificRecordBase with ImportProtocol {
+        |  def this() = this(new ImportedSchema, "")
         |  def get(field$: Int): AnyRef = {
         |    field$ match {
+        |      case pos if pos == 0 => {
+        |        dependency
+        |      }.asInstanceOf[AnyRef]
+        |      case pos if pos == 1 => {
+        |        name
+        |      }.asInstanceOf[AnyRef]
         |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
         |    }
         |  }
         |  def put(field$: Int, value: Any): Unit = {
         |    field$ match {
+        |      case pos if pos == 0 => this.dependency = {
+        |        value
+        |      }.asInstanceOf[ImportedSchema]
+        |      case pos if pos == 1 => this.name = {
+        |        value.toString
+        |      }.asInstanceOf[String]
         |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
         |    }
         |    ()
         |  }
-        |  def getSchema: org.apache.avro.Schema = Reset.SCHEMA$
+        |  def getSchema: org.apache.avro.Schema = DependentRecord2.SCHEMA$
         |}
         |
-        |object Reset {
-        |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Reset\",\"namespace\":\"test\",\"fields\":[]}")
+        |final object DependentRecord2 {
+        |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"DependentRecord2\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"dependency\",\"type\":{\"type\":\"record\",\"name\":\"ImportedSchema\",\"namespace\":\"other.ns\",\"fields\":[{\"name\":\"name\",\"type\":\"string\"}]}},{\"name\":\"name\",\"type\":\"string\"}]}")
         |}""".stripMargin
+    }
+
+    "correctly generate records depending on others defined in a different AVDL file and in a nested field" in {
+      val importing = new java.io.File("avrohugger-core/src/test/avro/import-nested.avdl")
+      val gen = new Generator(SpecificRecord)
+      val outDir = gen.defaultOutputDir + "/specific/"
+      gen.fileToFile(importing, outDir)
+
+      val sourceRecord = scala.io.Source.fromFile(s"$outDir/example/idl/ImportNestedProtocol.scala").mkString
+      sourceRecord ===
+        """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
+          |package example.idl
+          |
+          |import other.ns.ExternalDependency
+          |
+          |sealed trait ImportNestedProtocol extends Product with Serializable
+          |
+          |final case class DependentOptionalRecord(var dependency: Option[ExternalDependency], var number: Int) extends org.apache.avro.specific.SpecificRecordBase with ImportNestedProtocol {
+          |  def this() = this(None, 0)
+          |  def get(field$: Int): AnyRef = {
+          |    field$ match {
+          |      case pos if pos == 0 => {
+          |        dependency match {
+          |          case Some(x) => x
+          |          case None => null
+          |        }
+          |      }.asInstanceOf[AnyRef]
+          |      case pos if pos == 1 => {
+          |        number
+          |      }.asInstanceOf[AnyRef]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |  }
+          |  def put(field$: Int, value: Any): Unit = {
+          |    field$ match {
+          |      case pos if pos == 0 => this.dependency = {
+          |        value match {
+          |          case null => None
+          |          case _ => Some(value)
+          |        }
+          |      }.asInstanceOf[Option[ExternalDependency]]
+          |      case pos if pos == 1 => this.number = {
+          |        value
+          |      }.asInstanceOf[Int]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |    ()
+          |  }
+          |  def getSchema: org.apache.avro.Schema = DependentOptionalRecord.SCHEMA$
+          |}
+          |
+          |final object DependentOptionalRecord {
+          |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"DependentOptionalRecord\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"dependency\",\"type\":[\"null\",{\"type\":\"record\",\"name\":\"ExternalDependency\",\"namespace\":\"other.ns\",\"fields\":[{\"name\":\"number\",\"type\":\"int\"}]}]},{\"name\":\"number\",\"type\":\"int\"}]}")
+          |}""".stripMargin
+    }
+
+    "not generate copy of imported classes in the importing package" in {
+      val importing = new java.io.File("avrohugger-core/src/test/avro/import.avdl")
+      val gen = new Generator(SpecificRecord)
+      val outDir = gen.defaultOutputDir + "/specific/"
+      gen.fileToFile(importing, outDir)
+
+      (new File(s"$outDir/example/idl/ImportedProtocol.scala")).exists === false
+    }
+
+    "Generate imported classes in the declared package" in {
+      val importing = new java.io.File("avrohugger-core/src/test/avro/import.avdl")
+      val gen = new Generator(SpecificRecord)
+      val outDir = gen.defaultOutputDir + "/specific/"
+      gen.fileToFile(importing, outDir)
+
+      (new File(s"$outDir/other/ns/ImportedProtocol.scala")).exists === true
+    }
+
+    "correctly generate an empty case class definition from an empty record" in {
+      val infile = new java.io.File("avrohugger-core/src/test/avro/AvroTypeProviderTestEmptyRecord.avdl")
+      val gen = new Generator(SpecificRecord)
+      val outDir = gen.defaultOutputDir + "/specific/"
+      gen.fileToFile(infile, outDir)
+      val source = scala.io.Source.fromFile(s"$outDir/test/Calculator.scala").mkString
+      source ===
+        """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
+          |package test
+          |
+          |sealed trait Calculator extends Product with Serializable
+          |
+          |final case class Added(var value: Int) extends org.apache.avro.specific.SpecificRecordBase with Calculator {
+          |  def this() = this(0)
+          |  def get(field$: Int): AnyRef = {
+          |    field$ match {
+          |      case pos if pos == 0 => {
+          |        value
+          |      }.asInstanceOf[AnyRef]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |  }
+          |  def put(field$: Int, value: Any): Unit = {
+          |    field$ match {
+          |      case pos if pos == 0 => this.value = {
+          |        value
+          |      }.asInstanceOf[Int]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |    ()
+          |  }
+          |  def getSchema: org.apache.avro.Schema = Added.SCHEMA$
+          |}
+          |
+          |final object Added {
+          |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Added\",\"namespace\":\"test\",\"fields\":[{\"name\":\"value\",\"type\":\"int\"}]}")
+          |}
+          |
+          |final case class Subtracted(var value: Int) extends org.apache.avro.specific.SpecificRecordBase with Calculator {
+          |  def this() = this(0)
+          |  def get(field$: Int): AnyRef = {
+          |    field$ match {
+          |      case pos if pos == 0 => {
+          |        value
+          |      }.asInstanceOf[AnyRef]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |  }
+          |  def put(field$: Int, value: Any): Unit = {
+          |    field$ match {
+          |      case pos if pos == 0 => this.value = {
+          |        value
+          |      }.asInstanceOf[Int]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |    ()
+          |  }
+          |  def getSchema: org.apache.avro.Schema = Subtracted.SCHEMA$
+          |}
+          |
+          |final object Subtracted {
+          |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Subtracted\",\"namespace\":\"test\",\"fields\":[{\"name\":\"value\",\"type\":\"int\"}]}")
+          |}
+          |
+          |final case class Divided(var value: Int) extends org.apache.avro.specific.SpecificRecordBase with Calculator {
+          |  def this() = this(0)
+          |  def get(field$: Int): AnyRef = {
+          |    field$ match {
+          |      case pos if pos == 0 => {
+          |        value
+          |      }.asInstanceOf[AnyRef]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |  }
+          |  def put(field$: Int, value: Any): Unit = {
+          |    field$ match {
+          |      case pos if pos == 0 => this.value = {
+          |        value
+          |      }.asInstanceOf[Int]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |    ()
+          |  }
+          |  def getSchema: org.apache.avro.Schema = Divided.SCHEMA$
+          |}
+          |
+          |final object Divided {
+          |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Divided\",\"namespace\":\"test\",\"fields\":[{\"name\":\"value\",\"type\":\"int\"}]}")
+          |}
+          |
+          |final case class Multiplied(var value: Int) extends org.apache.avro.specific.SpecificRecordBase with Calculator {
+          |  def this() = this(0)
+          |  def get(field$: Int): AnyRef = {
+          |    field$ match {
+          |      case pos if pos == 0 => {
+          |        value
+          |      }.asInstanceOf[AnyRef]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |  }
+          |  def put(field$: Int, value: Any): Unit = {
+          |    field$ match {
+          |      case pos if pos == 0 => this.value = {
+          |        value
+          |      }.asInstanceOf[Int]
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |    ()
+          |  }
+          |  def getSchema: org.apache.avro.Schema = Multiplied.SCHEMA$
+          |}
+          |
+          |final object Multiplied {
+          |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Multiplied\",\"namespace\":\"test\",\"fields\":[{\"name\":\"value\",\"type\":\"int\"}]}")
+          |}
+          |
+          |final case class Reset() extends org.apache.avro.specific.SpecificRecordBase with Calculator {
+          |  def get(field$: Int): AnyRef = {
+          |    field$ match {
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |  }
+          |  def put(field$: Int, value: Any): Unit = {
+          |    field$ match {
+          |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+          |    }
+          |    ()
+          |  }
+          |  def getSchema: org.apache.avro.Schema = Reset.SCHEMA$
+          |}
+          |
+          |final object Reset {
+          |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Reset\",\"namespace\":\"test\",\"fields\":[]}")
+          |}""".stripMargin
+          
+      }  
+        
   }
 
 }

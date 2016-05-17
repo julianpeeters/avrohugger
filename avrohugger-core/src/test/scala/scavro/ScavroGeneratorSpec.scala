@@ -14,7 +14,7 @@ class ScavroGeneratorSpec extends mutable.Specification {
       val gen = new Generator(Scavro)
       val outDir = gen.defaultOutputDir + "/scavro/"
       gen.fileToFile(infile, outDir)
-      val source = scala.io.Source.fromFile(s"$outDir/example/proto/model/Message.scala").mkString
+      val source = scala.io.Source.fromFile(s"$outDir/example/proto/model/Mail.scala").mkString
       source ===
         """|/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
             |package example.proto.model
@@ -25,14 +25,16 @@ class ScavroGeneratorSpec extends mutable.Specification {
             |
             |import example.proto.{Message => JMessage}
             |
-            |case class Message(to: String, from: String, body: String) extends AvroSerializeable {
+            |sealed trait Mail extends Product with Serializable
+            |
+            |final case class Message(to: String, from: String, body: String) extends AvroSerializeable with Mail {
             |  type J = JMessage
             |  override def toAvro: JMessage = {
             |    new JMessage(to, from, body)
             |  }
             |}
             |
-            |object Message {
+            |final object Message {
             |  implicit def reader = new AvroReader[Message] {
             |    override type J = JMessage
             |  }
@@ -51,7 +53,7 @@ class ScavroGeneratorSpec extends mutable.Specification {
       val gen = new Generator(Scavro)
       val outDir = gen.defaultOutputDir + "/scavro/"
       gen.fileToFile(infile, outDir)
-      val source = scala.io.Source.fromFile(s"$outDir/example/proto/model/Binary.scala").mkString
+      val source = scala.io.Source.fromFile(s"$outDir/example/proto/model/BinaryProtocol.scala").mkString
       source ===
         """|/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
             |package example.proto.model
@@ -62,14 +64,16 @@ class ScavroGeneratorSpec extends mutable.Specification {
             |
             |import example.proto.{Binary => JBinary}
             |
-            |case class Binary(data: Array[Byte]) extends AvroSerializeable {
+            |sealed trait BinaryProtocol extends Product with Serializable
+            |
+            |final case class Binary(data: Array[Byte]) extends AvroSerializeable with BinaryProtocol {
             |  type J = JBinary
             |  override def toAvro: JBinary = {
             |    new JBinary(java.nio.ByteBuffer.wrap(data))
             |  }
             |}
             |
-            |object Binary {
+            |final object Binary {
             |  implicit def reader = new AvroReader[Binary] {
             |    override type J = JBinary
             |  }

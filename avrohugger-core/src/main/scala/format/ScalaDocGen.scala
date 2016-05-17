@@ -5,7 +5,7 @@ import treehugger.forest._
 import definitions._
 import treehuggerDSL._
 
-import org.apache.avro.Schema
+import org.apache.avro.{ Protocol, Schema }
 import org.apache.avro.Schema.Field
 import org.apache.avro.Schema.Type.{ ENUM, RECORD }
 
@@ -14,7 +14,9 @@ import scala.collection.JavaConversions._
 
 object ScalaDocGen {
 
-  def docToScalaDoc(schema: Schema, tree: Tree): Tree = {
+  def docToScalaDoc(
+    schemaOrProtocol: Either[Schema, Protocol],
+    tree: Tree): Tree = {
 
     def aFieldHasDoc(schema: Schema): Boolean = {
       schema.getFields.exists(field => isDoc(field.doc))
@@ -55,13 +57,27 @@ object ScalaDocGen {
       if (topLevelHasDoc(schema)) tree.withDoc(docs)
       else tree
     }
+    
+    def wrapTraitWithDoc(protocol: Protocol, tree: Tree, docs: List[String]) = {
+      if (isDoc(protocol.getDoc)) tree.withDoc(docs)
+      else tree
+    }
 
-    val schemaDocString = avroDocToScalaString(schema.getDoc)
+    val docString = schemaOrProtocol match {
+      case Left(schema) => avroDocToScalaString(schema.getDoc)
+      case Right(protocol) => protocol.getDoc
+    }
 
-    schema.getType match {
-      case RECORD => wrapClassWithDoc(schema, tree, schemaDocString::getFieldFauxDocTags(schema))
-      case ENUM => wrapEnumWithDoc(schema, tree, List(schemaDocString))
-      case _ => sys.error("Error generating ScalaDoc from Avro doc. Not an ENUM or RECORD")
+    schemaOrProtocol match {
+      case Left(schema) => schema.getType match {
+        case RECORD =>
+          wrapClassWithDoc(schema, tree, docString::getFieldFauxDocTags(schema))
+        case ENUM =>
+          wrapEnumWithDoc(schema, tree, List(docString))
+        case _ =>
+          sys.error("Error generating ScalaDoc from Avro doc. Not ENUM/RECORD")
+      }
+      case Right(protocol) => wrapTraitWithDoc(protocol, tree, List(docString))
     }
 
   }

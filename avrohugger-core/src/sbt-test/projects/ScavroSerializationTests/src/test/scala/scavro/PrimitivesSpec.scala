@@ -1,6 +1,5 @@
+package scavro
 
-
-// Specs2
 import org.specs2.mutable.Specification
 
 import org.oedura.scavro.{AvroReader, AvroWriter}
@@ -480,7 +479,7 @@ class ScavroEmptyRecordTest extends Specification {
       val record = Compass(Direction.NORTH)
 
       val filename = "Compass.avro"
-              val records = record :: Nil
+      val records = record :: Nil
 
       // Convert to json
       records.foreach(f => println(f.toJson))

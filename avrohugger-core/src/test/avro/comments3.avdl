@@ -1,6 +1,6 @@
 @namespace("com.example")
 /**
-Example courtesy https://github.com/delagoya. This is a comment for the whole protocol
+Example adapted from https://github.com/delagoya. This is a comment for the whole protocol
 */
 
 protocol Example3 {

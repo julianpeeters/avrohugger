@@ -105,7 +105,6 @@ class StandardGeneratorSpec extends mutable.Specification {
     }
     
 
-
     "correctly generate a simple case class definition from protocol as a string" in {
       val schemaString = 
         """
@@ -191,234 +190,245 @@ class StandardGeneratorSpec extends mutable.Specification {
           |case class Level2(name: String)
         """.stripMargin.trim
     }
-  }
-
-  "correctly generate a nested case class from IDL" in {
-    val infile = new java.io.File("avrohugger-core/src/test/avro/nested.avdl")
-    val gen = new Generator(Standard)
-    gen.fileToFile(infile)
-
-    val source0 = scala.io.Source.fromFile("target/generated-sources/example/idl/Level0.scala").mkString
-    source0 ====
-      """
-        |/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
-        |package example.idl
-        |
-        |case class Level0(level1: Level1)
-      """.stripMargin.trim
-
-    val source1 = scala.io.Source.fromFile("target/generated-sources/example/idl/Level1.scala").mkString
-    source1 ====
-      """
-        |/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
-        |package example.idl
-        |
-        |case class Level1(level2: Level2)
-      """.stripMargin.trim
-
-    val source2 = scala.io.Source.fromFile("target/generated-sources/example/idl/Level2.scala").mkString
-    source2 ====
-      """
-        |/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
-        |package example.idl
-        |
-        |case class Level2(name: String)
-      """.stripMargin.trim
-  }
 
 
-  "correctly generate a recursive case class from IDL" in {
-    val infile = new java.io.File("avrohugger-core/src/test/avro/recursive.avdl")
-    val gen = new Generator(Standard)
-    gen.fileToFile(infile)
+    "correctly generate a nested case class from IDL" in {
+      val infile = new java.io.File("avrohugger-core/src/test/avro/nested.avdl")
+      val gen = new Generator(Standard)
+      gen.fileToFile(infile)
 
-    val source = scala.io.Source.fromFile("target/generated-sources/example/idl/Recursive.scala").mkString
-    source ====
-      """
-        |/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
-        |package example.idl
-        |
-        |case class Recursive(name: String, recursive: Option[Recursive])
-      """.stripMargin.trim
-  }
+      val source = scala.io.Source.fromFile("target/generated-sources/example/idl/NestedProtocol.scala").mkString
+      source ====
+        """
+          |/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
+          |package example.idl
+          |
+          |sealed trait NestedProtocol extends Product with Serializable
+          |
+          |final case class Level2(name: String) extends NestedProtocol
+          |
+          |final case class Level1(level2: Level2) extends NestedProtocol
+          |
+          |final case class Level0(level1: Level1) extends NestedProtocol
+        """.stripMargin.trim
+    }
 
-  "correctly generate enums" in {
-    val infile = new java.io.File("avrohugger-core/src/test/avro/enums.avsc")
-    val gen = new Generator(Standard)
-    gen.fileToFile(infile)
 
-    val sourceEnum = scala.io.Source.fromFile("target/generated-sources/example/Suit.scala").mkString
-    sourceEnum ====
-      """
-        |/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
-        |package example
-        |
-        |object Suit extends Enumeration {
-        |  type Suit = Value
-        |  val SPADES, DIAMONDS, CLUBS, HEARTS = Value
-        |}
-      """.stripMargin.trim
-  }
+    "correctly generate a recursive case class from IDL" in {
+      val infile = new java.io.File("avrohugger-core/src/test/avro/recursive.avdl")
+      val gen = new Generator(Standard)
+      gen.fileToFile(infile)
 
-  "correctly generate enums from protocol files" in {
-    val infile = new java.io.File("avrohugger-core/src/test/avro/enums.avpr")
-    val gen = new Generator(Standard)
-    gen.fileToFile(infile)
+      val source = scala.io.Source.fromFile("target/generated-sources/example/idl/RecursiveProtocol.scala").mkString
+      source ====
+        """
+          |/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
+          |package example.idl
+          |
+          |sealed trait RecursiveProtocol extends Product with Serializable
+          |
+          |final case class Recursive(name: String, recursive: Option[Recursive]) extends RecursiveProtocol
+        """.stripMargin.trim
+    }
 
-    val sourceEnum = scala.io.Source.fromFile("target/generated-sources/example/proto/Suit.scala").mkString
-    sourceEnum ====
-      """
-        |/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
-        |package example.proto
-        |
-        |object Suit extends Enumeration {
-        |  type Suit = Value
-        |  val SPADES, HEARTS, DIAMONDS, CLUBS = Value
-        |}
-      """.stripMargin.trim
+    "correctly generate enums" in {
+      val infile = new java.io.File("avrohugger-core/src/test/avro/enums.avsc")
+      val gen = new Generator(Standard)
+      gen.fileToFile(infile)
 
-    val sourceCard = scala.io.Source.fromFile("target/generated-sources/example/proto/Card.scala").mkString
-    sourceCard ====
-      """
-        |/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
-        |package example.proto
-        |
-        |case class Card(suit: Suit.Value, number: Int)
-      """.stripMargin.trim
-  }
+      val sourceEnum = scala.io.Source.fromFile("target/generated-sources/example/Suit.scala").mkString
+      sourceEnum ====
+        """
+          |/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
+          |package example
+          |
+          |object Suit extends Enumeration {
+          |  type Suit = Value
+          |  val SPADES, DIAMONDS, CLUBS, HEARTS = Value
+          |}
+        """.stripMargin.trim
+    }
 
-  "correctly generate enums from IDL files" in {
-    val infile = new java.io.File("avrohugger-core/src/test/avro/enums.avdl")
-    val gen = new Generator(Standard)
-    gen.fileToFile(infile)
+    "correctly generate enums from protocol files" in {
+      val infile = new java.io.File("avrohugger-core/src/test/avro/enums.avpr")
+      val gen = new Generator(Standard)
+      gen.fileToFile(infile)
 
-    val sourceEnum = scala.io.Source.fromFile("target/generated-sources/example/idl/Suit.scala").mkString
-    sourceEnum ====
-      """
-        |/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
-        |package example.idl
-        |
-        |object Suit extends Enumeration {
-        |  type Suit = Value
-        |  val SPADES, DIAMONDS, CLUBS, HEARTS = Value
-        |}
-      """.stripMargin.trim
+      val sourceEnum = scala.io.Source.fromFile("target/generated-sources/example/proto/EnumProtocol.scala").mkString
+      sourceEnum ====
+        """
+          |/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
+          |package example.proto
+          |
+          |sealed trait EnumProtocol extends Product with Serializable
+          |
+          |final object Suit extends Enumeration with EnumProtocol {
+          |  type Suit = Value
+          |  val SPADES, HEARTS, DIAMONDS, CLUBS = Value
+          |}
+          |
+          |final case class Card(suit: Suit.Value, number: Int) extends EnumProtocol
+        """.stripMargin.trim
+    }
 
-    val sourceCard = scala.io.Source.fromFile("target/generated-sources/example/idl/Card.scala").mkString
-    sourceCard ====
-      """
-        |/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
-        |package example.idl
-        |
-        |case class Card(suit: Suit.Value, number: Int)
-      """.stripMargin.trim
-  }
+    "correctly generate enums from IDL files" in {
+      val infile = new java.io.File("avrohugger-core/src/test/avro/enums.avdl")
+      val gen = new Generator(Standard)
+      gen.fileToFile(infile)
+
+      val sourceEnum = scala.io.Source.fromFile("target/generated-sources/example/idl/EnumProtocol.scala").mkString
+      sourceEnum ====
+        """
+          |/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
+          |package example.idl
+          |
+          |sealed trait EnumProtocol extends Product with Serializable
+          |
+          |final object Suit extends Enumeration with EnumProtocol {
+          |  type Suit = Value
+          |  val SPADES, DIAMONDS, CLUBS, HEARTS = Value
+          |}
+          |
+          |final case class Card(suit: Suit.Value, number: Int) extends EnumProtocol
+        """.stripMargin.trim
+    }
 
     "correctly generate bytes" in {
-    val infile = new java.io.File("avrohugger-core/src/test/avro/bytes.avsc")
-    val gen = new Generator(Standard)
-    gen.fileToFile(infile)
+      val infile = new java.io.File("avrohugger-core/src/test/avro/bytes.avsc")
+      val gen = new Generator(Standard)
+      gen.fileToFile(infile)
 
-    val sourceBytes = scala.io.Source.fromFile("target/generated-sources/example/Binary.scala").mkString
-    sourceBytes ====
-      """
-        |/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
-        |package example
-        |
-        |case class Binary(data: Array[Byte])
-      """.stripMargin.trim
+      val sourceBytes = scala.io.Source.fromFile("target/generated-sources/example/Binary.scala").mkString
+      sourceBytes ====
+        """
+          |/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
+          |package example
+          |
+          |case class Binary(data: Array[Byte])
+        """.stripMargin.trim
+    }
+
+    "correctly generate bytes from protocol files" in {
+      val infile = new java.io.File("avrohugger-core/src/test/avro/bytes.avpr")
+      val gen = new Generator(Standard)
+      gen.fileToFile(infile)
+
+      val sourceBytes = scala.io.Source.fromFile("target/generated-sources/example/proto/BinaryProtocol.scala").mkString
+      sourceBytes ====
+        """
+          |/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
+          |package example.proto
+          |
+          |sealed trait BinaryProtocol extends Product with Serializable
+          |
+          |final case class Binary(data: Array[Byte]) extends BinaryProtocol
+        """.stripMargin.trim
+    }
+
+    "correctly generate bytes from IDL files" in {
+      val infile = new java.io.File("avrohugger-core/src/test/avro/bytes.avdl")
+      val gen = new Generator(Standard)
+      gen.fileToFile(infile)
+
+      val sourceBytes = scala.io.Source.fromFile("target/generated-sources/example/idl/BinaryIDL.scala").mkString
+      sourceBytes ====
+        """
+          |/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
+          |package example.idl
+          |
+          |sealed trait BinaryIDL extends Product with Serializable
+          |
+          |final case class Binary(data: Array[Byte]) extends BinaryIDL
+          |""".stripMargin.trim
+    }
+
+
+    "correctly generate records depending on others defined in a different AVDL file" in {
+      val importing = new java.io.File("avrohugger-core/src/test/avro/import.avdl")
+      val gen = new Generator(Standard)
+      gen.fileToFile(importing)
+
+      val sourceRecord = scala.io.Source.fromFile("target/generated-sources/example/idl/ImportProtocol.scala").mkString
+      sourceRecord ====
+        """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
+          |package example.idl
+          |
+          |import other.ns.ExternalDependency
+          |
+          |import other.ns.ImportedSchema
+          |
+          |sealed trait ImportProtocol extends Product with Serializable
+          |
+          |final case class DependentRecord(dependency: ExternalDependency, number: Int) extends ImportProtocol
+          |
+          |final case class DependentRecord2(dependency: ImportedSchema, name: String) extends ImportProtocol
+          |""".stripMargin.trim
+    }
+
+    "correctly generate records depending on others defined in a different AVDL file and in a nested field" in {
+      val importing = new java.io.File("avrohugger-core/src/test/avro/import-nested.avdl")
+      val gen = new Generator(Standard)
+      gen.fileToFile(importing)
+
+      val sourceRecord = scala.io.Source.fromFile("target/generated-sources/example/idl/ImportNestedProtocol.scala").mkString
+      sourceRecord ====
+        """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
+          |package example.idl
+          |
+          |import other.ns.ExternalDependency
+          |
+          |sealed trait ImportNestedProtocol extends Product with Serializable
+          |
+          |final case class DependentOptionalRecord(dependency: Option[ExternalDependency], number: Int) extends ImportNestedProtocol
+          |""".stripMargin.trim
+    }
+
+    "not generate copy of imported classes in the importing package" in {
+      val importing = new java.io.File("avrohugger-core/src/test/avro/import.avdl")
+      val gen = new Generator(Standard)
+      gen.fileToFile(importing)
+
+      (new File(s"target/generated-sources/example/idl/ExternalDependency.scala")).exists === false
+    }
+
+    "Generate imported ADTs in the declared package" in {
+      val importing = new java.io.File("avrohugger-core/src/test/avro/import.avdl")
+      val gen = new Generator(Standard)
+      gen.fileToFile(importing)
+
+      (new File(s"target/generated-sources/other/ns/ImportedProtocol.scala")).exists === true
+    }
+    
+    "Generate imported class in the declared package" in {
+      val importing = new java.io.File("avrohugger-core/src/test/avro/import.avdl")
+      val gen = new Generator(Standard)
+      gen.fileToFile(importing)
+
+      (new File(s"target/generated-sources/other/ns/ImportedSchema.scala")).exists === true
+    }
+
+    "correctly generate an empty case class definition" in {
+      val infile = new java.io.File("avrohugger-core/src/test/avro/AvroTypeProviderTestEmptyRecord.avdl")
+      val gen = new Generator(Standard)
+      gen.fileToFile(infile)
+      val source = scala.io.Source.fromFile("target/generated-sources/test/Calculator.scala").mkString
+      source ===
+        """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
+          |package test
+          |
+          |sealed trait Calculator extends Product with Serializable
+          |
+          |final case class Added(value: Int) extends Calculator
+          |
+          |final case class Subtracted(value: Int) extends Calculator
+          |
+          |final case class Divided(value: Int) extends Calculator
+          |
+          |final case class Multiplied(value: Int) extends Calculator
+          |
+          |final case class Reset() extends Calculator
+        """.stripMargin.trim
+    }
+    
   }
-
-  "correctly generate bytes from protocol files" in {
-    val infile = new java.io.File("avrohugger-core/src/test/avro/bytes.avpr")
-    val gen = new Generator(Standard)
-    gen.fileToFile(infile)
-
-    val sourceBytes = scala.io.Source.fromFile("target/generated-sources/example/proto/Binary.scala").mkString
-    sourceBytes ====
-      """
-        |/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
-        |package example.proto
-        |
-        |case class Binary(data: Array[Byte])
-      """.stripMargin.trim
-  }
-
-  "correctly generate bytes from IDL files" in {
-    val infile = new java.io.File("avrohugger-core/src/test/avro/bytes.avdl")
-    val gen = new Generator(Standard)
-    gen.fileToFile(infile)
-
-    val sourceBytes = scala.io.Source.fromFile("target/generated-sources/example/idl/Binary.scala").mkString
-    sourceBytes ====
-      """
-        |/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
-        |package example.idl
-        |
-        |case class Binary(data: Array[Byte])
-        |""".stripMargin.trim
-  }
-
-
-  "correctly generate records depending on others defined in a different AVDL file" in {
-    val importing = new java.io.File("avrohugger-core/src/test/avro/import.avdl")
-    val gen = new Generator(Standard)
-    gen.fileToFile(importing)
-
-    val sourceEnum = scala.io.Source.fromFile("target/generated-sources/example/idl/DependentRecord.scala").mkString
-    sourceEnum ====
-      """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
-        |package example.idl
-        |
-        |import other.ns.ExternalDependency
-        |
-        |case class DependentRecord(dependency: ExternalDependency, number: Int)
-        |""".stripMargin.trim
-  }
-
-  "correctly generate records depending on others defined in a different AVDL file and in a nested field" in {
-    val importing = new java.io.File("avrohugger-core/src/test/avro/import-nested.avdl")
-    val gen = new Generator(Standard)
-    gen.fileToFile(importing)
-
-    val sourceEnum = scala.io.Source.fromFile("target/generated-sources/example/idl/DependentOptionalRecord.scala").mkString
-    sourceEnum ====
-      """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
-        |package example.idl
-        |
-        |import other.ns.ExternalDependency
-        |
-        |case class DependentOptionalRecord(dependency: Option[ExternalDependency], number: Int)
-        |""".stripMargin.trim
-  }
-
-  "not generate copy of imported classes in the importing package" in {
-    val importing = new java.io.File("avrohugger-core/src/test/avro/import.avdl")
-    val gen = new Generator(Standard)
-    gen.fileToFile(importing)
-
-    (new File(s"target/generated-sources/example/idl/ExternalDependency.scala")).exists === false
-  }
-
-  "Generate imported classes in the declared package" in {
-    val importing = new java.io.File("avrohugger-core/src/test/avro/import.avdl")
-    val gen = new Generator(Standard)
-    gen.fileToFile(importing)
-
-    (new File(s"target/generated-sources/other/ns/ExternalDependency.scala")).exists === true
-  }
-
-  "correctly generate an empty case class definition" in {
-    val infile = new java.io.File("avrohugger-core/src/test/avro/AvroTypeProviderTestEmptyRecord.avdl")
-    val gen = new Generator(Standard)
-    gen.fileToFile(infile)
-    val source = scala.io.Source.fromFile("target/generated-sources/test/Reset.scala").mkString
-    source ===
-      """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
-        |package test
-        |
-        |case class Reset()
-      """.stripMargin.trim
-  }
-  
 }

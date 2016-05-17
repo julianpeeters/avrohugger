@@ -54,10 +54,10 @@ class SchemaGenSpec extends mutable.Specification {
     }
 
     
-    "Expand a case object in the default package to implement SpecificRecord" in {
+    "Expand an empty case class in the default package to implement SpecificRecord" in {
       val schemaString = 
         """/** Auto-Generated Schema */
-          |case object Reset""".stripMargin
+          |case class Reset()""".stripMargin
       val gen = new Generator(SpecificRecord)
       val List(source) = gen.stringToStrings(schemaString)
 
@@ -117,12 +117,12 @@ class SchemaGenSpec extends mutable.Specification {
     }
 
 
-
+/*
 
 // Scala 2.10 can't parse package declarations, so rather than than maintain 
 // a separate branch, these tests (that pass for 2.11) get commented out until 
 // 2.10 is phased out.
-  /*
+  
     "Expand a standard case class with immutable fields to implement SpecificRecord" in {
       val schemaString = 
         """package example
@@ -361,7 +361,7 @@ class SchemaGenSpec extends mutable.Specification {
       //      import depths per import. Perhaps not feasible unless it becomes easier
       //      to match arbitrary packages and arbitrary imports. 
 
-    /*
+    /* imports are not supported as of Scala 2.11.x: not legal package stat: import test.major.Vehicle
     "Expand a two dependent packages with imports to implement SpecificRecord" in {
       val schemaString = 
         """package example
@@ -384,7 +384,6 @@ class SchemaGenSpec extends mutable.Specification {
       val gen = new Generator(SpecificRecord)
       val List(sourcePerson, sourceVehicle) = gen.stringToStrings(schemaString)
 
-       
       sourcePerson ===
        """|package example
           |
@@ -454,8 +453,7 @@ class SchemaGenSpec extends mutable.Specification {
           |}""".stripMargin.trim
           
     }
-
-*/
+    */
 
     "Expand a standard case class in more than one package to implement SpecificRecord" in {
       val schemaString = 
@@ -1146,6 +1144,6 @@ class SchemaGenSpec extends mutable.Specification {
           |}
           |""".stripMargin
     }
-  */
+*/
   }
 }

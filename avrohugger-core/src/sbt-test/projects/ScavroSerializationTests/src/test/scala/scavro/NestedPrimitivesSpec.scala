@@ -1,6 +1,5 @@
-//import test._
+package scavro
 
-// Specs2
 import org.specs2.mutable.Specification
 
 import org.oedura.scavro.{AvroReader, AvroWriter}

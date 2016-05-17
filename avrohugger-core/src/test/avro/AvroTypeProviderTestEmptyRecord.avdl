@@ -1,5 +1,5 @@
 @namespace("test")
-protocol MyApplication {
+protocol Calculator {
     record Added {
         int value;
     }

@@ -7,18 +7,18 @@ import avrohugger.input.reflectivecompilation.schemagen.SchemaStore
 
 import treehugger.forest._
 
-import org.apache.avro.Schema
+import org.apache.avro.{ Protocol, Schema }
 
-import java.nio.file.{Path, Paths, Files, StandardOpenOption}
-import java.io.{File, FileNotFoundException, IOException}
+import java.nio.file.{ Path, Paths, Files, StandardOpenOption }
+import java.io.{ File, FileNotFoundException, IOException }
 
 import scala.collection.JavaConversions._
 
 object Scavro extends SourceFormat {
 
-  override val toolName = "generate-scavro";
-  override val toolShortDescription = "Generates Scala wrapper code for the given schema.";
-  override def fileExt(schema: Schema) = ".scala"
+  override val toolName = "generate-scavro"
+  override val toolShortDescription = "Generates Scala wrapper code for the given schema."
+  override def fileExt(schemaOrProtocol: Either[Schema, Protocol]) = ".scala"
 
   val typeMatcher = new TypeMatcher
   typeMatcher.updateTypeMap("array"-> classOf[Array[_]])
@@ -26,15 +26,16 @@ object Scavro extends SourceFormat {
   override def asDefinitionString(
     classStore: ClassStore, 
     namespace: Option[String], 
-    schema: Schema,
+    schemaOrProtocol: Either[Schema, Protocol],
     schemaStore: SchemaStore): String = {
     
-    val tree = ScavroTreehugger.asScalaCodeString(
+    val tree =  ScavroTreehugger.asScalaCodeString(
       classStore, 
-      schema, 
+      schemaOrProtocol, 
       namespace, 
       typeMatcher,
       schemaStore)
+      
     // SpecificCompiler can't return a tree for Java enums, so return
     // a string here for a consistent api vis a vis *ToFile and *ToStrings
     treeToString(tree)
@@ -42,13 +43,13 @@ object Scavro extends SourceFormat {
 
   override def writeToFile(
     classStore: ClassStore, 
-    namespace: Option[String], 
-    schema: Schema, 
+    namespace: Option[String],
+    schemaOrProtocol: Either[Schema, Protocol],
     outDir: String,
     schemaStore: SchemaStore): Unit = {
 
-    // By default, Scavro generates Scala classes in packages that are the same as the 
-    // Java package with `model` appended. 
+    // By default, Scavro generates Scala classes in packages that are the same 
+    // as the Java package with `model` appended. 
     val scavroModelDefaultPackage = "model"
     val scavroModelDefaultNamespace = namespace match {
       case Some(ns) => Some(ns + "." + scavroModelDefaultPackage)
@@ -62,25 +63,36 @@ object Scavro extends SourceFormat {
       }
     }
     
-    val scavroModelNamespace = schema.getNamespace match {
-      case null => scavroModelDefaultNamespace
-      case schemaNamespace => getCustomNamespace(schemaNamespace) 
+    val scavroModelNamespace = schemaOrProtocol match {
+      case Left(schema) => {
+        schema.getNamespace match {
+          case null => scavroModelDefaultNamespace
+          case schemaNamespace => getCustomNamespace(schemaNamespace)
+        }
+      }
+      case Right(protocol) => {
+        protocol.getNamespace match {
+          case null => scavroModelDefaultNamespace
+          case schemaNamespace => getCustomNamespace(schemaNamespace)
+        }
+      }
     }
 
     val codeAsString = asDefinitionString(
       classStore,
       scavroModelNamespace,
-      schema,
+      schemaOrProtocol,
       schemaStore)
 
     val folderPath: Path = Paths.get{
-      outDir + "/" + scavroModelNamespace.get.toString.replace('.','/')
+      s"$outDir/${scavroModelNamespace.get.toString.replace('.','/')}"
     } 
 
     if (!Files.exists(folderPath)) Files.createDirectories(folderPath)
 
-    val filePath = { 
-      Paths.get(folderPath.toString + "/" + schema.getName + fileExt(schema))
+    val filePath = {
+      val fileName = getName(schemaOrProtocol) + fileExt(schemaOrProtocol)
+      Paths.get(s"$folderPath/$fileName")
     }
     try { // delete old and/or create new
       Files.deleteIfExists(filePath)
@@ -89,7 +101,7 @@ object Scavro extends SourceFormat {
     } 
     catch {
       case ex: FileNotFoundException => sys.error("File not found:" + ex)
-      case ex: IOException => sys.error("There was a problem using the file: " + ex)
+      case ex: IOException => sys.error("Problem using the file: " + ex)
     }
 
   }

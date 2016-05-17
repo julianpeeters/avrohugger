@@ -15,10 +15,13 @@ class CommentsSpec extends mutable.Specification {
       val outDir = gen.defaultOutputDir + "/specific/"
       gen.fileToFile(infile, outDir)
 
-      val sourceRecord = scala.io.Source.fromFile(s"$outDir/com/example/NoSpaces.scala").mkString
+      val sourceRecord = scala.io.Source.fromFile(s"$outDir/com/example/Example.scala").mkString
       sourceRecord ====
         """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
           |package com.example
+          |
+          |/** Example adapted from https://github.com/delagoya. This is a comment for the whole protocol */
+          |sealed trait Example extends Product with Serializable
           |
           |/**
           | * The comment applies to the `NoSpaces` record, but is not indented to the
@@ -42,7 +45,7 @@ class CommentsSpec extends mutable.Specification {
           | * end
           | * ```
           | */
-          |case class NoSpaces(var single_line_comment_property: String, var multi_line_property: String) extends org.apache.avro.specific.SpecificRecordBase {
+          |final case class NoSpaces(var single_line_comment_property: String, var multi_line_property: String) extends org.apache.avro.specific.SpecificRecordBase with Example {
           |  def this() = this("", "")
           |  def get(field$: Int): AnyRef = {
           |    field$ match {
@@ -70,7 +73,7 @@ class CommentsSpec extends mutable.Specification {
           |  def getSchema: org.apache.avro.Schema = NoSpaces.SCHEMA$
           |}
           |
-          |object NoSpaces {
+          |final object NoSpaces {
           |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"NoSpaces\",\"namespace\":\"com.example\",\"doc\":\"The comment applies to the `NoSpaces` record, but is not indented to the\\nlevel of the record specification.\",\"fields\":[{\"name\":\"single_line_comment_property\",\"type\":\"string\",\"doc\":\"This is a single line comment that is indented for readability,\\n    and is not affected by indentation.\"},{\"name\":\"multi_line_property\",\"type\":\"string\",\"doc\":\"This multi-line comment on `mult_line_property` that would be affected by indentation.\\n\\nThis is another paragraph\\n\\n\\n    This is an indented block and should be shown as\\n    such.\\n\\nHere is a code block that apparently does not work for avrodoc. E.g. no [GFM](https://help.github.com/articles/github-flavored-markdown) support.\\n\\n```ruby\\n# this is a Ruby code block\\ndef method(arg1, arg2=nil)\\n  puts \\\"hello world!\\\"\\nend\\n```\"}]}")
           |}
           |""".stripMargin.trim
@@ -83,13 +86,16 @@ class CommentsSpec extends mutable.Specification {
           val outDir = gen.defaultOutputDir + "/specific/"
           gen.fileToFile(infile, outDir)
 
-          val sourceRecord = scala.io.Source.fromFile(s"$outDir/com/example/NoSpaces2.scala").mkString
+          val sourceRecord = scala.io.Source.fromFile(s"$outDir/com/example/Example2.scala").mkString
           sourceRecord ====
             """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
               |package com.example
               |
+              |/** Example adapted from https://github.com/delagoya. This is a comment for the whole protocol */
+              |sealed trait Example2 extends Product with Serializable
+              |
               |/** @param comment_property This is a single line comment on a field, in a record that has no comment. */
-              |case class NoSpaces2(var comment_property: String) extends org.apache.avro.specific.SpecificRecordBase {
+              |final case class NoSpaces2(var comment_property: String) extends org.apache.avro.specific.SpecificRecordBase with Example2 {
               |  def this() = this("")
               |  def get(field$: Int): AnyRef = {
               |    field$ match {
@@ -111,7 +117,7 @@ class CommentsSpec extends mutable.Specification {
               |  def getSchema: org.apache.avro.Schema = NoSpaces2.SCHEMA$
               |}
               |
-              |object NoSpaces2 {
+              |final object NoSpaces2 {
               |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"NoSpaces2\",\"namespace\":\"com.example\",\"fields\":[{\"name\":\"comment_property\",\"type\":\"string\",\"doc\":\"This is a single line comment on a field, in a record that has no comment.\"}]}")
               |}
               |""".stripMargin.trim
@@ -124,17 +130,20 @@ class CommentsSpec extends mutable.Specification {
           val outDir = gen.defaultOutputDir + "/specific/"
           gen.fileToFile(infile, outDir)
 
-          val sourceRecord = scala.io.Source.fromFile(s"$outDir/com/example/NoSpaces3.scala").mkString
+          val sourceRecord = scala.io.Source.fromFile(s"$outDir/com/example/Example3.scala").mkString
           sourceRecord ====
             """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
               |package com.example
+              |
+              |/** Example adapted from https://github.com/delagoya. This is a comment for the whole protocol */
+              |sealed trait Example3 extends Product with Serializable
               |
               |/**
               | * The comment applies to the `NoSpaces3` record, but is not indented to the
               | * level of the record specification.
               | * @param comment_property 
               | */
-              |case class NoSpaces3(var comment_property: String) extends org.apache.avro.specific.SpecificRecordBase {
+              |final case class NoSpaces3(var comment_property: String) extends org.apache.avro.specific.SpecificRecordBase with Example3 {
               |  def this() = this("")
               |  def get(field$: Int): AnyRef = {
               |    field$ match {
@@ -156,7 +165,7 @@ class CommentsSpec extends mutable.Specification {
               |  def getSchema: org.apache.avro.Schema = NoSpaces3.SCHEMA$
               |}
               |
-              |object NoSpaces3 {
+              |final object NoSpaces3 {
               |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"NoSpaces3\",\"namespace\":\"com.example\",\"doc\":\"The comment applies to the `NoSpaces3` record, but is not indented to the\\nlevel of the record specification.\",\"fields\":[{\"name\":\"comment_property\",\"type\":\"string\"}]}")
               |}
               |""".stripMargin.trim

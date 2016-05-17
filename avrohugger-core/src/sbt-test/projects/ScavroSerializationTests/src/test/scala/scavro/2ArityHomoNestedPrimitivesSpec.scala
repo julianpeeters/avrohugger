@@ -1,7 +1,7 @@
+package scavro
 
 import test.model._
 
-// Specs2
 import org.specs2.mutable.Specification
 
 import java.io.File

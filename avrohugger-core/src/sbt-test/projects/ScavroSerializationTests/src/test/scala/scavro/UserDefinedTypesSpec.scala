@@ -1,10 +1,10 @@
+package scavro
+
 import test.model._
 
-// Specs2
 import org.specs2.mutable.Specification
 
 import org.oedura.scavro.{AvroReader, AvroWriter}
-
 
 
 class Scavro58Test extends Specification {
@@ -33,7 +33,7 @@ class Scavro58Test extends Specification {
     }
   }
 }
-/*
+
 class Scavro59Test extends Specification {
 
   "A case class with an `Float` field" should {
@@ -91,10 +91,10 @@ class Scavro60Test extends Specification {
 
 class Scavro61Test extends Specification {
 
-  "A case class with a field that is Array of a user-defined type" should {
+  "A case class with a field that has a user-defined type" should {
     "serialize and deserialize correctly" in {
 
-      val record = AvroTypeProviderTest61(Array(AvroTypeProviderTest00(1), AvroTypeProviderTest00(2)))
+      val record = AvroTypeProviderTest61(List(AvroTypeProviderTest00(1), AvroTypeProviderTest00(2)))
 
       val filename = "AvroTypeProviderTest61.avro"
       val records = record :: Nil
@@ -118,10 +118,10 @@ class Scavro61Test extends Specification {
 
 class Scavro62Test extends Specification {
 
-  "A case class with a field that is Array of a nested user-defined type" should {
+  "A case class with a field that has a nested user-defined type" should {
     "serialize and deserialize correctly" in {
 
-      val record = AvroTypeProviderTest62(Array(AvroTypeProviderTest58(AvroTypeProviderTest00(1)), AvroTypeProviderTest58(AvroTypeProviderTest00(2))))
+      val record = AvroTypeProviderTest62(List(AvroTypeProviderTest58(AvroTypeProviderTest00(1)), AvroTypeProviderTest58(AvroTypeProviderTest00(2))))
 
       val filename = "AvroTypeProviderTest62.avro"
       val records = record :: Nil
@@ -147,7 +147,7 @@ class Scavro62Test extends Specification {
 
 class Scavro64Test extends Specification {
 
-  "A case class with a field that is Array of a nested user-defined type in the second position" should {
+  "A case class with a field that has a nested user-defined type in the second position" should {
     "serialize and deserialize correctly" in {
 
       val record = AvroTypeProviderTest64(Some(AvroTypeProviderTest00(1)))
@@ -174,7 +174,7 @@ class Scavro64Test extends Specification {
 
 class Scavro65Test extends Specification {
 
-  "A case class with a field that is Array of a nested user-defined type in the second position" should {
+  "A case class with a field that has a nested user-defined type in the second position" should {
     "serialize and deserialize correctly" in {
 
       val record = AvroTypeProviderTest65(None)
@@ -201,7 +201,7 @@ class Scavro65Test extends Specification {
 
 class Scavro66Test extends Specification {
 
-  "A case class with a field that is Array of a nested user-defined type in the second position" should {
+  "A case class with a field that has a nested user-defined type in the second position" should {
     "serialize and deserialize correctly" in {
 
       val record = AvroTypeProviderTest66(Some(AvroTypeProviderTest58(AvroTypeProviderTest00(1))))
@@ -228,7 +228,7 @@ class Scavro66Test extends Specification {
 
 class Scavro67Test extends Specification {
 
-  "A case class with a field that is Array of a nested user-defined type in the second position" should {
+  "A case class with a field that has a nested user-defined type in the second position" should {
     "serialize and deserialize correctly" in {
 
       val record = AvroTypeProviderTest67(Some(AvroTypeProviderTest00(1)), Some(AvroTypeProviderTest60(AvroTypeProviderTest00(4), AvroTypeProviderTest58(AvroTypeProviderTest00(1)))))
@@ -255,10 +255,10 @@ class Scavro67Test extends Specification {
 
 class Scavro68Test extends Specification {
 
-  "A case class with a field that is Array of a nested user-defined type in the second position" should {
+  "A case class with a field that has a nested user-defined type in the second position" should {
     "serialize and deserialize correctly" in {
 
-      val record = AvroTypeProviderTest68(Some(Array(Some(AvroTypeProviderTest00(1)), None)), Array(None, Some(Array(AvroTypeProviderTest01(1F), AvroTypeProviderTest01(2F)))))
+      val record = AvroTypeProviderTest68(Some(List(Some(AvroTypeProviderTest00(1)), None)), List(None, Some(AvroTypeProviderTest01(1F))))
 
       val filename = "AvroTypeProviderTest68.avro"
       val records = record :: Nil
@@ -282,7 +282,7 @@ class Scavro68Test extends Specification {
 
 class ScavroMap12Test extends Specification {
 
-  "A case class with a field that is Array of a nested user-defined type in the second position" should {
+  "A case class with a field that has a nested user-defined type in the second position" should {
     "serialize and deserialize correctly" in {
 
       val record = AvroTypeProviderTestMap12(Map("necessary" -> (Map("a"->AvroTypeProviderTest00(1)))),
@@ -309,11 +309,11 @@ class ScavroMap12Test extends Specification {
 
 class ScavroMap13Test extends Specification {
 
-  "A case class with a field that is Array of a nested user-defined type in the second position" should {
+  "A case class with a field that has a nested user-defined type in the second position" should {
     "serialize and deserialize correctly" in {
 
-      val record = AvroTypeProviderTestMap13(Map("optional" -> Array(Array("maybe"))),
-        Map("gratis" -> Array(Array(1.0))))
+      val record = AvroTypeProviderTestMap13(Map("optional" -> List(List("maybe"))),
+        Map("gratis" -> List(List(1.0))))
       val filename = "AvroTypeProviderTestMap13.avsc"
       val records = record :: Nil
 
@@ -333,6 +333,6 @@ class ScavroMap13Test extends Specification {
     }
   }
 }
-*/
+
 
 

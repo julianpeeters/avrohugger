@@ -19,11 +19,6 @@ case class twitter_schema(username: String, tweet: String, timestamp: Long) exte
   }
 }
 
-/**
- * @param username Name of the user account on Twitter.com
- * @param tweet The content of the user's Twitter message
- * @param timestamp Unix epoch time in milliseconds
- */
 object twitter_schema {
   implicit def reader = new AvroReader[twitter_schema] {
     override type J = Jtwitter_schema
