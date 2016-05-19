@@ -3,10 +3,8 @@ package format
 package specific
 
 import trees.{ SpecificCaseClassTree, SpecificObjectTree, SpecificTraitTree }
-
-import avrohugger.input.DependencyInspector._
-import avrohugger.input.NestedSchemaExtractor._
-import avrohugger.input.reflectivecompilation.schemagen.SchemaStore
+import util.ScalaDocGen
+import input.reflectivecompilation.schemagen.SchemaStore
 
 import org.apache.avro.{ Protocol, Schema }
 import org.apache.avro.Schema.Field
@@ -28,9 +26,11 @@ object SpecificScalaTreehugger {
       
     // imports in case a field type is from a different namespace
     val imports: List[Import] = schemaOrProtocol match {
-      case Left(schema) => getImports(schema, namespace, schemaStore)
+      case Left(schema) => {
+        SpecificImports.getImports(schema, namespace, schemaStore)
+      }
       case Right(protocol) => protocol.getTypes.toList.flatMap(schema => 
-        getImports(schema, namespace, schemaStore))
+        SpecificImports.getImports(schema, namespace, schemaStore))
     }
 
     val topLevelDefs: List[Tree] =
@@ -48,38 +48,10 @@ object SpecificScalaTreehugger {
       if (namespace.isDefined) BLOCK(blockContent:_*).inPackage(namespace.get)
       else BLOCK(blockContent:_*).withoutPackage
     }.withDoc("MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY")
-    //TODO: move all docs into format.doc package
+
     val codeString = treeToString(tree)
     codeString
   }
-  
-  def isRecord(schema: Schema): Boolean = (schema.getType == Schema.Type.RECORD)
-  
-  def getImports(
-    schema: Schema,
-    currentNamespace: Option[String],
-    schemaStore: SchemaStore): List[Import] = {
-    if (isRecord(schema)) {
-      val topLevelSchemas: List[Schema] =
-        schema::(getNestedSchemas(schema, schemaStore)) 
-      topLevelSchemas.filter(isRecord).flatMap(s => s.getFields)
-        .filter(field => getReferredNamespace(field.schema).isDefined)
-        .filter(field => getReferredNamespace(field.schema) != currentNamespace)
-        .distinct
-        .groupBy(field => getReferredNamespace(field.schema).get )
-        .toList
-        .map { _ match { case(packageName, fields) =>
-            IMPORT(packageName, fields.map( getReferredTypeName ).distinct )
-          }
-        }
-    }
-    else List.empty
-  }
-  
-  def registerType(schema: Schema, classStore: ClassStore): Unit = {
-    val classSymbol = RootClass.newClass(schema.getName)
-    classStore.accept(schema, classSymbol)
-  } 
   
   def asTopLevelDef(
     classStore: ClassStore,
@@ -90,73 +62,22 @@ object SpecificScalaTreehugger {
     maybeFlags: Option[List[Long]]): List[Tree] = {
     
     schemaOrProtocol match {
-      case Left(schema) => {
-        registerType(schema, classStore)
-        val caseClassDef = SpecificCaseClassTree.toCaseClassDef(
-          classStore,
-          namespace,
-          schema,
-          typeMatcher,
-          maybeBaseTrait,
-          maybeFlags)
-        val companionDef = SpecificObjectTree.toCompanionDef(schema, maybeFlags)
-        List(caseClassDef, companionDef)
-      }
-      case Right(protocol) => {
-        val name: String = protocol.getName
-        val ns: String = protocol.getNamespace
-        val allTypes = protocol.getTypes.toList
-        val messages = protocol.getMessages.toMap
-        val maybeProtocolDoc = Option(protocol.getDoc)
-        allTypes.foreach(schema => registerType(schema, classStore))
-        def isEnum(schema: Schema) = schema.getType == Schema.Type.ENUM
-        def isTopLevelNamespace(schema: Schema) = schema.getNamespace == ns
-        if (messages.isEmpty) {
-          val localSubTypes = allTypes.filter(isTopLevelNamespace)
-          // protocols with only 1 schema are ADTs (Java Enums don't count)
-          if (localSubTypes.filterNot(isEnum).length > 1) {
-            val maybeNewBaseTrait = Some(name)
-            val maybeFlags = Some(List(Flags.FINAL.toLong))
-            val sealedTraitDef = SpecificTraitTree.toADTRootDef(protocol)
-            sealedTraitDef +: localSubTypes.filterNot(isEnum).flatMap(schema =>
-    					asTopLevelDef(
-                classStore,
-                namespace,
-                Left(schema),
-                typeMatcher,
-                maybeNewBaseTrait,
-                maybeFlags))
-          }
-          // if only one Scala type is defined, then don't generate sealed trait
-          else {
-            // no sealed trait tree, but could still need a top-level doc
-  					val docTrees = {
-  						Option(protocol.getDoc) match {
-  							case Some(doc) => 
-  							  List(ScalaDocGen.docToScalaDoc(Right(protocol), EmptyTree))
-  							case None => List.empty
-  						}	
-  					} 
-            docTrees ::: localSubTypes.filterNot(isEnum).flatMap(schema =>
-            asTopLevelDef(
-              classStore,
-              namespace,
-              Left(schema),
-              typeMatcher,
-              None,
-              None))
-            }
-        }
-        else {
-          val traitDef = SpecificTraitTree.toTraitDef(
-            classStore,
-            namespace,
-            protocol,
-            typeMatcher)
-          val companionDef = SpecificObjectTree.toCompanionDef(protocol)
-          List(traitDef, companionDef)
-        }
-      }
+      case Left(schema) => SpecificSchemaHandler.toTrees(
+        classStore,
+        namespace,
+        schema,
+        typeMatcher,
+        maybeBaseTrait,
+        maybeFlags
+      )
+      case Right(protocol) => SpecificProtocolHandler.toTrees(
+        classStore,
+        namespace,
+        protocol,
+        typeMatcher,
+        maybeBaseTrait,
+        maybeFlags
+      )
     }
     
   }

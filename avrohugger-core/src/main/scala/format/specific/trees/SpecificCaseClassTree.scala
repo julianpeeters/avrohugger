@@ -5,6 +5,7 @@ package trees
 
 import matchers.{ DefaultParamMatcher, DefaultValueMatcher }
 import methods.{ GetGenerator, GetSchemaGenerator, PutGenerator }
+import util.ScalaDocGen
 
 import treehugger.forest._
 import definitions._

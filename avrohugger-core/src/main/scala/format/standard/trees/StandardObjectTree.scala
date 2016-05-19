@@ -3,6 +3,8 @@ package format
 package standard
 package trees
 
+import util.ScalaDocGen
+
 import treehugger.forest._
 import definitions._
 import treehuggerDSL._
