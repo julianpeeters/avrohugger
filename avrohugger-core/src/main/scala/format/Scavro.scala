@@ -28,17 +28,14 @@ object Scavro extends SourceFormat {
     namespace: Option[String], 
     schemaOrProtocol: Either[Schema, Protocol],
     schemaStore: SchemaStore): String = {
-    
-    val tree =  ScavroTreehugger.asScalaCodeString(
+    // SpecificCompiler can't return a tree for Java enums, so return
+    // a string here for a consistent api vis a vis *ToFile and *ToStrings
+    ScavroTreehugger.asScalaCodeString(
       classStore, 
       schemaOrProtocol, 
       namespace, 
       typeMatcher,
       schemaStore)
-      
-    // SpecificCompiler can't return a tree for Java enums, so return
-    // a string here for a consistent api vis a vis *ToFile and *ToStrings
-    treeToString(tree)
   }
 
   override def writeToFile(

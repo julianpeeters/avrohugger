@@ -100,7 +100,7 @@ object StandardTreehugger {
 
     schemaOrProtocol match {
       case Left(schema) => { // as case class definition
-        registerType(schema, classStore)
+        StandardTypeRegistrar.registerType(schema, classStore)
         schema.getType match {
           case RECORD => 
             val classDef = StandardCaseClassTree.toCaseClassDef(
@@ -121,24 +121,46 @@ object StandardTreehugger {
           case _ => sys.error("Only RECORD or ENUM can be toplevel definitions")
         }
       }
-      case Right(protocol) => { // as ADT definition
+      case Right(protocol) => {
         val name: String = protocol.getName
         val ns: String = protocol.getNamespace
         val allTypes = protocol.getTypes.toList
-        allTypes.foreach(schema => registerType(schema, classStore))
+        allTypes.foreach(schema => 
+          StandardTypeRegistrar.registerType(schema, classStore))
         def isTopLevelNamespace(schema: Schema) = schema.getNamespace == ns
         val maybeNewBaseTrait = Some(name)
-        val maybeFlags = Some(List(Flags.FINAL.toLong))
+        val maybeNewFlags = Some(List(Flags.FINAL.toLong))
         val traitDef = StandardTraitTree.toADTRootDef(protocol)
         val localSubTypes = allTypes.filter(isTopLevelNamespace)
-        traitDef +: localSubTypes.flatMap(schema =>
-          asTopLevelDef(
-            classStore,
-            namespace,
-            Left(schema),
-            typeMatcher,
-            maybeNewBaseTrait,
-            maybeFlags))
+        if (localSubTypes.length > 1) {
+          traitDef +: localSubTypes.flatMap(schema =>
+            StandardTreehugger.asTopLevelDef(
+              classStore,
+              namespace,
+              Left(schema),
+              typeMatcher,
+              maybeNewBaseTrait,
+              maybeNewFlags))
+        }
+        // if only one Scala type is defined, then don't generate sealed trait
+        else {
+          // no sealed trait tree, but could still need a top-level doc
+          val docTrees = {
+            Option(protocol.getDoc) match {
+              case Some(doc) => 
+                List(ScalaDocGen.docToScalaDoc(Right(protocol), EmptyTree))
+              case None => List.empty
+            }	
+          } 
+          docTrees ::: localSubTypes.flatMap(schema =>
+            StandardTreehugger.asTopLevelDef(
+              classStore,
+              namespace,
+              Left(schema),
+              typeMatcher,
+              None,
+              None))
+        }
       }
     }
     

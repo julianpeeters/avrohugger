@@ -106,23 +106,46 @@ object SpecificScalaTreehugger {
         val name: String = protocol.getName
         val ns: String = protocol.getNamespace
         val allTypes = protocol.getTypes.toList
-        allTypes.foreach(schema => registerType(schema, classStore))
         val messages = protocol.getMessages.toMap
+        val maybeProtocolDoc = Option(protocol.getDoc)
+        allTypes.foreach(schema => registerType(schema, classStore))
         def isEnum(schema: Schema) = schema.getType == Schema.Type.ENUM
         def isTopLevelNamespace(schema: Schema) = schema.getNamespace == ns
         if (messages.isEmpty) {
-          val maybeNewBaseTrait = Some(name)
-          val maybeFlags = Some(List(Flags.FINAL.toLong))
-          val sealedTraitDef = SpecificTraitTree.toADTRootDef(protocol)
           val localSubTypes = allTypes.filter(isTopLevelNamespace)
-          sealedTraitDef +: localSubTypes.filterNot(isEnum).flatMap(schema =>
-  					asTopLevelDef(
+          // protocols with only 1 schema are ADTs (Java Enums don't count)
+          if (localSubTypes.filterNot(isEnum).length > 1) {
+            val maybeNewBaseTrait = Some(name)
+            val maybeFlags = Some(List(Flags.FINAL.toLong))
+            val sealedTraitDef = SpecificTraitTree.toADTRootDef(protocol)
+            sealedTraitDef +: localSubTypes.filterNot(isEnum).flatMap(schema =>
+    					asTopLevelDef(
+                classStore,
+                namespace,
+                Left(schema),
+                typeMatcher,
+                maybeNewBaseTrait,
+                maybeFlags))
+          }
+          // if only one Scala type is defined, then don't generate sealed trait
+          else {
+            // no sealed trait tree, but could still need a top-level doc
+  					val docTrees = {
+  						Option(protocol.getDoc) match {
+  							case Some(doc) => 
+  							  List(ScalaDocGen.docToScalaDoc(Right(protocol), EmptyTree))
+  							case None => List.empty
+  						}	
+  					} 
+            docTrees ::: localSubTypes.filterNot(isEnum).flatMap(schema =>
+            asTopLevelDef(
               classStore,
               namespace,
               Left(schema),
               typeMatcher,
-              maybeNewBaseTrait,
-              maybeFlags))
+              None,
+              None))
+            }
         }
         else {
           val traitDef = SpecificTraitTree.toTraitDef(

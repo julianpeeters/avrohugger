@@ -26,15 +26,14 @@ object Standard extends SourceFormat {
     namespace: Option[String], 
     schemaOrProtocol: Either[Schema, Protocol],
     schemaStore: SchemaStore): String = {
-      
-    val tree = StandardTreehugger.asScalaCodeString(
+    // SpecificCompiler can't return a tree for Java enums, so return
+    // a string here for a consistent api vis a vis *ToFile and *ToStrings
+    StandardTreehugger.asScalaCodeString(
       classStore,
       schemaOrProtocol,
       namespace,
       typeMatcher,
       schemaStore)
-      
-    treeToString(tree)
   }
 
   override def writeToFile(

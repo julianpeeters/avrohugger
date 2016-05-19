@@ -25,16 +25,14 @@ class ScavroGeneratorSpec extends mutable.Specification {
             |
             |import example.proto.{Message => JMessage}
             |
-            |sealed trait Mail extends Product with Serializable
-            |
-            |final case class Message(to: String, from: String, body: String) extends AvroSerializeable with Mail {
+            |case class Message(to: String, from: String, body: String) extends AvroSerializeable {
             |  type J = JMessage
             |  override def toAvro: JMessage = {
             |    new JMessage(to, from, body)
             |  }
             |}
             |
-            |final object Message {
+            |object Message {
             |  implicit def reader = new AvroReader[Message] {
             |    override type J = JMessage
             |  }
@@ -64,16 +62,14 @@ class ScavroGeneratorSpec extends mutable.Specification {
             |
             |import example.proto.{Binary => JBinary}
             |
-            |sealed trait BinaryProtocol extends Product with Serializable
-            |
-            |final case class Binary(data: Array[Byte]) extends AvroSerializeable with BinaryProtocol {
+            |case class Binary(data: Array[Byte]) extends AvroSerializeable {
             |  type J = JBinary
             |  override def toAvro: JBinary = {
             |    new JBinary(java.nio.ByteBuffer.wrap(data))
             |  }
             |}
             |
-            |final object Binary {
+            |object Binary {
             |  implicit def reader = new AvroReader[Binary] {
             |    override type J = JBinary
             |  }

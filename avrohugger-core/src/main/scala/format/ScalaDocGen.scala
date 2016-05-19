@@ -19,30 +19,25 @@ object ScalaDocGen {
     tree: Tree): Tree = {
 
     def aFieldHasDoc(schema: Schema): Boolean = {
-      schema.getFields.exists(field => isDoc(field.doc))
+      schema.getFields.exists(field => isDoc(Option(field.doc)))
     }
 
     def topLevelHasDoc(schema: Schema): Boolean = {
-      isDoc(schema.getDoc)
+      isDoc(Option(schema.getDoc))
     }
 
-    def isDoc(maybeDoc: String): Boolean = {
+    def isDoc(maybeDoc: Option[String]): Boolean = {
       maybeDoc match {
-        case null => false
-        case _ => true
+        case Some(doc) => true
+        case None => false
       }
-    }
-
-    def avroDocToScalaString(doc: String) = doc match {
-      case null => ""
-      case docString => docString
     }
 
     // Need arbitrary number of fields, so can't use DocTags, must return String
     def getFieldFauxDocTags(schema: Schema): List[String] = {
       val docStrings = schema.getFields.toList.map(field => {
         val fieldName = field.name
-        val fieldDoc = avroDocToScalaString(field.doc)
+        val fieldDoc = Option(field.doc).getOrElse("")
         s"@param $fieldName $fieldDoc"
       })
       docStrings
@@ -59,25 +54,26 @@ object ScalaDocGen {
     }
     
     def wrapTraitWithDoc(protocol: Protocol, tree: Tree, docs: List[String]) = {
-      if (isDoc(protocol.getDoc)) tree.withDoc(docs)
+      if (isDoc(Option(protocol.getDoc))) tree.withDoc(docs)
       else tree
     }
 
-    val docString = schemaOrProtocol match {
-      case Left(schema) => avroDocToScalaString(schema.getDoc)
-      case Right(protocol) => protocol.getDoc
+    val docStrings: List[String] = schemaOrProtocol match {
+      case Left(schema) => Option(schema.getDoc).toList
+      case Right(protocol) => Option(protocol.getDoc).toList
     }
 
     schemaOrProtocol match {
       case Left(schema) => schema.getType match {
         case RECORD =>
-          wrapClassWithDoc(schema, tree, docString::getFieldFauxDocTags(schema))
+          val paramDocs = getFieldFauxDocTags(schema)
+          wrapClassWithDoc(schema, tree, docStrings:::paramDocs)
         case ENUM =>
-          wrapEnumWithDoc(schema, tree, List(docString))
+          wrapEnumWithDoc(schema, tree, docStrings)
         case _ =>
           sys.error("Error generating ScalaDoc from Avro doc. Not ENUM/RECORD")
       }
-      case Right(protocol) => wrapTraitWithDoc(protocol, tree, List(docString))
+      case Right(protocol) => wrapTraitWithDoc(protocol, tree, docStrings)
     }
 
   }

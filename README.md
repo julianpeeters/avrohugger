@@ -113,7 +113,7 @@ namespace map (please see warnings below):
 
 #####Protocol Support:
 
-* `.avdl`, `.avpr`, and json protocol strings are generated as ADTs.
+* `.avdl`, `.avpr`, and json protocol strings are generated as ADTs if they define more than one Scala definition.
 
 * For `SpecificRecord`, if the protocol contains messages then no ADT is generated, and an RPC trait is generated instead. 
 

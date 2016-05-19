@@ -225,9 +225,7 @@ class StandardGeneratorSpec extends mutable.Specification {
           |/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
           |package example.idl
           |
-          |sealed trait RecursiveProtocol extends Product with Serializable
-          |
-          |final case class Recursive(name: String, recursive: Option[Recursive]) extends RecursiveProtocol
+          |case class Recursive(name: String, recursive: Option[Recursive])
         """.stripMargin.trim
     }
 
@@ -319,9 +317,7 @@ class StandardGeneratorSpec extends mutable.Specification {
           |/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
           |package example.proto
           |
-          |sealed trait BinaryProtocol extends Product with Serializable
-          |
-          |final case class Binary(data: Array[Byte]) extends BinaryProtocol
+          |case class Binary(data: Array[Byte])
         """.stripMargin.trim
     }
 
@@ -336,9 +332,7 @@ class StandardGeneratorSpec extends mutable.Specification {
           |/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
           |package example.idl
           |
-          |sealed trait BinaryIDL extends Product with Serializable
-          |
-          |final case class Binary(data: Array[Byte]) extends BinaryIDL
+          |case class Binary(data: Array[Byte])
           |""".stripMargin.trim
     }
 
@@ -377,9 +371,7 @@ class StandardGeneratorSpec extends mutable.Specification {
           |
           |import other.ns.ExternalDependency
           |
-          |sealed trait ImportNestedProtocol extends Product with Serializable
-          |
-          |final case class DependentOptionalRecord(dependency: Option[ExternalDependency], number: Int) extends ImportNestedProtocol
+          |case class DependentOptionalRecord(dependency: Option[ExternalDependency], number: Int)
           |""".stripMargin.trim
     }
 

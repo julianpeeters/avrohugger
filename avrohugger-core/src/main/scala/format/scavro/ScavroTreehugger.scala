@@ -179,15 +179,36 @@ object ScavroTreehugger {
 				val maybeNewBaseTrait = Some(name)
 				val maybeFlags = Some(List(Flags.FINAL.toLong))
 				val traitDef = ScavroTraitTree.toADTRootDef(protocol)
-				val subTypes = allTypes.filter(isTopLevelNamespace)
-				traitDef +: subTypes.flatMap(schema =>
-					asTopLevelDef(
-						classStore,
-						namespace,
-						Left(schema),
-						typeMatcher,
-						maybeNewBaseTrait,
-					  maybeFlags))
+				val localSubTypes = allTypes.filter(isTopLevelNamespace)
+				if (localSubTypes.length > 1) {
+					traitDef +: localSubTypes.flatMap(schema =>
+						asTopLevelDef(
+							classStore,
+							namespace,
+							Left(schema),
+							typeMatcher,
+							maybeNewBaseTrait,
+						  maybeFlags))
+				}
+				// if only one Scala type is defined, then don't generate sealed trait
+				else {
+					// no sealed trait tree, but could still need a top-level doc
+					val docTrees = {
+						Option(protocol.getDoc) match {
+							case Some(doc) => 
+							  List(ScalaDocGen.docToScalaDoc(Right(protocol), EmptyTree))
+							case None => List.empty
+						}	
+					}
+					docTrees ::: localSubTypes.flatMap(schema =>
+						asTopLevelDef(
+							classStore,
+							namespace,
+							Left(schema),
+							typeMatcher,
+							None,
+							None))
+				}
 
 		}
 		

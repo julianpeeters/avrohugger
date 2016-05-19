@@ -165,9 +165,7 @@ class SpecificGeneratorSpec extends mutable.Specification {
         """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
           |package example.idl
           |
-          |sealed trait EnumProtocol extends Product with Serializable
-          |
-          |final case class Card(var suit: Suit, var number: Int) extends org.apache.avro.specific.SpecificRecordBase with EnumProtocol {
+          |case class Card(var suit: Suit, var number: Int) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this(null, 0)
           |  def get(field$: Int): AnyRef = {
           |    field$ match {
@@ -195,7 +193,7 @@ class SpecificGeneratorSpec extends mutable.Specification {
           |  def getSchema: org.apache.avro.Schema = Card.SCHEMA$
           |}
           |
-          |final object Card {
+          |object Card {
           |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Card\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"suit\",\"type\":{\"type\":\"enum\",\"name\":\"Suit\",\"symbols\":[\"SPADES\",\"DIAMONDS\",\"CLUBS\",\"HEARTS\"]}},{\"name\":\"number\",\"type\":\"int\"}]}")
           |}""".stripMargin.trim
     }
@@ -253,9 +251,7 @@ class SpecificGeneratorSpec extends mutable.Specification {
         """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
           |package example.idl
           |
-          |sealed trait BinaryIDL extends Product with Serializable
-          |
-          |final case class Binary(var data: Array[Byte]) extends org.apache.avro.specific.SpecificRecordBase with BinaryIDL {
+          |case class Binary(var data: Array[Byte]) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this(null)
           |  def get(field$: Int): AnyRef = {
           |    field$ match {
@@ -281,7 +277,7 @@ class SpecificGeneratorSpec extends mutable.Specification {
           |  def getSchema: org.apache.avro.Schema = Binary.SCHEMA$
           |}
           |
-          |final object Binary {
+          |object Binary {
           |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Binary\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"data\",\"type\":\"bytes\"}]}")
           |}""".stripMargin.trim
     }
@@ -595,9 +591,7 @@ class SpecificGeneratorSpec extends mutable.Specification {
           |
           |import other.ns.ExternalDependency
           |
-          |sealed trait ImportNestedProtocol extends Product with Serializable
-          |
-          |final case class DependentOptionalRecord(var dependency: Option[ExternalDependency], var number: Int) extends org.apache.avro.specific.SpecificRecordBase with ImportNestedProtocol {
+          |case class DependentOptionalRecord(var dependency: Option[ExternalDependency], var number: Int) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this(None, 0)
           |  def get(field$: Int): AnyRef = {
           |    field$ match {
@@ -631,7 +625,7 @@ class SpecificGeneratorSpec extends mutable.Specification {
           |  def getSchema: org.apache.avro.Schema = DependentOptionalRecord.SCHEMA$
           |}
           |
-          |final object DependentOptionalRecord {
+          |object DependentOptionalRecord {
           |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"DependentOptionalRecord\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"dependency\",\"type\":[\"null\",{\"type\":\"record\",\"name\":\"ExternalDependency\",\"namespace\":\"other.ns\",\"fields\":[{\"name\":\"number\",\"type\":\"int\"}]}]},{\"name\":\"number\",\"type\":\"int\"}]}")
           |}""".stripMargin
     }
