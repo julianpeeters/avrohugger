@@ -48,7 +48,7 @@ runtime, Java classes provided separately (see [Scavro Plugin](https://github.co
 
 #####Get the dependency with:
 
-    "com.julianpeeters" % "avrohugger-core" %% "0.10.0-SNAPSHOT"
+    "com.julianpeeters" % "avrohugger-core" %% "0.10.0"
 
 
 #####Description:
@@ -131,22 +131,22 @@ _Note:_ Currently [Treehugger](http://eed3si9n.com/treehugger/comments.html#Scal
 ####`avrohugger-tools`
 
 
-Download the avrohugger-tools jar for Scala [2.10](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.10/0.10.0-SNAPSHOT/avrohugger-tools_2.10-0.10.0-SNAPSHOT-assembly.jar) or Scala [2.11](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.11/0.10.0-SNAPSHOT/avrohugger-tools_2.11-0.10.0-SNAPSHOT-assembly.jar)(>20MB!) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
+Download the avrohugger-tools jar for Scala [2.10](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.10/0.10.0/avrohugger-tools_2.10-0.10.0-assembly.jar) or Scala [2.11](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.11/0.10.0/avrohugger-tools_2.11-0.10.0-assembly.jar)(>20MB!) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
 
 
 'generate' generates Scala case class definitions:
 
-`java -jar /path/to/avrohugger-tools_2.11-0.10.0-SNAPSHOT-assembly.jar generate schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.11-0.10.0-assembly.jar generate schema user.avsc . `
 
 
 'generate-specific' generates definitions that extend SpecificRecordBase:
 
-`java -jar /path/to/avrohugger-tools_2.11-0.10.0-SNAPSHOT-assembly.jar generate-specific schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.11-0.10.0-assembly.jar generate-specific schema user.avsc . `
 
 
 'generate-scavro' generates definitions that extend Scavro's AvroSerializable:
 
-`java -jar /path/to/avrohugger-tools_2.11-0.10.0-SNAPSHOT-assembly.jar generate-scavro schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.11-0.10.0-assembly.jar generate-scavro schema user.avsc . `
 
 ####`sbt-avrohugger`
 
