@@ -16,10 +16,10 @@ import org.codehaus.jackson.node.{NullNode, ObjectNode, TextNode}
 import scala.collection.JavaConversions._
 
 object DefaultValueMatcher {
-
+  
   // This code was stolen from here:
   // https://github.com/julianpeeters/avro-scala-macro-annotations/blob/104fa325a00044ff6d31184fa7ff7b6852e9acd5/macros/src/main/scala/avro/scala/macro/annotations/provider/matchers/FromJsonMatcher.scala
-  def getDefaultValue(field: Schema.Field): Tree = {
+  def getDefaultValue(field: Schema.Field, typeMatcher: TypeMatcher): Tree = {
 
     val nullNode = new TextNode("null")
 
@@ -55,7 +55,11 @@ object DefaultValueMatcher {
           else throw new Exception("Unsupported union field")
         }
         case Schema.Type.ARRAY => {
-          LIST(node.getElements.toList.map(e => fromJsonNode(e, schema.getElementType)))
+          val maybeCustom = typeMatcher.typeMap.get("array")
+          val collectionType = {
+            DefaultParamMatcher.checkCustomArrayType(maybeCustom, ListClass)
+          }
+          collectionType APPLY(node.getElements.toSeq.map(e => fromJsonNode(e, schema.getElementType)))
         }
         case Schema.Type.MAP => {
           val kvps = node.getFields.toList.map(e => LIT(e.getKey) ANY_-> fromJsonNode(e.getValue, schema.getValueType))

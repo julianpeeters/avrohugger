@@ -16,7 +16,8 @@ import scala.language.postfixOps
 
 object PutGenerator {
 
-    def toDef(classStore: ClassStore, 
+    def toDef(
+      classStore: ClassStore, 
       namespace: Option[String], 
       indexedFields: List[IndexedField],
       typeMatcher: TypeMatcher) = {
@@ -24,7 +25,7 @@ object PutGenerator {
       def asPutCase(field: IndexedField) = {
         CASE (ID("pos"), IF(REF("pos") INT_== LIT(field.idx))) ==> {
           THIS DOT field.avroField.name := 
-            BLOCK(convertFromJava(field.avroField.schema, REF("value")))
+            BLOCK(convertFromJava(classStore, namespace, field.avroField.schema, REF("value"), typeMatcher))
             .AS(typeMatcher.toScalaType(classStore, namespace, field.avroField.schema))
         }
       }

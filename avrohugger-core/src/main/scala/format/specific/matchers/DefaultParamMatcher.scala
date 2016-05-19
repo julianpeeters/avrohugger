@@ -14,8 +14,24 @@ import scala.collection.JavaConversions._
 
 
 object DefaultParamMatcher {
+  
+  
+  def checkCustomArrayType(
+    maybeCustomArray: Option[Class[_]],
+    defaultSym: Symbol) = {
+    maybeCustomArray match {
+      case Some(c) if c == classOf[Array[_]] => ArrayClass
+      case Some(c) if c == classOf[List[_]]  => ListClass
+      case Some(c) if c == classOf[Seq[_]]   => SeqClass
+      case _                                 => defaultSym
+    }
+  }
+  
 
-  def asDefaultParam(classStore: ClassStore, avroSchema: Schema): Tree  = {
+  def asDefaultParam(
+    classStore: ClassStore,
+    avroSchema: Schema,
+    typeMatcher: TypeMatcher): Tree  = {
 
     avroSchema.getType match {
 
@@ -26,14 +42,21 @@ object DefaultParamMatcher {
       case Type.DOUBLE  => LIT(0D)
       case Type.STRING  => LIT("")
       case Type.NULL    => NULL
-      case Type.ARRAY   => NIL
-      case Type.MAP     => MAKE_MAP(LIT("") ANY_-> asDefaultParam(classStore, avroSchema.getValueType))
       case Type.FIXED   => sys.error("the FIXED datatype is not yet supported")
       case Type.ENUM    => NULL // TODO Take first enum value?
       case Type.BYTES   => NULL
       case Type.RECORD  => NEW(classStore.generatedClasses(avroSchema))
       case Type.UNION   => NONE
+      case Type.ARRAY   => {
+        checkCustomArrayType(typeMatcher.typeMap.get("array"), ListClass) DOT "empty"
+      }
+      case Type.MAP     => {
+        MAKE_MAP(LIT("") ANY_-> asDefaultParam(classStore, avroSchema.getValueType, typeMatcher))
+      }
+      
     }
+    
+    
   }
 
 }

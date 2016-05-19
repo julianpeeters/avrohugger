@@ -14,53 +14,66 @@ import scala.collection.JavaConversions._
 
 
 object ScalaConverter {
+
+  def checkCustomArrayType(
+    maybeCustomArray: Option[Class[_]],
+    elementType: Type,
+    seqArgs: Typed,
+    defaultConversion: Tree) = {
+    val classTagIdent = REF(s"scala.reflect.ClassTag(classOf[$elementType])")
+    val arrayConversion = ARRAY(seqArgs).APPLY(classTagIdent).AS(TYPE_ARRAY(elementType))
+    maybeCustomArray match {
+      case Some(c) if c == classOf[Array[_]] => arrayConversion
+      case Some(c) if c == classOf[List[_]]  => LIST(seqArgs)
+      case Some(c) if c == classOf[Seq[_]]   => SEQ(seqArgs)
+      case _                                 => defaultConversion
+    }
+  }
+  
   // takes as args a REF wrapped according to field Type
-  def convertFromJava(schema: Schema, tree: Tree): Tree = {
+  def convertFromJava(
+    classStore: ClassStore,
+    namespace: Option[String],
+    schema: Schema,
+    tree: Tree, 
+    typeMatcher: TypeMatcher): Tree = {
 
     schema.getType match {
-      case Schema.Type.UNION  => {
-        // check if it's the kind of union that we support (i.e. nullable fields)
-        if (schema.getTypes.length != 2 ||
-           !schema.getTypes.map(x => x.getType).contains(Schema.Type.NULL) ||
-            schema.getTypes.filterNot(x => x.getType == Schema.Type.NULL).length != 1) {
-              sys.error("Unions beyond nullable fields are not supported")
-        }
-        // the union represents a nullable field, the kind of union supported in avrohugger
-        else {
-          val typeParamSchema = schema.getTypes.find(x => x.getType != Schema.Type.NULL).get
-          val nullConversion = CASE(NULL) ==> NONE
-          val someConversion = CASE(WILDCARD) ==> SOME(convertFromJava(typeParamSchema, tree))
-          val conversionCases = List(nullConversion, someConversion)
-          tree MATCH(conversionCases:_*)
-        }
-      }
-      case Schema.Type.STRING => tree TOSTRING
       case Schema.Type.ARRAY => {
+        val elementSchema = schema.getElementType
+        val elementType = typeMatcher.toScalaType(classStore, namespace, elementSchema)
         val JavaList = RootClass.newClass("java.util.List[_]")
         val applyParam = REF("array") DOT("iterator")
-        val resultExpr = {
-          BLOCK(
-            REF("scala.collection.JavaConversions.asScalaIterator")
-            .APPLY(applyParam)
-            .DOT("toList")
-            .MAP(LAMBDA(PARAM("x")) ==> BLOCK(convertFromJava(schema.getElementType, REF("x"))))
+        val elementConversion = convertFromJava(classStore, namespace, elementSchema, REF("x"), typeMatcher)
+        val seqArgs = {
+          SEQARG(
+            REF("scala.collection.JavaConversions.asScalaIterator").APPLY(applyParam).DOT("toSeq")
+              .MAP(LAMBDA(PARAM("x")) ==> BLOCK(elementConversion))
           )
         }
+        val maybeCustomArrayType = typeMatcher.typeMap.get("array")
+        val resultExpr = BLOCK(
+          checkCustomArrayType(maybeCustomArrayType, elementType, seqArgs, LIST(seqArgs))
+        )
         val arrayConversion = CASE(ID("array") withType(JavaList)) ==> resultExpr
-        tree MATCH(arrayConversion)
+        val errorMessage = INTERP("s", LIT(s"expected array with type $JavaList, found "), LIT("array"))
+        val errorExpr = NEW("org.apache.avro.AvroRuntimeException", errorMessage)
+        val conversionCases = List(arrayConversion)
+        val arrayMatchError = CASE(WILDCARD) ==> errorExpr
+        tree MATCH(conversionCases:_*)
       }
+      case Schema.Type.STRING => tree TOSTRING
       case Schema.Type.MAP => {
         val JavaMap = RootClass.newClass("java.util.Map[_,_]")
         val resultExpr = {
           BLOCK(
             REF("scala.collection.JavaConversions.mapAsScalaMap")
-           // .APPLY(tree)
             .APPLY(REF("map"))
             .DOT("toMap")
             .MAP(LAMBDA(PARAM("kvp")) ==> BLOCK(
               VAL("key") := REF("kvp._1").DOT("toString"),
               VAL("value") := REF("kvp._2"),
-              PAREN(REF("key"), convertFromJava(schema.getValueType, REF("value"))))
+              PAREN(REF("key"), convertFromJava(classStore, namespace, schema.getValueType, REF("value"), typeMatcher)))
             )
           )
         }
@@ -75,6 +88,23 @@ object ScalaConverter {
         )
         val bufferConversion = CASE(ID("buffer") withType(JavaBuffer)) ==> resultExpr
         tree MATCH bufferConversion
+      }
+      case Schema.Type.UNION  => {
+        // check if it's the kind of union that we support (i.e. nullable fields)
+        if (schema.getTypes.length != 2 ||
+           !schema.getTypes.map(x => x.getType).contains(Schema.Type.NULL) ||
+            schema.getTypes.filterNot(x => x.getType == Schema.Type.NULL).length != 1) {
+              sys.error("Unions beyond nullable fields are not supported")
+        }
+        // the union represents a nullable field, the kind of union supported in avrohugger
+        else {
+          val typeParamSchema = schema.getTypes.find(x => x.getType != Schema.Type.NULL).get
+          val nullConversion = CASE(NULL) ==> NONE
+          val someExpr = SOME(convertFromJava(classStore, namespace, typeParamSchema, tree, typeMatcher))
+          val someConversion = CASE(WILDCARD) ==> someExpr
+          val conversionCases = List(nullConversion, someConversion)
+          tree MATCH(conversionCases:_*)
+        }
       }
       case _ => tree
     }

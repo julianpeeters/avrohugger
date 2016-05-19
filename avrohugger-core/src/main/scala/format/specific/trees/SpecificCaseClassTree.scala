@@ -31,7 +31,8 @@ object SpecificCaseClassTree {
     val params: List[ValDef] = avroFields.map { f =>
       val fieldName = f.name
       val fieldType = typeMatcher.toScalaType(classStore, namespace, f.schema)
-      VAR(fieldName, fieldType) := DefaultValueMatcher.getDefaultValue(f)
+      val defaultValue = DefaultValueMatcher.getDefaultValue(f, typeMatcher)
+      VAR(fieldName, fieldType) := defaultValue
     }
 
     // extension
@@ -42,7 +43,7 @@ object SpecificCaseClassTree {
     val defaultParams: List[Tree] = avroFields.zip(params).map(f => {
       val (avroField, defaultValue) = (f._1, f._2.rhs)
       if (defaultValue == EmptyTree)
-        DefaultParamMatcher.asDefaultParam(classStore, avroField.schema)
+        DefaultParamMatcher.asDefaultParam(classStore, avroField.schema, typeMatcher)
       else
         defaultValue
     })

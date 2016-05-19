@@ -23,17 +23,21 @@ class TypeMatcher {
     val _ = typeMap += avroToScalaMapEntry
   }
 
-  def checkCustomArrayType(maybeCustomArray: Option[Class[_]], elementType: Type, defaultType: Type => Type) = {
+  def checkCustomArrayType(
+    maybeCustomArray: Option[Class[_]],
+    defaultType: Type => Type) = {
     maybeCustomArray match {
-      case Some(c) if c == classOf[Array[_]] => TYPE_ARRAY(elementType)
-      case Some(c) if c == classOf[List[_]]  => listType(elementType)
-      case Some(c) if c == classOf[Seq[_]]   => TYPE_SEQ(elementType)
-      case _             => defaultType(elementType)
+      case Some(c) if c == classOf[Array[_]] => TYPE_ARRAY(_)
+      case Some(c) if c == classOf[List[_]]  => listType(_)
+      case Some(c) if c == classOf[Seq[_]]   => TYPE_SEQ(_)
+      case _                                 => defaultType(_)
     }
   }
 
   // Scavro allows number types to be remapped.
-  def checkCustomNumberType(maybeCustomNumber: Option[Class[_]], defaultClass: Symbol) = {
+  def checkCustomNumberType(
+    maybeCustomNumber: Option[Class[_]],
+    defaultClass: Symbol) = {
     maybeCustomNumber match {
       case Some(c) if c == classOf[Double] => DoubleClass
       case Some(c) if c == classOf[Float]  => FloatClass
@@ -63,9 +67,10 @@ class TypeMatcher {
 
       schema.getType match { 
         case Schema.Type.ARRAY    => {
+          // default array mapping is currently List, for historical reasons
           val elementType = toScalaType(classStore, namespace, schema.getElementType)
-          // default array mapping is currently List, but only for historical reasons
-          checkCustomArrayType(typeMap.get("array"), elementType, listType)
+          val collectionType = checkCustomArrayType(typeMap.get("array"), listType)
+          collectionType(elementType)
         }
         case Schema.Type.MAP      => {
           val keyType = StringClass
@@ -80,7 +85,7 @@ class TypeMatcher {
         case Schema.Type.NULL     => NullClass
         case Schema.Type.STRING   => StringClass
         case Schema.Type.FIXED    => sys.error("the FIXED datatype is not yet supported")
-        case Schema.Type.BYTES    => checkCustomArrayType(typeMap.get("bytes"), ByteClass, TYPE_ARRAY)
+        case Schema.Type.BYTES    => TYPE_ARRAY(ByteClass)
         case Schema.Type.RECORD   => classStore.generatedClasses(schema)
         case Schema.Type.ENUM     => classStore.generatedClasses(schema)
         case Schema.Type.UNION    => { 

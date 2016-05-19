@@ -2,7 +2,7 @@
 package avro.examples.baseball
 
 case class Player(var number: Int, var first_name: String, var last_name: String, var nicknames: List[Nickname]) extends org.apache.avro.specific.SpecificRecordBase {
-  def this() = this(0, "", "", Nil)
+  def this() = this(0, "", "", List.empty)
   def get(field$: Int): AnyRef = {
     field$ match {
       case pos if pos == 0 => {
@@ -38,9 +38,9 @@ case class Player(var number: Int, var first_name: String, var last_name: String
       case pos if pos == 3 => this.nicknames = {
         value match {
           case (array: java.util.List[_]) => {
-            scala.collection.JavaConversions.asScalaIterator(array.iterator).toList map { x =>
+            List((scala.collection.JavaConversions.asScalaIterator(array.iterator).toSeq map { x =>
               x
-            }
+            }: _*))
           }
         }
       }.asInstanceOf[List[Nickname]]

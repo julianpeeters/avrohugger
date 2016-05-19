@@ -465,9 +465,9 @@ class SpecificGeneratorSpec extends mutable.Specification {
           |      case pos if pos == 6 => this.defaultArray = {
           |        value match {
           |          case (array: java.util.List[_]) => {
-          |            scala.collection.JavaConversions.asScalaIterator(array.iterator).toList map { x =>
+          |            List((scala.collection.JavaConversions.asScalaIterator(array.iterator).toSeq map { x =>
           |              x
-          |            }
+          |            }: _*))
           |          }
           |        }
           |      }.asInstanceOf[List[Int]]
