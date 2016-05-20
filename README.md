@@ -13,7 +13,7 @@ Alternative Distributions:
 * `sbt-avrohugger`: Generate source code at compile time with an sbt plugin [found here](https://github.com/julianpeeters/sbt-avrohugger).
 * `avro2caseclass`: Generate source code from a web app, [found here](https://github.com/julianpeeters/avro2caseclass).
 
-#####Generates Scala case classes in various formats:
+##### Generates Scala case classes in various formats:
 
 * `Standard` Vanilla case classes (for use with [Scalavro](https://github.com/GenslerAppsPod/scalavro), [Salat-Avro](https://github.com/julianpeeters/salat-avro), [gfc-avro](https://github.com/gilt/gfc-avro), etc.)
 
@@ -25,7 +25,7 @@ Scalding, Spark, Avro, etc.).
 Avro classes (for use with the [Scavro](https://github.com/oedura/scavro#scavro-reader-and-writer)
 runtime, Java classes provided separately (see [Scavro Plugin](https://github.com/oedura/scavro#scavro-plugin) or [sbt-avro](https://github.com/sbt/sbt-avro))).
 
-#####Supports generating case classes with arbitrary fields of the following datatypes:
+##### Supports generating case classes with arbitrary fields of the following datatypes:
 
 
 * INT &rarr; Int
@@ -48,14 +48,14 @@ runtime, Java classes provided separately (see [Scavro Plugin](https://github.co
 ## Usage (for Scala 2.10 and 2.11)
 
 
-####`avrohugger-core`
+#### `avrohugger-core`
 
-#####Get the dependency with:
+##### Get the dependency with:
 
-    "com.julianpeeters" % "avrohugger-core" %% "0.10.0"
+    "com.julianpeeters" % "avrohugger-core" %% "0.10.1"
 
 
-#####Description:
+##### Description:
 
 Instantiate a `Generator` with `Standard`, `Scavro`, or `SpecificRecord` source
 formats. Then use
@@ -72,7 +72,7 @@ or
 
 where 'T' can be `File`, `Schema`, or `String`.
 
-#####Example
+##### Example
 
 
 
@@ -92,7 +92,7 @@ protocol, IDL, or a set of case classes that you'd like to have implement
 `SpecificRecordBase`.
 
 
-#####Customizable Type Mapping:
+##### Customizable Type Mapping:
 
 Avro 'array' is represented by Scala `List` by default. `array` can be
 reassigned to either `Array` or `Seq` by instantiating a `Generator` with a
@@ -102,7 +102,7 @@ custom type map:
     val generator = new Generator(SpecificRecord, avroScalaCustomType = Map("array"->classOf[Array[_]]))
 
 
-#####Customizable Namespace Mapping:
+##### Customizable Namespace Mapping:
 
 Namespaces can be reassigned by instantiating a `Generator` with a custom
 namespace map (please see warnings below):
@@ -111,14 +111,14 @@ namespace map (please see warnings below):
     val generator = new Generator(SpecificRecord, avroScalaCustomNamespace = Map("oldnamespace"->"newnamespace"))  
 
 
-#####Protocol Support:
+##### Protocol Support:
 
 * `.avdl`, `.avpr`, and json protocol strings are generated as ADTs if they define more than one Scala definition.
 
 * For `SpecificRecord`, if the protocol contains messages then no ADT is generated, and an RPC trait is generated instead. 
 
 
-#####Doc Support:
+##### Doc Support:
 
 * `.avdl`: Comments that begin with `/**` are used as the documentation string for the type or field definition that follows the comment.
 
@@ -132,34 +132,34 @@ _Note:_ Currently [Treehugger](http://eed3si9n.com/treehugger/comments.html#Scal
 
 
 
-####`avrohugger-tools`
+#### `avrohugger-tools`
 
 
-Download the avrohugger-tools jar for Scala [2.10](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.10/0.10.0/avrohugger-tools_2.10-0.10.0-assembly.jar) or Scala [2.11](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.11/0.10.0/avrohugger-tools_2.11-0.10.0-assembly.jar)(>20MB!) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
+Download the avrohugger-tools jar for Scala [2.10](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.10/0.10.1/avrohugger-tools_2.10-0.10.1-assembly.jar) or Scala [2.11](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.11/0.10.1/avrohugger-tools_2.11-0.10.1-assembly.jar)(>20MB!) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
 
 
 'generate' generates Scala case class definitions:
 
-`java -jar /path/to/avrohugger-tools_2.11-0.10.0-assembly.jar generate schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.11-0.10.1-assembly.jar generate schema user.avsc . `
 
 
 'generate-specific' generates definitions that extend SpecificRecordBase:
 
-`java -jar /path/to/avrohugger-tools_2.11-0.10.0-assembly.jar generate-specific schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.11-0.10.1-assembly.jar generate-specific schema user.avsc . `
 
 
 'generate-scavro' generates definitions that extend Scavro's AvroSerializable:
 
-`java -jar /path/to/avrohugger-tools_2.11-0.10.0-assembly.jar generate-scavro schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.11-0.10.1-assembly.jar generate-scavro schema user.avsc . `
 
-####`sbt-avrohugger`
+#### `sbt-avrohugger`
 
 Also available as an sbt plugin [found here](https://github.com/julianpeeters/sbt-avrohugger)
 that adds a `generate` or `generate-specific` task to `compile` (an alternative
 to [macros](https://github.com/julianpeeters/avro-scala-macro-annotations)).
 
 
-####`avro2caseclass`
+#### `avro2caseclass`
 
 Code generation is also available via a web app
 [found here](https://github.com/julianpeeters/avro2caseclass). Hosted at
@@ -226,4 +226,4 @@ Contributors:
 
 ##### Criticism is appreciated.
 
-#####Fork away, just make sure the tests pass before sending a pull request.
+##### Fork away, just make sure the tests pass before sending a pull request.

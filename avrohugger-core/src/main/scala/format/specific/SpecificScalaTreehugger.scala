@@ -8,6 +8,7 @@ import input.reflectivecompilation.schemagen.SchemaStore
 
 import org.apache.avro.{ Protocol, Schema }
 import org.apache.avro.Schema.Field
+import org.apache.avro.Schema.Type.RECORD
 
 import treehugger.forest._
 import definitions._
@@ -24,13 +25,24 @@ object SpecificScalaTreehugger {
     typeMatcher: TypeMatcher,
     schemaStore: SchemaStore): String = {
       
+    val switchAnnotSymbol = RootClass.newClass("scala.annotation.switch")
+    val switchImport = IMPORT(switchAnnotSymbol)
+    
     // imports in case a field type is from a different namespace
     val imports: List[Import] = schemaOrProtocol match {
       case Left(schema) => {
-        SpecificImports.getImports(schema, namespace, schemaStore)
+        val deps = SpecificImports.getImports(schema, namespace, schemaStore)
+        if (schema.getType == RECORD) switchImport :: deps
+        else deps
       }
-      case Right(protocol) => protocol.getTypes.toList.flatMap(schema => 
-        SpecificImports.getImports(schema, namespace, schemaStore))
+      case Right(protocol) => {
+        val types = protocol.getTypes.toList
+        val messages = protocol.getMessages.toMap
+        val deps = types.flatMap(schema =>
+          SpecificImports.getImports(schema, namespace, schemaStore))
+        if (messages.isEmpty) switchImport :: deps // for ADT
+        else List.empty // for RPC
+      }
     }
 
     val topLevelDefs: List[Tree] =

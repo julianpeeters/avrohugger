@@ -22,14 +22,16 @@ class SchemaGenSpec extends mutable.Specification {
 
        
       source ===
-        """/**
+        """import scala.annotation.switch
+          |
+          |/**
           | * Auto-Generated Schema
           | * @param name Auto-Generated Field
           | */
           |case class Person(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this("")
           |  def get(field$: Int): AnyRef = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case pos if pos == 0 => {
           |        name
           |      }.asInstanceOf[AnyRef]
@@ -37,7 +39,7 @@ class SchemaGenSpec extends mutable.Specification {
           |    }
           |  }
           |  def put(field$: Int, value: Any): Unit = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case pos if pos == 0 => this.name = {
           |        value.toString
           |      }.asInstanceOf[String]
@@ -63,15 +65,17 @@ class SchemaGenSpec extends mutable.Specification {
 
        
       source ===
-        """/** Auto-Generated Schema */
+        """import scala.annotation.switch
+          |
+          |/** Auto-Generated Schema */
           |case class Reset() extends org.apache.avro.specific.SpecificRecordBase {
           |  def get(field$: Int): AnyRef = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
           |    }
           |  }
           |  def put(field$: Int, value: Any): Unit = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
           |    }
           |    ()
@@ -95,15 +99,17 @@ class SchemaGenSpec extends mutable.Specification {
 
        
       source ===
-        """/** Auto-Generated Schema */
+        """import scala.annotation.switch
+          |
+          |/** Auto-Generated Schema */
           |case class Raise() extends org.apache.avro.specific.SpecificRecordBase {
           |  def get(field$: Int): AnyRef = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
           |    }
           |  }
           |  def put(field$: Int, value: Any): Unit = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
           |    }
           |    ()
@@ -139,6 +145,8 @@ class SchemaGenSpec extends mutable.Specification {
       source ===
         """package example
           |
+          |import scala.annotation.switch
+          |
           |/**
           | * Auto-Generated Schema
           | * @param name Auto-Generated Field
@@ -146,7 +154,7 @@ class SchemaGenSpec extends mutable.Specification {
           |case class Person(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this("")
           |  def get(field$: Int): AnyRef = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case pos if pos == 0 => {
           |        name
           |      }.asInstanceOf[AnyRef]
@@ -154,7 +162,7 @@ class SchemaGenSpec extends mutable.Specification {
           |    }
           |  }
           |  def put(field$: Int, value: Any): Unit = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case pos if pos == 0 => this.name = {
           |        value.toString
           |      }.asInstanceOf[String]
@@ -195,6 +203,8 @@ class SchemaGenSpec extends mutable.Specification {
       sourcePerson ===
         """package example
           |
+          |import scala.annotation.switch
+          |
           |/**
           | * Auto-Generated Schema
           | * @param name Auto-Generated Field
@@ -202,7 +212,7 @@ class SchemaGenSpec extends mutable.Specification {
           |case class Person(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this("")
           |  def get(field$: Int): AnyRef = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case pos if pos == 0 => {
           |        name
           |      }.asInstanceOf[AnyRef]
@@ -210,7 +220,7 @@ class SchemaGenSpec extends mutable.Specification {
           |    }
           |  }
           |  def put(field$: Int, value: Any): Unit = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case pos if pos == 0 => this.name = {
           |        value.toString
           |      }.asInstanceOf[String]
@@ -228,6 +238,8 @@ class SchemaGenSpec extends mutable.Specification {
       sourceVehicle ===
         """package test
           |
+          |import scala.annotation.switch
+          |
           |/**
           | * Auto-Generated Schema
           | * @param name Auto-Generated Field
@@ -235,7 +247,7 @@ class SchemaGenSpec extends mutable.Specification {
           |case class Vehicle(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this("")
           |  def get(field$: Int): AnyRef = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case pos if pos == 0 => {
           |        name
           |      }.asInstanceOf[AnyRef]
@@ -243,7 +255,7 @@ class SchemaGenSpec extends mutable.Specification {
           |    }
           |  }
           |  def put(field$: Int, value: Any): Unit = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case pos if pos == 0 => this.name = {
           |        value.toString
           |      }.asInstanceOf[String]
@@ -286,6 +298,8 @@ class SchemaGenSpec extends mutable.Specification {
       sourcePerson ===
        """|package example
           |
+          |import scala.annotation.switch
+          |
           |import test.major.Vehicle
           |
           |/**
@@ -295,7 +309,7 @@ class SchemaGenSpec extends mutable.Specification {
           |case class Person(var vehicle: Vehicle) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this(new Vehicle)
           |  def get(field$: Int): AnyRef = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case pos if pos == 0 => {
           |        vehicle
           |      }.asInstanceOf[AnyRef]
@@ -303,7 +317,7 @@ class SchemaGenSpec extends mutable.Specification {
           |    }
           |  }
           |  def put(field$: Int, value: Any): Unit = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case pos if pos == 0 => this.vehicle = {
           |        value
           |      }.asInstanceOf[Vehicle]
@@ -321,6 +335,8 @@ class SchemaGenSpec extends mutable.Specification {
       sourceVehicle ===
         """package test.major
           |
+          |import scala.annotation.switch
+          |
           |/**
           | * Auto-Generated Schema
           | * @param name Auto-Generated Field
@@ -328,7 +344,7 @@ class SchemaGenSpec extends mutable.Specification {
           |case class Vehicle(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this("")
           |  def get(field$: Int): AnyRef = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case pos if pos == 0 => {
           |        name
           |      }.asInstanceOf[AnyRef]
@@ -336,7 +352,7 @@ class SchemaGenSpec extends mutable.Specification {
           |    }
           |  }
           |  def put(field$: Int, value: Any): Unit = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case pos if pos == 0 => this.name = {
           |        value.toString
           |      }.asInstanceOf[String]
@@ -387,6 +403,8 @@ class SchemaGenSpec extends mutable.Specification {
       sourcePerson ===
        """|package example
           |
+          |import scala.annotation.switch
+          |
           |import test.major.Vehicle
           |
           |/**
@@ -396,7 +414,7 @@ class SchemaGenSpec extends mutable.Specification {
           |case class Person(var vehicle: Vehicle) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this(new Vehicle)
           |  def get(field$: Int): AnyRef = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case pos if pos == 0 => {
           |        vehicle
           |      }.asInstanceOf[AnyRef]
@@ -404,7 +422,7 @@ class SchemaGenSpec extends mutable.Specification {
           |    }
           |  }
           |  def put(field$: Int, value: Any): Unit = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case pos if pos == 0 => this.vehicle = {
           |        value
           |      }.asInstanceOf[Vehicle]
@@ -422,6 +440,8 @@ class SchemaGenSpec extends mutable.Specification {
       sourceVehicle ===
         """package test.major
           |
+          |import scala.annotation.switch
+          |
           |/**
           | * Auto-Generated Schema
           | * @param name Auto-Generated Field
@@ -429,7 +449,7 @@ class SchemaGenSpec extends mutable.Specification {
           |case class Vehicle(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this("")
           |  def get(field$: Int): AnyRef = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case pos if pos == 0 => {
           |        name
           |      }.asInstanceOf[AnyRef]
@@ -437,7 +457,7 @@ class SchemaGenSpec extends mutable.Specification {
           |    }
           |  }
           |  def put(field$: Int, value: Any): Unit = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case pos if pos == 0 => this.name = {
           |        value.toString
           |      }.asInstanceOf[String]
@@ -473,6 +493,8 @@ class SchemaGenSpec extends mutable.Specification {
       source ===
         """package test.testsub
           |
+          |import scala.annotation.switch
+          |
           |/**
           | * Auto-Generated Schema
           | * @param name Auto-Generated Field
@@ -480,7 +502,7 @@ class SchemaGenSpec extends mutable.Specification {
           |case class Person(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this("")
           |  def get(field$: Int): AnyRef = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case pos if pos == 0 => {
           |        name
           |      }.asInstanceOf[AnyRef]
@@ -488,7 +510,7 @@ class SchemaGenSpec extends mutable.Specification {
           |    }
           |  }
           |  def put(field$: Int, value: Any): Unit = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case pos if pos == 0 => this.name = {
           |        value.toString
           |      }.asInstanceOf[String]
@@ -521,6 +543,8 @@ class SchemaGenSpec extends mutable.Specification {
       source ===
         """package test.example.testsub
           |
+          |import scala.annotation.switch
+          |
           |/**
           | * Auto-Generated Schema
           | * @param name Auto-Generated Field
@@ -528,7 +552,7 @@ class SchemaGenSpec extends mutable.Specification {
           |case class Person(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this("")
           |  def get(field$: Int): AnyRef = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case pos if pos == 0 => {
           |        name
           |      }.asInstanceOf[AnyRef]
@@ -536,7 +560,7 @@ class SchemaGenSpec extends mutable.Specification {
           |    }
           |  }
           |  def put(field$: Int, value: Any): Unit = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case pos if pos == 0 => this.name = {
           |        value.toString
           |      }.asInstanceOf[String]
@@ -561,10 +585,12 @@ class SchemaGenSpec extends mutable.Specification {
 
        
       source1 ===
-        """case class Person(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
+        """import scala.annotation.switch
+          |
+          |case class Person(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this("")
           |  def get(field$: Int): AnyRef = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case pos if pos == 0 => {
           |        name
           |      }.asInstanceOf[AnyRef]
@@ -572,7 +598,7 @@ class SchemaGenSpec extends mutable.Specification {
           |    }
           |  }
           |  def put(field$: Int, value: Any): Unit = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case pos if pos == 0 => this.name = {
           |        value.toString
           |      }.asInstanceOf[String]
@@ -588,10 +614,12 @@ class SchemaGenSpec extends mutable.Specification {
           |}""".stripMargin.trim
 
       source2 ===
-        """case class Pet(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
+        """import scala.annotation.switch
+          |
+          |case class Pet(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this("")
           |  def get(field$: Int): AnyRef = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case pos if pos == 0 => {
           |        name
           |      }.asInstanceOf[AnyRef]
@@ -599,7 +627,7 @@ class SchemaGenSpec extends mutable.Specification {
           |    }
           |  }
           |  def put(field$: Int, value: Any): Unit = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case pos if pos == 0 => this.name = {
           |        value.toString
           |      }.asInstanceOf[String]
@@ -637,6 +665,8 @@ class SchemaGenSpec extends mutable.Specification {
       source1 ===
         """package example
           |
+          |import scala.annotation.switch
+          |
           |/**
           | * Auto-Generated Schema
           | * @param name Auto-Generated Field
@@ -644,7 +674,7 @@ class SchemaGenSpec extends mutable.Specification {
           |case class Person(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this("")
           |  def get(field$: Int): AnyRef = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case pos if pos == 0 => {
           |        name
           |      }.asInstanceOf[AnyRef]
@@ -652,7 +682,7 @@ class SchemaGenSpec extends mutable.Specification {
           |    }
           |  }
           |  def put(field$: Int, value: Any): Unit = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case pos if pos == 0 => this.name = {
           |        value.toString
           |      }.asInstanceOf[String]
@@ -670,6 +700,8 @@ class SchemaGenSpec extends mutable.Specification {
       source2 ===
         """package example
           |
+          |import scala.annotation.switch
+          |
           |/**
           | * Auto-Generated Schema
           | * @param name Auto-Generated Field
@@ -677,7 +709,7 @@ class SchemaGenSpec extends mutable.Specification {
           |case class Pet(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this("")
           |  def get(field$: Int): AnyRef = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case pos if pos == 0 => {
           |        name
           |      }.asInstanceOf[AnyRef]
@@ -685,7 +717,7 @@ class SchemaGenSpec extends mutable.Specification {
           |    }
           |  }
           |  def put(field$: Int, value: Any): Unit = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case pos if pos == 0 => this.name = {
           |        value.toString
           |      }.asInstanceOf[String]
@@ -711,10 +743,12 @@ class SchemaGenSpec extends mutable.Specification {
 
        
       source1 ===
-        """case class Person(var pet: Pet) extends org.apache.avro.specific.SpecificRecordBase {
+        """import scala.annotation.switch
+          |
+          |case class Person(var pet: Pet) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this(new Pet)
           |  def get(field$: Int): AnyRef = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case pos if pos == 0 => {
           |        pet
           |      }.asInstanceOf[AnyRef]
@@ -722,7 +756,7 @@ class SchemaGenSpec extends mutable.Specification {
           |    }
           |  }
           |  def put(field$: Int, value: Any): Unit = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case pos if pos == 0 => this.pet = {
           |        value
           |      }.asInstanceOf[Pet]
@@ -738,10 +772,12 @@ class SchemaGenSpec extends mutable.Specification {
           |}""".stripMargin.trim
 
       source2 ===
-        """case class Pet(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
+        """import scala.annotation.switch
+          |
+          |case class Pet(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this("")
           |  def get(field$: Int): AnyRef = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case pos if pos == 0 => {
           |        name
           |      }.asInstanceOf[AnyRef]
@@ -749,7 +785,7 @@ class SchemaGenSpec extends mutable.Specification {
           |    }
           |  }
           |  def put(field$: Int, value: Any): Unit = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case pos if pos == 0 => this.name = {
           |        value.toString
           |      }.asInstanceOf[String]
@@ -788,6 +824,8 @@ class SchemaGenSpec extends mutable.Specification {
         """
           |package test
           |
+          |import scala.annotation.switch
+          |
           |/**
           | * Auto-Generated Schema
           | * @param pet Auto-Generated Field
@@ -795,7 +833,7 @@ class SchemaGenSpec extends mutable.Specification {
           |case class Person(var pet: Pet) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this(new Pet)
           |  def get(field$: Int): AnyRef = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case pos if pos == 0 => {
           |        pet
           |      }.asInstanceOf[AnyRef]
@@ -803,7 +841,7 @@ class SchemaGenSpec extends mutable.Specification {
           |    }
           |  }
           |  def put(field$: Int, value: Any): Unit = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case pos if pos == 0 => this.pet = {
           |        value
           |      }.asInstanceOf[Pet]
@@ -822,6 +860,8 @@ class SchemaGenSpec extends mutable.Specification {
         """
           |package test
           |
+          |import scala.annotation.switch
+          |
           |/**
           | * Auto-Generated Schema
           | * @param name Auto-Generated Field
@@ -829,7 +869,7 @@ class SchemaGenSpec extends mutable.Specification {
           |case class Pet(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this("")
           |  def get(field$: Int): AnyRef = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case pos if pos == 0 => {
           |        name
           |      }.asInstanceOf[AnyRef]
@@ -837,7 +877,7 @@ class SchemaGenSpec extends mutable.Specification {
           |    }
           |  }
           |  def put(field$: Int, value: Any): Unit = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case pos if pos == 0 => this.name = {
           |        value.toString
           |      }.asInstanceOf[String]
@@ -876,6 +916,8 @@ class SchemaGenSpec extends mutable.Specification {
         """
           |package test.one.a
           |
+          |import scala.annotation.switch
+          |
           |/**
           | * Auto-Generated Schema
           | * @param pet Auto-Generated Field
@@ -883,7 +925,7 @@ class SchemaGenSpec extends mutable.Specification {
           |case class Person(var pet: Pet) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this(new Pet)
           |  def get(field$: Int): AnyRef = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case pos if pos == 0 => {
           |        pet
           |      }.asInstanceOf[AnyRef]
@@ -891,7 +933,7 @@ class SchemaGenSpec extends mutable.Specification {
           |    }
           |  }
           |  def put(field$: Int, value: Any): Unit = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case pos if pos == 0 => this.pet = {
           |        value
           |      }.asInstanceOf[Pet]
@@ -910,6 +952,8 @@ class SchemaGenSpec extends mutable.Specification {
         """
           |package test.one.a
           |
+          |import scala.annotation.switch
+          |
           |/**
           | * Auto-Generated Schema
           | * @param name Auto-Generated Field
@@ -917,7 +961,7 @@ class SchemaGenSpec extends mutable.Specification {
           |case class Pet(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this("")
           |  def get(field$: Int): AnyRef = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case pos if pos == 0 => {
           |        name
           |      }.asInstanceOf[AnyRef]
@@ -925,7 +969,7 @@ class SchemaGenSpec extends mutable.Specification {
           |    }
           |  }
           |  def put(field$: Int, value: Any): Unit = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case pos if pos == 0 => this.name = {
           |        value.toString
           |      }.asInstanceOf[String]
@@ -959,6 +1003,8 @@ class SchemaGenSpec extends mutable.Specification {
       source ===
         """package test
           |
+          |import scala.annotation.switch
+          |
           |/**
           | * Auto-Generated Schema
           | * @param name Auto-Generated Field
@@ -966,7 +1012,7 @@ class SchemaGenSpec extends mutable.Specification {
           |case class Person(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this("")
           |  def get(field$: Int): AnyRef = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case pos if pos == 0 => {
           |        name
           |      }.asInstanceOf[AnyRef]
@@ -974,7 +1020,7 @@ class SchemaGenSpec extends mutable.Specification {
           |    }
           |  }
           |  def put(field$: Int, value: Any): Unit = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case pos if pos == 0 => this.name = {
           |        value.toString
           |      }.asInstanceOf[String]
@@ -1009,6 +1055,8 @@ class SchemaGenSpec extends mutable.Specification {
       source ===
         """package test
           |
+          |import scala.annotation.switch
+          |
           |/**
           | * Auto-Generated Schema
           | * @param name Auto-Generated Field
@@ -1017,7 +1065,7 @@ class SchemaGenSpec extends mutable.Specification {
           |case class Person(var name: String, var age: Int) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this("", 0)
           |  def get(field$: Int): AnyRef = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case pos if pos == 0 => {
           |        name
           |      }.asInstanceOf[AnyRef]
@@ -1028,7 +1076,7 @@ class SchemaGenSpec extends mutable.Specification {
           |    }
           |  }
           |  def put(field$: Int, value: Any): Unit = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case pos if pos == 0 => this.name = {
           |        value.toString
           |      }.asInstanceOf[String]
@@ -1095,10 +1143,12 @@ class SchemaGenSpec extends mutable.Specification {
       sourceRecord ====
         """package example
           |
+          |import scala.annotation.switch
+          |
           |case class Card(var suit: Suit = Suit.SPADES, var number: Int) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this(Suit.SPADES, 0)
           |  def get(field$: Int): AnyRef = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case pos if pos == 0 => {
           |        suit
           |      }.asInstanceOf[AnyRef]
@@ -1109,7 +1159,7 @@ class SchemaGenSpec extends mutable.Specification {
           |    }
           |  }
           |  def put(field$: Int, value: Any): Unit = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case pos if pos == 0 => this.suit = {
           |        value
           |      }.asInstanceOf[Suit]

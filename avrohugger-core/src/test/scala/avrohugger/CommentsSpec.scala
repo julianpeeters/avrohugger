@@ -20,6 +20,8 @@ class CommentsSpec extends mutable.Specification {
         """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
           |package com.example
           |
+          |import scala.annotation.switch
+          |
           |/** Example adapted from https://github.com/delagoya. This is a comment for the whole protocol */
           |
           |
@@ -48,7 +50,7 @@ class CommentsSpec extends mutable.Specification {
           |case class NoSpaces(var single_line_comment_property: String, var multi_line_property: String) extends org.apache.avro.specific.SpecificRecordBase {
           |  def this() = this("", "")
           |  def get(field$: Int): AnyRef = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case pos if pos == 0 => {
           |        single_line_comment_property
           |      }.asInstanceOf[AnyRef]
@@ -59,7 +61,7 @@ class CommentsSpec extends mutable.Specification {
           |    }
           |  }
           |  def put(field$: Int, value: Any): Unit = {
-          |    field$ match {
+          |    (field$: @switch) match {
           |      case pos if pos == 0 => this.single_line_comment_property = {
           |        value.toString
           |      }.asInstanceOf[String]
@@ -91,6 +93,8 @@ class CommentsSpec extends mutable.Specification {
             """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
               |package com.example
               |
+              |import scala.annotation.switch
+              |
               |/** Example adapted from https://github.com/delagoya. This is a comment for the whole protocol */
               |
               |
@@ -98,7 +102,7 @@ class CommentsSpec extends mutable.Specification {
               |case class NoSpaces2(var comment_property: String) extends org.apache.avro.specific.SpecificRecordBase {
               |  def this() = this("")
               |  def get(field$: Int): AnyRef = {
-              |    field$ match {
+              |    (field$: @switch) match {
               |      case pos if pos == 0 => {
               |        comment_property
               |      }.asInstanceOf[AnyRef]
@@ -106,7 +110,7 @@ class CommentsSpec extends mutable.Specification {
               |    }
               |  }
               |  def put(field$: Int, value: Any): Unit = {
-              |    field$ match {
+              |    (field$: @switch) match {
               |      case pos if pos == 0 => this.comment_property = {
               |        value.toString
               |      }.asInstanceOf[String]
@@ -135,6 +139,8 @@ class CommentsSpec extends mutable.Specification {
             """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
               |package com.example
               |
+              |import scala.annotation.switch
+              |
               |/** Example adapted from https://github.com/delagoya. This is a comment for the whole protocol */
               |
               |
@@ -146,7 +152,7 @@ class CommentsSpec extends mutable.Specification {
               |case class NoSpaces3(var comment_property: String) extends org.apache.avro.specific.SpecificRecordBase {
               |  def this() = this("")
               |  def get(field$: Int): AnyRef = {
-              |    field$ match {
+              |    (field$: @switch) match {
               |      case pos if pos == 0 => {
               |        comment_property
               |      }.asInstanceOf[AnyRef]
@@ -154,7 +160,7 @@ class CommentsSpec extends mutable.Specification {
               |    }
               |  }
               |  def put(field$: Int, value: Any): Unit = {
-              |    field$ match {
+              |    (field$: @switch) match {
               |      case pos if pos == 0 => this.comment_property = {
               |        value.toString
               |      }.asInstanceOf[String]

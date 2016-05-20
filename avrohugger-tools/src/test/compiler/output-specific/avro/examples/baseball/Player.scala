@@ -1,10 +1,12 @@
 /** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
 package avro.examples.baseball
 
+import scala.annotation.switch
+
 case class Player(var number: Int, var first_name: String, var last_name: String, var nicknames: List[Nickname]) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this(0, "", "", List.empty)
   def get(field$: Int): AnyRef = {
-    field$ match {
+    (field$: @switch) match {
       case pos if pos == 0 => {
         number
       }.asInstanceOf[AnyRef]
@@ -25,7 +27,7 @@ case class Player(var number: Int, var first_name: String, var last_name: String
     }
   }
   def put(field$: Int, value: Any): Unit = {
-    field$ match {
+    (field$: @switch) match {
       case pos if pos == 0 => this.number = {
         value
       }.asInstanceOf[Int]

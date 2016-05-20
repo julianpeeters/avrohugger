@@ -37,6 +37,7 @@ object SpecificImports {
             IMPORT(packageName, fields.map( getReferredTypeName ).distinct )
           }
         }
+      
     }
     else List.empty
   }

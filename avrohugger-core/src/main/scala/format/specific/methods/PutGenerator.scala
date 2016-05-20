@@ -34,7 +34,7 @@ object PutGenerator {
       val casesPut = indexedFields.map(field => asPutCase(field)):+ errorCase
 
       DEF("put", UnitClass) withParams(PARAM("field$", IntClass), PARAM("value", AnyClass)) := BLOCK(
-        REF("field$") MATCH(casesPut:_*), UNIT
+        REF("field$") withAnnots(ANNOT("switch")) MATCH(casesPut:_*), UNIT
       ) 
     }
 

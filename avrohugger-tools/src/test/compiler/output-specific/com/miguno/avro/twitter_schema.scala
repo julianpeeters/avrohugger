@@ -1,6 +1,8 @@
 /** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
 package com.miguno.avro
 
+import scala.annotation.switch
+
 /** 
 * @param username Name of the user account on Twitter.com 
 * @param tweet The content of the user's Twitter message 
@@ -9,7 +11,7 @@ package com.miguno.avro
 case class twitter_schema(var username: String, var tweet: String, var timestamp: Long) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this("", "", 0L)
   def get(field$: Int): AnyRef = {
-    field$ match {
+    (field$: @switch) match {
       case pos if pos == 0 => {
         username
       }.asInstanceOf[AnyRef]
@@ -23,7 +25,7 @@ case class twitter_schema(var username: String, var tweet: String, var timestamp
     }
   }
   def put(field$: Int, value: Any): Unit = {
-    field$ match {
+    (field$: @switch) match {
       case pos if pos == 0 => this.username = {
         value.toString
       }.asInstanceOf[String]

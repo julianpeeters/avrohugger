@@ -78,7 +78,7 @@ object SpecificRecord extends SourceFormat{
       
     def writeProtocolSubTypes(protocol: Protocol) = {
       def writeJavaTypesFirst(types: List[Schema]): Unit = {
-        // protocol is destined to be an ADT def, so write Java separately
+        // protocol could be destined to be an ADT def, so write Java separately
         def isEnum(schema: Schema) = schema.getType == ENUM
         val enums = types.filter(isEnum)
         enums.foreach(schema => {
@@ -90,8 +90,8 @@ object SpecificRecord extends SourceFormat{
       })
       val types = protocol.getTypes.toList
       val messages = protocol.getMessages.toMap
-      if (messages.isEmpty) writeJavaTypesFirst(types)
-      else writeAllTypes(types)
+      if (messages.isEmpty) writeJavaTypesFirst(types) // for ADTs
+      else writeAllTypes(types) // for RPC trait
     }
     
     // Custom namespaces work for simple types, but seem to fail for records 
