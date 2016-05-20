@@ -56,6 +56,8 @@ class GeneratorTool(sourceFormat: SourceFormat,
     val method: String = args.get(arg);
     var inputs: List[File] = new ArrayList[File]();
 
+    println("INPUTS " + inputs)
+    
     for (i <- (arg + 1) until (args.size() - 1)) {
       Try {
          inputs.add(new File(args.get(i)));

@@ -34,7 +34,9 @@ object SpecificImports {
         .toList
         .map { _ match {
           case(packageName, fields) =>
-            IMPORT(packageName, fields.map( getReferredTypeName ).distinct )
+            val importedPackage = RootClass.newClass(packageName)
+            val importedClassNames = fields.map(getReferredTypeName).distinct
+            IMPORT(importedPackage, importedClassNames)
           }
         }
       

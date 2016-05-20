@@ -41,7 +41,8 @@ object ScavroImports {
         case null =>
           sys.error("Scavro does not support schemas without namespaces.")
         case _ =>
-          IMPORT(schema.getNamespace,RENAME(schema.getName) ==> javaClassRename)
+          val importedNamespace = RootClass.newClass(schema.getNamespace)
+          IMPORT(importedNamespace, RENAME(schema.getName) ==> javaClassRename)
       }
       val topLevelSchemas = schema::(getNestedSchemas(schema, schemaStore))
       val recordImports: List[Import] = topLevelSchemas.filter(isRecord)
@@ -52,7 +53,8 @@ object ScavroImports {
         .groupBy(field => getReferredNamespace(field.schema).get)
         .toList
         .map { _ match { case(packageName, fields) =>
-          IMPORT(packageName, fields.map( field => {
+          val importedPackage = RootClass.newClass(packageName)
+          IMPORT(importedPackage, fields.map( field => {
             val renamedType = "J" + getReferredTypeName(field)
             RENAME(getReferredTypeName(field)) ==> renamedType
           } ).distinct )
@@ -64,7 +66,8 @@ object ScavroImports {
       val hasArrayField = fieldTypes.contains(Schema.Type.ARRAY)
       val hasMapField = fieldTypes.contains(Schema.Type.MAP)
       val hasUnionField = fieldTypes.contains(Schema.Type.UNION)
-      val javaConversionsImport = IMPORT("scala.collection.JavaConversions._")
+      val convPackage = RootClass.newClass("scala.collection.JavaConversions")
+      val javaConversionsImport = IMPORT(convPackage, "_")
       if( hasArrayField || hasMapField || hasUnionField) {
         List(schemaImport, scavroImport, renameImport, javaConversionsImport) ++
           recordImports
