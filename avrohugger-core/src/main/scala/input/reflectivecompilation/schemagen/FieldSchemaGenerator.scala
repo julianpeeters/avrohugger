@@ -83,6 +83,9 @@ class FieldSchemaGenerator() {
             }
           }
         }
+        case null => throw new UnsupportedOperationException("""ToolBox typecheck 
+          |returned null. Perhaps there was a problem storing previously defined
+          | types to the TypecheckDependencyStore""".trim.stripMargin)
         case x => throw new UnsupportedOperationException("Could not generate schema. Cannot support yet: " + x )
       }
     }

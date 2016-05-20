@@ -55,14 +55,13 @@ class GeneratorTool(sourceFormat: SourceFormat,
       
     val method: String = args.get(arg);
     var inputs: List[File] = new ArrayList[File]();
-
-    println("INPUTS " + inputs)
     
     for (i <- (arg + 1) until (args.size() - 1)) {
       Try {
          inputs.add(new File(args.get(i)));
       }
     }
+    
     if ("datafile".equals(method)) {
       for (src: File <- determineInputs(inputs, DATAFILE_FILTER)) {
         generator.fileToFile(src, args.last)

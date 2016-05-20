@@ -1,3 +1,4 @@
+package standard
 
 import java.io.File
 
@@ -13,7 +14,7 @@ class StandardGeneratorSpec extends mutable.Specification {
       val infile = new java.io.File("avrohugger-core/src/test/avro/twitter.avro")
       val gen = new Generator(Standard)
       gen.fileToFile(infile)
-      val source = scala.io.Source.fromFile("target/generated-sources/com/miguno/avro/twitter_schema.scala").mkString
+      val source = util.Util.readFile("target/generated-sources/com/miguno/avro/twitter_schema.scala")
       source ===
         """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
           |package com.miguno.avro
@@ -31,7 +32,7 @@ class StandardGeneratorSpec extends mutable.Specification {
       val infile = new java.io.File("avrohugger-core/src/test/avro/AvroTypeProviderTestNoNamespace.avro")
       val gen = new Generator(Standard)
       gen.fileToFile(infile)
-      val source = scala.io.Source.fromFile("target/generated-sources/AvroTypeProviderTestNoNamespace.scala").mkString
+      val source = util.Util.readFile("target/generated-sources/AvroTypeProviderTestNoNamespace.scala")
       source ===
         """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
           |/**
@@ -163,7 +164,7 @@ class StandardGeneratorSpec extends mutable.Specification {
       val gen = new Generator(Standard)
       gen.fileToFile(infile)
 
-      val source0 = scala.io.Source.fromFile("target/generated-sources/example/Level0.scala").mkString
+      val source0 = util.Util.readFile("target/generated-sources/example/Level0.scala")
       source0 ====
         """
           |/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
@@ -172,7 +173,7 @@ class StandardGeneratorSpec extends mutable.Specification {
           |case class Level0(level1: Level1)
         """.stripMargin.trim
 
-      val source1 = scala.io.Source.fromFile("target/generated-sources/example/Level1.scala").mkString
+      val source1 = util.Util.readFile("target/generated-sources/example/Level1.scala")
       source1 ====
         """
           |/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
@@ -181,7 +182,7 @@ class StandardGeneratorSpec extends mutable.Specification {
           |case class Level1(level2: Level2)
         """.stripMargin.trim
 
-      val source2 = scala.io.Source.fromFile("target/generated-sources/example/Level2.scala").mkString
+      val source2 = util.Util.readFile("target/generated-sources/example/Level2.scala")
       source2 ====
         """
           |/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
@@ -197,7 +198,7 @@ class StandardGeneratorSpec extends mutable.Specification {
       val gen = new Generator(Standard)
       gen.fileToFile(infile)
 
-      val source = scala.io.Source.fromFile("target/generated-sources/example/idl/NestedProtocol.scala").mkString
+      val source = util.Util.readFile("target/generated-sources/example/idl/NestedProtocol.scala")
       source ====
         """
           |/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
@@ -219,7 +220,7 @@ class StandardGeneratorSpec extends mutable.Specification {
       val gen = new Generator(Standard)
       gen.fileToFile(infile)
 
-      val source = scala.io.Source.fromFile("target/generated-sources/example/idl/RecursiveProtocol.scala").mkString
+      val source = util.Util.readFile("target/generated-sources/example/idl/RecursiveProtocol.scala")
       source ====
         """
           |/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
@@ -234,7 +235,7 @@ class StandardGeneratorSpec extends mutable.Specification {
       val gen = new Generator(Standard)
       gen.fileToFile(infile)
 
-      val sourceEnum = scala.io.Source.fromFile("target/generated-sources/example/Suit.scala").mkString
+      val sourceEnum = util.Util.readFile("target/generated-sources/example/Suit.scala")
       sourceEnum ====
         """
           |/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
@@ -252,7 +253,7 @@ class StandardGeneratorSpec extends mutable.Specification {
       val gen = new Generator(Standard)
       gen.fileToFile(infile)
 
-      val sourceEnum = scala.io.Source.fromFile("target/generated-sources/example/proto/EnumProtocol.scala").mkString
+      val sourceEnum = util.Util.readFile("target/generated-sources/example/proto/EnumProtocol.scala")
       sourceEnum ====
         """
           |/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
@@ -274,7 +275,7 @@ class StandardGeneratorSpec extends mutable.Specification {
       val gen = new Generator(Standard)
       gen.fileToFile(infile)
 
-      val sourceEnum = scala.io.Source.fromFile("target/generated-sources/example/idl/EnumProtocol.scala").mkString
+      val sourceEnum = util.Util.readFile("target/generated-sources/example/idl/EnumProtocol.scala")
       sourceEnum ====
         """
           |/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
@@ -296,7 +297,7 @@ class StandardGeneratorSpec extends mutable.Specification {
       val gen = new Generator(Standard)
       gen.fileToFile(infile)
 
-      val sourceBytes = scala.io.Source.fromFile("target/generated-sources/example/Binary.scala").mkString
+      val sourceBytes = util.Util.readFile("target/generated-sources/example/Binary.scala")
       sourceBytes ====
         """
           |/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
@@ -311,7 +312,7 @@ class StandardGeneratorSpec extends mutable.Specification {
       val gen = new Generator(Standard)
       gen.fileToFile(infile)
 
-      val sourceBytes = scala.io.Source.fromFile("target/generated-sources/example/proto/BinaryProtocol.scala").mkString
+      val sourceBytes = util.Util.readFile("target/generated-sources/example/proto/BinaryProtocol.scala")
       sourceBytes ====
         """
           |/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
@@ -326,7 +327,7 @@ class StandardGeneratorSpec extends mutable.Specification {
       val gen = new Generator(Standard)
       gen.fileToFile(infile)
 
-      val sourceBytes = scala.io.Source.fromFile("target/generated-sources/example/idl/BinaryIDL.scala").mkString
+      val sourceBytes = util.Util.readFile("target/generated-sources/example/idl/BinaryIDL.scala")
       sourceBytes ====
         """
           |/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
@@ -342,7 +343,7 @@ class StandardGeneratorSpec extends mutable.Specification {
       val gen = new Generator(Standard)
       gen.fileToFile(importing)
 
-      val sourceRecord = scala.io.Source.fromFile("target/generated-sources/example/idl/ImportProtocol.scala").mkString
+      val sourceRecord = util.Util.readFile("target/generated-sources/example/idl/ImportProtocol.scala")
       sourceRecord ====
         """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
           |package example.idl
@@ -364,7 +365,7 @@ class StandardGeneratorSpec extends mutable.Specification {
       val gen = new Generator(Standard)
       gen.fileToFile(importing)
 
-      val sourceRecord = scala.io.Source.fromFile("target/generated-sources/example/idl/ImportNestedProtocol.scala").mkString
+      val sourceRecord = util.Util.readFile("target/generated-sources/example/idl/ImportNestedProtocol.scala")
       sourceRecord ====
         """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
           |package example.idl
@@ -387,23 +388,32 @@ class StandardGeneratorSpec extends mutable.Specification {
       val importing = new java.io.File("avrohugger-core/src/test/avro/import.avdl")
       val gen = new Generator(Standard)
       gen.fileToFile(importing)
-
-      (new File(s"target/generated-sources/other/ns/ImportedProtocol.scala")).exists === true
+      val sourceRecord = util.Util.readFile("target/generated-sources/other/ns/ImportedProtocol.scala")
+      sourceRecord ====
+        """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
+          |package other.ns
+          |
+          |case class ExternalDependency(number: Int)""".stripMargin.trim
     }
     
     "Generate imported class in the declared package" in {
-      val importing = new java.io.File("avrohugger-core/src/test/avro/import.avdl")
+      val importing = new java.io.File("avrohugger-core/src/test/avro/import-nested.avdl")
       val gen = new Generator(Standard)
       gen.fileToFile(importing)
-
-      (new File(s"target/generated-sources/other/ns/ImportedSchema.scala")).exists === true
+      val sourceRecord = util.Util.readFile("target/generated-sources/other/ns/ImportedSchema.scala")
+      sourceRecord ====
+        """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
+          |package other.ns
+          |
+          |case class ImportedSchema(name: String)""".stripMargin.trim
     }
+
 
     "correctly generate an empty case class definition" in {
       val infile = new java.io.File("avrohugger-core/src/test/avro/AvroTypeProviderTestEmptyRecord.avdl")
       val gen = new Generator(Standard)
       gen.fileToFile(infile)
-      val source = scala.io.Source.fromFile("target/generated-sources/test/Calculator.scala").mkString
+      val source = util.Util.readFile("target/generated-sources/test/Calculator.scala")
       source ===
         """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
           |package test

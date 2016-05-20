@@ -14,10 +14,6 @@ import org.apache.avro.compiler.idl.ParseException
 import scala.collection.JavaConverters._
 import java.nio.charset.Charset
 
-import scala.reflect.runtime.universe._
-import scala.reflect.runtime.currentMirror
-import scala.tools.reflect.ToolBox
-
 // tries schema first, then protocol, then idl, then for case class defs
 class StringInputParser {
 

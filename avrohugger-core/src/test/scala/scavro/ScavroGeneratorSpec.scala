@@ -1,3 +1,4 @@
+package scavro
 
 import java.io.File
 
@@ -14,7 +15,7 @@ class ScavroGeneratorSpec extends mutable.Specification {
       val gen = new Generator(Scavro)
       val outDir = gen.defaultOutputDir + "/scavro/"
       gen.fileToFile(infile, outDir)
-      val source = scala.io.Source.fromFile(s"$outDir/example/proto/model/Mail.scala").mkString
+      val source = util.Util.readFile(s"$outDir/example/proto/model/Mail.scala")
       source ===
         """|/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
             |package example.proto.model
@@ -51,7 +52,7 @@ class ScavroGeneratorSpec extends mutable.Specification {
       val gen = new Generator(Scavro)
       val outDir = gen.defaultOutputDir + "/scavro/"
       gen.fileToFile(infile, outDir)
-      val source = scala.io.Source.fromFile(s"$outDir/example/proto/model/BinaryProtocol.scala").mkString
+      val source = util.Util.readFile(s"$outDir/example/proto/model/BinaryProtocol.scala")
       source ===
         """|/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
             |package example.proto.model

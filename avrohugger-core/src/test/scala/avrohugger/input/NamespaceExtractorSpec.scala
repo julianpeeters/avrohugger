@@ -1,4 +1,4 @@
-package avrohugger.format
+package avrohugger.input
 
 import avrohugger.input.DependencyInspector.getReferredNamespace
 import org.apache.avro.Schema

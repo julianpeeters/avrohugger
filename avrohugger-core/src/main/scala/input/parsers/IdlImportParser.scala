@@ -16,11 +16,27 @@ object IdlImportParser {
     commentFree
   }
 
-  def getImportedFiles(infile: java.io.File): List[File] = {
+  def getImportedFiles(infile: File): List[File] = {
+    def readFile(file: File): String = {
+      var count = 0
+      val maxTries = 3
+      try {
+        count += 1
+        val file = scala.io.Source.fromFile(infile)
+        val fileContents: String = stripComments(file.mkString)
+        file.close
+        // if file is empty, try again, it was there when we read idl
+        if (fileContents.isEmpty && (count < maxTries)) readFile(infile)
+        else fileContents
+      } catch {// if file is not found, try again, it was there when we read idl
+        case e: java.io.FileNotFoundException => {
+          if (count < maxTries) readFile(infile)
+          else sys.error("File to found: " + infile)
+        }
+      }
+    }
     val path = infile.getParent + "/"
-    val file = scala.io.Source.fromFile(infile)
-    val contents = stripComments(file.getLines.mkString)
-    file.close
+    val contents = readFile(infile)
     val avdlPattern = """import[ \t]+idl[ \t]+"([^"]*\.avdl)"[ \t]*;""".r
     val avprPattern = """import[ \t]+protocol[ \t]+"([^"]*\.avpr)"[ \t]*;""".r
     val avscPattern = """import[ \t]+schema[ \t]+"([^"]*\.avsc)"[ \t]*;""".r

@@ -10,7 +10,7 @@ object BuildSettings {
     organization := "com.julianpeeters",
     version := "0.10.2-SNAPSHOT",
     scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-Ywarn-value-discard"),
-    scalaVersion := "2.11.8",
+    scalaVersion := "2.11.7",
     crossScalaVersions := Seq("2.10.6", scalaVersion.value),
     resolvers += Resolver.typesafeIvyRepo("releases"),
     libraryDependencies += "org.apache.avro" % "avro" % avroVersion,
