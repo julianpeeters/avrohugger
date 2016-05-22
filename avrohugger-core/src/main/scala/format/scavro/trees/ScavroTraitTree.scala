@@ -17,6 +17,7 @@ object ScavroTraitTree {
     val traitTree =
       TRAITDEF(protocol.getName)
         .withFlags(Flags.SEALED)
+        .withParents("AvroSerializeable")
         .withParents("Product")
         .withParents("Serializable")
     val treeWithScalaDoc = ScalaDocGen.docToScalaDoc(Right(protocol), traitTree)

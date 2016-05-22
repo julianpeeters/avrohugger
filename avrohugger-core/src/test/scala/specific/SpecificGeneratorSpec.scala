@@ -366,7 +366,7 @@ class SpecificGeneratorSpec extends mutable.Specification {
           |
           |import scala.annotation.switch
           |
-          |sealed trait Defaults extends Product with Serializable
+          |sealed trait Defaults extends org.apache.avro.specific.SpecificRecordBase with Product with Serializable
           |
           |final case class Embedded(var inner: Int) extends org.apache.avro.specific.SpecificRecordBase with Defaults {
           |  def this() = this(0)
@@ -528,7 +528,7 @@ class SpecificGeneratorSpec extends mutable.Specification {
         |
         |import other.ns.ImportedSchema
         |
-        |sealed trait ImportProtocol extends Product with Serializable
+        |sealed trait ImportProtocol extends org.apache.avro.specific.SpecificRecordBase with Product with Serializable
         |
         |final case class DependentRecord(var dependency: ExternalDependency, var number: Int) extends org.apache.avro.specific.SpecificRecordBase with ImportProtocol {
         |  def this() = this(new ExternalDependency, 0)
@@ -679,7 +679,7 @@ class SpecificGeneratorSpec extends mutable.Specification {
           |
           |import scala.annotation.switch
           |
-          |sealed trait Calculator extends Product with Serializable
+          |sealed trait Calculator extends org.apache.avro.specific.SpecificRecordBase with Product with Serializable
           |
           |final case class Added(var value: Int) extends org.apache.avro.specific.SpecificRecordBase with Calculator {
           |  def this() = this(0)

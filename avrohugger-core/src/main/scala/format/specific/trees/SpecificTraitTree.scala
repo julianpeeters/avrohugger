@@ -20,7 +20,7 @@ object SpecificTraitTree {
     val traitTree =
       TRAITDEF(name)
         .withFlags(Flags.SEALED)
-        .withFlags(Flags.SEALED)
+        .withParents("org.apache.avro.specific.SpecificRecordBase")
         .withParents("Product")
         .withParents("Serializable")  
     val treeWithScalaDoc = ScalaDocGen.docToScalaDoc(Right(protocol), traitTree)
