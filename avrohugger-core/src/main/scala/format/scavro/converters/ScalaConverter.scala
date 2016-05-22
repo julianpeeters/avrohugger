@@ -57,7 +57,7 @@ class ScalaConverter(typeMatcher: TypeMatcher) {
         val collection = typeMatcher.typeMap.get("array") match {
           case Some(c) if c == classOf[Array[_]] => ARRAY(seqArgs)
           case Some(c) if c == classOf[List[_]]  => LIST(seqArgs)
-          case Some(c) if c == classOf[Seq[_]]   => SEQ(seqArgs)
+          case Some(c) if c == classOf[Vector[_]]   => VECTOR(seqArgs)
           // default array mapping is currently List, but only for historical reasons
           case _             => LIST(seqArgs) 
         }

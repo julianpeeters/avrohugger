@@ -23,10 +23,10 @@ object ScalaConverter {
     val classTagIdent = REF(s"scala.reflect.ClassTag(classOf[$elementType])")
     val arrayConversion = ARRAY(seqArgs).APPLY(classTagIdent).AS(TYPE_ARRAY(elementType))
     maybeCustomArray match {
-      case Some(c) if c == classOf[Array[_]] => arrayConversion
-      case Some(c) if c == classOf[List[_]]  => LIST(seqArgs)
-      case Some(c) if c == classOf[Seq[_]]   => SEQ(seqArgs)
-      case _                                 => defaultConversion
+      case Some(c) if c == classOf[Array[_]]  => arrayConversion
+      case Some(c) if c == classOf[List[_]]   => LIST(seqArgs)
+      case Some(c) if c == classOf[Vector[_]] => VECTOR(seqArgs)
+      case _                                  => defaultConversion
     }
   }
   

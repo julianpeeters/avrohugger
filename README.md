@@ -95,7 +95,7 @@ protocol, IDL, or a set of case classes that you'd like to have implement
 ##### Customizable Type Mapping:
 
 Avro 'array' is represented by Scala `List` by default. `array` can be
-reassigned to either `Array` or `Seq` by instantiating a `Generator` with a
+reassigned to either `Array` or `Vector` by instantiating a `Generator` with a
 custom type map:
 
 

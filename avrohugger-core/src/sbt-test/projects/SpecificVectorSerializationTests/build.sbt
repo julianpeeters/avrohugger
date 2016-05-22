@@ -1,8 +1,12 @@
+import sbtavrohugger.AvrohuggerSettings.avroScalaCustomTypes
+
 sbtavrohugger.SbtAvrohugger.specificAvroSettings
+
+(avroScalaCustomTypes in avroConfig) := Map("array" -> classOf[Vector[_]])
 
 organization := "com.julianpeeters"
 
-name := "datatype-specific-serializaton-tests"
+name := "datatype-specific-vector-serializaton-tests"
 
 version := "0.4-SNAPSHOT"
 

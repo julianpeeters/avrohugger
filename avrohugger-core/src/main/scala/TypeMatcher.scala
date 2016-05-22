@@ -13,7 +13,7 @@ import scala.collection.JavaConversions._
 
 class TypeMatcher {
 
-  // holds user-defined custom type mappings, e.g. ("array"->classOf[Seq[_]])
+  // holds user-defined custom type mappings, e.g. ("array"->classOf[Array[_]])
   val typeMap: scala.collection.concurrent.Map[String, Class[_]] = {
     JConcurrentMapWrapper(new ConcurrentHashMap[String, Class[_]]())
   }
@@ -27,10 +27,10 @@ class TypeMatcher {
     maybeCustomArray: Option[Class[_]],
     defaultType: Type => Type) = {
     maybeCustomArray match {
-      case Some(c) if c == classOf[Array[_]] => TYPE_ARRAY(_)
-      case Some(c) if c == classOf[List[_]]  => listType(_)
-      case Some(c) if c == classOf[Seq[_]]   => TYPE_SEQ(_)
-      case _                                 => defaultType(_)
+      case Some(c) if c == classOf[Array[_]]  => TYPE_ARRAY(_)
+      case Some(c) if c == classOf[List[_]]   => TYPE_LIST(_)
+      case Some(c) if c == classOf[Vector[_]] => TYPE_VECTOR(_)
+      case _                                  => defaultType(_)
     }
   }
 
@@ -69,7 +69,7 @@ class TypeMatcher {
         case Schema.Type.ARRAY    => {
           // default array mapping is currently List, for historical reasons
           val elementType = toScalaType(classStore, namespace, schema.getElementType)
-          val collectionType = checkCustomArrayType(typeMap.get("array"), listType)
+          val collectionType = checkCustomArrayType(typeMap.get("array"), TYPE_LIST)
           collectionType(elementType)
         }
         case Schema.Type.MAP      => {

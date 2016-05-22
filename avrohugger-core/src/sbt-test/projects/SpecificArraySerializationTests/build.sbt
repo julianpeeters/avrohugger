@@ -6,9 +6,9 @@ sbtavrohugger.SbtAvrohugger.specificAvroSettings
 
 organization := "com.julianpeeters"
 
-name := "datatype-specific-serializaton-tests"
+name := "datatype-specific-array-serializaton-tests"
 
-version := "0.3-SNAPSHOT"
+version := "0.4-SNAPSHOT"
 
 // 2.10 because scalavro is used for a single test, and it's stalled at 2.10
 scalaVersion := "2.10.6"

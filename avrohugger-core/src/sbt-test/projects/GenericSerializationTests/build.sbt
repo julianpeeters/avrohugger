@@ -4,7 +4,7 @@ organization := "com.julianpeeters"
 
 name := "datatype-avro-serializaton-tests"
 
-version := "0.3-SNAPSHOT"
+version := "0.4-SNAPSHOT"
 
 // 2.10 because scalavro is used for a single test, and it's stalled at 2.10
 scalaVersion := "2.10.6"

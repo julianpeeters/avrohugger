@@ -4,7 +4,7 @@ organization := "com.julianpeeters"
 
 name := "datatype-scavro-serializaton-tests"
 
-version := "0.3-SNAPSHOT"
+version := "0.5-SNAPSHOT"
 
 scalaVersion := "2.10.6"
 

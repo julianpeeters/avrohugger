@@ -20,10 +20,10 @@ object DefaultParamMatcher {
     maybeCustomArray: Option[Class[_]],
     defaultSym: Symbol) = {
     maybeCustomArray match {
-      case Some(c) if c == classOf[Array[_]] => ArrayClass
-      case Some(c) if c == classOf[List[_]]  => ListClass
-      case Some(c) if c == classOf[Seq[_]]   => SeqClass
-      case _                                 => defaultSym
+      case Some(c) if c == classOf[Array[_]]  => ArrayClass
+      case Some(c) if c == classOf[List[_]]   => ListClass
+      case Some(c) if c == classOf[Vector[_]] => VectorClass
+      case _                                  => defaultSym
     }
   }
   
