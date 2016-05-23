@@ -2,9 +2,9 @@ package avrohugger
 package format
 package specific
 
-import trees.{ SpecificCaseClassTree, SpecificObjectTree, SpecificTraitTree }
-import util.ScalaDocGen
+import converters.AvroConverter
 import input.reflectivecompilation.schemagen.SchemaStore
+import util.ScalaDocGen
 
 import org.apache.avro.{ Protocol, Schema }
 import org.apache.avro.Schema.Field
@@ -74,7 +74,7 @@ object SpecificScalaTreehugger {
     maybeFlags: Option[List[Long]]): List[Tree] = {
     
     schemaOrProtocol match {
-      case Left(schema) => SpecificSchemaHandler.toTrees(
+      case Left(schema) => AvroConverter.schemaToTrees(
         classStore,
         namespace,
         schema,
@@ -82,7 +82,7 @@ object SpecificScalaTreehugger {
         maybeBaseTrait,
         maybeFlags
       )
-      case Right(protocol) => SpecificProtocolHandler.toTrees(
+      case Right(protocol) => AvroConverter.protocolToTrees(
         classStore,
         namespace,
         protocol,

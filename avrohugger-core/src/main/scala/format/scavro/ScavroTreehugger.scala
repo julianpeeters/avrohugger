@@ -2,15 +2,15 @@ package avrohugger
 package format
 package scavro
 
-import trees.{ ScavroCaseClassTree, ScavroObjectTree, ScavroTraitTree }
+import converters.AvroConverter
+import input.DependencyInspector._
+import input.NestedSchemaExtractor._
 import input.reflectivecompilation.schemagen._
-
-import avrohugger.input.DependencyInspector._
-import avrohugger.input.NestedSchemaExtractor._
 
 import org.apache.avro.{ Protocol, Schema }
 import org.apache.avro.Schema.Field
 import org.apache.avro.Schema.Type.{ ENUM, RECORD }
+
 import treehugger.forest._
 import definitions._
 import treehuggerDSL._
@@ -66,7 +66,7 @@ object ScavroTreehugger {
 	  maybeFlags: Option[List[Long]]): List[Tree] = {
 			
 		schemaOrProtocol match {
-			case Left(schema) => ScavroSchemaHandler.toTrees(
+			case Left(schema) => AvroConverter.schemaToTrees(
 				classStore,
 				namespace,
 				schema,
@@ -74,7 +74,7 @@ object ScavroTreehugger {
 				maybeBaseTrait,
 				maybeFlags
 			)
-			case Right(protocol) => ScavroProtocolHandler.toTrees(
+			case Right(protocol) => AvroConverter.protocolToTrees(
 				classStore,
 				namespace,
 				protocol,

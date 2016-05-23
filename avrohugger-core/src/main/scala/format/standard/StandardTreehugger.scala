@@ -2,6 +2,7 @@ package avrohugger
 package format
 package standard
 
+import avrohugger.format.standard.converters.AvroConverter
 import avrohugger.input.DependencyInspector._
 import avrohugger.input.NestedSchemaExtractor._
 import avrohugger.input.reflectivecompilation.schemagen.SchemaStore
@@ -62,7 +63,7 @@ object StandardTreehugger {
     maybeFlags: Option[List[Long]]): List[Tree] = {
 
     schemaOrProtocol match {
-      case Left(schema) => StandardSchemaHandler.toTrees(
+      case Left(schema) => AvroConverter.schemaToTrees(
         classStore,
         namespace,
         schema,
@@ -70,7 +71,7 @@ object StandardTreehugger {
         maybeBaseTrait,
         maybeFlags
       )
-      case Right(protocol) => StandardProtocolHandler.toTrees(
+      case Right(protocol) => AvroConverter.protocolToTrees(
         classStore,
         namespace,
         protocol,

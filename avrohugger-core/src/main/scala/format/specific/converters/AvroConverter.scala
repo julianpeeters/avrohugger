@@ -1,21 +1,24 @@
 package avrohugger
 package format
 package specific
+package converters
 
-import trees.{ SpecificObjectTree, SpecificTraitTree }
+import trees.{ SpecificCaseClassTree, SpecificObjectTree, SpecificTraitTree }
 import util.ScalaDocGen
-
-import org.apache.avro.{ Protocol, Schema }
 
 import treehugger.forest._
 import definitions._
 import treehuggerDSL._
 
+import org.apache.avro.{ Protocol, Schema }
+
+import scala.language.postfixOps
 import scala.collection.JavaConversions._
 
-object SpecificProtocolHandler {
+
+object AvroConverter {
   
-  def toTrees(
+  def protocolToTrees(
     classStore: ClassStore,
     namespace: Option[String],
     protocol: Protocol,
@@ -79,4 +82,28 @@ object SpecificProtocolHandler {
     }
   }
   
+
+  def schemaToTrees(
+    classStore: ClassStore,
+    namespace: Option[String],
+    schema: Schema,
+    typeMatcher: TypeMatcher,
+    maybeBaseTrait: Option[String],
+    maybeFlags: Option[List[Long]]): List[Tree] = {
+    
+    SpecificTypeRegistrar.registerType(schema, classStore)
+    
+    val caseClassDef = SpecificCaseClassTree.toCaseClassDef(
+      classStore,
+      namespace,
+      schema,
+      typeMatcher,
+      maybeBaseTrait,
+      maybeFlags)
+      
+    val companionDef = SpecificObjectTree.toCompanionDef(schema, maybeFlags)
+    
+    List(caseClassDef, companionDef)
+  }
+
 }
