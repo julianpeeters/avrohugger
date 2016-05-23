@@ -1,6 +1,6 @@
 package avrohugger
 package format
-package util
+package docs
 
 import treehugger.forest._
 import definitions._

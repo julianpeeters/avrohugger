@@ -18,33 +18,33 @@ class ScavroGeneratorSpec extends mutable.Specification {
       val source = util.Util.readFile(s"$outDir/example/proto/model/Mail.scala")
       source ===
         """|/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
-            |package example.proto.model
-            |
-            |import org.apache.avro.Schema
-            |
-            |import org.oedura.scavro.{AvroMetadata, AvroReader, AvroSerializeable}
-            |
-            |import example.proto.{Message => JMessage}
-            |
-            |case class Message(to: String, from: String, body: String) extends AvroSerializeable {
-            |  type J = JMessage
-            |  override def toAvro: JMessage = {
-            |    new JMessage(to, from, body)
-            |  }
-            |}
-            |
-            |object Message {
-            |  implicit def reader = new AvroReader[Message] {
-            |    override type J = JMessage
-            |  }
-            |  implicit val metadata: AvroMetadata[Message, JMessage] = new AvroMetadata[Message, JMessage] {
-            |    override val avroClass: Class[JMessage] = classOf[JMessage]
-            |    override val schema: Schema = JMessage.getClassSchema()
-            |    override val fromAvro: (JMessage) => Message = {
-            |      (j: JMessage) => Message(j.getTo.toString, j.getFrom.toString, j.getBody.toString)
-            |    }
-            |  }
-            |}""".stripMargin
+           |package example.proto.model
+           |
+           |import org.apache.avro.Schema
+           |
+           |import org.oedura.scavro.{AvroMetadata, AvroReader, AvroSerializeable}
+           |
+           |import example.proto.{Message => JMessage}
+           |
+           |case class Message(to: String, from: String, body: String) extends AvroSerializeable {
+           |  type J = JMessage
+           |  override def toAvro: JMessage = {
+           |    new JMessage(to, from, body)
+           |  }
+           |}
+           |
+           |object Message {
+           |  implicit def reader = new AvroReader[Message] {
+           |    override type J = JMessage
+           |  }
+           |  implicit val metadata: AvroMetadata[Message, JMessage] = new AvroMetadata[Message, JMessage] {
+           |    override val avroClass: Class[JMessage] = classOf[JMessage]
+           |    override val schema: Schema = JMessage.getClassSchema()
+           |    override val fromAvro: (JMessage) => Message = {
+           |      (j: JMessage) => Message(j.getTo.toString, j.getFrom.toString, j.getBody.toString)
+           |    }
+           |  }
+           |}""".stripMargin
     }
 
     "correctly generate a case class with bytes" in {
@@ -55,37 +55,37 @@ class ScavroGeneratorSpec extends mutable.Specification {
       val source = util.Util.readFile(s"$outDir/example/proto/model/BinaryProtocol.scala")
       source ===
         """|/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
-            |package example.proto.model
-            |
-            |import org.apache.avro.Schema
-            |
-            |import org.oedura.scavro.{AvroMetadata, AvroReader, AvroSerializeable}
-            |
-            |import example.proto.{Binary => JBinary}
-            |
-            |case class Binary(data: Array[Byte]) extends AvroSerializeable {
-            |  type J = JBinary
-            |  override def toAvro: JBinary = {
-            |    new JBinary(java.nio.ByteBuffer.wrap(data))
-            |  }
-            |}
-            |
-            |object Binary {
-            |  implicit def reader = new AvroReader[Binary] {
-            |    override type J = JBinary
-            |  }
-            |  implicit val metadata: AvroMetadata[Binary, JBinary] = new AvroMetadata[Binary, JBinary] {
-            |    override val avroClass: Class[JBinary] = classOf[JBinary]
-            |    override val schema: Schema = JBinary.getClassSchema()
-            |    override val fromAvro: (JBinary) => Binary = {
-            |      (j: JBinary) => Binary(j.getData match {
-            |        case (buffer: java.nio.ByteBuffer) => {
-            |          buffer.array()
-            |        }
-            |      })
-            |    }
-            |  }
-            |}""".stripMargin
+           |package example.proto.model
+           |
+           |import org.apache.avro.Schema
+           |
+           |import org.oedura.scavro.{AvroMetadata, AvroReader, AvroSerializeable}
+           |
+           |import example.proto.{Binary => JBinary}
+           |
+           |case class Binary(data: Array[Byte]) extends AvroSerializeable {
+           |  type J = JBinary
+           |  override def toAvro: JBinary = {
+           |    new JBinary(java.nio.ByteBuffer.wrap(data))
+           |  }
+           |}
+           |
+           |object Binary {
+           |  implicit def reader = new AvroReader[Binary] {
+           |    override type J = JBinary
+           |  }
+           |  implicit val metadata: AvroMetadata[Binary, JBinary] = new AvroMetadata[Binary, JBinary] {
+           |    override val avroClass: Class[JBinary] = classOf[JBinary]
+           |    override val schema: Schema = JBinary.getClassSchema()
+           |    override val fromAvro: (JBinary) => Binary = {
+           |      (j: JBinary) => Binary(j.getData match {
+           |        case (buffer: java.nio.ByteBuffer) => {
+           |          buffer.array()
+           |        }
+           |      })
+           |    }
+           |  }
+           |}""".stripMargin
     }
 
   }

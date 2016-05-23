@@ -4,7 +4,7 @@ package specific
 
 import converters.AvroConverter
 import input.reflectivecompilation.schemagen.SchemaStore
-import util.ScalaDocGen
+import docs.ScalaDocGen
 
 import org.apache.avro.{ Protocol, Schema }
 import org.apache.avro.Schema.Field

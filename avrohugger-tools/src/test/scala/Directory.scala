@@ -54,6 +54,9 @@ object Directory {
   val TEST_EXPECTED_SPECIFIC_MESSAGE =
     new File(TEST_EXPECTED_SPECIFIC_OUTPUT_BASE_DIR,
              "example/proto/Message.scala");
+  val TEST_EXPECTED_SPECIFIC_MAIL =
+    new File(TEST_EXPECTED_SPECIFIC_OUTPUT_BASE_DIR,
+             "example/proto/Mail.scala");
 
   val TEST_EXPECTED_SCAVRO_OUTPUT_BASE_DIR =
     new File(TEST_DIR, "output-scavro/");
@@ -68,7 +71,7 @@ object Directory {
             "com/miguno/avro/twitter_schema.scala");
   val TEST_EXPECTED_SCAVRO_MESSAGE =
     new File(TEST_EXPECTED_SCAVRO_OUTPUT_BASE_DIR,
-            "example/proto/Message.scala");
+            "example/proto/model/Message.scala");
 
 
   // where test output goes
@@ -104,6 +107,8 @@ object Directory {
     new File(TEST_OUTPUT_SPECIFIC_BASE_DIR, "com/miguno/avro/twitter_schema.scala");
   val TEST_OUTPUT_SPECIFIC_MESSAGE =
     new File(TEST_OUTPUT_SPECIFIC_BASE_DIR, "example/proto/Message.scala");
+  val TEST_OUTPUT_SPECIFIC_MAIL =
+    new File(TEST_OUTPUT_SPECIFIC_BASE_DIR, "example/proto/Mail.scala");
 
   val TEST_OUTPUT_SCAVRO_BASE_DIR =
     new File("avrohugger-tools/target/compiler/output-scavro");
@@ -115,4 +120,5 @@ object Directory {
     new File(TEST_OUTPUT_SCAVRO_BASE_DIR, "com/miguno/avro/model/twitter_schema.scala");
   val TEST_OUTPUT_SCAVRO_MESSAGE =
     new File(TEST_OUTPUT_SCAVRO_BASE_DIR, "example/proto/model/Message.scala");
+
 }

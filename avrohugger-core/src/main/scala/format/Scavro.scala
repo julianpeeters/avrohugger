@@ -37,6 +37,20 @@ object Scavro extends SourceFormat {
       typeMatcher,
       schemaStore)
   }
+  
+  override def getName(schemaOrProtocol: Either[Schema, Protocol]): String = {
+    schemaOrProtocol match {
+      case Left(schema) => schema.getName
+      case Right(protocol) => {
+        val localSubtypes = Scavro.getLocalSubtypes(protocol)
+        if (localSubtypes.length > 1) protocol.getName
+        else localSubtypes.headOption match {
+          case Some(schema) => schema.getName
+          case None => protocol.getName
+        }
+      }
+    }
+  }
 
   override def writeToFile(
     classStore: ClassStore, 

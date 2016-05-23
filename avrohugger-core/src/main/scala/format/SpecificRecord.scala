@@ -69,6 +69,25 @@ object SpecificRecord extends SourceFormat{
       }
   }
   
+  override def getName(schemaOrProtocol: Either[Schema, Protocol]): String = {
+    schemaOrProtocol match {
+      case Left(schema) => schema.getName
+      case Right(protocol) => {
+        def isEnum(schema: Schema) = schema.getType == Schema.Type.ENUM
+        val messages = protocol.getMessages.toMap
+        val localRecords = getLocalSubtypes(protocol).filter(isEnum)
+        if (!messages.isEmpty) protocol.getName // for RPC trait
+        else {
+          if (localRecords.length > 1) protocol.getName // for ADT
+          else localRecords.headOption match {
+            case Some(schema) => schema.getName // for solo records make a class
+            case None => protocol.getName       // default to protocol name
+          }
+        }
+      }
+    }
+  }
+  
   override def writeToFile(
     classStore: ClassStore, 
     namespace: Option[String], 

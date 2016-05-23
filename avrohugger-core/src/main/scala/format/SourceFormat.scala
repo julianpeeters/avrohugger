@@ -6,6 +6,8 @@ import avrohugger.input.reflectivecompilation.schemagen.SchemaStore
 import org.apache.avro.Protocol
 import org.apache.avro.Schema
 
+import scala.collection.JavaConversions._
+
 trait SourceFormat {
 
   // abstract members to be implemented by a subclass
@@ -30,13 +32,15 @@ trait SourceFormat {
     outDir: String,
     schemaStore: SchemaStore): Unit
 
-
+  def getName(schemaOrProtocol: Either[Schema, Protocol]): String
+  
+  
   // concrete member
-  def getName(schemaOrProtocol: Either[Schema, Protocol]): String = {
-    schemaOrProtocol match {
-      case Left(schema) => schema.getName
-      case Right(protocol) => protocol.getName
-    }
+  def getLocalSubtypes(protocol: Protocol): List[Schema] = {
+    val ns = protocol.getNamespace
+    val allTypes = protocol.getTypes.toList
+    def isTopLevelNamespace(schema: Schema) = schema.getNamespace == ns
+    allTypes.filter(isTopLevelNamespace)
   }
   
 }

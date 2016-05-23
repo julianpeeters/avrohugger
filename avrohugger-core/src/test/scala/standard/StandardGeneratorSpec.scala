@@ -56,34 +56,34 @@ class StandardGeneratorSpec extends mutable.Specification {
 
     "correctly generate a nested case class definition from a schema as a string" in {
       val schemaString = """{
-        |  "namespace": "example",
-        |  "type": "record",
-        |  "name": "Level0",
-        |  "fields": [
-        |    {
-        |      "name": "level1",
-        |      "type": {
-        |        "name": "Level1",
-        |        "type": "record",
-        |        "fields": [
-        |          {
-        |            "name": "level2",
-        |            "type": {
-        |              "name": "Level2",
-        |              "type": "record",
-        |              "fields": [
-        |                {
-        |                  "name": "name",
-        |                  "type": "string"
-        |                }
-        |              ]
-        |            }
-        |          }
-        |        ]
-        |      }
-        |    }
-        |  ]
-        |}""".stripMargin
+          |  "namespace": "example",
+          |  "type": "record",
+          |  "name": "Level0",
+          |  "fields": [
+          |    {
+          |      "name": "level1",
+          |      "type": {
+          |        "name": "Level1",
+          |        "type": "record",
+          |        "fields": [
+          |          {
+          |            "name": "level2",
+          |            "type": {
+          |              "name": "Level2",
+          |              "type": "record",
+          |              "fields": [
+          |                {
+          |                  "name": "name",
+          |                  "type": "string"
+          |                }
+          |              ]
+          |            }
+          |          }
+          |        ]
+          |      }
+          |    }
+          |  ]
+          |}""".stripMargin
       val gen = new Generator(Standard)
       val List(source0, source1, source2) = gen.stringToStrings(schemaString)
       source0 ===
@@ -131,11 +131,11 @@ class StandardGeneratorSpec extends mutable.Specification {
       val gen = new Generator(Standard)
       val List(source) = gen.stringToStrings(schemaString)
       source ===
-      """
-        |package test.proto
-        |
-        |case class Message(alert: String)
-      """.stripMargin.trim
+        """
+          |package test.proto
+          |
+          |case class Message(alert: String)
+        """.stripMargin.trim
     }
 
     "correctly generate a simple case class definition from idl as a string" in {

@@ -3,7 +3,7 @@ package format
 package specific
 package trees
 
-import util.ScalaDocGen
+import docs.ScalaDocGen
 
 import treehugger.forest._
 import definitions._

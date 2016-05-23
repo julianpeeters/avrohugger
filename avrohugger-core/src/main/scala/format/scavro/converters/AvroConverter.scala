@@ -4,7 +4,7 @@ package scavro
 package converters
 
 import trees.{ ScavroCaseClassTree, ScavroObjectTree, ScavroTraitTree }
-import util.ScalaDocGen
+import docs.ScalaDocGen
 
 import org.apache.avro.{ Protocol, Schema }
 import org.apache.avro.Schema.Type.{ ENUM, RECORD }
@@ -25,18 +25,15 @@ object AvroConverter {
     maybeBaseTrait: Option[String],
     maybeFlags: Option[List[Long]]): List[Tree] = {
       
-    val name: String = protocol.getName
-    val ns: String = protocol.getNamespace
     val allTypes = protocol.getTypes.toList
     allTypes.foreach(schema =>
       ScavroTypeRegistrar.registerType(schema, classStore))
-    def isTopLevelNamespace(schema: Schema) = schema.getNamespace == ns
-    val maybeNewBaseTrait = Some(name)
-    val maybeNewFlags = Some(List(Flags.FINAL.toLong))
-    val traitDef = ScavroTraitTree.toADTRootDef(protocol)
-    val localSubTypes = allTypes.filter(isTopLevelNamespace)
-    if (localSubTypes.length > 1) {
-      traitDef +: localSubTypes.flatMap(schema =>
+    val localSubtypes = Scavro.getLocalSubtypes(protocol)
+    if (localSubtypes.length > 1) {
+      val maybeNewBaseTrait = Some(protocol.getName)
+      val maybeNewFlags = Some(List(Flags.FINAL.toLong))
+      val traitDef = ScavroTraitTree.toADTRootDef(protocol)
+      traitDef +: localSubtypes.flatMap(schema =>
         ScavroTreehugger.asTopLevelDef(
           classStore,
           namespace,
@@ -55,7 +52,7 @@ object AvroConverter {
           case None => List.empty
         }	
       }
-      docTrees ::: localSubTypes.flatMap(schema =>
+      docTrees ::: localSubtypes.flatMap(schema =>
         ScavroTreehugger.asTopLevelDef(
           classStore,
           namespace,

@@ -4,7 +4,7 @@ package scavro
 package trees
 
 import converters.JavaConverter
-import util.ScalaDocGen
+import docs.ScalaDocGen
 
 import treehugger.forest._
 import definitions._

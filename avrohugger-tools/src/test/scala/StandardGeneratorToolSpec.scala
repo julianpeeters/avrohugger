@@ -26,15 +26,15 @@ class StandardGeneratorToolSpec extends mutable.Specification {
 
 
   "the generated Scala files" should {
-/* //TODO in Java an interface is generated in addition to the types, how to represent in Scala? Trait?
+    
     "match the expected single protocol file" in {
       doCompile(List[String] ("protocol",
         Directory.TEST_INPUT_DIR.toString() + "/mail.avpr",
-        Directory.TEST_OUTPUT_SCALA_DIR.getPath()
+        Directory.TEST_OUTPUT_BASE_DIR.getPath()
       ))
       Util.readFile(Directory.TEST_OUTPUT_MESSAGE) === Util.readFile(Directory.TEST_EXPECTED_MESSAGE)
     }
-*/
+
     "match the expected single datafile file" in {
       doCompile(List[String] ("datafile",
         Directory.TEST_INPUT_DIR.toString() + "/twitter.avro",

@@ -4,7 +4,7 @@ package standard
 package converters
 
 import trees.{ StandardCaseClassTree, StandardObjectTree, StandardTraitTree }
-import util.ScalaDocGen
+import docs.ScalaDocGen
 
 import org.apache.avro.{ Protocol, Schema }
 import org.apache.avro.Schema.Type.{ ENUM, RECORD }
@@ -25,16 +25,12 @@ object AvroConverter {
     maybeBaseTrait: Option[String],
     maybeFlags: Option[List[Long]]): List[Tree] = {
       
-    val name: String = protocol.getName
-    val ns: String = protocol.getNamespace
     val allTypes = protocol.getTypes.toList
     allTypes.foreach(schema => 
       StandardTypeRegistrar.registerType(schema, classStore))
-    def isTopLevelNamespace(schema: Schema) = schema.getNamespace == ns
-    val localSubTypes = allTypes.filter(isTopLevelNamespace)
-    
+    val localSubTypes = Standard.getLocalSubtypes(protocol)
     if (localSubTypes.length > 1) {
-      val maybeNewBaseTrait = Some(name)
+      val maybeNewBaseTrait = Some(protocol.getName)
       val maybeNewFlags = Some(List(Flags.FINAL.toLong))
       val traitDef = StandardTraitTree.toADTRootDef(protocol)
       traitDef +: localSubTypes.flatMap(schema =>

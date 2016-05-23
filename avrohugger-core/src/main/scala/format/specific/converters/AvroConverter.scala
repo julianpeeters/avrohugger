@@ -4,7 +4,7 @@ package specific
 package converters
 
 import trees.{ SpecificCaseClassTree, SpecificObjectTree, SpecificTraitTree }
-import util.ScalaDocGen
+import docs.ScalaDocGen
 
 import treehugger.forest._
 import definitions._
@@ -26,23 +26,20 @@ object AvroConverter {
     maybeBaseTrait: Option[String],
     maybeFlags: Option[List[Long]]): List[Tree] = {
       
-    val name: String = protocol.getName
-    val ns: String = protocol.getNamespace
     val allTypes = protocol.getTypes.toList
     val messages = protocol.getMessages.toMap
     val maybeProtocolDoc = Option(protocol.getDoc)
+    def isEnum(schema: Schema) = schema.getType == Schema.Type.ENUM
     allTypes.foreach(schema => 
       SpecificTypeRegistrar.registerType(schema, classStore))
-    def isEnum(schema: Schema) = schema.getType == Schema.Type.ENUM
-    def isTopLevelNamespace(schema: Schema) = schema.getNamespace == ns
     if (messages.isEmpty) {
-      val localSubTypes = allTypes.filter(isTopLevelNamespace)
+      val localSubtypes = SpecificRecord.getLocalSubtypes(protocol)
       // protocols with only 1 schema are ADTs (Java Enums don't count)
-      if (localSubTypes.filterNot(isEnum).length > 1) {
-        val maybeNewBaseTrait = Some(name)
+      if (localSubtypes.filterNot(isEnum).length > 1) {
+        val maybeNewBaseTrait = Some(protocol.getName)
         val maybeNewFlags = Some(List(Flags.FINAL.toLong))
         val sealedTraitDef = SpecificTraitTree.toADTRootDef(protocol)
-        sealedTraitDef +: localSubTypes.filterNot(isEnum).flatMap(schema =>
+        sealedTraitDef +: localSubtypes.filterNot(isEnum).flatMap(schema =>
           SpecificScalaTreehugger.asTopLevelDef(
             classStore,
             namespace,
@@ -61,7 +58,7 @@ object AvroConverter {
             case None => List.empty
           }	
         } 
-        docTrees ::: localSubTypes.filterNot(isEnum).flatMap(schema =>
+        docTrees ::: localSubtypes.filterNot(isEnum).flatMap(schema =>
         SpecificScalaTreehugger.asTopLevelDef(
           classStore,
           namespace,

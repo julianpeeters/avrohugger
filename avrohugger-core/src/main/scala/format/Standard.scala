@@ -35,6 +35,20 @@ object Standard extends SourceFormat {
       typeMatcher,
       schemaStore)
   }
+  
+  override def getName(schemaOrProtocol: Either[Schema, Protocol]): String = {
+    schemaOrProtocol match {
+      case Left(schema) => schema.getName
+      case Right(protocol) => {
+        val localSubTypes = getLocalSubtypes(protocol)
+        if (localSubTypes.length > 1) protocol.getName // for ADT
+        else localSubTypes.headOption match {
+          case Some(schema) => schema.getName // for single class defintion
+          case None => protocol.getName  // default to protocol name
+        }
+      }
+    }
+  }
 
   override def writeToFile(
     classStore: ClassStore, 
