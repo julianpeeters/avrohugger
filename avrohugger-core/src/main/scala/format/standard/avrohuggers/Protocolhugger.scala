@@ -1,13 +1,12 @@
 package avrohugger
 package format
 package standard
-package converters
+package avrohuggers
 
-import trees.{ StandardCaseClassTree, StandardObjectTree, StandardTraitTree }
+import trees.StandardTraitTree
 import docs.ScalaDocGen
 
 import org.apache.avro.{ Protocol, Schema }
-import org.apache.avro.Schema.Type.{ ENUM, RECORD }
 
 import treehugger.forest._
 import definitions._
@@ -15,9 +14,9 @@ import treehuggerDSL._
 
 import scala.collection.JavaConversions._
 
-object AvroConverter {
+object Protocolhugger {
   
-  def protocolToTrees(
+  def toTrees(
     classStore: ClassStore,
     namespace: Option[String],
     protocol: Protocol,
@@ -25,12 +24,16 @@ object AvroConverter {
     maybeBaseTrait: Option[String],
     maybeFlags: Option[List[Long]]): List[Tree] = {
       
+    val name: String = protocol.getName
+    val ns: String = protocol.getNamespace
     val allTypes = protocol.getTypes.toList
     allTypes.foreach(schema => 
       StandardTypeRegistrar.registerType(schema, classStore))
-    val localSubTypes = Standard.getLocalSubtypes(protocol)
+    def isTopLevelNamespace(schema: Schema) = schema.getNamespace == ns
+    val localSubTypes = allTypes.filter(isTopLevelNamespace)
+    
     if (localSubTypes.length > 1) {
-      val maybeNewBaseTrait = Some(protocol.getName)
+      val maybeNewBaseTrait = Some(name)
       val maybeNewFlags = Some(List(Flags.FINAL.toLong))
       val traitDef = StandardTraitTree.toADTRootDef(protocol)
       traitDef +: localSubTypes.flatMap(schema =>
@@ -62,39 +65,5 @@ object AvroConverter {
           maybeFlags))
     }
   }
-  
-  
-  def schemaToTrees(
-    classStore: ClassStore,
-    namespace: Option[String],
-    schema: Schema,
-    typeMatcher: TypeMatcher,
-    maybeBaseTrait: Option[String],
-    maybeFlags: Option[List[Long]]): List[Tree] = { // as case class definition
-      
-    StandardTypeRegistrar.registerType(schema, classStore)
-    
-    schema.getType match {
-      case RECORD => 
-        val classDef = StandardCaseClassTree.toCaseClassDef(
-          classStore,
-          namespace,
-          schema,
-          typeMatcher,
-          maybeBaseTrait,
-          maybeFlags)
-        List(classDef)
-      case ENUM => 
-        val objectDef = StandardObjectTree.toObjectDef(
-          classStore,
-          schema,
-          maybeBaseTrait,
-          maybeFlags)
-        List(objectDef)
-      case _ => sys.error("Only RECORD or ENUM can be toplevel definitions")
-    }
-  }
-  
-  
   
 }

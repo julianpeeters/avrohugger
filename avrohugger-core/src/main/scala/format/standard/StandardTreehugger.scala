@@ -2,10 +2,10 @@ package avrohugger
 package format
 package standard
 
-import avrohugger.format.standard.converters.AvroConverter
-import avrohugger.input.DependencyInspector._
-import avrohugger.input.NestedSchemaExtractor._
-import avrohugger.input.reflectivecompilation.schemagen.SchemaStore
+import avrohuggers.{ Protocolhugger, Schemahugger }
+import input.DependencyInspector._
+import input.NestedSchemaExtractor._
+import input.reflectivecompilation.schemagen.SchemaStore
 
 import org.apache.avro.{ Protocol, Schema }
 import org.apache.avro.Schema.Field
@@ -63,7 +63,7 @@ object StandardTreehugger {
     maybeFlags: Option[List[Long]]): List[Tree] = {
 
     schemaOrProtocol match {
-      case Left(schema) => AvroConverter.schemaToTrees(
+      case Left(schema) => Schemahugger.toTrees(
         classStore,
         namespace,
         schema,
@@ -71,7 +71,7 @@ object StandardTreehugger {
         maybeBaseTrait,
         maybeFlags
       )
-      case Right(protocol) => AvroConverter.protocolToTrees(
+      case Right(protocol) => Protocolhugger.toTrees(
         classStore,
         namespace,
         protocol,

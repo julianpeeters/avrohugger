@@ -2,7 +2,7 @@ package avrohugger
 package format
 package specific
 
-import converters.AvroConverter
+import avrohuggers.{ Protocolhugger, Schemahugger }
 import input.reflectivecompilation.schemagen.SchemaStore
 import docs.ScalaDocGen
 
@@ -74,7 +74,7 @@ object SpecificScalaTreehugger {
     maybeFlags: Option[List[Long]]): List[Tree] = {
     
     schemaOrProtocol match {
-      case Left(schema) => AvroConverter.schemaToTrees(
+      case Left(schema) => Schemahugger.toTrees(
         classStore,
         namespace,
         schema,
@@ -82,7 +82,7 @@ object SpecificScalaTreehugger {
         maybeBaseTrait,
         maybeFlags
       )
-      case Right(protocol) => AvroConverter.protocolToTrees(
+      case Right(protocol) => Protocolhugger.toTrees(
         classStore,
         namespace,
         protocol,
