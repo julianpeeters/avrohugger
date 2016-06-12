@@ -39,28 +39,28 @@ object JavaConverter {
         }
       }
       case Schema.Type.ARRAY => {
-      	val applyParam = {
+        val applyParam = {
           BLOCK(tree MAP(LAMBDA(PARAM("x")) ==> BLOCK(
-      			convertToJava(schema.getElementType, REF("x"))
-      		)))
+            convertToJava(schema.getElementType, REF("x"))
+          )))
         }
-      	REF("scala.collection.JavaConversions.bufferAsJavaList") APPLY(applyParam DOT "toBuffer")
+        REF("scala.collection.JavaConversions.bufferAsJavaList") APPLY(applyParam DOT "toBuffer")
       }
       case Schema.Type.MAP      => {
         val HashMapClass = RootClass.newClass("java.util.HashMap[String, Any]")
         BLOCK(
           VAL("map", HashMapClass) := NEW(HashMapClass),
-	        tree FOREACH( LAMBDA(PARAM("kvp")) ==>
-	        	BLOCK(
-	        	  VAL("key") := REF("kvp._1"),
-	        	  VAL("value") := REF("kvp._2"),
+          tree FOREACH( LAMBDA(PARAM("kvp")) ==>
+            BLOCK(
+              VAL("key") := REF("kvp._1"),
+              VAL("value") := REF("kvp._2"),
               REF("map").DOT("put").APPLY(REF("key"), convertToJava(schema.getValueType, REF("value")))
-			      )
+            )
           ),
           REF("map")
         )
       }
-      case Schema.Type.FIXED    => sys.error("the FIXED datatype is not yet supported")
+      case Schema.Type.FIXED => sys.error("the FIXED datatype is not yet supported")
       case Schema.Type.BYTES => REF("java.nio.ByteBuffer") DOT "wrap" APPLY tree
       case _ => tree
     }

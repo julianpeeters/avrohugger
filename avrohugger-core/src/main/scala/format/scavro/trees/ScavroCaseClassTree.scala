@@ -4,7 +4,8 @@ package scavro
 package trees
 
 import converters.JavaConverter
-import docs.ScalaDocGen
+import matchers.{ DefaultValueMatcher, TypeMatcher }
+import stores.ClassStore
 
 import treehugger.forest._
 import definitions._
@@ -33,7 +34,8 @@ object ScavroCaseClassTree {
     val scalaClassParams: List[ValDef] = avroFields.map { f =>
       val fieldName = f.name
       val fieldType = typeMatcher.toScalaType(classStore, namespace, f.schema)
-      PARAM(fieldName, fieldType): ValDef
+      val defaultValue = DefaultValueMatcher.getDefaultValue(f, typeMatcher)
+      PARAM(fieldName, fieldType) := defaultValue
     }
 
     val scalaClassAccessors: List[Tree] = avroFields.map(field => {
@@ -105,7 +107,10 @@ object ScavroCaseClassTree {
       )
     ) : Tree
 
-    val treeWithScalaDoc = ScalaDocGen.docToScalaDoc(Left(schema),caseClassTree)
+    val treeWithScalaDoc = ScalaDocGenerator.docToScalaDoc(
+      Left(schema),
+      caseClassTree)
+      
     treeWithScalaDoc
   }
 

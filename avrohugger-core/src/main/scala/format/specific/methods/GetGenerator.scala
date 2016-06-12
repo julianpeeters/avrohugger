@@ -9,20 +9,16 @@ import treehugger.forest._
 import definitions._
 import treehuggerDSL._
 
-import org.apache.avro.Schema
-
-import scala.collection.JavaConversions._
-
 object GetGenerator {
   def toDef(indexedFields: List[IndexedField]) = {
     def asGetCase(field: IndexedField) = {
-		        
-		  CASE (ID("pos"), IF(REF("pos") INT_== LIT(field.idx))) ==> {
-	      BLOCK(convertToJava(field.avroField.schema, REF(field.avroField.name))).AS(AnyRefClass)
-		  }
-		}
+            
+      CASE (ID("pos"), IF(REF("pos") INT_== LIT(field.idx))) ==> {
+        BLOCK(convertToJava(field.avroField.schema, REF(field.avroField.name))).AS(AnyRefClass)
+      }
+    }
 
-		val errorCase = CASE(WILDCARD) ==> NEW("org.apache.avro.AvroRuntimeException", LIT("Bad index"))
+    val errorCase = CASE(WILDCARD) ==> NEW("org.apache.avro.AvroRuntimeException", LIT("Bad index"))
     val casesGet = indexedFields.map(field => asGetCase(field)):+errorCase
 
     DEF("get", AnyRefClass) withParams(PARAM("field$", IntClass)) := BLOCK(

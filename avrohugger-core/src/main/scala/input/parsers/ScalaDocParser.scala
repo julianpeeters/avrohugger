@@ -5,7 +5,7 @@ package parsers
 object ScalaDocParser {
 
   val scalaDocRegex = """/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/""".r
-
+  
   def getScalaDocs(compUnits: List[String]): List[List[Option[String]]] = {
     def extractDoc(maybeDoc: String) = scalaDocRegex.findFirstIn(maybeDoc)
     compUnits.map(compilationUnit => {

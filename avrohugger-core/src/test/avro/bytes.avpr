@@ -2,7 +2,7 @@
   "namespace": "example.proto",
   "protocol": "BinaryProtocol",
   "types": [
-    {"name": "Binary", "type": "record",
+    {"name": "BinaryPr", "type": "record",
       "fields": [
         {"name": "data",   "type": "bytes"}
       ]

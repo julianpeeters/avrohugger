@@ -2,7 +2,7 @@
 
 protocol ImportedProtocol {
 
-  record ExternalDependency {
+  record AvroTypeProviderTest70 {
     int number;
   }
 }

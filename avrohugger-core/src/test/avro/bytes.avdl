@@ -2,7 +2,7 @@
 
 protocol BinaryIDL {
 
-  record Binary {
+  record BinaryIdl {
     bytes data;
   }
 }

@@ -4,7 +4,8 @@ package scavro
 package trees
 
 import converters.ScalaConverter
-import docs.ScalaDocGen
+import matchers.TypeMatcher
+import stores.ClassStore
 
 import treehugger.forest._
 import definitions._
@@ -47,7 +48,10 @@ object ScavroObjectTree {
       VAL(schema.getEnumSymbols.mkString(", ")) := REF("Value")
     )
     
-    val treeWithScalaDoc = ScalaDocGen.docToScalaDoc(Left(schema), objectTree)
+    val treeWithScalaDoc = ScalaDocGenerator.docToScalaDoc(
+      Left(schema),
+      objectTree)
+      
     treeWithScalaDoc
   }
 

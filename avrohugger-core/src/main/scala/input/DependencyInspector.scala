@@ -33,6 +33,4 @@ object DependencyInspector {
       schema.getName
   }
 
-  def getReferredTypeName(field: Field): String = getReferredTypeName(field.schema)
-
 }

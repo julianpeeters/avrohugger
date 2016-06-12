@@ -4,13 +4,14 @@ package reflectivecompilation
 package schemagen
 
 import parsers.ScalaDocParser
-import java.util.{Arrays => JArrays}
-import org.apache.avro.Schema.Field
+import stores.SchemaStore
+
 import org.apache.avro.Schema
 
-import scala.collection.JavaConverters._
+import java.util.{Arrays => JArrays}
 
-import scala.reflect.runtime.universe._
+import scala.reflect.runtime.universe.Name
+import scala.collection.JavaConverters._
 
 object EnumSchemaGenerator  {
 

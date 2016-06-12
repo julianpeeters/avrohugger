@@ -3,7 +3,8 @@ package format
 package standard
 package trees
 
-import docs.ScalaDocGen
+import matchers.{ DefaultValueMatcher, TypeMatcher }
+import stores.ClassStore
 
 import treehugger.forest._
 import definitions._
@@ -29,7 +30,8 @@ object StandardCaseClassTree {
     val params: List[ValDef] = schema.getFields.toList.map(f => {
       val fieldName = f.name
       val fieldType = typeMatcher.toScalaType(classStore, namespace, f.schema)
-      PARAM(fieldName, fieldType): ValDef
+      val defaultValue = DefaultValueMatcher.getDefaultValue(f, typeMatcher)
+      PARAM(fieldName, fieldType) := defaultValue
     })
     
     // There could be base traits, flags, or both, and could have no fields
@@ -87,7 +89,10 @@ object StandardCaseClassTree {
     val classTree = caseClassDef.tree
 
 
-    val treeWithScalaDoc = ScalaDocGen.docToScalaDoc(Left(schema), classTree)
+    val treeWithScalaDoc = ScalaDocGenerator.docToScalaDoc(
+      Left(schema),
+      classTree)
+      
     treeWithScalaDoc
   }
 

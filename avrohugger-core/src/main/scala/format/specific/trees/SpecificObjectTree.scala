@@ -3,13 +3,14 @@ package format
 package specific
 package trees
 
-import treehugger.forest._
-import definitions._
-import treehuggerDSL._
+//println needs import generators.docs.ScalaDocGenerator and commentspec
+
 
 import org.apache.avro.{ Protocol, Schema }
 
-import scala.collection.JavaConversions._
+import treehugger.forest._
+import definitions._
+import treehuggerDSL._
 
 object SpecificObjectTree {
 
@@ -39,5 +40,4 @@ object SpecificObjectTree {
     )
   }
   
-
 }

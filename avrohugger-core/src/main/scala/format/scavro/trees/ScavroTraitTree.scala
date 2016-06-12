@@ -3,8 +3,6 @@ package format
 package scavro
 package trees
 
-import docs.ScalaDocGen
-
 import treehugger.forest._
 import definitions._
 import treehuggerDSL._
@@ -20,7 +18,10 @@ object ScavroTraitTree {
         .withParents("AvroSerializeable")
         .withParents("Product")
         .withParents("Serializable")
-    val treeWithScalaDoc = ScalaDocGen.docToScalaDoc(Right(protocol), traitTree)
+    val treeWithScalaDoc = ScalaDocGenerator.docToScalaDoc(
+      Right(protocol),
+      traitTree)
+    
     treeWithScalaDoc
   }
   

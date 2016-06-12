@@ -1,7 +1,8 @@
 package avrohugger
 package input
 
-import avrohugger.input.reflectivecompilation.schemagen._
+import stores.SchemaStore
+
 import org.apache.avro.Schema
 import org.apache.avro.Schema.Type.{ARRAY, ENUM, MAP, RECORD, UNION}
 
@@ -28,7 +29,7 @@ object NestedSchemaExtractor {
                 else fieldSchema :: extract(fieldSchema, fieldSchema.getFullName :: fieldPath)
               }
               case UNION => fieldSchema.getTypes.asScala.toList.flatMap(x => flattenSchema(x))
-              case ENUM => { //List(fieldSchema)
+              case ENUM => {
                 // if the field schema is one that has already been stored, use that one
                 if (schemaStore.schemas.contains(fieldSchema.getFullName)) List()
                 else List(fieldSchema)

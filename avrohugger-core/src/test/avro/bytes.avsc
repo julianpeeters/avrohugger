@@ -1,7 +1,7 @@
 {
  "namespace": "example",
  "type": "record",
- "name": "Binary",
+ "name": "BinarySc",
  "fields": [
      {"name": "data", "type": "bytes"}
  ]

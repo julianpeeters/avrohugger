@@ -3,7 +3,8 @@ package format
 package specific
 package trees
 
-import docs.ScalaDocGen
+import stores.ClassStore
+import matchers.TypeMatcher
 
 import treehugger.forest._
 import definitions._
@@ -23,7 +24,10 @@ object SpecificTraitTree {
         .withParents("org.apache.avro.specific.SpecificRecordBase")
         .withParents("Product")
         .withParents("Serializable")  
-    val treeWithScalaDoc = ScalaDocGen.docToScalaDoc(Right(protocol), traitTree)
+    val treeWithScalaDoc = ScalaDocGenerator.docToScalaDoc(
+      Right(protocol),
+      traitTree)
+      
     treeWithScalaDoc
   }
   
@@ -121,7 +125,9 @@ object SpecificTraitTree {
     }
     
     // Return
-    val treeWithScalaDoc = ScalaDocGen.docToScalaDoc(Right(protocol), traitTree)
+    val treeWithScalaDoc = ScalaDocGenerator.docToScalaDoc(
+      Right(protocol),
+      traitTree)
     treeWithScalaDoc
     
   }

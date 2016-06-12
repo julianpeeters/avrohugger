@@ -4,15 +4,12 @@ package specific
 package methods
 
 import converters.ScalaConverter.convertFromJava
+import matchers.TypeMatcher
+import stores.ClassStore
 
 import treehugger.forest._
 import definitions._
 import treehuggerDSL._
-
-import org.apache.avro.Schema
-
-import scala.collection.JavaConversions._
-import scala.language.postfixOps
 
 object PutGenerator {
 

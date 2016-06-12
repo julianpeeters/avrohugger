@@ -3,7 +3,7 @@ package format
 package standard
 package trees
 
-import docs.ScalaDocGen
+import stores.ClassStore
 
 import treehugger.forest._
 import definitions._
@@ -45,7 +45,10 @@ object StandardObjectTree {
       VAL(schema.getEnumSymbols.mkString(", ")) := REF("Value")
     )
 
-    val treeWithScalaDoc = ScalaDocGen.docToScalaDoc(Left(schema), objectTree)
+    val treeWithScalaDoc = ScalaDocGenerator.docToScalaDoc(
+      Left(schema),
+      objectTree)
+      
     treeWithScalaDoc
     
   }

@@ -2,7 +2,11 @@ package avrohugger
 package input
 package parsers
 
-import reflectivecompilation.schemagen._
+import reflectivecompilation.schemagen.{
+  EnumSchemaGenerator,
+  RecordSchemaGenerator
+}
+import stores.{ SchemaStore, TypecheckDependencyStore}
 
 import collection.JavaConversions._
 
@@ -22,35 +26,50 @@ object TreeInputParser {
     schemaStore: SchemaStore,
     typecheckDependencyStore: TypecheckDependencyStore): List[Schema] = {
 
-    //e.g. takes `package test.one; package dev.helper;`, returns `test.one.dev.helper`
+    // e.g. takes `package test.one; package dev.helper;`,
+    // returns `test.one.dev.helper`
     def squashNamespace(pkgTrees: Seq[RefTree]): Name = {
       def extractNamespace(pkgTree: RefTree) ={
         // necessary because just using `.name` results in `one.helper`
         val owner = pkgTree.name
         val children = pkgTree.children
         val namespace = children match {
-          case List() => s"$owner" //empty list corresponds to a single-level package
+          case List() => s"$owner" //empty corresponds to a single-level package
           case List(child) => s"$child.$owner"
         }
         namespace
       }
-      val packageString = pkgTrees.map(tree => extractNamespace(tree)).mkString(".")
-      newTermName(packageString)
+      val pkgString = pkgTrees.map(tree => extractNamespace(tree)).mkString(".")
+      newTermName(pkgString)
     }
 
-    def enforceSingleScalaDoc(className: String, maybeScalaDoc: List[Option[String]]) = {
+    def enforceSingleScalaDoc(
+      className: String,
+      maybeScalaDoc: List[Option[String]]) = {
       maybeScalaDoc match {
         case List(doc) => doc
         case x => sys.error("Expected single ScalaDoc, found " + x)
        }
     }
 
-    def generateSchema(namespace: Option[Name], classDefTree: Tree, maybeScalaDocs: List[Option[String]], schemaStore: SchemaStore): List[Schema] = {
+    def generateSchema(
+      namespace: Option[Name],
+      classDefTree: Tree,
+      maybeScalaDocs: List[Option[String]],
+      schemaStore: SchemaStore): List[Schema] = {
       classDefTree match {
         // case classes get mapped to records
         case t @ q"$mods class $className[..$tparams](..$fields)(...$rest) extends ..$parents { $self => ..$body }" => {
-          val maybeScalaDoc = enforceSingleScalaDoc(className.toString, maybeScalaDocs)
-          List(RecordSchemaGenerator.generateSchema(className.toString, namespace, fields, maybeScalaDoc, schemaStore, typecheckDependencyStore)) 
+          val maybeScalaDoc = enforceSingleScalaDoc(
+            className.toString,
+            maybeScalaDocs)
+          List(
+            RecordSchemaGenerator.generateSchema(
+              className.toString,
+              namespace, fields,
+              maybeScalaDoc,
+              schemaStore,
+              typecheckDependencyStore)) 
         }
         // objects get mapped to empty records or enums
         case t @ q"$mods object $objectName extends ..$parents { $self => ..$body }" => {
@@ -58,10 +77,25 @@ object TreeInputParser {
           val maybeScalaDoc = enforceSingleScalaDoc(objectName.toString, maybeScalaDocs)
           // case objects get mapped to empty records
           if (mods.flags == CASE) {
-            List(RecordSchemaGenerator.generateSchema(objectName.toString, namespace, List.empty, maybeScalaDoc, schemaStore, typecheckDependencyStore))
+            List(
+              RecordSchemaGenerator.generateSchema(
+                objectName.toString,
+                namespace,
+                List.empty,
+                maybeScalaDoc,
+                schemaStore,
+                typecheckDependencyStore))
           }
           // objects that extend Enumeration get mapped to enums
-          else List(EnumSchemaGenerator.generateSchema(objectName.toString, namespace, values, maybeScalaDoc, schemaStore)) 
+          else {
+            List(
+              EnumSchemaGenerator.generateSchema(
+                objectName.toString,
+                namespace,
+                values,
+                maybeScalaDoc,
+                schemaStore)) 
+          }
         }
         case definition => sys.error(s"""Unsupported definition. Expected case class or object definition, 
           but found $definition with tree: ${showRaw(definition)}""")
@@ -208,18 +242,6 @@ object TreeInputParser {
       
       
       
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-
-
       // match list of classes in a package, wrap them each in the package and resubmit
       // to be matched as a single class def in 0 or more packages.
 

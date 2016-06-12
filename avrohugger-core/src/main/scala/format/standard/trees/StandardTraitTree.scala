@@ -3,8 +3,6 @@ package format
 package standard
 package trees
 
-import docs.ScalaDocGen
-
 import treehugger.forest._
 import definitions._
 import treehuggerDSL._
@@ -21,7 +19,10 @@ object StandardTraitTree {
         .withFlags(Flags.SEALED)
         .withParents("Product")
         .withParents("Serializable")
-    val treeWithScalaDoc = ScalaDocGen.docToScalaDoc(Right(protocol), traitTree)
+    val treeWithScalaDoc = ScalaDocGenerator.docToScalaDoc(
+      Right(protocol),
+      traitTree)
+      
     treeWithScalaDoc
   }
   

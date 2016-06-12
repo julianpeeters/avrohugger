@@ -3,9 +3,9 @@ package format
 package specific
 package trees
 
-import matchers.{ DefaultParamMatcher, DefaultValueMatcher }
+import matchers.{ DefaultParamMatcher, DefaultValueMatcher, TypeMatcher }
 import methods.{ GetGenerator, GetSchemaGenerator, PutGenerator }
-import docs.ScalaDocGen
+import stores.ClassStore
 
 import treehugger.forest._
 import definitions._
@@ -136,7 +136,10 @@ object SpecificCaseClassTree {
         defGetSchema)
     }
 
-    val treeWithScalaDoc = ScalaDocGen.docToScalaDoc(Left(schema),caseClassTree)
+    val treeWithScalaDoc = ScalaDocGenerator.docToScalaDoc(
+      Left(schema),
+      caseClassTree)
+      
     treeWithScalaDoc
 
   }

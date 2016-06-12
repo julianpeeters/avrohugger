@@ -2,8 +2,6 @@ package avrohugger
 package input
 package reflectivecompilation
 
-import schemagen._
-
 import scala.collection.JavaConverters._
 
 object PackageSplitter {
@@ -15,17 +13,22 @@ object PackageSplitter {
       pkgResult: List[String]= List(),
       compUnitResult: List[String]= List() ): List[String] = {
 
-      def getBody(code: List[String], bodyResult: List[String] = List()): List[String] = {
+      def getBody(
+        code: List[String],
+        bodyResult: List[String] = List()): List[String] = {
         code match {
           case head::tail if head.startsWith("package") => {
-            getCompilationUnits(code, List(), compUnitResult:+((pkgResult:::bodyResult).mkString("\n")))
+            val repackagedBody = (pkgResult:::bodyResult).mkString("\n")
+            getCompilationUnits(code, List(), compUnitResult :+ repackagedBody)
           }
           case head::tail => getBody(tail, bodyResult:+head)
           case Nil => compUnitResult:+((pkgResult:::bodyResult).mkString("\n"))
         }
       }
       val compilationUnits = lines match {
-        case head::tail if head.startsWith("package") => getCompilationUnits(tail, pkgResult:+head, compUnitResult)
+        case head::tail if head.startsWith("package") => {
+          getCompilationUnits(tail, pkgResult:+head, compUnitResult)
+        }
         case ls => getBody(ls)
       }
       compilationUnits
@@ -39,7 +42,9 @@ object PackageSplitter {
         case Some(nonWrappedPackage) => {
           val openPackage = nonWrappedPackage + " {"
           val closePackage = "}"
-          val wrappedPackage = nonWrappedRegEx.replaceFirstIn(code, openPackage) + closePackage
+          val wrappedPackage = {
+            nonWrappedRegEx.replaceFirstIn(code, openPackage) + closePackage
+          }
           wrapPackages(wrappedPackage)}
         case None => code
       }
@@ -47,9 +52,9 @@ object PackageSplitter {
 
     val lines = code.split("\n").toList
     val compilationUnits = getCompilationUnits(lines)
+    val formatted = compilationUnits.map(compUnit => wrapPackages(compUnit))
     // reversed so the most nested classes need to be expanded first
-    val formatted = compilationUnits.map(compUnit => wrapPackages(compUnit)).reverse
-    formatted
+    formatted.reverse
   }
 
 }

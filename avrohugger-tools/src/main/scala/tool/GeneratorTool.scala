@@ -1,13 +1,13 @@
 package avrohugger
 package tool
-import format.SourceFormat
+
+import format.abstractions.SourceFormat
 
 import org.apache.avro.tool.Tool
 import org.apache.avro.generic.GenericData.StringType;
 import org.apache.avro.Schema;
 import org.apache.avro.compiler.specific.SpecificCompiler;
 import org.apache.avro.Protocol;
-
 
 import java.io.File
 import java.io.FilenameFilter;
@@ -20,7 +20,6 @@ import java.util.List;
 
 import scala.collection.JavaConversions._
 import scala.util.Try
-
 
 /**
  * A Tool for generating Scala case classes from schemas 

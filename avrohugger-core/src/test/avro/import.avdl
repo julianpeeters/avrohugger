@@ -1,6 +1,7 @@
 @namespace("example.idl")
 
 protocol ImportProtocol {
+  import idl "defaults.avdl";
   import idl "imported.avdl";
   import schema "imported.avsc";
 
@@ -12,5 +13,10 @@ protocol ImportProtocol {
   record DependentRecord2 {
     other.ns.ImportedSchema dependency; // refers to the record defined in imported.avsc
     string name;
+  }
+  
+  record DependentRecord3 { // refers to the record defined in defaults.avdl
+    Embedded dependency;
+    boolean value;
   }
 }

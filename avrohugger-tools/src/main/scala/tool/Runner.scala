@@ -1,6 +1,8 @@
 package avrohugger
 package tool
-import format.{ Scavro, SourceFormat, Standard, SpecificRecord }
+
+import format.abstractions.SourceFormat
+import format.{ Scavro, Standard, SpecificRecord }
 
 import java.util.Arrays;
 import java.util.Map;

@@ -2,6 +2,9 @@ package avrohugger
 package input
 package parsers
 
+import format.abstractions.SourceFormat
+import stores.ClassStore
+
 import org.apache.avro.{ Protocol, Schema }
 import org.apache.avro.Schema.Parser
 import org.apache.avro.Schema.Type.{ RECORD, UNION, ENUM }
@@ -11,18 +14,21 @@ import org.apache.avro.file.DataFileReader
 
 import java.io.File
 
-import scala.collection.JavaConverters._
+import scala.collection.JavaConversions._
 
 class FileInputParser {
   lazy val parser = new Parser()
 
-  def getSchemaOrProtocols(infile: File): List[Either[Schema, Protocol]] = {
+  def getSchemaOrProtocols(
+    infile: File,
+    format: SourceFormat,
+    classStore: ClassStore): List[Either[Schema, Protocol]] = {
     
     def unUnion(schema: Schema) = {
       schema.getType match {
         //if top-level record is wrapped in a union with no other types
         case UNION => {
-          val types = schema.getTypes.asScala.toList
+          val types = schema.getTypes.toList
           if (types.length == 1) types.head
           else sys.error("""Unions, beyond nullable fields, are not supported. 
             |Found a union of more than one type: """.trim.stripMargin + types)
@@ -34,14 +40,7 @@ class FileInputParser {
       }
     }
     
-    /**
-     * Avro files may contain imported types from other namespaces. For .avdl
-     * files, it is possible to see where the imported types come from, and if 
-     * they come from a protocol or idl, then they should be generated as part 
-     * of an ADT. For .avpr and .avsc files, it is NOT possible to determine if 
-     * imported types are part of an external idl or protocol, and are generated
-     * as simple stand-alone classes or enums.  
-     */
+    
     val schemaOrProtocols: List[Either[Schema, Protocol]] = {
       infile.getName.split("\\.").last match {
         case "avro" =>
@@ -54,19 +53,40 @@ class FileInputParser {
           List(Left(schema))
         case "avpr" =>
           val protocol = Protocol.parse(infile)
-          val schemas = protocol.getTypes.asScala.toList
-          val otherNamespaceSchemaOrProtocols = schemas.filterNot(schema => {
-            schema.getNamespace == protocol.getNamespace
-          }).map(schema => Left(schema))
-          Right(protocol) +: otherNamespaceSchemaOrProtocols
+          List(Right(protocol))
         case "avdl" =>
           val idlParser = new Idl(infile)
           val protocol = idlParser.CompilationUnit()
+          /**
+           * IDLs may refer to types imported from another file. When converted 
+           * to protocols, the imported types that share the IDL's namespace 
+           * cannot be distinguished from types defined within the IDL, yet 
+           * should not be generated as subtypes of the IDL's ADT. So, strip the
+           * protocol of all imported types and generate them separately.
+           */
+          val types = protocol.getTypes.toList
           val importedFiles = IdlImportParser.getImportedFiles(infile)
           val importedSchemaOrProtocols = importedFiles.flatMap(imported => {
-            getSchemaOrProtocols(imported)
+            getSchemaOrProtocols(imported, format, classStore)
           }).toList
-          Right(protocol) +: importedSchemaOrProtocols
+          def stripImports(
+            protocol: Protocol,
+            importedSchemaOrProtocols: List[Either[Schema, Protocol]]) = {
+            val imported = importedSchemaOrProtocols.flatMap(avroDef => {
+              avroDef match {
+                case Left(importedSchema) => List(importedSchema)
+                case Right(importedProtocol) => importedProtocol.getTypes.toList
+              }
+            })
+            val localTypes = imported.foldLeft(types)((remaining, imported) => {
+              remaining.filterNot(remainingType => remainingType == imported)
+            })
+            protocol.setTypes(localTypes)
+            protocol
+          }
+          val localProtocol = stripImports(protocol, importedSchemaOrProtocols)
+          // reverse to dependent classes are generated first
+          (Right(localProtocol) +: importedSchemaOrProtocols).reverse
         case _ =>
           throw new Exception("""File must end in ".avpr" for protocol files, 
             |".avsc" for plain text json files, ".avdl" for IDL files, or .avro 

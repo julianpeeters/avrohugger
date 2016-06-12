@@ -1,22 +1,25 @@
 package avrohugger
 package format
 
-import avrohugger.format.specific._
-import avrohugger.input.reflectivecompilation.schemagen.SchemaStore
+import abstractions.SourceFormat
+import format.specific.{ SpecificJavaTreehugger, SpecificScalaTreehugger}
+import models.CompilationUnit
+import stores.{ ClassStore, SchemaStore }
+import matchers.TypeMatcher
 
 import treehugger.forest._
-import definitions._
-import treehuggerDSL._
+import definitions.RootClass
 
 import org.apache.avro.{ Protocol, Schema }
 import org.apache.avro.Schema.Type.{ ENUM, RECORD }
 
-import java.nio.file.{Path, Paths, Files, StandardOpenOption}
-import java.io.{File, FileNotFoundException, IOException}
-
+import java.nio.file.Path
 import scala.collection.JavaConversions._
 
 object SpecificRecord extends SourceFormat{
+  
+  // SpecificRecord API can only handle Java enums
+  def isEnum(schema: Schema) = schema.getType == Schema.Type.ENUM
 
   override val toolName = "generate-specific"
 
@@ -34,48 +37,116 @@ object SpecificRecord extends SourceFormat{
   }
 
   val typeMatcher = new TypeMatcher
+  val scalaTreehugger = SpecificScalaTreehugger
 
-  override def asDefinitionString(
+  override def asCompilationUnits(
     classStore: ClassStore, 
     namespace: Option[String], 
     schemaOrProtocol: Either[Schema, Protocol],
-    schemaStore: SchemaStore): String = {
-      schemaOrProtocol match {
-        case Left(schema) => schema.getType match {
+    schemaStore: SchemaStore,
+    maybeOutDir: Option[String]): List[CompilationUnit] = {
+      
+    registerTypes(schemaOrProtocol, classStore)
+
+    // generate as single string ADT or solo class
+    def protocolToADT(protocol: Protocol): List[CompilationUnit] = {
+      val localSubtypes = getLocalSubtypes(protocol)
+      val localEnums = localSubtypes.filter(isEnum)
+      val scalaCompilationUnit = getScalaCompilationUnit(
+        classStore,
+        namespace,
+        Right(protocol),
+        typeMatcher,
+        schemaStore,
+        maybeOutDir)
+      val javaCompilationUnits = localEnums.map(schema => {
+        protocolEnumSchemaToEnum(namespace, schema, maybeOutDir)
+      })
+      scalaCompilationUnit +: javaCompilationUnits
+    }
+    
+    // generate as RPC trait and separate class/enum strings
+    def protocolToRPC(protocol: Protocol): List[CompilationUnit] = {
+      val localSubtypes = getLocalSubtypes(protocol)
+      val localEnums = localSubtypes.filter(isEnum)
+      val localNonEnums = localSubtypes.filterNot(isEnum)
+      val maybePath = getFilePath(namespace, Right(protocol), maybeOutDir)
+      val rpcTraitString = scalaTreehugger.asScalaCodeString(
+        classStore,
+        namespace,
+        Right(protocol),
+        typeMatcher,
+        schemaStore)
+      val rpcTraitCompUnit = CompilationUnit(maybePath, rpcTraitString)
+      val scalaCompUnits = localNonEnums.map(schema => {
+        val scalaCompilationUnit = getScalaCompilationUnit(
+          classStore,
+          namespace,
+          Left(schema),
+          typeMatcher,
+          schemaStore,
+          maybeOutDir)
+        scalaCompilationUnit
+      })
+      val javaCompUnits = localEnums.map(schema => {
+        protocolEnumSchemaToEnum(namespace, schema, maybeOutDir)
+      })
+      val rpcTypeCompUnits = scalaCompUnits ::: javaCompUnits
+      rpcTraitCompUnit +: rpcTypeCompUnits
+    }
+    
+    def protocolEnumSchemaToEnum(
+      namespace: Option[String],
+      schema: Schema,
+      maybeOutDir: Option[String]): CompilationUnit = {
+      val maybePath = getFilePath(namespace, Left(schema), maybeOutDir)
+      val javaCompilationUnit = getJavaCompilationUnit(
+        classStore,
+        namespace,
+        schema,
+        maybeOutDir)
+      javaCompilationUnit
+    }
+     
+    schemaOrProtocol match {
+      case Left(schema) => {
+        schema.getType match {
           case RECORD => {
-            SpecificScalaTreehugger.asScalaCodeString(
+            val scalaCompilationUnit = getScalaCompilationUnit(
               classStore,
               namespace,
               schemaOrProtocol,
               typeMatcher,
-              schemaStore)
+              schemaStore,
+              maybeOutDir)
+            List(scalaCompilationUnit)
           }
           case ENUM => {
-            SpecificJavaTreehugger.asJavaCodeString(
+            val javaCompilationUnit = getJavaCompilationUnit(
               classStore,
               namespace,
-              schema)
+              schema,
+              maybeOutDir)
+            List(javaCompilationUnit)
           }
           case _ => sys.error("Only RECORD or ENUM can be toplevel definitions")
         }
-        case Right(protocol) => {
-          SpecificScalaTreehugger.asScalaCodeString(
-            classStore,
-            namespace,
-            schemaOrProtocol,
-            typeMatcher,
-            schemaStore)
-        }
       }
+      case Right(protocol) => {
+        val messages = protocol.getMessages.toMap
+        if (messages.isEmpty) protocolToADT(protocol)
+        else protocolToRPC(protocol)
+      }
+    }
   }
   
-  override def getName(schemaOrProtocol: Either[Schema, Protocol]): String = {
+  def getName(schemaOrProtocol: Either[Schema, Protocol]): String = {
     schemaOrProtocol match {
       case Left(schema) => schema.getName
       case Right(protocol) => {
         def isEnum(schema: Schema) = schema.getType == Schema.Type.ENUM
         val messages = protocol.getMessages.toMap
-        val localRecords = getLocalSubtypes(protocol).filter(isEnum)
+        val localRecords = getLocalSubtypes(protocol).filterNot(isEnum)
         if (!messages.isEmpty) protocol.getName // for RPC trait
         else {
           if (localRecords.length > 1) protocol.getName // for ADT
@@ -88,7 +159,7 @@ object SpecificRecord extends SourceFormat{
     }
   }
   
-  override def writeToFile(
+  def compile(
     classStore: ClassStore, 
     namespace: Option[String], 
     schemaOrProtocol: Either[Schema, Protocol],
@@ -96,23 +167,22 @@ object SpecificRecord extends SourceFormat{
     schemaStore: SchemaStore): Unit = {
       
     def writeProtocolSubTypes(protocol: Protocol) = {
+      // protocol could be destined to be an ADT def, so write Java separately
       def writeJavaTypesFirst(types: List[Schema]): Unit = {
-        // protocol could be destined to be an ADT def, so write Java separately
         def isEnum(schema: Schema) = schema.getType == ENUM
         val enums = types.filter(isEnum)
         enums.foreach(schema => {
-          writeToFile(classStore, namespace, Left(schema), outDir, schemaStore)
+          compile(classStore, namespace, Left(schema), outDir, schemaStore)
         })
       }
       def writeAllTypes(types: List[Schema]): Unit = types.foreach(schema => {
-        writeToFile(classStore, namespace, Left(schema), outDir, schemaStore)
+        compile(classStore, namespace, Left(schema), outDir, schemaStore)
       })
-      val types = protocol.getTypes.toList
+      val localSubTypes = getLocalSubtypes(protocol)
       val messages = protocol.getMessages.toMap
-      if (messages.isEmpty) writeJavaTypesFirst(types) // for ADTs
-      else writeAllTypes(types) // for RPC trait
+      if (messages.isEmpty) writeJavaTypesFirst(localSubTypes) // for ADTs
+      else writeAllTypes(localSubTypes) // for RPC trait
     }
-    
     // Custom namespaces work for simple types, but seem to fail for records 
     // within unions, see http://apache-avro.679487.n3.nabble.com/Deserialize-with-different-schema-td4032782.html
     def checkCustomNamespace(namespace: Option[String]) = {
@@ -127,43 +197,35 @@ object SpecificRecord extends SourceFormat{
         case None => None
       }
     }
-
     if (schemaOrProtocol.isRight) {
       val Right(protocol) = schemaOrProtocol
       writeProtocolSubTypes(protocol)
     }
-
     val scalaNamespace = checkCustomNamespace(namespace)
-
-    val codeAsString = asDefinitionString(
+    val compilationUnits = asCompilationUnits(
       classStore, 
       scalaNamespace, 
       schemaOrProtocol,
-      schemaStore)
-
-    val folderPath: Path = Paths.get{
-      if (scalaNamespace.isDefined) {
-        s"$outDir/${scalaNamespace.get.toString.replace('.','/')}"
-      }
-      else outDir
-    }
-
-    if (!Files.exists(folderPath)) Files.createDirectories(folderPath)
-
-    val filePath = {
-      val fileName = getName(schemaOrProtocol) + fileExt(schemaOrProtocol)
-      Paths.get(s"$folderPath/$fileName")
-    }
-    try { // delete old and/or create new
-      Files.deleteIfExists(filePath)
-      Files.write(filePath, codeAsString.getBytes(), StandardOpenOption.CREATE) 
-      () 
-    } 
-    catch {
-      case ex: FileNotFoundException => sys.error("File not found:" + ex)
-      case ex: IOException => sys.error("Problem using the file: " + ex)
-    }
+      schemaStore,
+      Some(outDir))
+    compilationUnits.foreach(writeToFile)
   }
 
+  def registerTypes(
+    schemaOrProtocol: Either[Schema, Protocol],
+    classStore: ClassStore): Unit = {
+    schemaOrProtocol match {
+      case Left(schema) => {
+        val classSymbol = RootClass.newClass(schema.getName)
+        classStore.accept(schema, classSymbol)
+      }
+      case Right(protocol) => {
+        protocol.getTypes.toList.foreach(schema => {
+          val classSymbol = RootClass.newClass(schema.getName)
+          classStore.accept(schema, classSymbol)
+        })
+      }
+    }
+  }
 
 }

@@ -1,15 +1,16 @@
 package avrohugger
 package format
 
-import avrohugger.format.standard._
-import avrohugger.input.reflectivecompilation.schemagen.SchemaStore
+import format.abstractions.SourceFormat
+import format.standard._
+import models.CompilationUnit
+import stores.{ ClassStore, SchemaStore }
+import matchers.TypeMatcher
 
 import treehugger.forest._
+import definitions.RootClass
 
 import org.apache.avro.{ Protocol, Schema }
-
-import java.nio.file.{Path, Paths, Files, StandardOpenOption}
-import java.io.{File, FileNotFoundException, IOException}
 
 import scala.collection.JavaConversions._
 
@@ -20,37 +21,28 @@ object Standard extends SourceFormat {
   override def fileExt(schemaOrProtocol: Either[Schema, Protocol]) = ".scala"
 
   val typeMatcher = new TypeMatcher
+  val scalaTreehugger = StandardScalaTreehugger
 
-  override def asDefinitionString(
+  override def asCompilationUnits(
     classStore: ClassStore, 
     namespace: Option[String], 
     schemaOrProtocol: Either[Schema, Protocol],
-    schemaStore: SchemaStore): String = {
-    // SpecificCompiler can't return a tree for Java enums, so return
-    // a string here for a consistent api vis a vis *ToFile and *ToStrings
-    StandardTreehugger.asScalaCodeString(
+    schemaStore: SchemaStore,
+    maybeOutDir: Option[String]): List[CompilationUnit] = {
+      
+    registerTypes(schemaOrProtocol, classStore)
+
+    val scalaCompilationUnit = getScalaCompilationUnit(
       classStore,
-      schemaOrProtocol,
       namespace,
+      schemaOrProtocol,
       typeMatcher,
-      schemaStore)
-  }
-  
-  override def getName(schemaOrProtocol: Either[Schema, Protocol]): String = {
-    schemaOrProtocol match {
-      case Left(schema) => schema.getName
-      case Right(protocol) => {
-        val localSubTypes = getLocalSubtypes(protocol)
-        if (localSubTypes.length > 1) protocol.getName // for ADT
-        else localSubTypes.headOption match {
-          case Some(schema) => schema.getName // for single class defintion
-          case None => protocol.getName  // default to protocol name
-        }
-      }
-    }
+      schemaStore,
+      maybeOutDir)
+    List(scalaCompilationUnit)
   }
 
-  override def writeToFile(
+  def compile(
     classStore: ClassStore, 
     namespace: Option[String], 
     schemaOrProtocol: Either[Schema, Protocol],
@@ -73,41 +65,42 @@ object Standard extends SourceFormat {
     }
 
     val scalaNamespace = checkCustomNamespace(namespace)
-
-    val codeAsString = asDefinitionString(
+    val compilationUnits: List[CompilationUnit] = asCompilationUnits(
       classStore, 
       scalaNamespace, 
       schemaOrProtocol,
-      schemaStore)
-
-    val folderPath: Path = Paths.get{
-      if (scalaNamespace.isDefined) {
-        s"$outDir/${scalaNamespace.get.toString.replace('.','/')}"
+      schemaStore,
+      Some(outDir))
+    compilationUnits.foreach(writeToFile)
+  }
+  
+  def getName(schemaOrProtocol: Either[Schema, Protocol]): String = {
+    schemaOrProtocol match {
+      case Left(schema) => schema.getName
+      case Right(protocol) => {
+        val localSubTypes = getLocalSubtypes(protocol)
+        if (localSubTypes.length > 1) protocol.getName // for ADT
+        else localSubTypes.headOption match {
+          case Some(schema) => schema.getName // for single class defintion
+          case None => protocol.getName  // default to protocol name
+        }
       }
-      else outDir
-    }
-
-    if (!Files.exists(folderPath)) Files.createDirectories(folderPath)
-
-    val filePath = {
-      val fileName = getName(schemaOrProtocol) + fileExt(schemaOrProtocol)
-      Paths.get(s"$folderPath/$fileName")
-    }
-    try { // delete old and/or create new
-      Files.deleteIfExists(filePath)
-      Files.write(filePath, codeAsString.getBytes(), StandardOpenOption.CREATE) 
-      () 
-    } 
-    catch {
-      case ex: FileNotFoundException => sys.error("File not found:" + ex)
-      case ex: IOException => sys.error("Problem using the file: " + ex)
     }
   }
 
-
-
-
-
-
+  def registerTypes(
+    schemaOrProtocol: Either[Schema, Protocol],
+    classStore: ClassStore): Unit = {
+    schemaOrProtocol match {
+      case Left(schema) => {
+        val classSymbol = RootClass.newClass(renameEnum(schema))
+        classStore.accept(schema, classSymbol)
+      }
+      case Right(protocol) => protocol.getTypes.toList.foreach(schema => {
+        val classSymbol = RootClass.newClass(renameEnum(schema))
+        classStore.accept(schema, classSymbol)
+      })
+    }
+  }
 
 }

@@ -7,10 +7,10 @@ protocol Example {
 
 /**
 
-The comment applies to the `NoSpaces` record, but is not indented to the
+The comment applies to the `NoSpaces1` record, but is not indented to the
 level of the record specification.
 */
-  record NoSpaces {
+  record NoSpaces1 {
     /** This is a single line comment that is indented for readability,
     and is not affected by indentation. */
     string single_line_comment_property;

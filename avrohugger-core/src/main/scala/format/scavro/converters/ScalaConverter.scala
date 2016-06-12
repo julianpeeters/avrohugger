@@ -3,6 +3,8 @@ package format
 package scavro
 package converters
 
+import matchers.TypeMatcher
+
 import treehugger.forest._
 import definitions._
 import treehuggerDSL._
@@ -14,7 +16,10 @@ import scala.collection.JavaConversions._
 
 class ScalaConverter(typeMatcher: TypeMatcher) {
 
-  def convertFromJava(schema: Schema, tree: Tree): Tree = { 
+  def convertFromJava(
+    schema: Schema,
+    tree: Tree,
+    fieldPath: List[String] = List.empty): Tree = { 
 
     schema.getType match {
       case Schema.Type.ENUM  => {
@@ -23,9 +28,13 @@ class ScalaConverter(typeMatcher: TypeMatcher) {
         })
         tree MATCH(conversionCases)
       }
-      case Schema.Type.RECORD  => {
-        val params = schema.getFields.map(field => {
-          convertFromJava(field.schema, tree DOT("get" + field.name.head.toUpper + field.name.tail) )
+      case Schema.Type.RECORD => {
+        val params = schema.getFields.flatMap(field => {
+          val updatedPath = field.schema.getFullName :: fieldPath
+          val accessorName = "get" + field.name.head.toUpper + field.name.tail
+          val updatedTree = tree DOT(accessorName)
+          if (fieldPath.contains(field.schema.getFullName)) List.empty
+          else List(convertFromJava(field.schema, updatedTree, updatedPath))
         })
         REF(schema.getName) APPLY params
       }
@@ -40,7 +49,7 @@ class ScalaConverter(typeMatcher: TypeMatcher) {
         else {
           val typeParamSchema = schema.getTypes.find(x => x.getType != Schema.Type.NULL).get
           val nullConversion = CASE(NULL) ==> NONE
-          val someConversion = CASE(WILDCARD) ==> SOME(convertFromJava(typeParamSchema, tree))
+          val someConversion = CASE(WILDCARD) ==> SOME(convertFromJava(typeParamSchema, tree, fieldPath))
           val conversionCases = List(nullConversion, someConversion)
           tree MATCH(conversionCases:_*)
         }
@@ -55,13 +64,13 @@ class ScalaConverter(typeMatcher: TypeMatcher) {
       case Schema.Type.ARRAY => {
         val seqArgs = SEQARG(tree)
         val collection = typeMatcher.typeMap.get("array") match {
-          case Some(c) if c == classOf[Array[_]] => ARRAY(seqArgs)
-          case Some(c) if c == classOf[List[_]]  => LIST(seqArgs)
-          case Some(c) if c == classOf[Vector[_]]   => VECTOR(seqArgs)
+          case Some(c) if c == classOf[Array[_]]  => ARRAY(seqArgs)
+          case Some(c) if c == classOf[List[_]]   => LIST(seqArgs)
+          case Some(c) if c == classOf[Vector[_]] => VECTOR(seqArgs)
           // default array mapping is currently List, but only for historical reasons
-          case _             => LIST(seqArgs) 
+          case _                                  => LIST(seqArgs) 
         }
-        collection MAP(LAMBDA(PARAM("x")) ==> BLOCK(convertFromJava(schema.getElementType, REF("x"))))
+        collection MAP(LAMBDA(PARAM("x")) ==> BLOCK(convertFromJava(schema.getElementType, REF("x"), fieldPath)))
       }
       case Schema.Type.MAP => {
         val JavaMap = RootClass.newClass("java.util.Map[_,_]")
@@ -73,7 +82,7 @@ class ScalaConverter(typeMatcher: TypeMatcher) {
             .MAP(LAMBDA(PARAM("kvp")) ==> BLOCK(
               VAL("key") := REF("kvp._1").DOT("toString"), 
               VAL("value") := REF("kvp._2"),
-              PAREN(REF("key"), convertFromJava(schema.getValueType, REF("value"))))
+              PAREN(REF("key"), convertFromJava(schema.getValueType, REF("value"), fieldPath)))
             )
           )
         }

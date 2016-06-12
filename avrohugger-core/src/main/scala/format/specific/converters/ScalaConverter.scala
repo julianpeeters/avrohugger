@@ -3,6 +3,9 @@ package format
 package specific
 package converters
 
+import matchers.TypeMatcher
+import stores.ClassStore
+
 import treehugger.forest._
 import definitions._
 import treehuggerDSL._

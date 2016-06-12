@@ -389,7 +389,7 @@ class ScavroMap01Test extends Specification {
       val record = AvroTypeProviderTestMap01(Map("bongo"->2))
 
       val filename = "AvroTypeProviderTestMap01.avro"
-              val records = record :: Nil
+      val records = record :: Nil
 
       // Convert to json
       records.foreach(f => println(f.toJson))
@@ -417,7 +417,7 @@ class ScavroMap02Test extends Specification {
       val record = AvroTypeProviderTestMap02(Map("4"->"four"))
 
       val filename = "AvroTypeProviderTestMap02.avro"
-              val records = record :: Nil
+      val records = record :: Nil
 
       // Convert to json
       records.foreach(f => println(f.toJson))
@@ -450,7 +450,7 @@ class ScavroMap03Test extends Specification {
       val record = AvroTypeProviderTestMap03(Map("sherpa"->Some(List(5,6))))
 
       val filename = "AvroTypeProviderTestMap03.avro"
-              val records = record :: Nil
+      val records = record :: Nil
 
       // Convert to json
       records.foreach(f => println(f.toJson))
@@ -473,7 +473,7 @@ class ScavroMap03Test extends Specification {
 
 class ScavroEmptyRecordTest extends Specification {
 
-  "A case class with a `Enumeration` field" should {
+  "A case class with an empty record" should {
     "serialize and deserialize correctly" in {
 
       val record = Compass(Direction.NORTH)
@@ -504,10 +504,7 @@ class ScavroEnum01Test extends Specification {
 
   "A case object that represents an empty record" should {
     "serialize and deserialize correctly" in {
-    //  val record1 = Reset()
-    //  val records = List(record1)
-    //  SpecificTestUtil.verifyWriteAndRead(records)
-    
+
       val record = Reset()
 
       val filename = "Reset.avro"

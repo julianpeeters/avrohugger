@@ -2,9 +2,11 @@ package avrohugger
 package format
 package specific
 
-import avrohuggers.{ Protocolhugger, Schemahugger }
-import input.reflectivecompilation.schemagen.SchemaStore
-import docs.ScalaDocGen
+import format.abstractions.ScalaTreehugger
+import avrohuggers.{ SpecificProtocolhugger, SpecificSchemahugger }
+import matchers.TypeMatcher
+import stores.{ ClassStore, SchemaStore }
+
 
 import org.apache.avro.{ Protocol, Schema }
 import org.apache.avro.Schema.Field
@@ -16,43 +18,34 @@ import treehuggerDSL._
 
 import scala.collection.JavaConversions._
 
-object SpecificScalaTreehugger {
+object SpecificScalaTreehugger extends ScalaTreehugger {
   
-  def asScalaCodeString(
+  val schemahugger = SpecificSchemahugger
+  val protocolhugger = SpecificProtocolhugger
+  val importer = SpecificImporter
+  
+  // SpecificCompiler can't return a tree for Java enums, so return
+  // a String here for a consistent api vis a vis *ToFile and *ToStrings
+  override def asScalaCodeString(
     classStore: ClassStore, 
     namespace: Option[String], 
     schemaOrProtocol: Either[Schema, Protocol],
     typeMatcher: TypeMatcher,
     schemaStore: SchemaStore): String = {
-      
-    val switchAnnotSymbol = RootClass.newClass("scala.annotation.switch")
-    val switchImport = IMPORT(switchAnnotSymbol)
-    
-    // imports in case a field type is from a different namespace
-    val imports: List[Import] = schemaOrProtocol match {
-      case Left(schema) => {
-        val deps = SpecificImports.getImports(schema, namespace, schemaStore)
-        if (schema.getType == RECORD) switchImport :: deps
-        else deps
-      }
-      case Right(protocol) => {
-        val types = protocol.getTypes.toList
-        val messages = protocol.getMessages.toMap
-        val deps = types.flatMap(schema =>
-          SpecificImports.getImports(schema, namespace, schemaStore))
-        if (messages.isEmpty) switchImport :: deps // for ADT
-        else List.empty // for RPC
-      }
-    }
 
-    val topLevelDefs: List[Tree] =
-      asTopLevelDef(
-        classStore,
-        namespace,
-        schemaOrProtocol,
-        typeMatcher,
-        None,
-        None)
+    // imports in case a field type is from a different namespace
+    val imports: List[Import] = importer.getImports(
+      schemaOrProtocol,
+      namespace,
+      schemaStore)
+
+    val topLevelDefs: List[Tree] = asTopLevelDefs(
+      classStore,
+      namespace,
+      schemaOrProtocol,
+      typeMatcher,
+      None,
+      None)
     
     // wrap the definitions in a block with a comment and a package
     val tree = {
@@ -63,35 +56,6 @@ object SpecificScalaTreehugger {
 
     val codeString = treeToString(tree)
     codeString
-  }
-  
-  def asTopLevelDef(
-    classStore: ClassStore,
-    namespace: Option[String],
-    schemaOrProtocol: Either[Schema, Protocol],
-    typeMatcher: TypeMatcher,
-    maybeBaseTrait: Option[String],
-    maybeFlags: Option[List[Long]]): List[Tree] = {
-    
-    schemaOrProtocol match {
-      case Left(schema) => Schemahugger.toTrees(
-        classStore,
-        namespace,
-        schema,
-        typeMatcher,
-        maybeBaseTrait,
-        maybeFlags
-      )
-      case Right(protocol) => Protocolhugger.toTrees(
-        classStore,
-        namespace,
-        protocol,
-        typeMatcher,
-        maybeBaseTrait,
-        maybeFlags
-      )
-    }
-    
   }
 
 }

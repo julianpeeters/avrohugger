@@ -3,15 +3,19 @@ package input
 package reflectivecompilation
 package schemagen
 
-import collection.JavaConversions._
-import java.util.{Arrays => JArrays}
+import matchers.JsonMatcher
+import stores.SchemaStore
+
 import org.apache.avro.Schema
 import org.apache.avro.Schema.Field
-import org.apache.avro.Schema.{Type => AvroType}
+import org.apache.avro.Schema.{ Type => AvroType }
 import org.apache.avro.util.Utf8
 
-import reflect.runtime.universe._
+import java.util.{Arrays => JArrays}
+
+import scala.reflect.runtime.universe._
 import scala.tools.reflect.ToolBox
+import scala.collection.JavaConversions._
 
 class FieldSchemaGenerator() {
  

@@ -4,14 +4,16 @@ package reflectivecompilation
 package schemagen
 
 import parsers.ScalaDocParser
-import java.util.{Arrays => JArrays}
+import stores.{ SchemaStore, TypecheckDependencyStore }
+
 import org.apache.avro.Schema.Field
 import org.apache.avro.Schema
 
-import scala.collection.JavaConverters._
+import java.util.{ Arrays => JArrays }
 
 import scala.reflect.runtime.universe._
 import scala.reflect.runtime.currentMirror
+import scala.collection.JavaConverters._
 
 object RecordSchemaGenerator  {
 
