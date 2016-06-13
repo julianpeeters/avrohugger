@@ -158,7 +158,7 @@ class SpecificFileToStringsSpec extends mutable.Specification {
       val expectedDep1 = util.Util.readFile("avrohugger-core/src/test/expected/specific/example/idl/Defaults.scala")
       val expectedEnum = util.Util.readFile("avrohugger-core/src/test/expected/specific/example/idl/DefaultEnum.java")
       val expectedDep2 = util.Util.readFile("avrohugger-core/src/test/expected/specific/other/ns/ExternalDependency.scala")
-      val expectedDep3 = util.Util.readFile("avrohugger-core/src/test/expected/specific/other/ns/ImportedSchema.scala")
+      val expectedDep3 = util.Util.readFile("avrohugger-core/src/test/expected/specific/other/ns/Suit.java")
       
       adt === expectedADT
       dep1 === expectedDep1

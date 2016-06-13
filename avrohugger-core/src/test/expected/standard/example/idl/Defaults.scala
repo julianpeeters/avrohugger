@@ -1,7 +1,7 @@
 /** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
 package example.idl
 
-sealed trait Defaults extends Product with Serializable
+sealed trait Defaults
 
 final object DefaultEnum extends Enumeration with Defaults {
   type DefaultEnum = Value

@@ -117,4 +117,13 @@ class SpecificUserDefinedTypesSpec extends Specification {
     }
   }
   
+  "A case class with a fields are imported classes" should {
+    "serialize and deserialize correctly" in {
+      val record1 = DependentRecord(other.ns.ExternalDependency(1), 2)
+      val record2 = DependentRecord(other.ns.ExternalDependency(3), 4)
+      val records = List(record1, record2)
+      SpecificTestUtil.verifyWriteAndRead(records)
+    }
+  }
+  
 }

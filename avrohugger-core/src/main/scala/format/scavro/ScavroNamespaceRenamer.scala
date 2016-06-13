@@ -9,6 +9,7 @@ import org.apache.avro.{ Schema, Protocol }
 object ScavroNamespaceRenamer {
   // By default, Scavro generates Scala classes in packages that are the same 
   // as the Java package with `model` appended.
+  // TypeMatcher is here because it holds the custom namespace map
   def renameNamespace(
     namespace: Option[String],
     schemaOrProtocol: Either[Schema, Protocol],

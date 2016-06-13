@@ -142,10 +142,10 @@ class StandardFileToStringsSpec extends mutable.Specification {
       val gen = new Generator(Standard)
       val List(dep3, dep2, dep1, adt) = gen.fileToStrings(infile)
       
-      val expectedADT = util.Util.readFile("target/generated-sources/standard/example/idl/ImportProtocol.scala")
-      val expectedDep1 = util.Util.readFile("target/generated-sources/standard/example/idl/Defaults.scala")
-      val expectedDep2 = util.Util.readFile("target/generated-sources/standard/other/ns/ExternalDependency.scala")
-      val expectedDep3 = util.Util.readFile("target/generated-sources/standard/other/ns/ImportedSchema.scala")
+      val expectedADT = util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/ImportProtocol.scala")
+      val expectedDep1 = util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/Defaults.scala")
+      val expectedDep2 = util.Util.readFile("avrohugger-core/src/test/expected/standard/other/ns/ExternalDependency.scala")
+      val expectedDep3 = util.Util.readFile("avrohugger-core/src/test/expected/standard/other/ns/Suit.scala")
       
       adt === expectedADT
       dep1 === expectedDep1

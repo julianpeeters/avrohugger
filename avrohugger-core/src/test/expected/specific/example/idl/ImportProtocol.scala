@@ -3,7 +3,7 @@ package example.idl
 
 import scala.annotation.switch
 
-import other.ns.{ExternalDependency, ImportedSchema}
+import other.ns.{ExternalDependency, Suit}
 
 sealed trait ImportProtocol extends org.apache.avro.specific.SpecificRecordBase with Product with Serializable
 
@@ -39,8 +39,8 @@ final object DependentRecord {
   val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"DependentRecord\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"dependency\",\"type\":{\"type\":\"record\",\"name\":\"ExternalDependency\",\"namespace\":\"other.ns\",\"fields\":[{\"name\":\"number\",\"type\":\"int\"}]}},{\"name\":\"number\",\"type\":\"int\"}]}")
 }
 
-final case class DependentRecord2(var dependency: ImportedSchema, var name: String) extends org.apache.avro.specific.SpecificRecordBase with ImportProtocol {
-  def this() = this(new ImportedSchema, "")
+final case class DependentRecord2(var dependency: Suit, var name: String) extends org.apache.avro.specific.SpecificRecordBase with ImportProtocol {
+  def this() = this(null, "")
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
       case pos if pos == 0 => {
@@ -56,7 +56,7 @@ final case class DependentRecord2(var dependency: ImportedSchema, var name: Stri
     (field$: @switch) match {
       case pos if pos == 0 => this.dependency = {
         value
-      }.asInstanceOf[ImportedSchema]
+      }.asInstanceOf[Suit]
       case pos if pos == 1 => this.name = {
         value.toString
       }.asInstanceOf[String]
@@ -68,7 +68,7 @@ final case class DependentRecord2(var dependency: ImportedSchema, var name: Stri
 }
 
 final object DependentRecord2 {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"DependentRecord2\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"dependency\",\"type\":{\"type\":\"record\",\"name\":\"ImportedSchema\",\"namespace\":\"other.ns\",\"fields\":[{\"name\":\"name\",\"type\":\"string\"}]}},{\"name\":\"name\",\"type\":\"string\"}]}")
+  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"DependentRecord2\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"dependency\",\"type\":{\"type\":\"enum\",\"name\":\"Suit\",\"namespace\":\"other.ns\",\"symbols\":[\"SPADES\",\"DIAMONDS\",\"CLUBS\",\"HEARTS\"]}},{\"name\":\"name\",\"type\":\"string\"}]}")
 }
 
 final case class DependentRecord3(var dependency: Embedded, var value: Boolean) extends org.apache.avro.specific.SpecificRecordBase with ImportProtocol {

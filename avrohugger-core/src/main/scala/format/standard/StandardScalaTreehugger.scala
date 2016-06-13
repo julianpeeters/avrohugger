@@ -23,7 +23,7 @@ object StandardScalaTreehugger extends ScalaTreehugger {
   val protocolhugger = StandardProtocolhugger
   val importer = StandardImporter
 
-  override def asScalaCodeString(
+  def asScalaCodeString(
 		classStore: ClassStore,
     namespace: Option[String],
     schemaOrProtocol: Either[Schema, Protocol], 

@@ -1,4 +1,4 @@
-@namespace("example.idl")
+@namespace("test")
 
 protocol ImportProtocol {
   import idl "defaults.avdl";
@@ -6,7 +6,7 @@ protocol ImportProtocol {
   import schema "imported.avsc";
 
   record DependentRecord {
-    other.ns.ExternalDependency dependency; // refers to the record defined in imported.avdl
+    alt.ns.ExternalDependency dependency; // refers to the record defined in imported.avdl
     int number;
   }
   

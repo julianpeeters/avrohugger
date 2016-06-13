@@ -5,9 +5,11 @@ import org.apache.avro.Schema
 
 import org.oedura.scavro.{AvroMetadata, AvroReader, AvroSerializeable}
 
+import other.ns.model.{ExternalDependency, Suit}
+
 import example.idl.{DependentRecord => JDependentRecord, DependentRecord2 => JDependentRecord2, DependentRecord3 => JDependentRecord3, Embedded => JEmbedded}
 
-import other.ns.{ExternalDependency => JExternalDependency, ImportedSchema => JImportedSchema}
+import other.ns.{ExternalDependency => JExternalDependency, Suit => JSuit}
 
 sealed trait ImportProtocol extends AvroSerializeable with Product with Serializable
 
@@ -33,11 +35,14 @@ final object DependentRecord {
   }
 }
 
-final case class DependentRecord2(dependency: ImportedSchema, name: String) extends AvroSerializeable with ImportProtocol {
+final case class DependentRecord2(dependency: Suit.Value, name: String) extends AvroSerializeable with ImportProtocol {
   type J = JDependentRecord2
   override def toAvro: JDependentRecord2 = {
     new JDependentRecord2(dependency match {
-      case ImportedSchema(name) => new JImportedSchema(name)
+      case Suit.SPADES => JSuit.SPADES
+      case Suit.DIAMONDS => JSuit.DIAMONDS
+      case Suit.CLUBS => JSuit.CLUBS
+      case Suit.HEARTS => JSuit.HEARTS
     }, name)
   }
 }
@@ -50,7 +55,12 @@ final object DependentRecord2 {
     override val avroClass: Class[JDependentRecord2] = classOf[JDependentRecord2]
     override val schema: Schema = JDependentRecord2.getClassSchema()
     override val fromAvro: (JDependentRecord2) => DependentRecord2 = {
-      (j: JDependentRecord2) => DependentRecord2(ImportedSchema(j.getDependency.getName.toString), j.getName.toString)
+      (j: JDependentRecord2) => DependentRecord2(j.getDependency match {
+        case JSuit.SPADES => Suit.SPADES
+        case JSuit.DIAMONDS => Suit.DIAMONDS
+        case JSuit.CLUBS => Suit.CLUBS
+        case JSuit.HEARTS => Suit.HEARTS
+      }, j.getName.toString)
     }
   }
 }

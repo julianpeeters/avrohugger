@@ -127,7 +127,7 @@ class GeneratorTool(sourceFormat: SourceFormat,
     new FileExtensionFilter("avsc");
   val PROTOCOL_FILTER: FileExtensionFilter =
     new FileExtensionFilter("avpr");
-      val DATAFILE_FILTER: FileExtensionFilter =
+  val DATAFILE_FILTER: FileExtensionFilter =
     new FileExtensionFilter("avro");
 
   case class FileExtensionFilter(extension: String) extends FilenameFilter {

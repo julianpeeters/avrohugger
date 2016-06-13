@@ -11,22 +11,29 @@ import definitions._
 import treehuggerDSL._
 
 import org.apache.avro.{ Protocol, Schema }
+import org.apache.avro.Schema.Type.{ ENUM, RECORD }
 
 import scala.collection.JavaConversions._
 
 object SpecificTraitTree {
 
-  def toADTRootDef(protocol: Protocol) = {
-    val name = protocol.getName
-    val traitTree =
-      TRAITDEF(name)
-        .withFlags(Flags.SEALED)
-        .withParents("org.apache.avro.specific.SpecificRecordBase")
-        .withParents("Product")
-        .withParents("Serializable")  
+  def toADTRootDef(protocol: Protocol) = {    
+    val sealedTraitTree =  TRAITDEF(protocol.getName).withFlags(Flags.SEALED)
+    val adtRootTree = {
+      val types = protocol.getTypes.toList
+      // filter out enums since they will be written as java and in the adt
+      val nonEnums = types.filterNot(schema => schema.getType == ENUM)
+      if (nonEnums.forall(schema => schema.getType == RECORD)) {
+        sealedTraitTree
+          .withParents("org.apache.avro.specific.SpecificRecordBase")
+          .withParents("Product")
+          .withParents("Serializable")
+      }
+      else sealedTraitTree
+    } 
     val treeWithScalaDoc = ScalaDocGenerator.docToScalaDoc(
       Right(protocol),
-      traitTree)
+      adtRootTree)
       
     treeWithScalaDoc
   }

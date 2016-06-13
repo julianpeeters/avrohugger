@@ -16,14 +16,14 @@ import scala.collection.JavaConversions._
 
 object Standard extends SourceFormat {
 
-  override val toolName = "generate";
-  override val toolShortDescription = "Generates Scala code for the given schema.";
-  override def fileExt(schemaOrProtocol: Either[Schema, Protocol]) = ".scala"
+  val toolName = "generate";
+  val toolShortDescription = "Generates Scala code for the given schema.";
+  def fileExt(schemaOrProtocol: Either[Schema, Protocol]) = ".scala"
 
   val typeMatcher = new TypeMatcher
   val scalaTreehugger = StandardScalaTreehugger
 
-  override def asCompilationUnits(
+  def asCompilationUnits(
     classStore: ClassStore, 
     namespace: Option[String], 
     schemaOrProtocol: Either[Schema, Protocol],

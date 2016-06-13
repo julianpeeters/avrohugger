@@ -17,12 +17,14 @@ import java.io.File
 import scala.collection.JavaConversions._
 
 class FileInputParser {
-  lazy val parser = new Parser()
+  
+  val schemaParser = new Parser()
 
   def getSchemaOrProtocols(
     infile: File,
     format: SourceFormat,
-    classStore: ClassStore): List[Either[Schema, Protocol]] = {
+    classStore: ClassStore,
+    parser: Parser = schemaParser): List[Either[Schema, Protocol]] = {
     
     def unUnion(schema: Schema) = {
       schema.getType match {
@@ -61,13 +63,14 @@ class FileInputParser {
            * IDLs may refer to types imported from another file. When converted 
            * to protocols, the imported types that share the IDL's namespace 
            * cannot be distinguished from types defined within the IDL, yet 
-           * should not be generated as subtypes of the IDL's ADT. So, strip the
-           * protocol of all imported types and generate them separately.
+           * should not be generated as subtypes of the IDL's ADT and should 
+           * instead be generated in its own namespace. So, strip the protocol 
+           * of all imported types and generate them separately.
            */
-          val types = protocol.getTypes.toList
           val importedFiles = IdlImportParser.getImportedFiles(infile)
-          val importedSchemaOrProtocols = importedFiles.flatMap(imported => {
-            getSchemaOrProtocols(imported, format, classStore)
+          val importedSchemaOrProtocols = importedFiles.flatMap(file => {
+            val importParser = new Parser() // else attempts to redefine schemas
+            getSchemaOrProtocols(file, format, classStore, importParser)
           }).toList
           def stripImports(
             protocol: Protocol,
@@ -78,6 +81,7 @@ class FileInputParser {
                 case Right(importedProtocol) => importedProtocol.getTypes.toList
               }
             })
+            val types = protocol.getTypes.toList
             val localTypes = imported.foldLeft(types)((remaining, imported) => {
               remaining.filterNot(remainingType => remainingType == imported)
             })

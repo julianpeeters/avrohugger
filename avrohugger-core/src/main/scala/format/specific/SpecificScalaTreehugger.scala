@@ -26,7 +26,7 @@ object SpecificScalaTreehugger extends ScalaTreehugger {
   
   // SpecificCompiler can't return a tree for Java enums, so return
   // a String here for a consistent api vis a vis *ToFile and *ToStrings
-  override def asScalaCodeString(
+  def asScalaCodeString(
     classStore: ClassStore, 
     namespace: Option[String], 
     schemaOrProtocol: Either[Schema, Protocol],

@@ -17,10 +17,6 @@ import treehuggerDSL._
 import scala.collection.JavaConversions._
 
 object SpecificImporter extends Importer {
-  
-  def asImportTree(packageSym: Symbol, typeNames: List[String]) = {
-    IMPORT(packageSym, typeNames)
-  }
 
   def getImports(
     schemaOrProtocol: Either[Schema, Protocol],
@@ -29,13 +25,7 @@ object SpecificImporter extends Importer {
       
     val switchAnnotSymbol = RootClass.newClass("scala.annotation.switch")
     val switchImport = IMPORT(switchAnnotSymbol)
-    
-    val topLevelSchemas = schemaOrProtocol match {
-      case Left(schema) => getTopLevelSchemas(schema, schemaStore)
-      case Right(protocol) => protocol.getTypes.toList.flatMap(schema => {
-        getTopLevelSchemas(schema, schemaStore)
-      })
-    }
+    val topLevelSchemas = getTopLevelSchemas(schemaOrProtocol, schemaStore)
     val recordSchemas = getRecordSchemas(topLevelSchemas)
     val deps = getRecordImports(recordSchemas, currentNamespace)
     
@@ -52,13 +42,5 @@ object SpecificImporter extends Importer {
       }
     }
   }
-  
-  // gets record schemas, excluding the root schema, which may be dependencies
-  def getRecordSchemas(topLevelSchemas: List[Schema]): List[Schema] = {
-    topLevelSchemas
-      .filter(isRecord)
-      .flatMap(schema => getFieldSchemas(schema))
-      .distinct
-  }
-  
+
 }

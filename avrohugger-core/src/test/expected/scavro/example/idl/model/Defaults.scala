@@ -9,7 +9,7 @@ import example.idl.{DefaultEnum => JDefaultEnum, DefaultTest => JDefaultTest, Em
 
 import scala.collection.JavaConversions._
 
-sealed trait Defaults extends AvroSerializeable with Product with Serializable
+sealed trait Defaults
 
 final object DefaultEnum extends Enumeration with Defaults {
   type DefaultEnum = Value

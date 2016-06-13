@@ -9,6 +9,8 @@
 [error] scavro.RPCTest$$anonfun$1$$anonfun$apply$1.apply(RPCTest.scala:23)
 
 
+//TODO: Possible to get Avro RPC working with Scavro?
+
 package scavro
 
 import org.specs2.mutable.Specification

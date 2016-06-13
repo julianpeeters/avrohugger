@@ -1,7 +1,7 @@
 /** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
 package example.proto
 
-sealed trait EnumProtocol extends Product with Serializable
+sealed trait EnumProtocol
 
 final object Suit extends Enumeration with EnumProtocol {
   type Suit = Value

@@ -7,7 +7,7 @@ import org.oedura.scavro.{AvroMetadata, AvroReader, AvroSerializeable}
 
 import example.proto.{Card => JCard, Suit => JSuit}
 
-sealed trait EnumProtocol extends AvroSerializeable with Product with Serializable
+sealed trait EnumProtocol
 
 final object Suit extends Enumeration with EnumProtocol {
   type Suit = Value

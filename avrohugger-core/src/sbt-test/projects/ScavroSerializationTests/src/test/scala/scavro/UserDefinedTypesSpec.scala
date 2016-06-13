@@ -334,5 +334,33 @@ class ScavroMap13Test extends Specification {
   }
 }
 
+class ScavroDependentRecordTest extends Specification {
+
+  "A case class with a fields are imported classes" should {
+    "serialize and deserialize correctly" in {
+      val record1 = DependentRecord(alt.ns.model.ExternalDependency(1), 2)
+      val record2 = DependentRecord(alt.ns.model.ExternalDependency(3), 4)
+      
+      val filename = "import.avro"
+
+      
+      val records = List(record1, record2)
+      // Convert to json
+      records.foreach(f => println(f.toJson))
+
+      // Write the avro file
+      val writer = AvroWriter[DependentRecord](filename)
+      writer.write(records)
+
+      // Read the avro file and do some processing
+      val reader: AvroReader[DependentRecord] =
+        AvroReader[DependentRecord]
+      val sameRecords = reader.read(filename)
+
+      sameRecords must ===(records)
+    }
+  }
+}
+
 
 

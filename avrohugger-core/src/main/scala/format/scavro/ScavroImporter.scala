@@ -3,6 +3,10 @@ package format
 package scavro
 
 import format.abstractions.Importer
+import avrohugger.input.DependencyInspector.{
+  getReferredNamespace,
+  getReferredTypeName
+}
 import avrohugger.stores.SchemaStore
 
 import org.apache.avro.{ Protocol, Schema }
@@ -17,7 +21,9 @@ import scala.collection.JavaConversions._
 
 object ScavroImporter extends Importer {
   
-  def asImportTree(packageSym: Symbol, typeNames: List[String]) = {
+  def asRenamedImportTree(imported: Import) = {
+    val packageSym = imported.expr
+    val typeNames = imported.selectors.map(s => treeToString(s.name))
     val renames = typeNames.distinct.sorted.map(typeName => {
       val renamedType = "J" + typeName
       RENAME(typeName) ==> renamedType
@@ -70,25 +76,57 @@ object ScavroImporter extends Importer {
     lazy val baseImports = List(schemaImport, scavroImport)
     lazy val maybeJavaConversionsImport = checkJavaConversions(schemaOrProtocol)
     
-    val topLevelSchemas = schemaOrProtocol match {
-      case Left(schema) => getTopLevelSchemas(schema, schemaStore)
-      case Right(protocol) => protocol.getTypes.toList.flatMap(schema => {
-        getTopLevelSchemas(schema, schemaStore)
-      })
+    // gets all record schemas, including the root schema, which need renaming
+    def getAllRecordSchemas(topLevelSchemas: List[Schema]): List[Schema] = {
+      topLevelSchemas
+        .filter(isRecord)
+        .flatMap(schema => schema +: getFieldSchemas(schema))
+        .distinct
     }
-    val allRecordSchemas = getRecordSchemas(topLevelSchemas)
-    val recordImports = getRecordImports(allRecordSchemas, currentNamespace)
-
-    if (recordImports.isEmpty) List.empty
+    // gets imported Scavro model classes, returning them as Import trees
+    def getScalaRecordImports(
+      recordSchemas: List[Schema],
+      namespace: Option[String]): List[Import] = {
+      recordSchemas
+        .filter(schema => getReferredNamespace(schema).isDefined)
+        .filter(schema => {
+          val renamedNamespace = ScavroNamespaceRenamer.renameNamespace(
+            getReferredNamespace(schema),
+            Left(schema),
+            Scavro.typeMatcher)
+          renamedNamespace != namespace
+        })
+        .groupBy(schema => {
+          val renamedNamespace = ScavroNamespaceRenamer.renameNamespace(
+            getReferredNamespace(schema),
+            Left(schema),
+            Scavro.typeMatcher)
+          renamedNamespace.get
+        })
+        .toList.map(group => group match {
+          case(packageName, fields) => {
+            val importedPackageSym = RootClass.newClass(packageName)
+            val importedTypes = fields.map(field => getReferredTypeName(field))
+            IMPORT(importedPackageSym, importedTypes)
+          }
+        })
+    }
+    val topLevelSchemas = getTopLevelSchemas(schemaOrProtocol, schemaStore)
+    
+    val allRecordSchemas = getAllRecordSchemas(topLevelSchemas)
+    val allRecordImports = getRecordImports(allRecordSchemas, currentNamespace)
+    val renamedJavaImports = allRecordImports.map(asRenamedImportTree)
+    
+    val scalaRecords = getRecordSchemas(topLevelSchemas)
+    val scalaImports = getScalaRecordImports(scalaRecords, currentNamespace)
+    
+    val recordImports = scalaImports ++ renamedJavaImports
+    
+    if (allRecordSchemas.isEmpty) List.empty
     else baseImports ++ recordImports ++ maybeJavaConversionsImport
   }
   
-  // gets all record schemas, including the root schema, which need renaming
-  def getRecordSchemas(topLevelSchemas: List[Schema]): List[Schema] = {
-    topLevelSchemas
-      .filter(isRecord)
-      .flatMap(schema => schema +: getFieldSchemas(schema))
-      .distinct
-  }
+
+
   
 }

@@ -189,12 +189,12 @@ class ScavroFileToFileSpec extends mutable.Specification {
       val sourceADT = util.Util.readFile("target/generated-sources/scavro/example/idl/model/ImportProtocol.scala")
       val sourceDep1 = util.Util.readFile("target/generated-sources/scavro/example/idl/model/Defaults.scala")
       val sourceDep2 = util.Util.readFile("target/generated-sources/scavro/other/ns/model/ExternalDependency.scala")
-      val sourceDep3 = util.Util.readFile("target/generated-sources/scavro/other/ns/model/ImportedSchema.scala")
+      val sourceDep3 = util.Util.readFile("target/generated-sources/scavro/other/ns/model/Suit.scala")
       
       sourceADT === util.Util.readFile("avrohugger-core/src/test/expected/scavro/example/idl/model/ImportProtocol.scala")
       sourceDep1 === util.Util.readFile("avrohugger-core/src/test/expected/scavro/example/idl/model/Defaults.scala")
       sourceDep2 === util.Util.readFile("avrohugger-core/src/test/expected/scavro/other/ns/model/ExternalDependency.scala")
-      sourceDep3 === util.Util.readFile("avrohugger-core/src/test/expected/scavro/other/ns/model/ImportedSchema.scala")
+      sourceDep3 === util.Util.readFile("avrohugger-core/src/test/expected/scavro/other/ns/model/Suit.scala")
     }
 
     "15. correctly generate an empty case class definition" in {

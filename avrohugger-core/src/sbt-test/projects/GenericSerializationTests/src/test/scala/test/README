@@ -5,4 +5,4 @@ CyclicReference: : illegal cyclic reference involving object AvroType  (AvroType
 
 NullPointerException
 
- MissingRequirementError: : term fromTypeHelper in com.gensler.scalavro.types.AvroType not found. 
+MissingRequirementError: : term fromTypeHelper in com.gensler.scalavro.types.AvroType not found. 

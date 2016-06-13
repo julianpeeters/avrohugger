@@ -1,4 +1,4 @@
-@namespace("example.idl")
+@namespace("test")
 
 protocol ImportProtocol {
   import idl "defaults.avdl";

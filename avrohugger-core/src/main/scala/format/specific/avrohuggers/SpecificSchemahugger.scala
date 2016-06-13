@@ -30,7 +30,7 @@ object SpecificSchemahugger extends Schemahugger {
       maybeBaseTrait,
       maybeFlags)
       
-    val companionDef = SpecificObjectTree.toCompanionDef(schema, maybeFlags)
+    val companionDef = SpecificObjectTree.toCaseCompanionDef(schema, maybeFlags)
     
     List(caseClassDef, companionDef)
   }

@@ -71,7 +71,7 @@ private[avrohugger] object FileGenerator {
     format: SourceFormat,
     classStore: ClassStore,
     schemaStore: SchemaStore,
-    fileParser: FileInputParser): Unit = {
+    fileParser: FileInputParser): Unit = {      
     val schemaOrProtocols: List[Either[Schema, Protocol]] =
       fileParser.getSchemaOrProtocols(inFile, format, classStore)
     schemaOrProtocols.foreach(schemaOrProtocol => schemaOrProtocol match {

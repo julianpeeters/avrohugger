@@ -200,13 +200,13 @@ class SpecificFileToFileSpec extends mutable.Specification {
       val sourceDep1 = util.Util.readFile("target/generated-sources/specific/example/idl/Defaults.scala")
       val sourceEnum = util.Util.readFile("target/generated-sources/specific/example/idl/DefaultEnum.java")
       val sourceDep2 = util.Util.readFile("target/generated-sources/specific/other/ns/ExternalDependency.scala")
-      val sourceDep3 = util.Util.readFile("target/generated-sources/specific/other/ns/ImportedSchema.scala")
+      val sourceDep3 = util.Util.readFile("target/generated-sources/specific/other/ns/Suit.java")
       
       sourceADT === util.Util.readFile("avrohugger-core/src/test/expected/specific/example/idl/ImportProtocol.scala")
       sourceDep1 === util.Util.readFile("avrohugger-core/src/test/expected/specific/example/idl/Defaults.scala")
       sourceEnum === util.Util.readFile("avrohugger-core/src/test/expected/specific/example/idl/DefaultEnum.java")
       sourceDep2 === util.Util.readFile("avrohugger-core/src/test/expected/specific/other/ns/ExternalDependency.scala")
-      sourceDep3 === util.Util.readFile("avrohugger-core/src/test/expected/specific/other/ns/ImportedSchema.scala")
+      sourceDep3 === util.Util.readFile("avrohugger-core/src/test/expected/specific/other/ns/Suit.java")
     }
 
     "15. correctly generate an empty case class definition" in {

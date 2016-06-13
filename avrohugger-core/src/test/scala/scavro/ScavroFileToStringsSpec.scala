@@ -143,7 +143,7 @@ class ScavroFileToStringsSpec extends mutable.Specification {
       val expectedADT = util.Util.readFile("target/generated-sources/scavro/example/idl/model/ImportProtocol.scala")
       val expectedDep1 = util.Util.readFile("target/generated-sources/scavro/example/idl/model/Defaults.scala")
       val expectedDep2 = util.Util.readFile("target/generated-sources/scavro/other/ns/model/ExternalDependency.scala")
-      val expectedDep3 = util.Util.readFile("target/generated-sources/scavro/other/ns/model/ImportedSchema.scala")
+      val expectedDep3 = util.Util.readFile("target/generated-sources/scavro/other/ns/model/Suit.scala")
       
       adt === expectedADT
       dep1 === expectedDep1

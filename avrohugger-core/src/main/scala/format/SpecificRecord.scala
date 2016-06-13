@@ -21,11 +21,11 @@ object SpecificRecord extends SourceFormat{
   // SpecificRecord API can only handle Java enums
   def isEnum(schema: Schema) = schema.getType == Schema.Type.ENUM
 
-  override val toolName = "generate-specific"
+  val toolName = "generate-specific"
 
-  override val toolShortDescription = "Generates Scala code extending SpecificRecordBase."
+  val toolShortDescription = "Generates Scala code extending SpecificRecordBase."
 
-  override def fileExt(schemaOrProtocol: Either[Schema, Protocol]) = {
+  def fileExt(schemaOrProtocol: Either[Schema, Protocol]) = {
     schemaOrProtocol match {
       case Left(schema) => schema.getType match {
         case RECORD => ".scala"
@@ -39,7 +39,7 @@ object SpecificRecord extends SourceFormat{
   val typeMatcher = new TypeMatcher
   val scalaTreehugger = SpecificScalaTreehugger
 
-  override def asCompilationUnits(
+  def asCompilationUnits(
     classStore: ClassStore, 
     namespace: Option[String], 
     schemaOrProtocol: Either[Schema, Protocol],

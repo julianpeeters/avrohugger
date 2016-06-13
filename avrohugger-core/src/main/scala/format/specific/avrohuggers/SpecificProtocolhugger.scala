@@ -76,7 +76,7 @@ object SpecificProtocolhugger extends Protocolhugger {
         namespace,
         protocol,
         typeMatcher)
-      val companionDef = SpecificObjectTree.toCompanionDef(protocol)
+      val companionDef = SpecificObjectTree.toTraitCompanionDef(protocol)
       List(traitDef, companionDef)
     }
   }

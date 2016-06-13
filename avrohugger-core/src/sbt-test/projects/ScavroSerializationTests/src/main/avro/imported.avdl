@@ -1,4 +1,4 @@
-@namespace("other.ns")
+@namespace("alt.ns")
 
 protocol ImportedProtocol {
 
