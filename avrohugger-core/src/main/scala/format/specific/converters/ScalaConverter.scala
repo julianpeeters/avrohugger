@@ -54,7 +54,7 @@ object ScalaConverter {
               .MAP(LAMBDA(PARAM("x")) ==> BLOCK(elementConversion))
           )
         }
-        val maybeCustomArrayType = typeMatcher.typeMap.get("array")
+        val maybeCustomArrayType = typeMatcher.customTypeMap.get("array")
         val resultExpr = BLOCK(
           checkCustomArrayType(maybeCustomArrayType, elementType, seqArgs, LIST(seqArgs))
         )

@@ -21,7 +21,7 @@ object Scavro extends SourceFormat {
   def fileExt(schemaOrProtocol: Either[Schema, Protocol]) = ".scala"
 
   val typeMatcher = new TypeMatcher
-  typeMatcher.updateTypeMap("array"-> classOf[Array[_]])
+  typeMatcher.updateCustomTypeMap("array"-> classOf[Array[_]])
   
   val scalaTreehugger = ScavroScalaTreehugger
 

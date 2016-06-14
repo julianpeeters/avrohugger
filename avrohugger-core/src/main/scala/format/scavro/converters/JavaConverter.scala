@@ -123,10 +123,10 @@ class JavaConverter(
           REF("map")
         )
       }
-      case Schema.Type.INT    => checkCustomNumberType(typeMatcher.typeMap.get("int"), tree, "toInt")
-      case Schema.Type.FLOAT  => checkCustomNumberType(typeMatcher.typeMap.get("float"), tree, "toFloat")
-      case Schema.Type.DOUBLE => checkCustomNumberType(typeMatcher.typeMap.get("double"), tree, "toDouble")
-      case Schema.Type.LONG   => checkCustomNumberType(typeMatcher.typeMap.get("long"), tree, "toLong")
+      case Schema.Type.INT    => checkCustomNumberType(typeMatcher.customTypeMap.get("int"), tree, "toInt")
+      case Schema.Type.FLOAT  => checkCustomNumberType(typeMatcher.customTypeMap.get("float"), tree, "toFloat")
+      case Schema.Type.DOUBLE => checkCustomNumberType(typeMatcher.customTypeMap.get("double"), tree, "toDouble")
+      case Schema.Type.LONG   => checkCustomNumberType(typeMatcher.customTypeMap.get("long"), tree, "toLong")
       case Schema.Type.FIXED  => sys.error("the FIXED datatype is not yet supported")
       case Schema.Type.BYTES  => REF("java.nio.ByteBuffer") DOT "wrap" APPLY tree
       case _ => tree

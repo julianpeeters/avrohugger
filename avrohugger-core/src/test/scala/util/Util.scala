@@ -12,7 +12,7 @@ object Util {
       if (contents.isEmpty && (count < maxTries)) readFile(fileName)
       else contents
     } catch { // if file is not found, try again, it should be there
-      case e => {
+      case e: Throwable => {
         if (count < maxTries) readFile(fileName)
         else sys.error("File not found: " + fileName)
       }

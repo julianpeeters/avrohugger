@@ -2,7 +2,7 @@ package avrohugger
 package format
 package scavro
 
-import matchers.TypeMatcher
+import matchers.{ CustomNamespaceMatcher, TypeMatcher }
 
 import org.apache.avro.{ Schema, Protocol }
 
@@ -21,21 +21,18 @@ object ScavroNamespaceRenamer {
       case None => sys.error("Scavro requires a namespace because Java " + 
         "classes cannot be imported from the default package")
     }
-
-    def getCustomNamespace(schemaNamespace: String): Option[String] = {
-      typeMatcher.namespaceMap.get(schemaNamespace) match {
-        case None => scavroModelDefaultNamespace
-        case customNamespace => customNamespace
-      }
-    }
-
     val scavroModelNamespace = {
       val ns = schemaOrProtocol match {
         case Left(schema) => Option(schema.getNamespace)
         case Right(protocol) => Option(protocol.getNamespace)
       }
       ns match {
-        case Some(schemaNamespace) => getCustomNamespace(schemaNamespace)
+        case Some(schemaNS) => {
+          val maybeCustomNS = typeMatcher.customNamespaceMap.get(schemaNS)
+          CustomNamespaceMatcher.checkCustomNamespace(
+            maybeCustomNS,
+            scavroModelDefaultNamespace)
+        }
         case None => scavroModelDefaultNamespace
       }
     }

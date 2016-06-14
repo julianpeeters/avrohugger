@@ -17,91 +17,79 @@ import scala.collection.JavaConversions._
 class TypeMatcher {
 
   // holds user-defined custom type mappings, e.g. ("array"->classOf[Array[_]])
-  val typeMap: scala.collection.concurrent.Map[String, Class[_]] = {
+  val customTypeMap: scala.collection.concurrent.Map[String, Class[_]] = {
     JConcurrentMapWrapper(new ConcurrentHashMap[String, Class[_]]())
   }
-
-  // updates the type map to allow for custom avro to scala mappings
-  def updateTypeMap(avroToScalaMapEntry: (String, Class[_])) {
-    val _ = typeMap += avroToScalaMapEntry
-  }
-
-  def checkCustomArrayType(
-    maybeCustomArray: Option[Class[_]],
-    defaultType: Type => Type) = {
-    maybeCustomArray match {
-      case Some(c) if c == classOf[Array[_]]  => TYPE_ARRAY(_)
-      case Some(c) if c == classOf[List[_]]   => TYPE_LIST(_)
-      case Some(c) if c == classOf[Vector[_]] => TYPE_VECTOR(_)
-      case _                                  => defaultType(_)
-    }
-  }
-
-  // Scavro allows number types to be remapped.
-  def checkCustomNumberType(
-    maybeCustomNumber: Option[Class[_]],
-    defaultClass: Symbol) = {
-    maybeCustomNumber match {
-      case Some(c) if c == classOf[Double] => DoubleClass
-      case Some(c) if c == classOf[Float]  => FloatClass
-      case Some(c) if c == classOf[Long]   => LongClass
-      case Some(c) if c == classOf[Int]    => IntClass
-      case _                               => defaultClass
-    }
-  }
-
-
-  // holds user-defined custom namespace mappings, e.g. ("com.example.idl"->"com.example.model")
-  val namespaceMap: scala.collection.concurrent.Map[String, String] = {
+  
+  // holds user-defined custom namespace mappings, 
+  // e.g. ("com.example.idl"->"com.example.model")
+  val customNamespaceMap: scala.collection.concurrent.Map[String, String] = {
     JConcurrentMapWrapper(new ConcurrentHashMap[String, String]())
   }
 
-
-  // updates the namespace map to allow for custom avro to scala mappings
-  def updateNamespaceMap(namespaceMapEntry: (String, String)) {
-    val _ = namespaceMap += namespaceMapEntry
+  // updates the type map to allow for custom avro to scala mappings
+  def updateCustomTypeMap(avroToScalaMapEntry: (String, Class[_])) {
+    val _ = customTypeMap += avroToScalaMapEntry
   }
 
+  // updates the namespace map to allow for custom avro to scala mappings
+  def updateCustomNamespaceMap(customNamespaceMapEntry: (String, String)) {
+    val _ = customNamespaceMap += customNamespaceMapEntry
+  }
 
-  def toScalaType(classStore: ClassStore, namespace: Option[String], schema: Schema): Type = {
-    // May contain nested schemas that will use the same namespace as the top-level schema. 
-    // Thus, when a field is parsed, the namespace is passed in once
+  def toScalaType(
+    classStore: ClassStore,
+    namespace: Option[String],
+    schema: Schema): Type = {
+    // May contain nested schemas that will use the same namespace as the 
+    // top-level schema. Thus, when a field is parsed, the namespace is passed.
     def matchType(schema: Schema): Type = {
 
       schema.getType match { 
         case Schema.Type.ARRAY    => {
           // default array mapping is currently List, for historical reasons
-          val elementType = toScalaType(classStore, namespace, schema.getElementType)
-          val collectionType = checkCustomArrayType(typeMap.get("array"), TYPE_LIST)
-          collectionType(elementType)
+          val avroElement = schema.getElementType
+          val scalaElementType = toScalaType(classStore, namespace, avroElement)
+          val collectionType = CustomTypeMatcher.checkCustomArrayType(
+            customTypeMap.get("array"),
+            TYPE_LIST)
+          collectionType(scalaElementType)
         }
         case Schema.Type.MAP      => {
           val keyType = StringClass
-          val valueType = toScalaType(classStore, namespace, schema.getValueType)
-          TYPE_MAP(keyType, valueType)
+          val avroValueType = schema.getValueType
+          val scalaValueType = toScalaType(classStore, namespace, avroValueType)
+          TYPE_MAP(keyType, scalaValueType)
         }
         case Schema.Type.BOOLEAN  => BooleanClass
-        case Schema.Type.DOUBLE   => checkCustomNumberType(typeMap.get("double"), DoubleClass)
-        case Schema.Type.FLOAT    => checkCustomNumberType(typeMap.get("float"), FloatClass)
-        case Schema.Type.LONG     => checkCustomNumberType(typeMap.get("long"), LongClass)
-        case Schema.Type.INT      => checkCustomNumberType(typeMap.get("int"), IntClass)
+        case Schema.Type.DOUBLE   => CustomTypeMatcher.checkCustomNumberType(
+          customTypeMap.get("double"), DoubleClass)
+        case Schema.Type.FLOAT    => CustomTypeMatcher.checkCustomNumberType(
+          customTypeMap.get("float"), FloatClass)
+        case Schema.Type.LONG     => CustomTypeMatcher.checkCustomNumberType(
+          customTypeMap.get("long"), LongClass)
+        case Schema.Type.INT      => CustomTypeMatcher.checkCustomNumberType(
+          customTypeMap.get("int"), IntClass)
         case Schema.Type.NULL     => NullClass
         case Schema.Type.STRING   => StringClass
-        case Schema.Type.FIXED    => sys.error("the FIXED datatype is not yet supported")
+        case Schema.Type.FIXED    => sys.error("FIXED datatype not supported")
         case Schema.Type.BYTES    => TYPE_ARRAY(ByteClass)
         case Schema.Type.RECORD   => classStore.generatedClasses(schema)
         case Schema.Type.ENUM     => classStore.generatedClasses(schema)
         case Schema.Type.UNION    => { 
           val unionSchemas = schema.getTypes.toList
-          // unions are represented as Scala Option[T], and thus unions must be of two types, one of them NULL
-          if (unionSchemas.length == 2 && unionSchemas.exists(schema => schema.getType == Schema.Type.NULL)) {
-            val maybeSchema = unionSchemas.find(schema => schema.getType != Schema.Type.NULL)
+          // unions are represented as Scala Option[T], and thus unions must be 
+          // of two types, one of them NULL
+          val isTwoTypes = unionSchemas.length == 2
+          val oneTypeIsNull = unionSchemas.exists(_.getType == Schema.Type.NULL)
+          if (isTwoTypes && oneTypeIsNull) {
+            val maybeSchema = unionSchemas.find(_.getType != Schema.Type.NULL)
             if (maybeSchema.isDefined ) optionType(matchType(maybeSchema.get))
             else sys.error("no avro type found in this union")  
           }
           else sys.error("unions not yet supported beyond nullable fields")
         }
-        case x => sys.error( x + " is not yet supported or is not a valid Avro type")
+        case x => sys.error( x + " is not supported or not a valid Avro type")
       }
     }
     
@@ -109,15 +97,22 @@ class TypeMatcher {
   }
 
 
-  //Scavro format requires that Java types be generated for mapping Java classes to Scala
+  //Scavro requires Java types be generated for mapping Java classes to Scala
 
   // in the future, scavro may allow this to be set
   val avroStringType = TYPE_REF("CharSequence") 
 
-  def toJavaType(classStore: ClassStore, namespace: Option[String], schema: Schema): Type = {
-    // The schema may contain nested schemas that will use the same namespace as the top-level schema. 
-    // Thus, when a field is parsed, the namespace is passed in once
+  def toJavaType(
+    classStore: ClassStore,
+    namespace: Option[String],
+    schema: Schema): Type = {
+    // The schema may contain nested schemas that will use the same namespace 
+    // as the top-level schema.  Thus, when a field is parsed, the namespace is 
+    // passed in once
     def matchType(schema: Schema): Type = {
+      def javaRename(schema: Schema) = {
+        "J" + classStore.generatedClasses(schema)
+      }
 
       schema.getType match { 
         case Schema.Type.INT => TYPE_REF("java.lang.Integer")
@@ -127,7 +122,8 @@ class TypeMatcher {
         case Schema.Type.BOOLEAN => TYPE_REF("java.lang.Boolean")
         case Schema.Type.STRING => avroStringType
         case Schema.Type.ARRAY => {
-          val elementType = toJavaType(classStore, namespace, schema.getElementType)
+          val avroElement = schema.getElementType
+          val elementType = toJavaType(classStore, namespace, avroElement)
           TYPE_REF(REF("java.util.List") APPLYTYPE(elementType))
         }
         case Schema.Type.MAP      => {
@@ -136,21 +132,24 @@ class TypeMatcher {
           TYPE_REF(REF("java.util.Map") APPLYTYPE(keyType, valueType))
         }
         case Schema.Type.NULL     => TYPE_REF("java.lang.Void")
-        case Schema.Type.FIXED    => sys.error("the FIXED datatype is not yet supported")
+        case Schema.Type.FIXED    => sys.error("FIXED datatype not supported")
         case Schema.Type.BYTES    => TYPE_REF("java.nio.ByteBuffer")
-        case Schema.Type.RECORD   => TYPE_REF("J" + classStore.generatedClasses(schema))
-        case Schema.Type.ENUM     => TYPE_REF("J" + classStore.generatedClasses(schema))
+        case Schema.Type.RECORD   => TYPE_REF(javaRename(schema))
+        case Schema.Type.ENUM     => TYPE_REF(javaRename(schema))
         case Schema.Type.UNION    => { 
           val unionSchemas = schema.getTypes.toList
-          // unions are represented as Scala Option[T], and thus unions must be of two types, one of them NULL
-          if (unionSchemas.length == 2 && unionSchemas.exists(schema => schema.getType == Schema.Type.NULL)) {
-            val maybeSchema = unionSchemas.find(schema => schema.getType != Schema.Type.NULL)
+          // unions are represented as Scala Option[T], and thus unions must be 
+          // of two types, one of them NULL
+          val isTwoTypes = unionSchemas.length == 2
+          val oneTypeIsNull = unionSchemas.exists(_.getType == Schema.Type.NULL)
+          if (isTwoTypes && oneTypeIsNull) {
+            val maybeSchema = unionSchemas.find(_.getType != Schema.Type.NULL)
             if (maybeSchema.isDefined ) matchType(maybeSchema.get)
             else sys.error("no avro type found in this union")  
           }
           else sys.error("unions not yet supported beyond nullable fields")
         }
-        case x => sys.error( x +  " is not yet supported or is not a valid Avro type")
+        case x => sys.error( x +  " is not supported or not a valid Avro type")
       }
     }
 

@@ -63,7 +63,7 @@ class ScalaConverter(typeMatcher: TypeMatcher) {
 
       case Schema.Type.ARRAY => {
         val seqArgs = SEQARG(tree)
-        val collection = typeMatcher.typeMap.get("array") match {
+        val collection = typeMatcher.customTypeMap.get("array") match {
           case Some(c) if c == classOf[Array[_]]  => ARRAY(seqArgs)
           case Some(c) if c == classOf[List[_]]   => LIST(seqArgs)
           case Some(c) if c == classOf[Vector[_]] => VECTOR(seqArgs)

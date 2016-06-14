@@ -24,8 +24,8 @@ class Generator(format: SourceFormat,
   val typeMatcher = format.typeMatcher
   
   //update potential custom type mapping and/or custom namespace
-  avroScalaCustomTypes.foreach(typeMatcher.updateTypeMap)
-  avroScalaCustomNamespace.foreach(typeMatcher.updateNamespaceMap)
+  avroScalaCustomTypes.foreach(typeMatcher.updateCustomTypeMap)
+  avroScalaCustomNamespace.foreach(typeMatcher.updateCustomNamespaceMap)
 
   //////////////// methods for writing definitions out to file /////////////////
   def schemaToFile(

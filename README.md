@@ -13,6 +13,31 @@ Alternative Distributions:
 * `sbt-avrohugger`: Generate source code at compile time with an sbt plugin [found here](https://github.com/julianpeeters/sbt-avrohugger).
 * `avro2caseclass`: Generate source code from a web app, [found here](https://github.com/julianpeeters/avro2caseclass).
 
+
+Table of contents
+=================
+
+  * [Supported Formats: Standard, SpecificRecord, Scavro](#generates-scala-case-classes-in-various-formats)
+  * [Supported Datatypes](#supports-generating-case-classes-with-arbitrary-fields-of-the-following-datatypes)
+  * [Usage](#usage)
+    * ['avrohugger-core'](#avrohugger-core)
+      * [Get the dependency](#get-the-dependency-with)
+      * [Description](#description)
+      * [Example](#example)
+      * [Customizable type mapping](#customizable-type-mapping)
+      * [Customizable namespace mapping](#customizable-namespace-mapping)
+      * [Protocol support](#protocol-support)
+      * [Doc support](#doc-support)
+    * ['avrohugger-tools'](#avrohugger-tools)
+    * ['sbt-avrohugger'](#sbt-avrohugger)
+    * ['avro2caseclass'](#avro2caseclass)
+  * [Warnings](#warnings)
+  * [Best Practices](#best-practices)
+  * [Future](#future)
+  * [Testing](#testing)
+  * [Credits](#credits)
+  
+
 ##### Generates Scala case classes in various formats:
 
 * `Standard` Vanilla case classes (for use with [Scalavro](https://github.com/GenslerAppsPod/scalavro), [Salat-Avro](https://github.com/julianpeeters/salat-avro), [gfc-avro](https://github.com/gilt/gfc-avro), etc.)
@@ -45,7 +70,9 @@ runtime, Java classes provided separately (see [Scavro Plugin](https://github.co
 
 
 
-## Usage (for Scala 2.10 and 2.11)
+## Usage 
+
+**For Scala 2.10 and 2.11**
 
 
 #### `avrohugger-core`
@@ -188,7 +215,7 @@ unaffected, most formats fail on schemas with records within unions
 (see [avro forum](see http://apache-avro.679487.n3.nabble.com/Deserialize-with-different-schema-td4032782.html)).
 
 
-## "Best Practices"
+## Best Practices
 
 1) Avoid recursive schemas since they can cause compatibility issues if trying
 to flow data into a system that doesn't support them (e.g., Hive).
@@ -205,12 +232,11 @@ to flow data into a system that doesn't support them (e.g., Hive).
 
 ## Testing
 
-The `scripted` task runs all tests.
-
-As per Doug Cutting's [recommendations](https://github.com/apache/avro/blob/trunk/lang/java/tools/src/test/java/org/apache/avro/tool/TestSpecificCompilerTool.java#L130) in the avro compiler 
-tests, the string-based tests in `test` are augmented by `scripted` tests that
-generate and compile source that is run in de/serialization tests.
-
+The `test` task will only run the tests in `src/test`.
+The `scripted` task runs all tests in `src/test`, as well as the serialization 
+tests in `src/sbt-test`. _Note:_ the scripted tests depend on a local version 
+of `sbt-avrohugger` that needs to be published with the version of `avrohugger` 
+that is to be tested.
 
 #### Credits
 Depends on [Avro](https://github.com/apache/avro) and [Treehugger](https://github.com/eed3si9n/treehugger). `avrohugger-tools` is based on [avro-tools](http://avro.apache.org/docs/1.7.7/gettingstartedjava.html#Serializing+and+deserializing+with+code+generation).

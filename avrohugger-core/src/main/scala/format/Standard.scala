@@ -5,7 +5,7 @@ import format.abstractions.SourceFormat
 import format.standard._
 import models.CompilationUnit
 import stores.{ ClassStore, SchemaStore }
-import matchers.TypeMatcher
+import matchers.{ CustomNamespaceMatcher, TypeMatcher }
 
 import treehugger.forest._
 import definitions.RootClass
@@ -44,30 +44,15 @@ object Standard extends SourceFormat {
 
   def compile(
     classStore: ClassStore, 
-    namespace: Option[String], 
+    ns: Option[String], 
     schemaOrProtocol: Either[Schema, Protocol],
     outDir: String,
     schemaStore: SchemaStore): Unit = {
-
-    // Custom namespaces work for simple types, but seem to fail for records 
-    // within unions, see http://apache-avro.679487.n3.nabble.com/Deserialize-with-different-schema-td4032782.html
-    def checkCustomNamespace(namespace: Option[String]) = {
-      def queryNamespaceMap(schemaNamespace: String): Option[String] = {
-        typeMatcher.namespaceMap.get(schemaNamespace) match {
-          case Some(customNamespace) => Some(customNamespace)
-          case None => Some(schemaNamespace)
-        }
-      }
-      namespace match {
-        case Some(ns) => queryNamespaceMap(ns)
-        case None => None
-      }
-    }
-
-    val scalaNamespace = checkCustomNamespace(namespace)
+    val maybeCustomNS = Option(typeMatcher.customNamespaceMap.get(ns))
+    val scalaNS = CustomNamespaceMatcher.checkCustomNamespace(maybeCustomNS, ns)
     val compilationUnits: List[CompilationUnit] = asCompilationUnits(
       classStore, 
-      scalaNamespace, 
+      scalaNS, 
       schemaOrProtocol,
       schemaStore,
       Some(outDir))

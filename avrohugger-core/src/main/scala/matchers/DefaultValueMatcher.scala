@@ -53,7 +53,7 @@ object DefaultValueMatcher {
           else throw new Exception("Unsupported union field")
         }
         case Schema.Type.ARRAY => {
-          val maybeCustom = typeMatcher.typeMap.get("array")
+          val maybeCustom = typeMatcher.customTypeMap.get("array")
           val collectionType = {
             DefaultParamMatcher.checkCustomArrayType(maybeCustom, ListClass)
           }

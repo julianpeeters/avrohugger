@@ -48,7 +48,7 @@ object DefaultParamMatcher {
       case Type.RECORD  => NEW(classStore.generatedClasses(avroSchema))
       case Type.UNION   => NONE
       case Type.ARRAY   => {
-        checkCustomArrayType(typeMatcher.typeMap.get("array"), ListClass) DOT "empty"
+        checkCustomArrayType(typeMatcher.customTypeMap.get("array"), ListClass) DOT "empty"
       }
       case Type.MAP     => {
         MAKE_MAP(LIT("") ANY_-> asDefaultParam(classStore, avroSchema.getValueType, typeMatcher))

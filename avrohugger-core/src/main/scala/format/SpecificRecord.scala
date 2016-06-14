@@ -5,7 +5,7 @@ import abstractions.SourceFormat
 import format.specific.{ SpecificJavaTreehugger, SpecificScalaTreehugger}
 import models.CompilationUnit
 import stores.{ ClassStore, SchemaStore }
-import matchers.TypeMatcher
+import matchers.{ CustomNamespaceMatcher, TypeMatcher }
 
 import treehugger.forest._
 import definitions.RootClass
@@ -161,7 +161,7 @@ object SpecificRecord extends SourceFormat{
   
   def compile(
     classStore: ClassStore, 
-    namespace: Option[String], 
+    ns: Option[String], 
     schemaOrProtocol: Either[Schema, Protocol],
     outDir: String,
     schemaStore: SchemaStore): Unit = {
@@ -172,39 +172,26 @@ object SpecificRecord extends SourceFormat{
         def isEnum(schema: Schema) = schema.getType == ENUM
         val enums = types.filter(isEnum)
         enums.foreach(schema => {
-          compile(classStore, namespace, Left(schema), outDir, schemaStore)
+          compile(classStore, ns, Left(schema), outDir, schemaStore)
         })
       }
       def writeAllTypes(types: List[Schema]): Unit = types.foreach(schema => {
-        compile(classStore, namespace, Left(schema), outDir, schemaStore)
+        compile(classStore, ns, Left(schema), outDir, schemaStore)
       })
       val localSubTypes = getLocalSubtypes(protocol)
       val messages = protocol.getMessages.toMap
       if (messages.isEmpty) writeJavaTypesFirst(localSubTypes) // for ADTs
       else writeAllTypes(localSubTypes) // for RPC trait
     }
-    // Custom namespaces work for simple types, but seem to fail for records 
-    // within unions, see http://apache-avro.679487.n3.nabble.com/Deserialize-with-different-schema-td4032782.html
-    def checkCustomNamespace(namespace: Option[String]) = {
-      def queryNamespaceMap(schemaNamespace: String): Option[String] = {
-        typeMatcher.namespaceMap.get(schemaNamespace) match {
-          case Some(customNamespace) => Some(customNamespace)
-          case None => Some(schemaNamespace)
-        }
-      }
-      namespace match {
-        case Some(ns) => queryNamespaceMap(ns)
-        case None => None
-      }
-    }
     if (schemaOrProtocol.isRight) {
       val Right(protocol) = schemaOrProtocol
       writeProtocolSubTypes(protocol)
     }
-    val scalaNamespace = checkCustomNamespace(namespace)
+    val maybeCustomNS = Option(typeMatcher.customNamespaceMap.get(ns))
+    val scalaNS = CustomNamespaceMatcher.checkCustomNamespace(maybeCustomNS, ns)
     val compilationUnits = asCompilationUnits(
       classStore, 
-      scalaNamespace, 
+      scalaNS, 
       schemaOrProtocol,
       schemaStore,
       Some(outDir))

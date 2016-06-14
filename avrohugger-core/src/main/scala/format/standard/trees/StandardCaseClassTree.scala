@@ -3,7 +3,8 @@ package format
 package standard
 package trees
 
-import matchers.{ DefaultValueMatcher, TypeMatcher }
+import matchers.DefaultValueMatcher
+import matchers.TypeMatcher
 import stores.ClassStore
 
 import treehugger.forest._
