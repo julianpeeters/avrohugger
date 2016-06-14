@@ -33,7 +33,7 @@ object Util {
       if (contents.isEmpty && (count < maxTries)) readFile(file)
       else contents
     } catch { // if file is not found, try again, it should be there
-      case e: java.io.FileNotFoundException => {
+      case e: Throwable => {
         if (count < maxTries) readFile(file)
         else sys.error("File to found: " + file)
       }
