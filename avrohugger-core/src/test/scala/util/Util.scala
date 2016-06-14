@@ -12,9 +12,9 @@ object Util {
       if (contents.isEmpty && (count < maxTries)) readFile(fileName)
       else contents
     } catch { // if file is not found, try again, it should be there
-      case e: java.io.FileNotFoundException => {
+      case e => {
         if (count < maxTries) readFile(fileName)
-        else sys.error("File to found: " + fileName)
+        else sys.error("File not found: " + fileName)
       }
     }
 
