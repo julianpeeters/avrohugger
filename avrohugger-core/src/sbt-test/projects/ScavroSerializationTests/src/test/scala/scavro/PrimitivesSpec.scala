@@ -471,9 +471,9 @@ class ScavroMap03Test extends Specification {
 }
 
 
-class ScavroEmptyRecordTest extends Specification {
+class ScavroEnum01Test extends Specification {
 
-  "A case class with an empty record" should {
+  "An enum" should {
     "serialize and deserialize correctly" in {
 
       val record = Compass(Direction.NORTH)
@@ -499,10 +499,9 @@ class ScavroEmptyRecordTest extends Specification {
   }
 }
 
+class ScavroEmptyRecordTest extends Specification {
 
-class ScavroEnum01Test extends Specification {
-
-  "A case object that represents an empty record" should {
+  "An case class that represents an empty record" should {
     "serialize and deserialize correctly" in {
 
       val record = Reset()
@@ -525,5 +524,6 @@ class ScavroEnum01Test extends Specification {
       sameRecords must ===(records)
     }
   }
+
   
 }

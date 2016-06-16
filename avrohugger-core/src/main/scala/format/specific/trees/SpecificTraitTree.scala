@@ -21,7 +21,7 @@ object SpecificTraitTree {
     val sealedTraitTree =  TRAITDEF(protocol.getName).withFlags(Flags.SEALED)
     val adtRootTree = {
       val types = protocol.getTypes.toList
-      // filter out enums since they will be written as java and in the adt
+      // filter out enums since they will be written as java and not in the adt
       val nonEnums = types.filterNot(schema => schema.getType == ENUM)
       if (nonEnums.forall(schema => schema.getType == RECORD)) {
         sealedTraitTree
@@ -38,7 +38,7 @@ object SpecificTraitTree {
     treeWithScalaDoc
   }
   
-  def toTraitDef(
+  def toRPCTraitDef(
     classStore: ClassStore, 
     namespace: Option[String],
     protocol: Protocol,

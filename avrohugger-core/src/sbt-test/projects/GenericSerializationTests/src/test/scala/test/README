@@ -1,8 +1,0 @@
-These tests pass when run in their own `sbt run`, but fail intermittently 
-with `sbt-scripted`, with each with a variety of possible errors such as:
-
-CyclicReference: : illegal cyclic reference involving object AvroType  (AvroType.scala:269)
-
-NullPointerException
-
-MissingRequirementError: : term fromTypeHelper in com.gensler.scalavro.types.AvroType not found. 

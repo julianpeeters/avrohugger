@@ -32,7 +32,7 @@ object ScavroScalaTreehugger extends ScalaTreehugger {
     schemaStore: SchemaStore): String = {
 
     val imports: List[Import] = importer.getImports(
-      schemaOrProtocol, namespace, schemaStore)
+      schemaOrProtocol, namespace, schemaStore, typeMatcher)
 
     val topLevelDefs: List[Tree] = 
       asTopLevelDefs(

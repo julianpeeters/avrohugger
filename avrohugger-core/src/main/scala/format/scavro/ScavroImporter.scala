@@ -7,6 +7,7 @@ import avrohugger.input.DependencyInspector.{
   getReferredNamespace,
   getReferredTypeName
 }
+import avrohugger.matchers.TypeMatcher
 import avrohugger.stores.SchemaStore
 
 import org.apache.avro.{ Protocol, Schema }
@@ -34,7 +35,8 @@ object ScavroImporter extends Importer {
   def getImports(
     schemaOrProtocol: Either[Schema, Protocol],
     currentNamespace: Option[String],
-    schemaStore: SchemaStore): List[Import] = {
+    schemaStore: SchemaStore,
+    typeMatcher: TypeMatcher): List[Import] = {
     
     def checkJavaConversions(schemaOrProtocol: Either[Schema, Protocol]) = {
       def getFieldTypes(schema: Schema): List[Schema.Type] = {
@@ -93,14 +95,14 @@ object ScavroImporter extends Importer {
           val renamedNamespace = ScavroNamespaceRenamer.renameNamespace(
             getReferredNamespace(schema),
             Left(schema),
-            Scavro.typeMatcher)
+            typeMatcher)
           renamedNamespace != namespace
         })
         .groupBy(schema => {
           val renamedNamespace = ScavroNamespaceRenamer.renameNamespace(
             getReferredNamespace(schema),
             Left(schema),
-            Scavro.typeMatcher)
+            typeMatcher)
           renamedNamespace.get
         })
         .toList.map(group => group match {
@@ -114,7 +116,8 @@ object ScavroImporter extends Importer {
     val topLevelSchemas = getTopLevelSchemas(schemaOrProtocol, schemaStore)
     
     val allRecordSchemas = getAllRecordSchemas(topLevelSchemas)
-    val allRecordImports = getRecordImports(allRecordSchemas, currentNamespace)
+    val allRecordImports =
+      getRecordImports(allRecordSchemas, currentNamespace, typeMatcher)
     val renamedJavaImports = allRecordImports.map(asRenamedImportTree)
     
     val scalaRecords = getRecordSchemas(topLevelSchemas)

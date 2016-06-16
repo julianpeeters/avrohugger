@@ -5,6 +5,7 @@ package specific
 import avrohugger.format.abstractions.Importer
 import avrohugger.input.DependencyInspector._
 import avrohugger.input.NestedSchemaExtractor._
+import avrohugger.matchers.TypeMatcher
 import avrohugger.stores.SchemaStore
 
 import org.apache.avro.{ Protocol, Schema }
@@ -21,13 +22,14 @@ object SpecificImporter extends Importer {
   def getImports(
     schemaOrProtocol: Either[Schema, Protocol],
     currentNamespace: Option[String],
-    schemaStore: SchemaStore): List[Import] = {
+    schemaStore: SchemaStore,
+    typeMatcher: TypeMatcher): List[Import] = {
       
     val switchAnnotSymbol = RootClass.newClass("scala.annotation.switch")
     val switchImport = IMPORT(switchAnnotSymbol)
     val topLevelSchemas = getTopLevelSchemas(schemaOrProtocol, schemaStore)
     val recordSchemas = getRecordSchemas(topLevelSchemas)
-    val deps = getRecordImports(recordSchemas, currentNamespace)
+    val deps = getRecordImports(recordSchemas, currentNamespace, typeMatcher)
     
     schemaOrProtocol match {
       case Left(schema) => {

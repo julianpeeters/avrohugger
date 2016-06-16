@@ -22,7 +22,8 @@ private[avrohugger] object StringGenerator {
     schema: Schema,
     format: SourceFormat,
     classStore: ClassStore,
-    schemaStore: SchemaStore): List[String] = {
+    schemaStore: SchemaStore,
+    typeMatcher: TypeMatcher): List[String] = {
     val maybeNamespace = DependencyInspector.getReferredNamespace(schema)
     val topLevels = NestedSchemaExtractor.getNestedSchemas(schema, schemaStore)
     //reversed to process nested classes first
@@ -36,7 +37,8 @@ private[avrohugger] object StringGenerator {
         maybeNS,
         Left(schema),
         schemaStore,
-        None)
+        None,
+        typeMatcher)
     })
     compilationUnits.map(compUnit => removeExtraWarning(compUnit.codeString))
   }
@@ -45,14 +47,16 @@ private[avrohugger] object StringGenerator {
     protocol: Protocol,
     format: SourceFormat,
     classStore: ClassStore,
-    schemaStore: SchemaStore): List[String] = {
+    schemaStore: SchemaStore,
+    typeMatcher: TypeMatcher): List[String] = {
     val namespace: Option[String] = Option(protocol.getNamespace)
     val compilationUnits = format.asCompilationUnits(
       classStore,
       namespace,
       Right(protocol),
       schemaStore,
-      None)
+      None,
+      typeMatcher)
     compilationUnits.map(compUnit => removeExtraWarning(compUnit.codeString))
   }
 
@@ -61,15 +65,16 @@ private[avrohugger] object StringGenerator {
     format: SourceFormat,
     classStore: ClassStore,
     schemaStore: SchemaStore,
-    stringParser: StringInputParser): List[String] = {
+    stringParser: StringInputParser,
+    typeMatcher: TypeMatcher): List[String] = {
     val schemaOrProtocols = stringParser.getSchemaOrProtocols(str, schemaStore)
     val codeStrings = schemaOrProtocols.flatMap(schemaOrProtocol => {
       schemaOrProtocol match {
         case Left(schema) => {
-          schemaToStrings(schema, format, classStore, schemaStore)
+          schemaToStrings(schema, format, classStore, schemaStore, typeMatcher)
         }
         case Right(protocol) => {
-          protocolToStrings(protocol, format, classStore, schemaStore)
+          protocolToStrings(protocol, format, classStore, schemaStore, typeMatcher)
         }
       }
     }).distinct
@@ -83,16 +88,17 @@ private[avrohugger] object StringGenerator {
     format: SourceFormat,
     classStore: ClassStore,
     schemaStore: SchemaStore,
-    fileParser: FileInputParser): List[String] = {
+    fileParser: FileInputParser,
+    typeMatcher: TypeMatcher): List[String] = {
     try {
       val schemaOrProtocols: List[Either[Schema, Protocol]] =
         fileParser.getSchemaOrProtocols(inFile, format, classStore)
       schemaOrProtocols.flatMap(schemaOrProtocol => schemaOrProtocol match {
         case Left(schema) => {
-          schemaToStrings(schema, format, classStore, schemaStore)
+          schemaToStrings(schema, format, classStore, schemaStore, typeMatcher)
         }
         case Right(protocol) => {
-          protocolToStrings(protocol, format, classStore, schemaStore)
+          protocolToStrings(protocol, format, classStore, schemaStore, typeMatcher)
         }
       })
     }

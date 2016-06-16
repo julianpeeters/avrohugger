@@ -31,10 +31,10 @@ object SpecificProtocolhugger extends Protocolhugger {
     val maybeProtocolDoc = Option(protocol.getDoc)
 
     if (messages.isEmpty) {
-      val localSubTypes = SpecificRecord.getLocalSubtypes(protocol)
-      // protocols with more than schema defined (Java Enums don't count) and 
+      val localSubTypes = getLocalSubtypes(protocol)
+      // protocols with more than 1 schema defined (Java Enums don't count) and 
       // without messages are generated as ADTs
-      val localNonEnums = localSubTypes.filterNot(SpecificRecord.isEnum)
+      val localNonEnums = localSubTypes.filterNot(isEnum)
 
       if (localNonEnums.length > 1) {
         val maybeNewBaseTrait = Some(name)
@@ -71,13 +71,13 @@ object SpecificProtocolhugger extends Protocolhugger {
         }
     }
     else {
-      val traitDef = SpecificTraitTree.toTraitDef(
+      val rpcTraitDef = SpecificTraitTree.toRPCTraitDef(
         classStore,
         namespace,
         protocol,
         typeMatcher)
       val companionDef = SpecificObjectTree.toTraitCompanionDef(protocol)
-      List(traitDef, companionDef)
+      List(rpcTraitDef, companionDef)
     }
   }
   

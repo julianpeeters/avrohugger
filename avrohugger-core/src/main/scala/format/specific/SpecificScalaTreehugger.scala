@@ -7,7 +7,6 @@ import avrohuggers.{ SpecificProtocolhugger, SpecificSchemahugger }
 import matchers.TypeMatcher
 import stores.{ ClassStore, SchemaStore }
 
-
 import org.apache.avro.{ Protocol, Schema }
 import org.apache.avro.Schema.Field
 import org.apache.avro.Schema.Type.RECORD
@@ -37,7 +36,8 @@ object SpecificScalaTreehugger extends ScalaTreehugger {
     val imports: List[Import] = importer.getImports(
       schemaOrProtocol,
       namespace,
-      schemaStore)
+      schemaStore,
+      typeMatcher)
 
     val topLevelDefs: List[Tree] = asTopLevelDefs(
       classStore,

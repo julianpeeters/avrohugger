@@ -46,7 +46,7 @@ object ScavroSchemahugger extends Schemahugger{
           maybeFlags)
         List(caseClassDef, companionDef)
       case ENUM =>
-        val objectDef = ScavroObjectTree.toObjectDef(
+        val objectDef = ScavroObjectTree.toScalaEnumDef(
           classStore,
           schema,
           maybeBaseTrait,

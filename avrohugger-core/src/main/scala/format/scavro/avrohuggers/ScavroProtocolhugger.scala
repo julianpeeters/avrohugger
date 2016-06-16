@@ -30,7 +30,7 @@ object ScavroProtocolhugger extends Protocolhugger {
     val maybeNewBaseTrait = Some(name)
     val maybeNewFlags = Some(List(Flags.FINAL.toLong))
     val traitDef = ScavroTraitTree.toADTRootDef(protocol)
-    val localSubTypes = Scavro.getLocalSubtypes(protocol)
+    val localSubTypes = getLocalSubtypes(protocol)
     if (localSubTypes.length > 1) {
       traitDef +: localSubTypes.flatMap(schema =>
         ScavroScalaTreehugger.asTopLevelDefs(

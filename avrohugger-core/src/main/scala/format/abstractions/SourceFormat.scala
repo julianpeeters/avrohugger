@@ -12,6 +12,10 @@ import org.apache.avro.Schema.Type.{ ENUM, RECORD }
 import java.nio.file.{ Path, Paths, Files, StandardOpenOption }
 import java.io.{ File, FileNotFoundException, IOException }
 
+import treehugger.forest._
+import definitions._
+import treehuggerDSL._
+
 import scala.collection.JavaConversions._
 
 /** Parent to all ouput formats
@@ -21,18 +25,18 @@ import scala.collection.JavaConversions._
   * compile
   * fileExt
   * getName
-  * registerTypes
   * scalaTreehugger
   * toolName
   * toolShortDescription
-  * typeMatcher
   *
   * _CONCRETE MEMBERS_: implementations to be inherited by a subclass
   * getFilePath
   * getLocalSubtypes
   * getJavaCompilationUnit
-  * renameEnum
   * getScalaCompilationUnit
+  * isEnum
+  * registerTypes
+  * renameEnum
   * writeToFile
   */
 trait SourceFormat {
@@ -43,31 +47,26 @@ trait SourceFormat {
     namespace: Option[String], 
     schemaOrProtocol: Either[Schema, Protocol],
     schemaStore: SchemaStore,
-    maybeOutDir: Option[String]): List[CompilationUnit]
+    maybeOutDir: Option[String],
+    typeMatcher: TypeMatcher): List[CompilationUnit]
     
   def compile(
     classStore: ClassStore, 
     namespace: Option[String], 
     schemaOrProtocol: Either[Schema, Protocol],
     outDir: String,
-    schemaStore: SchemaStore): Unit
+    schemaStore: SchemaStore,
+    typeMatcher: TypeMatcher): Unit
   
   def fileExt(schemaOrProtocol: Either[Schema, Protocol]): String
 
   def getName(schemaOrProtocol: Either[Schema, Protocol]): String
-  
-  def registerTypes(
-    schemaOrProtocol: Either[Schema, Protocol],
-    classStore: ClassStore): Unit  
       
   val scalaTreehugger: ScalaTreehugger
 
   val toolName: String
 
-  val toolShortDescription: String
-  
-  val typeMatcher: TypeMatcher
-  
+  val toolShortDescription: String  
   
   ///////////////////////////// concrete members ///////////////////////////////
   def getFilePath(
@@ -98,25 +97,17 @@ trait SourceFormat {
     types.filter(isTopLevelNamespace)
   }
   
-  def getJavaCompilationUnit(
+  def getJavaEnumCompilationUnit(
     classStore: ClassStore,
     namespace: Option[String],
     schema: Schema,
     maybeOutDir: Option[String]): CompilationUnit = {
     val maybeFilePath = getFilePath(namespace, Left(schema), maybeOutDir)
-    val codeString = format.specific.SpecificJavaTreehugger.asJavaCodeString(
+    val codeString = JavaTreehugger.asJavaCodeString(
       classStore,
       namespace,
       schema)
     CompilationUnit(maybeFilePath, codeString)
-  }
-  
-  def renameEnum(schema: Schema) = {
-    schema.getType match {
-      case RECORD => schema.getName
-      case ENUM => schema.getName + ".Value"
-      case _ => sys.error("Only RECORD and ENUM can be top-level definitions")
-    }
   }
   
   def getScalaCompilationUnit(
@@ -126,7 +117,6 @@ trait SourceFormat {
     typeMatcher: TypeMatcher,
     schemaStore: SchemaStore,
     maybeOutDir: Option[String]): CompilationUnit = {
-    registerTypes(schemaOrProtocol, classStore)
     val scalaFilePath = getFilePath(namespace, schemaOrProtocol, maybeOutDir)
     val scalaString = scalaTreehugger.asScalaCodeString(
       classStore,
@@ -135,6 +125,36 @@ trait SourceFormat {
       typeMatcher,
       schemaStore)
     CompilationUnit(scalaFilePath, scalaString)
+  }
+  
+  def isEnum(schema: Schema) = schema.getType == Schema.Type.ENUM
+  
+  def registerTypes(
+    schemaOrProtocol: Either[Schema, Protocol],
+    classStore: ClassStore,
+    typeMatcher: TypeMatcher): Unit = {
+    def registerSchema(schema: Schema): Unit = {
+      val typeName = typeMatcher.customEnumStyleMap.get("enum") match {
+        case Some("java enum") => schema.getName
+        case _ => renameEnum(schema)
+      }
+      val classSymbol = RootClass.newClass(typeName)
+      classStore.accept(schema, classSymbol)
+    }
+    schemaOrProtocol match {
+      case Left(schema) => registerSchema(schema)
+      case Right(protocol) => protocol.getTypes.toList.foreach(schema => {
+        registerSchema(schema)
+      })
+    }
+  }
+  
+  def renameEnum(schema: Schema) = {
+    schema.getType match {
+      case RECORD => schema.getName
+      case ENUM => schema.getName + ".Value"
+      case _ => sys.error("Only RECORD and ENUM can be top-level definitions")
+    }
   }
   
   def writeToFile(compilationUnit: CompilationUnit): Unit = {

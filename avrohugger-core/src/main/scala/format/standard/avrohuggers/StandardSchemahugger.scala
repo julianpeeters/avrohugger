@@ -35,13 +35,15 @@ object StandardSchemahugger extends Schemahugger {
           maybeBaseTrait,
           maybeFlags)
         List(classDef)
-      case ENUM => 
-        val objectDef = StandardObjectTree.toObjectDef(
-          classStore,
-          schema,
-          maybeBaseTrait,
-          maybeFlags)
-        List(objectDef)
+      case ENUM => typeMatcher.customEnumStyleMap.get("enum") match {
+        case _ =>
+          val objectDef = StandardObjectTree.toScalaEnumDef(
+            classStore,
+            schema,
+            maybeBaseTrait,
+            maybeFlags)
+          List(objectDef)
+      }
       case _ => sys.error("Only RECORD or ENUM can be toplevel definitions")
     }
   }

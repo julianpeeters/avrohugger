@@ -20,8 +20,6 @@ object Scavro extends SourceFormat {
   val toolShortDescription = "Generates Scala wrapper code for the given schema."
   def fileExt(schemaOrProtocol: Either[Schema, Protocol]) = ".scala"
 
-  val typeMatcher = new TypeMatcher
-  typeMatcher.updateCustomTypeMap("array"-> classOf[Array[_]])
   
   val scalaTreehugger = ScavroScalaTreehugger
 
@@ -30,9 +28,10 @@ object Scavro extends SourceFormat {
     namespace: Option[String], 
     schemaOrProtocol: Either[Schema, Protocol],
     schemaStore: SchemaStore,
-    maybeOutDir: Option[String]): List[CompilationUnit] = {
+    maybeOutDir: Option[String],
+    typeMatcher: TypeMatcher): List[CompilationUnit] = {
       
-    registerTypes(schemaOrProtocol, classStore)
+    registerTypes(schemaOrProtocol, classStore, typeMatcher)
         
     // By default, Scavro generates Scala classes in packages that are the same 
     // as the Java package with `model` appended. 
@@ -70,31 +69,16 @@ object Scavro extends SourceFormat {
     namespace: Option[String],
     schemaOrProtocol: Either[Schema, Protocol],
     outDir: String,
-    schemaStore: SchemaStore): Unit = {
-    
-    val compilationUnits = asCompilationUnits(
+    schemaStore: SchemaStore,
+    typeMatcher: TypeMatcher): Unit = {
+    val compilationUnits: List[CompilationUnit] = asCompilationUnits(
       classStore,
       namespace,
       schemaOrProtocol,
       schemaStore,
-      Some(outDir))
-      
+      Some(outDir),
+      typeMatcher)  
     compilationUnits.foreach(writeToFile)
   }
-
-  def registerTypes(
-    schemaOrProtocol: Either[Schema, Protocol],
-    classStore: ClassStore): Unit = {
-    schemaOrProtocol match {
-      case Left(schema) => {
-        val classSymbol = RootClass.newClass(renameEnum(schema))
-        classStore.accept(schema, classSymbol)
-      }
-      case Right(protocol) => protocol.getTypes.toList.foreach(schema => {
-        val classSymbol = RootClass.newClass(renameEnum(schema))
-        classStore.accept(schema, classSymbol)
-      })
-    }
-	}
 
 }

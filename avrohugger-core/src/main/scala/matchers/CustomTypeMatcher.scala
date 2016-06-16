@@ -17,8 +17,7 @@ object CustomTypeMatcher {
       case _                                  => defaultType(_)
     }
   }
-  
-  
+ 
   // Scavro allows number types to be remapped.
   def checkCustomNumberType(
     maybeCustomNumber: Option[Class[_]],

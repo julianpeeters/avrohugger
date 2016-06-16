@@ -29,13 +29,18 @@ object StandardProtocolhugger extends Protocolhugger {
       
     val name: String = protocol.getName
     
-    val localSubTypes = Standard.getLocalSubtypes(protocol)
+    val localSubTypes = getLocalSubtypes(protocol)
+      
+    val adtSubTypes = typeMatcher.customEnumStyleMap.get("enum") match {
+      case Some("java enum") => localSubTypes.filterNot(isEnum)
+      case _ => localSubTypes
+    }
     
-    if (localSubTypes.length > 1) {
+    if (adtSubTypes.length > 1) {
       val maybeNewBaseTrait = Some(name)
       val maybeNewFlags = Some(List(Flags.FINAL.toLong))
-      val traitDef = StandardTraitTree.toADTRootDef(protocol)
-      traitDef +: localSubTypes.flatMap(schema =>
+      val traitDef = StandardTraitTree.toADTRootDef(protocol, typeMatcher)
+      traitDef +: adtSubTypes.flatMap(schema =>
         StandardScalaTreehugger.asTopLevelDefs(
           classStore,
           namespace,

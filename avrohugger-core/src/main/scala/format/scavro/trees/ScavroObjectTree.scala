@@ -18,7 +18,7 @@ import scala.collection.JavaConversions._
 object ScavroObjectTree {
 
   // for generating enums
-  def toObjectDef(
+  def toScalaEnumDef(
     classStore: ClassStore, 
     schema: Schema,
     maybeBaseTrait: Option[String],

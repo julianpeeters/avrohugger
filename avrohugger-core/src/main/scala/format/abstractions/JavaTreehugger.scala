@@ -23,12 +23,12 @@ import scala.collection.JavaConversions._
 
 // Java required for generating Enums (Specific API requires Java enums)
 // Note that the Apache Avro SpecificCompiler does not add doc comments
-trait JavaTreehugger {
+object JavaTreehugger {
 
   def asJavaCodeString(
     classStore: ClassStore,
     namespace: Option[String],
-    schema: Schema) = {
+    schema: Schema): String = {
 
     def writeJavaTempFile(
       namespace: Option[String],
@@ -86,7 +86,19 @@ trait JavaTreehugger {
     val tempPath = outDir + schema.getFullName.replace('.','/') + ".java"
     val tempFile = new File(tempPath)
     val fileContents = scala.io.Source.fromFile(tempPath)
+    val schemaPackage = "package " + schema.getNamespace
+    val updatedPackage = namespace match {
+      case Some(ns) => "package " + ns
+      case None => ""
+    }
+    val schemaNamespace = """\"namespace\":\"""" +schema.getNamespace+ """\","""
+    val updatedNamespace = namespace match {
+      case Some(ns) => """\"namespace\":\"""" + ns + """\","""
+      case None => ""
+    }
     val codeString = fileContents.mkString
+      .replace(schemaPackage, updatedPackage)
+      .replace(schemaNamespace, updatedNamespace)
     fileContents.close
     deleteTemps(tempPath)
     codeString

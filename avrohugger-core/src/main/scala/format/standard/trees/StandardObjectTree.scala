@@ -15,7 +15,7 @@ import scala.collection.JavaConversions._
 
 object StandardObjectTree {
 
-  def toObjectDef(
+  def toScalaEnumDef(
     classStore: ClassStore, 
     schema: Schema,
     maybeBaseTrait: Option[String],
@@ -50,7 +50,8 @@ object StandardObjectTree {
       objectTree)
       
     treeWithScalaDoc
-    
   }
+  
+  
   
 }

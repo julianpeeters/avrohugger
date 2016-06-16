@@ -5,12 +5,13 @@ import format.abstractions.SourceFormat
 import format.standard._
 import models.CompilationUnit
 import stores.{ ClassStore, SchemaStore }
-import matchers.{ CustomNamespaceMatcher, TypeMatcher }
+import matchers.{ CustomNamespaceMatcher, CustomTypeMatcher, TypeMatcher }
 
 import treehugger.forest._
 import definitions.RootClass
 
 import org.apache.avro.{ Protocol, Schema }
+import org.apache.avro.Schema.Type.{ ENUM, RECORD }
 
 import scala.collection.JavaConversions._
 
@@ -20,26 +21,90 @@ object Standard extends SourceFormat {
   val toolShortDescription = "Generates Scala code for the given schema.";
   def fileExt(schemaOrProtocol: Either[Schema, Protocol]) = ".scala"
 
-  val typeMatcher = new TypeMatcher
   val scalaTreehugger = StandardScalaTreehugger
-
+  
   def asCompilationUnits(
     classStore: ClassStore, 
-    namespace: Option[String], 
+    ns: Option[String], 
     schemaOrProtocol: Either[Schema, Protocol],
     schemaStore: SchemaStore,
-    maybeOutDir: Option[String]): List[CompilationUnit] = {
+    maybeOutDir: Option[String],
+    typeMatcher: TypeMatcher): List[CompilationUnit] = {
       
-    registerTypes(schemaOrProtocol, classStore)
+    registerTypes(schemaOrProtocol, classStore, typeMatcher)
 
-    val scalaCompilationUnit = getScalaCompilationUnit(
-      classStore,
-      namespace,
-      schemaOrProtocol,
-      typeMatcher,
-      schemaStore,
-      maybeOutDir)
-    List(scalaCompilationUnit)
+    val maybeCustom = ns match {
+      case Some(schemaNS) => typeMatcher.customNamespaceMap.get(schemaNS)
+      case None => ns
+    }
+    val namespace = CustomNamespaceMatcher.checkCustomNamespace(maybeCustom, ns)
+    
+    def maybeCustomEnumStyle = typeMatcher.customEnumStyleMap.get("enum")
+
+    schemaOrProtocol match {
+      case Left(schema) => {
+        schema.getType match {
+          case RECORD => {
+            val scalaCompilationUnit = getScalaCompilationUnit(
+              classStore,
+              namespace,
+              schemaOrProtocol,
+              typeMatcher,
+              schemaStore,
+              maybeOutDir)
+            List(scalaCompilationUnit)
+          }
+          case ENUM => {
+            maybeCustomEnumStyle match {
+              case Some("java enum") => {
+                val javaCompilationUnit = getJavaEnumCompilationUnit(
+                  classStore,
+                  namespace,
+                  schema,
+                  maybeOutDir)
+                List(javaCompilationUnit)
+              }
+              case _ => {
+                val scalaCompilationUnit = getScalaCompilationUnit(
+                  classStore,
+                  namespace,
+                  schemaOrProtocol,
+                  typeMatcher,
+                  schemaStore,
+                  maybeOutDir)
+                List(scalaCompilationUnit)
+              }
+            }
+            
+          }
+          case _ => sys.error("Only RECORD or ENUM can be toplevel definitions")
+        }
+      }
+      case Right(protocol) => {
+        val scalaADTorSoloClassCompilationUnit = getScalaCompilationUnit(
+          classStore,
+          namespace,
+          Right(protocol),
+          typeMatcher,
+          schemaStore,
+          maybeOutDir)
+        maybeCustomEnumStyle match {
+          case Some("java enum") => {
+            val localSubtypes = getLocalSubtypes(protocol)
+            val localEnums = localSubtypes.filter(isEnum)
+            val javaCompilationUnits = localEnums.map(schema => {
+              getJavaEnumCompilationUnit(
+                classStore,
+                namespace,
+                schema,
+                maybeOutDir)
+            })
+            scalaADTorSoloClassCompilationUnit +: javaCompilationUnits
+          }
+          case _ => List(scalaADTorSoloClassCompilationUnit)
+        }
+      }
+    }
   }
 
   def compile(
@@ -47,15 +112,15 @@ object Standard extends SourceFormat {
     ns: Option[String], 
     schemaOrProtocol: Either[Schema, Protocol],
     outDir: String,
-    schemaStore: SchemaStore): Unit = {
-    val maybeCustomNS = Option(typeMatcher.customNamespaceMap.get(ns))
-    val scalaNS = CustomNamespaceMatcher.checkCustomNamespace(maybeCustomNS, ns)
+    schemaStore: SchemaStore,
+    typeMatcher: TypeMatcher): Unit = {
     val compilationUnits: List[CompilationUnit] = asCompilationUnits(
       classStore, 
-      scalaNS, 
+      ns, 
       schemaOrProtocol,
       schemaStore,
-      Some(outDir))
+      Some(outDir),
+      typeMatcher)
     compilationUnits.foreach(writeToFile)
   }
   
@@ -70,21 +135,6 @@ object Standard extends SourceFormat {
           case None => protocol.getName  // default to protocol name
         }
       }
-    }
-  }
-
-  def registerTypes(
-    schemaOrProtocol: Either[Schema, Protocol],
-    classStore: ClassStore): Unit = {
-    schemaOrProtocol match {
-      case Left(schema) => {
-        val classSymbol = RootClass.newClass(renameEnum(schema))
-        classStore.accept(schema, classSymbol)
-      }
-      case Right(protocol) => protocol.getTypes.toList.foreach(schema => {
-        val classSymbol = RootClass.newClass(renameEnum(schema))
-        classStore.accept(schema, classSymbol)
-      })
     }
   }
 

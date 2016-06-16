@@ -26,6 +26,12 @@ class TypeMatcher {
   val customNamespaceMap: scala.collection.concurrent.Map[String, String] = {
     JConcurrentMapWrapper(new ConcurrentHashMap[String, String]())
   }
+  
+  // holds user-selected enum style, e.g. ("enum"->"java_enum")
+  val customEnumStyleMap: scala.collection.concurrent.Map[String, String] = {
+    JConcurrentMapWrapper(new ConcurrentHashMap[String, String]())
+  }
+  
 
   // updates the type map to allow for custom avro to scala mappings
   def updateCustomTypeMap(avroToScalaMapEntry: (String, Class[_])) {
@@ -35,6 +41,11 @@ class TypeMatcher {
   // updates the namespace map to allow for custom avro to scala mappings
   def updateCustomNamespaceMap(customNamespaceMapEntry: (String, String)) {
     val _ = customNamespaceMap += customNamespaceMapEntry
+  }
+  
+  // updates the enum style map map to allow for avro to java or scala mappings
+  def updateCustomEnumStyleMap(customEnumStyleMapEntry: (String, String)) {
+    val _ = customEnumStyleMap += customEnumStyleMapEntry
   }
 
   def toScalaType(

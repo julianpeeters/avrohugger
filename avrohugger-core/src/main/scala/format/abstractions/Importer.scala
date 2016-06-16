@@ -7,6 +7,7 @@ import avrohugger.input.DependencyInspector.{
   getReferredTypeName
 }
 import avrohugger.input.NestedSchemaExtractor
+import matchers.{ CustomNamespaceMatcher, TypeMatcher }
 import stores.SchemaStore
 
 import org.apache.avro.{ Schema, Protocol }
@@ -37,7 +38,8 @@ trait Importer {
   def getImports(
     schemaOrProtocol: Either[Schema, Protocol],
     currentNamespace: Option[String],
-    schemaStore: SchemaStore): List[Import]
+    schemaStore: SchemaStore,
+    typeMatcher: TypeMatcher): List[Import]
   
   ////////////////////////////// concrete members //////////////////////////////
   def getFieldSchemas(schema: Schema): List[Schema] = {
@@ -45,15 +47,31 @@ trait Importer {
   }
     
   def getRecordImports(
-    recordSchemas: List[Schema],//schemaOrProtocol: Either[Schema, Protocol],
-    namespace: Option[String]): List[Import] = {
+    recordSchemas: List[Schema],
+    namespace: Option[String],
+    typeMatcher: TypeMatcher): List[Import] = {
+    
+    
+    def checkNamespace(schema: Schema): Option[String] = {
+      val maybeCustom = typeMatcher.customNamespaceMap.get(schema.getNamespace)
+      getReferredNamespace(schema) match {
+        case Some(ns) => CustomNamespaceMatcher.checkCustomNamespace(
+          maybeCustom, Some(ns))
+        case None => None
+      }
+    }
+    
     recordSchemas
-      .filter(schema => getReferredNamespace(schema).isDefined)
-      .filter(schema => getReferredNamespace(schema) != namespace)
-      .groupBy(schema => getReferredNamespace(schema).get)
+      .filter(schema => isRecord(schema) || isEnum(schema))
+      .filter(schema => checkNamespace(schema).isDefined)
+      .filter(schema => checkNamespace(schema) != namespace)
+      .groupBy(schema => checkNamespace(schema).get)
       .toList.map(group => group match {
         case(packageName, fields) => {
-          val importedPackageSym = RootClass.newClass(packageName)
+          val maybeCustomNS = typeMatcher.customNamespaceMap.get(packageName)
+          val Some(updatedPkg) = CustomNamespaceMatcher.checkCustomNamespace(
+            maybeCustomNS, Some(packageName))
+          val importedPackageSym = RootClass.newClass(updatedPkg)
           val importedTypes = fields.map(field => getReferredTypeName(field))
           IMPORT(importedPackageSym, importedTypes)
         }

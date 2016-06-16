@@ -1,6 +1,7 @@
 package avrohugger
 
 import avrohugger.format.abstractions.SourceFormat
+import avrohugger.format.{ Scavro, SpecificRecord }
 import avrohugger.input.parsers.{ FileInputParser, StringInputParser}
 import avrohugger.matchers.TypeMatcher
 import avrohugger.stores.{ ClassStore, SchemaStore }
@@ -12,7 +13,8 @@ import java.io.File
 // Unable to overload this class' methods because outDir uses a default value
 class Generator(format: SourceFormat,
   avroScalaCustomTypes: Map[String, Class[_]] = Map.empty,
-  avroScalaCustomNamespace: Map[String, String] = Map.empty) {
+  avroScalaCustomNamespace: Map[String, String] = Map.empty,
+  avroScalaCustomEnumStyle: Map[String, String] = Map.empty) {
   
   val sourceFormat = format
   val defaultOutputDir = "target/generated-sources"
@@ -21,17 +23,27 @@ class Generator(format: SourceFormat,
   lazy val schemaParser = new Schema.Parser
   val classStore = new ClassStore
   val schemaStore = new SchemaStore
-  val typeMatcher = format.typeMatcher
+  val typeMatcher = new TypeMatcher
   
+  // update format defaults
+  format match {
+    case Scavro =>
+      typeMatcher.updateCustomTypeMap("array" -> classOf[Array[_]])
+    case SpecificRecord =>
+      typeMatcher.updateCustomEnumStyleMap("enum" -> "java enum")
+    case _ => ()
+  }
   //update potential custom type mapping and/or custom namespace
   avroScalaCustomTypes.foreach(typeMatcher.updateCustomTypeMap)
   avroScalaCustomNamespace.foreach(typeMatcher.updateCustomNamespaceMap)
+  avroScalaCustomEnumStyle.foreach(typeMatcher.updateCustomEnumStyleMap)
 
   //////////////// methods for writing definitions out to file /////////////////
   def schemaToFile(
     schema: Schema,
     outDir: String = defaultOutputDir): Unit = {
-    FileGenerator.schemaToFile(schema, outDir, format, classStore, schemaStore)
+    FileGenerator.schemaToFile(
+      schema, outDir, format, classStore, schemaStore, typeMatcher)
   }
   
   def protocolToFile(
@@ -42,7 +54,8 @@ class Generator(format: SourceFormat,
       outDir,
       format,
       classStore,
-      schemaStore)
+      schemaStore,
+      typeMatcher)
   }
 
   def stringToFile(
@@ -54,7 +67,8 @@ class Generator(format: SourceFormat,
       format, 
       classStore,
       schemaStore,
-      stringParser)
+      stringParser,
+      typeMatcher)
   }
 
   def fileToFile(
@@ -66,16 +80,19 @@ class Generator(format: SourceFormat,
       format, 
       classStore,
       schemaStore,
-      fileParser)
+      fileParser,
+      typeMatcher)
   }
 
   //////// methods for writing to a list of definitions in String format ///////
   def schemaToStrings(schema: Schema): List[String] = {
-    StringGenerator.schemaToStrings(schema, format, classStore, schemaStore)
+    StringGenerator.schemaToStrings(
+      schema, format, classStore, schemaStore, typeMatcher)
   }
   
   def protocolToStrings(protocol: Protocol): List[String] = {
-    StringGenerator.protocolToStrings(protocol, format, classStore, schemaStore)
+    StringGenerator.protocolToStrings(
+      protocol, format, classStore, schemaStore, typeMatcher)
   }
 
   def stringToStrings(schemaStr: String): List[String] = {
@@ -84,7 +101,8 @@ class Generator(format: SourceFormat,
       format,
       classStore,
       schemaStore,
-      stringParser)
+      stringParser,
+      typeMatcher)
   }
 
   def fileToStrings(inFile: File): List[String] = {
@@ -93,7 +111,8 @@ class Generator(format: SourceFormat,
       format,
       classStore,
       schemaStore,
-      fileParser)
+      fileParser,
+      typeMatcher)
   }
 
 }

@@ -30,7 +30,8 @@ object StandardScalaTreehugger extends ScalaTreehugger {
     typeMatcher: TypeMatcher,
     schemaStore: SchemaStore): String = {
       
-    val imports = importer.getImports(schemaOrProtocol, namespace, schemaStore)
+    val imports = importer.getImports(
+      schemaOrProtocol, namespace, schemaStore, typeMatcher)
       
     val topLevelDefs: List[Tree] = 
       asTopLevelDefs(

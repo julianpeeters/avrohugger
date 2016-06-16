@@ -6,9 +6,11 @@ package avrohuggers
 import stores.ClassStore
 import matchers.TypeMatcher
 
-import org.apache.avro.Protocol
+import org.apache.avro.{ Protocol, Schema }
 
 import treehugger.forest.Tree
+
+import scala.collection.JavaConversions._
 
 trait Protocolhugger {
   
@@ -19,5 +21,16 @@ trait Protocolhugger {
     typeMatcher: TypeMatcher,
     maybeBaseTrait: Option[String],
     maybeFlags: Option[List[Long]]): List[Tree]
+    
+    
+  def getLocalSubtypes(protocol: Protocol): List[Schema] = {
+    val protocolNS = protocol.getNamespace
+    val types = protocol.getTypes.toList
+    def isTopLevelNamespace(schema: Schema) = schema.getNamespace == protocolNS
+    types.filter(isTopLevelNamespace)
+  }
+  
+  def isEnum(schema: Schema) = schema.getType == Schema.Type.ENUM
+
     
 }
