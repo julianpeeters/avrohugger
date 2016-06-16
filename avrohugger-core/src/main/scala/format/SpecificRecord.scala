@@ -22,17 +22,6 @@ object SpecificRecord extends SourceFormat{
 
   val toolShortDescription = "Generates Scala code extending SpecificRecordBase."
 
-  def fileExt(schemaOrProtocol: Either[Schema, Protocol]) = {
-    schemaOrProtocol match {
-      case Left(schema) => schema.getType match {
-        case RECORD => ".scala"
-        case ENUM => ".java" // Avro's SpecificData requires enums be Java Enum
-        case _ => sys.error("Only RECORD and ENUM can be top-level definitions")
-      }
-      case Right(protocol) => ".scala"
-    }
-  }
-
   val scalaTreehugger = SpecificScalaTreehugger
 
   def asCompilationUnits(
@@ -56,7 +45,11 @@ object SpecificRecord extends SourceFormat{
       val localSubtypes = getLocalSubtypes(protocol)
       val localEnums = localSubtypes.filter(isEnum)
       val localNonEnums = localSubtypes.filterNot(isEnum)
-      val maybePath = getFilePath(namespace, Right(protocol), maybeOutDir)
+      val maybePath = getFilePath(
+        namespace,
+        Right(protocol),
+        maybeOutDir,
+        typeMatcher)
       val rpcTraitString = scalaTreehugger.asScalaCodeString(
         classStore,
         namespace,
@@ -75,7 +68,12 @@ object SpecificRecord extends SourceFormat{
         scalaCompilationUnit
       })
       val javaCompUnits = localEnums.map(schema => {
-        getJavaEnumCompilationUnit(classStore, namespace, schema, maybeOutDir)
+        getJavaEnumCompilationUnit(
+        classStore,
+        namespace,
+        schema,
+        maybeOutDir,
+        typeMatcher)
       })
       val rpcTypeCompUnits = scalaCompUnits ::: javaCompUnits
       rpcTraitCompUnit +: rpcTypeCompUnits
@@ -99,7 +97,8 @@ object SpecificRecord extends SourceFormat{
               classStore,
               namespace,
               schema,
-              maybeOutDir)
+              maybeOutDir,
+              typeMatcher)
             List(javaCompilationUnit)
           }
           case _ => sys.error("Only RECORD or ENUM can be toplevel definitions")
@@ -111,7 +110,12 @@ object SpecificRecord extends SourceFormat{
           val localSubtypes = getLocalSubtypes(protocol)
           val localEnums = localSubtypes.filter(isEnum)
           val javaCompilationUnits = localEnums.map(schema => {
-            getJavaEnumCompilationUnit(classStore, namespace, schema, maybeOutDir)
+            getJavaEnumCompilationUnit(
+              classStore,
+              namespace,
+              schema,
+              maybeOutDir,
+              typeMatcher)
           })
           val scalaADTorSoloClassCompilationUnit = getScalaCompilationUnit(
             classStore,
@@ -127,15 +131,17 @@ object SpecificRecord extends SourceFormat{
     }
   }
   
-  def getName(schemaOrProtocol: Either[Schema, Protocol]): String = {
+  def getName(
+    schemaOrProtocol: Either[Schema, Protocol],
+    typeMatcher: TypeMatcher): String = {
     schemaOrProtocol match {
       case Left(schema) => schema.getName
       case Right(protocol) => {
         def isEnum(schema: Schema) = schema.getType == Schema.Type.ENUM
         val messages = protocol.getMessages.toMap
-        val localRecords = getLocalSubtypes(protocol).filterNot(isEnum)
         if (!messages.isEmpty) protocol.getName // for RPC trait
         else {
+          val localRecords = getLocalSubtypes(protocol).filterNot(isEnum)
           if (localRecords.length > 1) protocol.getName // for ADT
           else localRecords.headOption match {
             case Some(schema) => schema.getName // for solo records make a class

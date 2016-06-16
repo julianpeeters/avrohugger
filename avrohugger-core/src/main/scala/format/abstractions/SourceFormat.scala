@@ -23,13 +23,13 @@ import scala.collection.JavaConversions._
   * _ABSTRACT MEMBERS_: to be implemented by a subclass
   * asCompilationUnits
   * compile
-  * fileExt
   * getName
   * scalaTreehugger
   * toolName
   * toolShortDescription
   *
   * _CONCRETE MEMBERS_: implementations to be inherited by a subclass
+  * fileExt
   * getFilePath
   * getLocalSubtypes
   * getJavaCompilationUnit
@@ -57,10 +57,10 @@ trait SourceFormat {
     outDir: String,
     schemaStore: SchemaStore,
     typeMatcher: TypeMatcher): Unit
-  
-  def fileExt(schemaOrProtocol: Either[Schema, Protocol]): String
 
-  def getName(schemaOrProtocol: Either[Schema, Protocol]): String
+  def getName(
+    schemaOrProtocol: Either[Schema, Protocol], 
+    typeMatcher: TypeMatcher): String
       
   val scalaTreehugger: ScalaTreehugger
 
@@ -69,10 +69,29 @@ trait SourceFormat {
   val toolShortDescription: String  
   
   ///////////////////////////// concrete members ///////////////////////////////
+  def fileExt(
+    schemaOrProtocol: Either[Schema, Protocol],
+    typeMatcher: TypeMatcher) = {
+    val maybeCustomEnumStyle = typeMatcher.customEnumStyleMap.get("enum")
+    val enumExt = maybeCustomEnumStyle match {
+      case Some("java enum") => ".java"
+      case _ => ".scala"
+    }
+    schemaOrProtocol match {
+      case Left(schema) => schema.getType match {
+        case RECORD => ".scala"
+        case ENUM => enumExt // Avro's SpecificData requires enums be Java Enum
+        case _ => sys.error("Only RECORD and ENUM can be top-level definitions")
+      }
+      case Right(protocol) => ".scala"
+    }
+  }
+
   def getFilePath(
     namespace: Option[String],
     schemaOrProtocol: Either[Schema, Protocol],
-    maybeOutDir: Option[String]): Option[Path] = {
+    maybeOutDir: Option[String],
+    typeMatcher: TypeMatcher): Option[Path] = {
     maybeOutDir match {
       case Some(outDir) => {
         val folderPath: Path = Paths.get{
@@ -81,7 +100,8 @@ trait SourceFormat {
           }
           else outDir
         }
-        val fileName = getName(schemaOrProtocol) + fileExt(schemaOrProtocol)
+        val ext = fileExt(schemaOrProtocol, typeMatcher)
+        val fileName = getName(schemaOrProtocol, typeMatcher) + ext
         if (!Files.exists(folderPath)) Files.createDirectories(folderPath)
         Some(Paths.get(s"$folderPath/$fileName"))
       }
@@ -101,8 +121,10 @@ trait SourceFormat {
     classStore: ClassStore,
     namespace: Option[String],
     schema: Schema,
-    maybeOutDir: Option[String]): CompilationUnit = {
-    val maybeFilePath = getFilePath(namespace, Left(schema), maybeOutDir)
+    maybeOutDir: Option[String],
+    typeMatcher: TypeMatcher): CompilationUnit = {
+    val maybeFilePath =
+      getFilePath(namespace, Left(schema), maybeOutDir, typeMatcher)
     val codeString = JavaTreehugger.asJavaCodeString(
       classStore,
       namespace,
@@ -117,7 +139,8 @@ trait SourceFormat {
     typeMatcher: TypeMatcher,
     schemaStore: SchemaStore,
     maybeOutDir: Option[String]): CompilationUnit = {
-    val scalaFilePath = getFilePath(namespace, schemaOrProtocol, maybeOutDir)
+    val scalaFilePath =
+      getFilePath(namespace, schemaOrProtocol, maybeOutDir, typeMatcher)
     val scalaString = scalaTreehugger.asScalaCodeString(
       classStore,
       namespace,

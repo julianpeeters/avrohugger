@@ -34,6 +34,37 @@ class StandardCustomEnumSpec extends mutable.Specification {
       dep3 === expectedDep3
       
     }
+    
+    "correctly generate java enums when asked for" in {
+      val infile = new java.io.File("avrohugger-core/src/test/avro/import.avdl")
+      val gen = new Generator(
+        Standard,
+        Map.empty,
+        Map(
+          ("example.idl" -> "example.idl.java"),
+          ("other.ns" -> "other.ns.java")),
+        Map(("enum"-> "java enum")))
+        val outDir = gen.defaultOutputDir + "/standard/"
+      gen.fileToFile(infile, outDir)
+
+      val adt = util.Util.readFile("target/generated-sources/standard/example/idl/java/ImportProtocol.scala")
+      val dep1a = util.Util.readFile("target/generated-sources/standard/example/idl/java/DefaultEnum.java")
+      val dep1 = util.Util.readFile("target/generated-sources/standard/example/idl/java/Defaults.scala")
+      val dep2 = util.Util.readFile("target/generated-sources/standard/other/ns/java/ExternalDependency.scala")
+      val dep3 = util.Util.readFile("target/generated-sources/standard/other/ns/java/Suit.java")
+        
+      val expectedADT = util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/java/ImportProtocol.scala")
+      val expectedDep1a = util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/java/DefaultEnum.java")
+      val expectedDep1 = util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/java/Defaults.scala")
+      val expectedDep2 = util.Util.readFile("avrohugger-core/src/test/expected/standard/other/ns/java/ExternalDependency.scala")
+      val expectedDep3 = util.Util.readFile("avrohugger-core/src/test/expected/standard/other/ns/java/Suit.java")
+  
+      adt === expectedADT
+      dep1a === expectedDep1a
+      dep1 === expectedDep1
+      dep2 === expectedDep2
+      dep3 === expectedDep3      
+    }
 
   }
 }

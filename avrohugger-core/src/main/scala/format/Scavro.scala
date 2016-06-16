@@ -18,8 +18,6 @@ object Scavro extends SourceFormat {
 
   val toolName = "generate-scavro"
   val toolShortDescription = "Generates Scala wrapper code for the given schema."
-  def fileExt(schemaOrProtocol: Either[Schema, Protocol]) = ".scala"
-
   
   val scalaTreehugger = ScavroScalaTreehugger
 
@@ -50,7 +48,9 @@ object Scavro extends SourceFormat {
     List(scalaCompilationUnit)
   }
   
-  def getName(schemaOrProtocol: Either[Schema, Protocol]): String = {
+  def getName(
+    schemaOrProtocol: Either[Schema, Protocol],
+    typeMatcher: TypeMatcher): String = {
     schemaOrProtocol match {
       case Left(schema) => schema.getName
       case Right(protocol) => {

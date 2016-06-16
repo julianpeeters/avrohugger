@@ -17,9 +17,9 @@ import scala.collection.JavaConversions._
 
 object Standard extends SourceFormat {
 
-  val toolName = "generate";
-  val toolShortDescription = "Generates Scala code for the given schema.";
-  def fileExt(schemaOrProtocol: Either[Schema, Protocol]) = ".scala"
+  val toolName = "generate"
+  
+  val toolShortDescription = "Generates Scala code for the given schema."
 
   val scalaTreehugger = StandardScalaTreehugger
   
@@ -61,7 +61,8 @@ object Standard extends SourceFormat {
                   classStore,
                   namespace,
                   schema,
-                  maybeOutDir)
+                  maybeOutDir,
+                  typeMatcher)
                 List(javaCompilationUnit)
               }
               case _ => {
@@ -97,8 +98,9 @@ object Standard extends SourceFormat {
                 classStore,
                 namespace,
                 schema,
-                maybeOutDir)
-            })
+                maybeOutDir,
+                typeMatcher)
+            })            
             scalaADTorSoloClassCompilationUnit +: javaCompilationUnits
           }
           case _ => List(scalaADTorSoloClassCompilationUnit)
@@ -124,11 +126,17 @@ object Standard extends SourceFormat {
     compilationUnits.foreach(writeToFile)
   }
   
-  def getName(schemaOrProtocol: Either[Schema, Protocol]): String = {
+  def getName(
+    schemaOrProtocol: Either[Schema, Protocol],
+    typeMatcher: TypeMatcher): String = {
     schemaOrProtocol match {
       case Left(schema) => schema.getName
       case Right(protocol) => {
-        val localSubTypes = getLocalSubtypes(protocol)
+        val maybeCustomEnumStyle = typeMatcher.customEnumStyleMap.get("enum")
+        val localSubTypes = maybeCustomEnumStyle match {
+          case Some("java enum") => getLocalSubtypes(protocol).filterNot(isEnum)
+          case _ => getLocalSubtypes(protocol)
+        }
         if (localSubTypes.length > 1) protocol.getName // for ADT
         else localSubTypes.headOption match {
           case Some(schema) => schema.getName // for single class defintion
