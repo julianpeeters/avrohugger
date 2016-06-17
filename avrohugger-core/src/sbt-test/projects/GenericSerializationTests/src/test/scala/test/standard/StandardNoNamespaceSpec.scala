@@ -1,4 +1,5 @@
 import org.specs2.mutable.Specification
+import com.sksamuel.avro4s.RecordFormat
 
 class StandardNoNamespaceTest extends Specification {
 
@@ -6,7 +7,8 @@ class StandardNoNamespaceTest extends Specification {
     "serialize and deserialize correctly" in {
       val record1 = AvroTypeProviderTestNoNamespace(1)
       val record2 = AvroTypeProviderTestNoNamespace(2)
-      val records = List(record1, record2)
+      val format = RecordFormat[AvroTypeProviderTestNoNamespace]
+      val records = List(format.to(record1), format.to(record2))
       test.StandardTestUtil.verifyWriteAndRead(records)
     }
   }

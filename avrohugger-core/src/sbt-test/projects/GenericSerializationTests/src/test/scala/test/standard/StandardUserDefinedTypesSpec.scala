@@ -3,13 +3,16 @@ import test._
 // Specs2
 import org.specs2.mutable.Specification
 
+import com.sksamuel.avro4s.RecordFormat
+
 class StandardUserDefinedTypesSpec extends Specification {
 
   "A case class with another record as a field" should {
     "serialize and deserialize correctly" in {
       val record1 = AvroTypeProviderTest58(AvroTypeProviderTest00(1))
       val record2 = AvroTypeProviderTest58(AvroTypeProviderTest00(2))
-      val records = List(record1, record2)
+      val format = RecordFormat[AvroTypeProviderTest58]
+      val records = List(format.to(record1), format.to(record2))
       StandardTestUtil.verifyWriteAndRead(records)
     }
   }
@@ -18,7 +21,8 @@ class StandardUserDefinedTypesSpec extends Specification {
     "serialize and deserialize correctly" in {
       val record1 = AvroTypeProviderTest59(AvroTypeProviderTest58(AvroTypeProviderTest00(1)))
       val record2 = AvroTypeProviderTest59(AvroTypeProviderTest58(AvroTypeProviderTest00(2)))
-      val records = List(record1, record2)
+      val format = RecordFormat[AvroTypeProviderTest59]
+      val records = List(format.to(record1), format.to(record2))
       StandardTestUtil.verifyWriteAndRead(records)
     }
   }
@@ -27,7 +31,8 @@ class StandardUserDefinedTypesSpec extends Specification {
     "serialize and deserialize correctly" in {
       val record1 = AvroTypeProviderTest60(AvroTypeProviderTest00(1), AvroTypeProviderTest58(AvroTypeProviderTest00(2)))
       val record2 = AvroTypeProviderTest60(AvroTypeProviderTest00(3), AvroTypeProviderTest58(AvroTypeProviderTest00(4)))
-      val records = List(record1, record2)
+      val format = RecordFormat[AvroTypeProviderTest60]
+      val records = List(format.to(record1), format.to(record2))
       StandardTestUtil.verifyWriteAndRead(records)
     }
   }
@@ -36,7 +41,8 @@ class StandardUserDefinedTypesSpec extends Specification {
     "serialize and deserialize correctly" in {
       val record1 = AvroTypeProviderTest61(List(AvroTypeProviderTest00(1), AvroTypeProviderTest00(2)))
       val record2 = AvroTypeProviderTest61(List(AvroTypeProviderTest00(3), AvroTypeProviderTest00(4)))
-      val records = List(record1, record2)
+      val format = RecordFormat[AvroTypeProviderTest61]
+      val records = List(format.to(record1), format.to(record2))
       StandardTestUtil.verifyWriteAndRead(records)
     }
   }
@@ -45,7 +51,8 @@ class StandardUserDefinedTypesSpec extends Specification {
     "serialize and deserialize correctly" in {
       val record1 = AvroTypeProviderTest62(List(AvroTypeProviderTest58(AvroTypeProviderTest00(1)), AvroTypeProviderTest58(AvroTypeProviderTest00(2))))
       val record2 = AvroTypeProviderTest62(List(AvroTypeProviderTest58(AvroTypeProviderTest00(3)), AvroTypeProviderTest58(AvroTypeProviderTest00(4))))
-      val records = List(record1, record2)
+      val format = RecordFormat[AvroTypeProviderTest62]
+      val records = List(format.to(record1), format.to(record2))
       StandardTestUtil.verifyWriteAndRead(records)
     }
   }
@@ -57,7 +64,8 @@ class StandardUserDefinedTypesSpec extends Specification {
     "serialize and deserialize correctly" in {
       val record1 = AvroTypeProviderTest63(List(AvroTypeProviderTest00(1), AvroTypeProviderTest00(2)), List(AvroTypeProviderTest60(AvroTypeProviderTest00(3), AvroTypeProviderTest58(AvroTypeProviderTest00(2)))))
       val record2 = AvroTypeProviderTest63(List(AvroTypeProviderTest00(3), AvroTypeProviderTest00(2)), List(AvroTypeProviderTest60(AvroTypeProviderTest00(3), AvroTypeProviderTest58(AvroTypeProviderTest00(2)))))
-      val records = List(record1, record2)
+      val format = RecordFormat[AvroTypeProviderTest63]
+      val records = List(format.to(record1), format.to(record2))
       StandardTestUtil.verifyWriteAndRead(records)
 
     }
@@ -68,7 +76,8 @@ class StandardUserDefinedTypesSpec extends Specification {
     "serialize and deserialize correctly" in {
       val record1 = AvroTypeProviderTest64(Some(AvroTypeProviderTest00(1)))
       val record2 = AvroTypeProviderTest64(Some(AvroTypeProviderTest00(2)))
-      val records = List(record1, record2)
+      val format = RecordFormat[AvroTypeProviderTest64]
+      val records = List(format.to(record1), format.to(record2))
       StandardTestUtil.verifyWriteAndRead(records)
     }
   }
@@ -77,7 +86,8 @@ class StandardUserDefinedTypesSpec extends Specification {
     "serialize and deserialize correctly" in {
       val record1 = AvroTypeProviderTest65(None)
       val record2 = AvroTypeProviderTest65(None)
-      val records = List(record1, record2)
+      val format = RecordFormat[AvroTypeProviderTest65]
+      val records = List(format.to(record1), format.to(record2))
       StandardTestUtil.verifyWriteAndRead(records)
     }
   }
@@ -86,7 +96,8 @@ class StandardUserDefinedTypesSpec extends Specification {
     "serialize and deserialize correctly" in {
       val record1 = AvroTypeProviderTest66(Some(AvroTypeProviderTest58(AvroTypeProviderTest00(1))))
       val record2 = AvroTypeProviderTest66(Some(AvroTypeProviderTest58(AvroTypeProviderTest00(2))))
-      val records = List(record1, record2)
+      val format = RecordFormat[AvroTypeProviderTest66]
+      val records = List(format.to(record1), format.to(record2))
       StandardTestUtil.verifyWriteAndRead(records)
     }
   }
@@ -95,7 +106,8 @@ class StandardUserDefinedTypesSpec extends Specification {
     "serialize and deserialize correctly" in {
       val record1 = AvroTypeProviderTest67(Some(AvroTypeProviderTest00(1)), Some(AvroTypeProviderTest60(AvroTypeProviderTest00(4), AvroTypeProviderTest58(AvroTypeProviderTest00(1)))))
       val record2 = AvroTypeProviderTest67(Some(AvroTypeProviderTest00(7)), Some(AvroTypeProviderTest60(AvroTypeProviderTest00(8), AvroTypeProviderTest58(AvroTypeProviderTest00(7)))))
-      val records = List(record1, record2)
+      val format = RecordFormat[AvroTypeProviderTest67]
+      val records = List(format.to(record1), format.to(record2))
       StandardTestUtil.verifyWriteAndRead(records)
     }
   }
@@ -104,7 +116,8 @@ class StandardUserDefinedTypesSpec extends Specification {
     "serialize and deserialize correctly" in {
       val record1 = AvroTypeProviderTest68(Some(List(Some(AvroTypeProviderTest00(1)), None)), List(None, Some(List(AvroTypeProviderTest01(1F), AvroTypeProviderTest01(2F)))))
       val record2 = AvroTypeProviderTest68(Some(List(Some(AvroTypeProviderTest00(3)), None)), List(None, Some(List(AvroTypeProviderTest01(3F), AvroTypeProviderTest01(4F)))))
-      val records = List(record1, record2)
+      val format = RecordFormat[AvroTypeProviderTest68]
+      val records = List(format.to(record1), format.to(record2))
       StandardTestUtil.verifyWriteAndRead(records)
     }
   }
@@ -112,7 +125,8 @@ class StandardUserDefinedTypesSpec extends Specification {
   "A case object that represents an empty record" should {
     "serialize and deserialize correctly" in {
       val record1 = Reset()
-      val records = List(record1)
+      val format = RecordFormat[Reset]
+      val records = List(format.to(record1))
       StandardTestUtil.verifyWriteAndRead(records)
     }
   }
@@ -121,7 +135,8 @@ class StandardUserDefinedTypesSpec extends Specification {
     "serialize and deserialize correctly" in {
       val record1 = DependentRecord(other.ns.ExternalDependency(1), 2)
       val record2 = DependentRecord(other.ns.ExternalDependency(3), 4)
-      val records = List(record1, record2)
+      val format = RecordFormat[DependentRecord]
+      val records = List(format.to(record1), format.to(record2))
       StandardTestUtil.verifyWriteAndRead(records)
     }
   }

@@ -1,6 +1,7 @@
 import test._
 
 import org.specs2.mutable.Specification
+import com.sksamuel.avro4s.RecordFormat
 
 class Standard2ArityHeteroSpec extends Specification {
 
@@ -8,7 +9,8 @@ class Standard2ArityHeteroSpec extends Specification {
     "serialize and deserialize correctly" in {
       val record1 = AvroTypeProviderTest48(1, "bonjour")
       val record2 = AvroTypeProviderTest48(2, "moshi")
-      val records = List(record1, record2)
+      val format = RecordFormat[AvroTypeProviderTest48]
+      val records = List(format.to(record1), format.to(record2))
       StandardTestUtil.verifyWriteAndRead(records)
     }
   }
@@ -17,7 +19,8 @@ class Standard2ArityHeteroSpec extends Specification {
     "serialize and deserialize correctly" in {
       val record1 = AvroTypeProviderTest49("bueno", 2)
       val record2 = AvroTypeProviderTest49("hola", 3)
-      val records = List(record1, record2)
+      val format = RecordFormat[AvroTypeProviderTest49]
+      val records = List(format.to(record1), format.to(record2))
       StandardTestUtil.verifyWriteAndRead(records)
     }
   }
@@ -26,7 +29,8 @@ class Standard2ArityHeteroSpec extends Specification {
     "serialize and deserialize correctly" in {
       val record1 = AvroTypeProviderTest50(Some("tropics"), Some(3))
       val record2 = AvroTypeProviderTest50(Some("equator"), Some(4))
-      val records = List(record1, record2)
+      val format = RecordFormat[AvroTypeProviderTest50]
+      val records = List(format.to(record1), format.to(record2))
       StandardTestUtil.verifyWriteAndRead(records)
     }
   }
@@ -35,7 +39,8 @@ class Standard2ArityHeteroSpec extends Specification {
     "serialize and deserialize correctly" in {
       val record1 = AvroTypeProviderTest51(Some(4), Some("level"))
       val record2 = AvroTypeProviderTest51(Some(5), Some("inclined"))
-      val records = List(record1, record2)
+      val format = RecordFormat[AvroTypeProviderTest51]
+      val records = List(format.to(record1), format.to(record2))
       StandardTestUtil.verifyWriteAndRead(records)
     }
   }
@@ -44,7 +49,8 @@ class Standard2ArityHeteroSpec extends Specification {
     "serialize and deserialize correctly" in {
       val record1 = AvroTypeProviderTest52(List("am.pm"), List(5,6))
       val record2 = AvroTypeProviderTest52(List("time"), List(7,8))
-      val records = List(record1, record2)
+      val format = RecordFormat[AvroTypeProviderTest52]
+      val records = List(format.to(record1), format.to(record2))
       StandardTestUtil.verifyWriteAndRead(records)
     }
   }
@@ -53,7 +59,8 @@ class Standard2ArityHeteroSpec extends Specification {
     "serialize and deserialize correctly" in {
       val record1 = AvroTypeProviderTest53(List(7, 8), List("bon.sois"))
       val record2 = AvroTypeProviderTest53(List(9, 10), List("mon.amis"))
-      val records = List(record1, record2)
+      val format = RecordFormat[AvroTypeProviderTest53]
+      val records = List(format.to(record1), format.to(record2))
       StandardTestUtil.verifyWriteAndRead(records)
     }
   }
@@ -62,7 +69,8 @@ class Standard2ArityHeteroSpec extends Specification {
     "serialize and deserialize correctly" in {
       val record1 = AvroTypeProviderTest54(Some(List(Some("bronco"), None)), Some(List(Some(9), None)))
       val record2 = AvroTypeProviderTest54(Some(List(Some("bull"), None)), Some(List(Some(11), None)))
-      val records = List(record1, record2)
+      val format = RecordFormat[AvroTypeProviderTest54]
+      val records = List(format.to(record1), format.to(record2))
       StandardTestUtil.verifyWriteAndRead(records)
     }
   }
@@ -71,7 +79,8 @@ class Standard2ArityHeteroSpec extends Specification {
     "serialize and deserialize correctly" in {
       val record1 = AvroTypeProviderTest55(Some(List(Some(10), None)), Some(List(Some("bronca"), None)))
       val record2 = AvroTypeProviderTest55(Some(List(Some(12), None)), Some(List(Some("cow"), None)))
-      val records = List(record1, record2)
+      val format = RecordFormat[AvroTypeProviderTest55]
+      val records = List(format.to(record1), format.to(record2))
       StandardTestUtil.verifyWriteAndRead(records)
     }
   }
@@ -80,7 +89,8 @@ class Standard2ArityHeteroSpec extends Specification {
     "serialize and deserialize correctly" in {
       val record1 = AvroTypeProviderTest56(List(Some(List(Some("tibetan"), None)), None), List(Some(List(Some(11), None)), None))
       val record2 = AvroTypeProviderTest56(List(Some(List(Some("nepalese"), None)), None), List(Some(List(Some(13), None)), None))
-      val records = List(record1, record2)
+      val format = RecordFormat[AvroTypeProviderTest56]
+      val records = List(format.to(record1), format.to(record2))
       StandardTestUtil.verifyWriteAndRead(records)
     }
   }
@@ -89,7 +99,8 @@ class Standard2ArityHeteroSpec extends Specification {
     "serialize and deserialize correctly" in {
       val record1 = AvroTypeProviderTest57(List(Some(List(Some(12), None)), None), List(Some(List(Some("fire"), None)), None))
       val record2 = AvroTypeProviderTest57(List(Some(List(Some(15), None)), None), List(Some(List(Some("ice"), None)), None))
-      val records = List(record1, record2)
+      val format = RecordFormat[AvroTypeProviderTest57]
+      val records = List(format.to(record1), format.to(record2))
       StandardTestUtil.verifyWriteAndRead(records)
     }
   }

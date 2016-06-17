@@ -1,45 +1,40 @@
 package test
 
 import java.io.File
-import com.sksamuel.avro4s.AvroOutputStream
-import com.sksamuel.avro4s.AvroInputStream
-import com.sksamuel.avro4s.AvroSchema
-import com.sksamuel.avro4s.RecordFormat
 
-
+import org.apache.avro.file.{ DataFileReader, DataFileWriter }
+import org.apache.avro.generic.{
+  GenericRecord,
+  GenericDatumReader,
+  GenericDatumWriter }
 
 
 import org.specs2.mutable.Specification
 
 object StandardTestUtil extends Specification {
 
-  def write[T <: Product with Serializable](file: File, records: List[T]) = {
-  /*
-    val userDatumWriter = new StandardDatumWriter[T]
-    val dataFileWriter = new DataFileWriter[T](userDatumWriter)
+  def write(file: File, records: List[GenericRecord]) = {
+  
+    val userDatumWriter = new GenericDatumWriter[GenericRecord]
+    val dataFileWriter = new DataFileWriter[GenericRecord](userDatumWriter)
     dataFileWriter.create(records.head.getSchema, file);
     records.foreach(record => dataFileWriter.append(record))
     dataFileWriter.close();
-  */  
-//val schema = AvroSchema[T]
-    
-    val os = AvroOutputStream[T](file)
-    os.write(records)
-    os.flush()
-    os.close()
+   
+
   }
 
-  def read[T <: Product with Serializable](file: File, records: List[T]) = {
-    /*
+  def read(file: File, records: List[GenericRecord]) = {
+    
     val dummyRecord = new GenericDatumReader[GenericRecord]
     val schema = new DataFileReader(file, dummyRecord).getSchema
-    val userDatumReader = new StandardDatumReader[T](schema)
-    val dataFileReader = new DataFileReader[T](file, userDatumReader)
+    val userDatumReader = new GenericDatumReader[GenericRecord](schema)
+    val dataFileReader = new DataFileReader[GenericRecord](file, userDatumReader)
     // Adapted from: https://github.com/tackley/avrohugger-list-issue/blob/master/src/main/scala/net/tackley/Reader.scala
     // This isn't great scala, but represents how org.apache.avro.mapred.AvroInputFormat
     // (via org.apache.avro.file.DataFileStream) interacts with the StandardDatumReader.
-    var record: T = null.asInstanceOf[T]
-    var sameRecord: T = null.asInstanceOf[T]
+    var record: GenericRecord = null.asInstanceOf[GenericRecord]
+    var sameRecord: GenericRecord = null.asInstanceOf[GenericRecord]
     val recordIter = records.iterator
     while (dataFileReader.hasNext) {
       sameRecord = dataFileReader.next(sameRecord)
@@ -47,14 +42,10 @@ object StandardTestUtil extends Specification {
     }
     dataFileReader.close()
     sameRecord must ===(record)
-    */
-    val is = AvroInputStream[T](file)
-    val sameRecords = is.iterator.toSet
-    is.close()
-    sameRecords must ===(records)
+  
   }
 
-  def verifyWriteAndRead[T](records: List[T]) = {
+  def verifyWriteAndRead(records: List[GenericRecord]) = {
     val fileName = s"${records.head.getClass.getName}"
     val fileEnding = "avro"
     val file = File.createTempFile(fileName, fileEnding)
