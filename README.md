@@ -3,12 +3,12 @@
 [![Join the chat at https://gitter.im/julianpeeters/avrohugger](https://badges.gitter.im/julianpeeters/avrohugger.svg)](https://gitter.im/julianpeeters/avrohugger?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 
-Schema-to-case-class code generation for working with Avro in Scala.
+**Schema-to-case-class code generation for working with Avro in Scala.**
 
 * `avrohugger-core`: Generate source code at runtime for evaluation at a later step.
 * `avrohugger-tools`: Generate source code at the command line with the avrohugger-tools jar.
 
-Alternative Distributions:
+**Alternative Distributions:**
 
 * `sbt-avrohugger`: Generate source code at compile time with an sbt plugin [found here](https://github.com/julianpeeters/sbt-avrohugger).
 * `avro2caseclass`: Generate source code from a web app, [found here](https://github.com/julianpeeters/avro2caseclass).
@@ -19,6 +19,8 @@ Table of contents
 
   * [Supported Formats: Standard, SpecificRecord, Scavro](#generates-scala-case-classes-in-various-formats)
   * [Supported Datatypes](#supports-generating-case-classes-with-arbitrary-fields-of-the-following-datatypes)
+  * [Protocol support](#protocol-support)
+  * [Doc support](#doc-support)
   * [Usage](#usage)
     * ['avrohugger-core'](#avrohugger-core)
       * [Get the dependency](#get-the-dependency-with)
@@ -26,8 +28,7 @@ Table of contents
       * [Example](#example)
       * [Customizable type mapping](#customizable-type-mapping)
       * [Customizable namespace mapping](#customizable-namespace-mapping)
-      * [Protocol support](#protocol-support)
-      * [Doc support](#doc-support)
+      * [Customizable enum style](#customizable-enum-style)
     * ['avrohugger-tools'](#avrohugger-tools)
     * ['sbt-avrohugger'](#sbt-avrohugger)
     * ['avro2caseclass'](#avro2caseclass)
@@ -40,11 +41,12 @@ Table of contents
 
 ##### Generates Scala case classes in various formats:
 
-* `Standard` Vanilla case classes (for use with [Scalavro](https://github.com/GenslerAppsPod/scalavro), [Salat-Avro](https://github.com/julianpeeters/salat-avro), [gfc-avro](https://github.com/gilt/gfc-avro), etc.)
+* `Standard` Vanilla case classes (for use with [Scalavro](https://github.com/GenslerAppsPod/scalavro), [avro4s](https://github.com/sksamuel/avro4s), [gfc-avro](https://github.com/gilt/gfc-avro), etc.)
 
 * `SpecificRecord` Case classes that implement `SpecificRecordBase` and
 therefore have mutable `var` fields (for use with the Avro Specific API -
-Scalding, Spark, Avro, etc.).
+Scalding, Spark, Avro, etc.). _Note:_ If your framework allows 'GenericRecord', [avro4s](https://github.com/sksamuel/avro4s) provides a type class that converts
+to and from immutable case classes cleanly.
 
 * `Scavro` Case classes with immutable fields, intended to wrap Java generated
 Avro classes (for use with the [Scavro](https://github.com/oedura/scavro#scavro-reader-and-writer)
@@ -61,12 +63,33 @@ runtime, Java classes provided separately (see [Scavro Plugin](https://github.co
 * BOOLEAN &rarr; Boolean
 * NULL &rarr; Null
 * MAP &rarr; Map
-* ENUM &rarr; scala.Enumeration (`generate-specific`: Java Enum)
+* ENUM &rarr; scala.Enumeration, Java Enum. See [Customizable Enum Style](https://github.com/julianpeeters/avrohugger#customizable-enum-style).
 * BYTES &rarr; Array[Byte]
 * FIXED &rarr; //TODO
-* ARRAY &rarr; List (`generate-scavro`: Array). See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping).
+* ARRAY &rarr; List, `generate-scavro`: Array. See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping).
 * UNION &rarr; Option
 * RECORD &rarr; case class
+
+
+
+##### Protocol Support:
+
+* `.avdl`, `.avpr`, and json protocol strings are generated as ADTs if they define more than one Scala definition.
+
+* For `SpecificRecord`, if the protocol contains messages then no ADT is generated, and an RPC trait is generated instead. 
+
+
+##### Doc Support:
+
+* `.avdl`: Comments that begin with `/**` are used as the documentation string for the type or field definition that follows the comment.
+
+* `.avsc`, `.avpr`, and `.avro`: Docs in Avro schemas are used to define a case class' ScalaDoc
+
+* `.scala`: ScalaDocs of case class definitions are used to define record and field docs
+
+
+_Note:_ Currently [Treehugger](http://eed3si9n.com/treehugger/comments.html#Scaladoc+style+comments) appears to generate Javadoc style docs (thus compatible with ScalaDoc style).
+
 
 
 
@@ -138,23 +161,15 @@ namespace map (please see warnings below):
     val generator = new Generator(SpecificRecord, avroScalaCustomNamespace = Map("oldnamespace"->"newnamespace"))  
 
 
-##### Protocol Support:
+##### Customizable Enum Style:
 
-* `.avdl`, `.avpr`, and json protocol strings are generated as ADTs if they define more than one Scala definition.
-
-* For `SpecificRecord`, if the protocol contains messages then no ADT is generated, and an RPC trait is generated instead. 
-
-
-##### Doc Support:
-
-* `.avdl`: Comments that begin with `/**` are used as the documentation string for the type or field definition that follows the comment.
-
-* `.avsc`, `.avpr`, and `.avro`: Docs in Avro schemas are used to define a case class' ScalaDoc
-
-* `.scala`: ScalaDocs of case class definitions are used to define record and field docs
+`SpecificRecord` format requires that enums be represented as Java enums. By 
+ default, `Standard` and `Scavro` formats use Scala enumerations, but can be 
+ reassigned to a Java enum by instantiating a `Generator` with a custom enum 
+ style map:
 
 
-_Note:_ Currently [Treehugger](http://eed3si9n.com/treehugger/comments.html#Scaladoc+style+comments) appears to generate Javadoc style docs (thus compatible with ScalaDoc style).
+    val generator = new Generator(SpecificRecord, avroScalaCustomEnumStyle = Map("enum"->"java enum"))  
 
 
 
@@ -229,14 +244,16 @@ to flow data into a system that doesn't support them (e.g., Hive).
 
 * Support more Avro types: fixed, decimal via logical types.
 * Support for RPC using the Scavro format.
+* Support option for using case objects to represent enums
+* Support for expanding Standard ADT strings into SpecificRecord and Scavro ADTs
 
 ## Testing
 
 The `test` task will only run the tests in `src/test`.
 The `scripted` task runs all tests in `src/test`, as well as the serialization 
 tests in `src/sbt-test`. _Note:_ the scripted tests depend on a local version 
-of `sbt-avrohugger` that needs to be published with the version of `avrohugger` 
-that is to be tested.
+of `sbt-avrohugger` that needs to be published with the updated version of 
+`avrohugger` that is to be tested.
 
 #### Credits
 Depends on [Avro](https://github.com/apache/avro) and [Treehugger](https://github.com/eed3si9n/treehugger). `avrohugger-tools` is based on [avro-tools](http://avro.apache.org/docs/1.7.7/gettingstartedjava.html#Serializing+and+deserializing+with+code+generation).

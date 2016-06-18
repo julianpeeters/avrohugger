@@ -17,9 +17,6 @@ import treehugger.forest.Tree
   * importer
   * protocolhugger
   * schemahugger
-  *
-  * _CONCRETE MEMBERS_: implementations to be inherited by a subclass
-  * asTopLevelDefs
   */
 trait ScalaTreehugger {
 
@@ -37,34 +34,6 @@ trait ScalaTreehugger {
 
   val schemahugger: Schemahugger
       
-  ////////////////////////////// concrete members //////////////////////////////
-  def asTopLevelDefs(
-    classStore: ClassStore,
-    namespace: Option[String],
-    schemaOrProtocol: Either[Schema, Protocol],
-    typeMatcher: TypeMatcher,
-    maybeBaseTrait: Option[String],
-    maybeFlags: Option[List[Long]]): List[Tree] = {
-      
-    schemaOrProtocol match {
-      case Left(schema) => schemahugger.toTrees(
-        classStore,
-        namespace,
-        schema,
-        typeMatcher,
-        maybeBaseTrait,
-        maybeFlags
-      )
-      case Right(protocol) => protocolhugger.toTrees(
-        classStore,
-        namespace,
-        protocol,
-        typeMatcher,
-        maybeBaseTrait,
-        maybeFlags
-      )
-    }
-    
-  }
+
   
 }

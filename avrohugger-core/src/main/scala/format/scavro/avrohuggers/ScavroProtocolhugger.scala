@@ -29,17 +29,22 @@ object ScavroProtocolhugger extends Protocolhugger {
     val name: String = protocol.getName
     val maybeNewBaseTrait = Some(name)
     val maybeNewFlags = Some(List(Flags.FINAL.toLong))
-    val traitDef = ScavroTraitTree.toADTRootDef(protocol)
+    val traitDef = ScavroTraitTree.toADTRootDef(protocol, typeMatcher)
     val localSubTypes = getLocalSubtypes(protocol)
-    if (localSubTypes.length > 1) {
-      traitDef +: localSubTypes.flatMap(schema =>
-        ScavroScalaTreehugger.asTopLevelDefs(
+    val adtSubTypes = typeMatcher.customEnumStyleMap.get("enum") match {
+      case Some("java enum") => localSubTypes.filterNot(isEnum)
+      case _ => localSubTypes
+    }
+    if (adtSubTypes.length > 1) {
+      traitDef +: localSubTypes.flatMap(schema => {
+        ScavroSchemahugger.toTrees(
           classStore,
           namespace,
-          Left(schema),
+          schema,
           typeMatcher,
           maybeNewBaseTrait,
-          maybeNewFlags))
+          maybeNewFlags)
+      })
     }
     // if only one Scala type is defined, then don't generate sealed trait
     else {
@@ -51,14 +56,15 @@ object ScavroProtocolhugger extends Protocolhugger {
           case None => List.empty
         }	
       }
-      docTrees ::: localSubTypes.flatMap(schema =>
-        ScavroScalaTreehugger.asTopLevelDefs(
+      docTrees ::: adtSubTypes.flatMap(schema => {
+        ScavroSchemahugger.toTrees(
           classStore,
           namespace,
-          Left(schema),
+          schema,
           typeMatcher,
           maybeBaseTrait,
-          maybeFlags))
+          maybeFlags)
+      })
     }
   }
   

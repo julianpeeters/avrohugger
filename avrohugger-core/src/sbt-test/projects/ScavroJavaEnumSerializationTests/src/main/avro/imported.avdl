@@ -1,0 +1,8 @@
+@namespace("alt.ns")
+
+protocol ImportedProtocol {
+
+  record ExternalDependency {
+    int number;
+  }
+}

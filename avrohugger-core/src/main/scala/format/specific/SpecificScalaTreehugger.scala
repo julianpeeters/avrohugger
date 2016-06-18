@@ -39,13 +39,24 @@ object SpecificScalaTreehugger extends ScalaTreehugger {
       schemaStore,
       typeMatcher)
 
-    val topLevelDefs: List[Tree] = asTopLevelDefs(
-      classStore,
-      namespace,
-      schemaOrProtocol,
-      typeMatcher,
-      None,
-      None)
+    val topLevelDefs: List[Tree] = schemaOrProtocol match {
+      case Left(schema) => schemahugger.toTrees(
+        classStore,
+        namespace,
+        schema,
+        typeMatcher,
+        None,
+        None
+      )
+      case Right(protocol) => protocolhugger.toTrees(
+        classStore,
+        namespace,
+        protocol,
+        typeMatcher,
+        None,
+        None
+      )
+    }
     
     // wrap the definitions in a block with a comment and a package
     val tree = {

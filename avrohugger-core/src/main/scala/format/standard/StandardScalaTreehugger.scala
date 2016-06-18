@@ -33,14 +33,24 @@ object StandardScalaTreehugger extends ScalaTreehugger {
     val imports = importer.getImports(
       schemaOrProtocol, namespace, schemaStore, typeMatcher)
       
-    val topLevelDefs: List[Tree] = 
-      asTopLevelDefs(
+    val topLevelDefs: List[Tree] = schemaOrProtocol match {
+      case Left(schema) => schemahugger.toTrees(
         classStore,
-        namespace, 
-        schemaOrProtocol,
+        namespace,
+        schema,
         typeMatcher,
         None,
-        None)
+        None
+      )
+      case Right(protocol) => protocolhugger.toTrees(
+        classStore,
+        namespace,
+        protocol,
+        typeMatcher,
+        None,
+        None
+      )
+    }
       
     // wrap the imports and class definition in a block with comment and package
     val tree = {

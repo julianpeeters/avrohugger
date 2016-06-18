@@ -36,6 +36,7 @@ object StandardSchemahugger extends Schemahugger {
           maybeFlags)
         List(classDef)
       case ENUM => typeMatcher.customEnumStyleMap.get("enum") match {
+        case Some("java enum") => List.empty
         case _ =>
           val objectDef = StandardObjectTree.toScalaEnumDef(
             classStore,

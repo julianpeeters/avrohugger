@@ -132,6 +132,9 @@ trait SourceFormat {
     CompilationUnit(maybeFilePath, codeString)
   }
   
+  // Uses treehugger trees so can't handle java enums, therefore Java enums
+  // must be generated separately, and Scala enums must NOT be generated within 
+  // the compilation unit if enum style is set to "java enum".
   def getScalaCompilationUnit(
     classStore: ClassStore,
     namespace: Option[String],

@@ -40,14 +40,15 @@ object SpecificProtocolhugger extends Protocolhugger {
         val maybeNewBaseTrait = Some(name)
         val maybeNewFlags = Some(List(Flags.FINAL.toLong))
         val sealedTraitDef = SpecificTraitTree.toADTRootDef(protocol)
-        val subTypeDefs = localNonEnums.flatMap(schema =>
-          SpecificScalaTreehugger.asTopLevelDefs(
+        val subTypeDefs = localNonEnums.flatMap(schema => {
+          SpecificSchemahugger.toTrees(
             classStore,
             namespace,
-            Left(schema),
+            schema,
             typeMatcher,
             maybeNewBaseTrait,
-            maybeNewFlags))
+            maybeNewFlags)
+        })
         sealedTraitDef +: subTypeDefs
       }
       // if only one Scala type is defined, then don't generate sealed trait
@@ -60,14 +61,15 @@ object SpecificProtocolhugger extends Protocolhugger {
             case None => List.empty
           }	
         }
-        docTrees ::: localNonEnums.flatMap(schema =>
-        SpecificScalaTreehugger.asTopLevelDefs(
-          classStore,
-          namespace,
-          Left(schema),
-          typeMatcher,
-          maybeBaseTrait,
-          maybeFlags))
+        docTrees ::: localNonEnums.flatMap(schema => {
+          SpecificSchemahugger.toTrees(
+            classStore,
+            namespace,
+            schema,
+            typeMatcher,
+            maybeBaseTrait,
+            maybeFlags)
+          })
         }
     }
     else {

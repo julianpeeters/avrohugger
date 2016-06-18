@@ -45,13 +45,16 @@ object ScavroSchemahugger extends Schemahugger{
           typeMatcher,
           maybeFlags)
         List(caseClassDef, companionDef)
-      case ENUM =>
-        val objectDef = ScavroObjectTree.toScalaEnumDef(
-          classStore,
-          schema,
-          maybeBaseTrait,
-          maybeFlags)
-        List(objectDef)
+      case ENUM => typeMatcher.customEnumStyleMap.get("enum") match {
+        case Some("java enum") => List.empty
+        case _ =>
+          val objectDef = ScavroObjectTree.toScalaEnumDef(
+            classStore,
+            schema,
+            maybeBaseTrait,
+            maybeFlags)
+          List(objectDef)
+      }
       case _ =>
         sys.error("Only RECORD and ENUM can be top-level definitions")
     }

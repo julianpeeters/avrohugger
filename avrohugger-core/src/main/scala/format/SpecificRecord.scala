@@ -93,6 +93,7 @@ object SpecificRecord extends SourceFormat{
             List(scalaCompilationUnit)
           }
           case ENUM => {
+            // SpecificRecord requires java enums as of Avro 1.7.7; hard-coded
             val javaCompilationUnit = getJavaEnumCompilationUnit(
               classStore,
               namespace,
@@ -105,6 +106,7 @@ object SpecificRecord extends SourceFormat{
         }
       }
       case Right(protocol) => {
+        // SpecificRecord requires java enums as of Avro 1.7.7, thus hard-coded
         val messages = protocol.getMessages.toMap
         if (messages.isEmpty) {
           val localSubtypes = getLocalSubtypes(protocol)
@@ -117,14 +119,14 @@ object SpecificRecord extends SourceFormat{
               maybeOutDir,
               typeMatcher)
           })
-          val scalaADTorSoloClassCompilationUnit = getScalaCompilationUnit(
+          val scalaCompilationUnit = getScalaCompilationUnit(
             classStore,
             namespace,
             Right(protocol),
             typeMatcher,
             schemaStore,
             maybeOutDir)
-          scalaADTorSoloClassCompilationUnit +: javaCompilationUnits
+          scalaCompilationUnit +: javaCompilationUnits
         }
         else protocolToRPC(protocol)
       }

@@ -56,6 +56,10 @@ object Standard extends SourceFormat {
           }
           case ENUM => {
             maybeCustomEnumStyle match {
+              // java enums can't be represented as trees so they can't be 
+              // handled by treehugger. Their compilation unit must de generated 
+              // separately, and they will be excluded from scala compilation 
+              // units.
               case Some("java enum") => {
                 val javaCompilationUnit = getJavaEnumCompilationUnit(
                   classStore,
@@ -82,7 +86,7 @@ object Standard extends SourceFormat {
         }
       }
       case Right(protocol) => {
-        val scalaADTorSoloClassCompilationUnit = getScalaCompilationUnit(
+        val scalaCompilationUnit = getScalaCompilationUnit(
           classStore,
           namespace,
           Right(protocol),
@@ -90,6 +94,9 @@ object Standard extends SourceFormat {
           schemaStore,
           maybeOutDir)
         maybeCustomEnumStyle match {
+          // java enums can't be represented as trees so they can't be handled  
+          // by treehugger. Their compilation unit must de generated 
+          // separately, and they will be excluded from scala compilation units.
           case Some("java enum") => {
             val localSubtypes = getLocalSubtypes(protocol)
             val localEnums = localSubtypes.filter(isEnum)
@@ -101,9 +108,9 @@ object Standard extends SourceFormat {
                 maybeOutDir,
                 typeMatcher)
             })            
-            scalaADTorSoloClassCompilationUnit +: javaCompilationUnits
+            scalaCompilationUnit +: javaCompilationUnits
           }
-          case _ => List(scalaADTorSoloClassCompilationUnit)
+          case _ => List(scalaCompilationUnit)
         }
       }
     }
