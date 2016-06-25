@@ -2,21 +2,20 @@ package avrohugger
 package tool
 
 import format.abstractions.SourceFormat
-import format.{ Scavro, Standard, SpecificRecord }
-
-import java.util.Arrays;
-import java.util.Map;
-import java.util.TreeMap;
-import java.io.InputStream;
+import format.{Scavro, SpecificRecord, Standard}
+import java.util.Arrays
+import java.util.Map
+import java.util.TreeMap
+import java.io.{InputStream, PrintStream}
 
 import org.apache.avro.tool.Tool
 
-import scala.util.Try
+import scala.util.{Failure, Success, Try}
 import scala.collection.JavaConversions._
 
 
 /** Command-line driver.*/
-class Runner {
+class Runner(in: InputStream, out: PrintStream, err: PrintStream) {
 
   var maxLen = 0;
 
@@ -36,26 +35,38 @@ class Runner {
   }
 
   /**
-   * Delegates to tool specified on the command-line.
-   */
-  def run(args: Array[String]) = {
+    * Delegates to tool specified on the command-line.
+    */
+  def run(args: Array[String]): Int = {
     if (args.length != 0) {
-      val tool: Tool = toolsMap.get(args(0));
+      val tool: Tool = toolsMap.get(args(0))
       if (tool != null) {
-      	Try {
+        val result = Try {
           tool.run(
-            System.in, System.out, System.err, Arrays.asList(args: _*).subList(1, args.length));
+            in, out, err, Arrays.asList(args: _*).subList(1, args.length))
         }
+        result match {
+          case Success(0) => 0
+          case Success(exitCode) =>
+            err.println("Tool " + args(0) + " failed with exit code " + exitCode)
+            exitCode
+          case Failure(e) =>
+            err.println("Tool " + args(0) + " failed: " + e.toString)
+            1
+        }
+      } else {
+        err.println("Unknown tool: " + args(0))
+        1
       }
+    } else {
+      err.println("----------------")
+
+      err.println("Available tools:")
+      for (k <- toolsMap.values()) {
+        err.printf("%" + maxLen + "s  %s\n", k.getName(), k.getShortDescription())
+      }
+
+      1
     }
-
-    System.err.println("----------------");
-
-    System.err.println("Available tools:");
-    for (k <- toolsMap.values()) {
-      System.err.printf("%" + maxLen + "s  %s\n", k.getName(), k.getShortDescription());
-    }
-
-    1;
   }
 }
