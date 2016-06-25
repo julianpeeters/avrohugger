@@ -4,7 +4,7 @@ package standard
 package avrohuggers
 
 import format.abstractions.avrohuggers.Schemahugger
-import trees.{ StandardCaseClassTree, StandardObjectTree }
+import trees.{ StandardCaseClassTree, StandardObjectTree, StandardTraitTree }
 import matchers.TypeMatcher
 import stores.ClassStore
 
@@ -36,7 +36,10 @@ object StandardSchemahugger extends Schemahugger {
           maybeFlags)
         List(classDef)
       case ENUM => typeMatcher.customEnumStyleMap.get("enum") match {
-        case Some("java enum") => List.empty
+        case Some("java enum") =>
+          List.empty
+        case Some("case object") =>
+          StandardTraitTree.toCaseObjectEnumDef(schema, maybeBaseTrait)
         case _ =>
           val objectDef = StandardObjectTree.toScalaEnumDef(
             classStore,

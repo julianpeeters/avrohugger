@@ -4,7 +4,7 @@ package scavro
 package avrohuggers
 
 import format.abstractions.avrohuggers.Schemahugger
-import trees.{ ScavroCaseClassTree, ScavroObjectTree }
+import trees.{ ScavroCaseClassTree, ScavroObjectTree, ScavroTraitTree }
 import matchers.TypeMatcher
 import stores.ClassStore
 
@@ -46,7 +46,10 @@ object ScavroSchemahugger extends Schemahugger{
           maybeFlags)
         List(caseClassDef, companionDef)
       case ENUM => typeMatcher.customEnumStyleMap.get("enum") match {
-        case Some("java enum") => List.empty
+        case Some("java enum") =>
+          List.empty
+        case Some("case object") =>
+          ScavroTraitTree.toCaseObjectEnumDef(schema, maybeBaseTrait)
         case _ =>
           val objectDef = ScavroObjectTree.toScalaEnumDef(
             classStore,

@@ -17,7 +17,7 @@
 Table of contents
 =================
 
-  * [Supported Formats: Standard, SpecificRecord, Scavro](#generates-scala-case-classes-in-various-formats)
+  * [Supported Formats: `Standard`, `SpecificRecord`, `Scavro`](#generates-scala-case-classes-in-various-formats)
   * [Supported Datatypes](#supports-generating-case-classes-with-arbitrary-fields-of-the-following-datatypes)
   * [Protocol support](#protocol-support)
   * [Doc support](#doc-support)
@@ -41,12 +41,12 @@ Table of contents
 
 ##### Generates Scala case classes in various formats:
 
-* `Standard` Vanilla case classes (for use with [Scalavro](https://github.com/GenslerAppsPod/scalavro), [avro4s](https://github.com/sksamuel/avro4s), [gfc-avro](https://github.com/gilt/gfc-avro), etc.)
+* `Standard` Vanilla case classes (for use with Apache Avro's [`GenericRecord` 
+API](http://avro.apache.org/docs/1.8.1/gettingstartedjava.html#Serializing+and+deserializing+without+code+generation), etc.)
 
 * `SpecificRecord` Case classes that implement `SpecificRecordBase` and
 therefore have mutable `var` fields (for use with the Avro Specific API -
-Scalding, Spark, Avro, etc.). _Note:_ If your framework allows 'GenericRecord', [avro4s](https://github.com/sksamuel/avro4s) provides a type class that converts
-to and from immutable case classes cleanly.
+Scalding, Spark, Avro, etc.).
 
 * `Scavro` Case classes with immutable fields, intended to wrap Java generated
 Avro classes (for use with the [Scavro](https://github.com/oedura/scavro#scavro-reader-and-writer)
@@ -165,12 +165,12 @@ namespace map (please see warnings below):
 
 `SpecificRecord` format requires that enums be represented as Java enums. By 
  default, `Standard` and `Scavro` formats use Scala enumerations, but can be 
- reassigned to a Java enum by instantiating a `Generator` with a custom enum 
- style map:
+ reassigned to 'case object' or 'java enum' by instantiating a `Generator` 
+ with a custom enum style map:
 
 
-    val generator = new Generator(SpecificRecord, avroScalaCustomEnumStyle = Map("enum"->"java enum"))  
-
+    val custom = Map("enum" -> "java enum")
+    val generator = new Generator(Standard, avroScalaCustomEnumStyle = custom)  
 
 
 
@@ -216,7 +216,9 @@ will fail since Scala fields are private. Therefore preempt it by passing in
 a Schema to DatumReaders and DatumWriters (as in the Avro example above).
 
 2) For the `SpecificRecord` format, generated case class fields must be
-mutable (`var`) in order to be compatible with the SpecificRecord API.
+mutable (`var`) in order to be compatible with the SpecificRecord API. _Note:_ 
+If your framework allows 'GenericRecord', [avro4s](https://github.com/sksamuel/avro4s) provides a type class that converts to and from immutable case classes cleanly 
+(though seems to fail on maps and case object enums as of v1.4.3).
 
 3) When the input is a case class definition string, import statements are
 not supported, please use fully qualified type names if using records/classes

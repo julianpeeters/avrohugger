@@ -10,7 +10,7 @@ class ScavroCustomEnumSpec extends mutable.Specification {
 
   "a Generator" should {
 
-    "correctly generate java enums when asked for" in {
+    "correctly generate strings with java enums when asked for" in {
       val infile = new java.io.File("avrohugger-core/src/test/avro/import.avdl")
       val gen = new Generator(
         Scavro,
@@ -35,7 +35,7 @@ class ScavroCustomEnumSpec extends mutable.Specification {
     
     }
 
-    "correctly generate java enums when asked for" in {
+    "correctly generate files with java enums when asked for" in {
       val infile = new java.io.File("avrohugger-core/src/test/avro/import.avdl")
       val gen = new Generator(
         Scavro,
@@ -61,6 +61,58 @@ class ScavroCustomEnumSpec extends mutable.Specification {
 
       adt === expectedADT
       dep1a === expectedDep1a
+      dep1 === expectedDep1
+      dep2 === expectedDep2
+      dep3 === expectedDep3
+    }
+    
+    
+    "correctly generate strings with case object enums when asked for" in {
+      val infile = new java.io.File("avrohugger-core/src/test/avro/import.avdl")
+      val gen = new Generator(
+        Scavro,
+        Map.empty,
+        Map(
+          ("example.idl" -> "example.idl.case.model"),
+          ("other.ns" -> "other.ns.case")),
+        Map(("enum"-> "case object")))
+      val List(dep3, dep2, dep1, adt) = gen.fileToStrings(infile)
+
+      val expectedADT = util.Util.readFile("avrohugger-core/src/test/expected/scavro/example/idl/case/model/ImportProtocol.scala")
+      val expectedDep1 = util.Util.readFile("avrohugger-core/src/test/expected/scavro/example/idl/case/model/Defaults.scala")
+      val expectedDep2 = util.Util.readFile("avrohugger-core/src/test/expected/scavro/other/ns/case/ExternalDependency.scala")
+      val expectedDep3 = util.Util.readFile("avrohugger-core/src/test/expected/scavro/other/ns/case/Suit.scala")
+  
+      adt === expectedADT
+      dep1 === expectedDep1
+      dep2 === expectedDep2
+      dep3 === expectedDep3
+    
+    }
+
+    "correctly generate files with case object enums when asked for" in {
+      val infile = new java.io.File("avrohugger-core/src/test/avro/import.avdl")
+      val gen = new Generator(
+        Scavro,
+        Map.empty,
+        Map(
+          ("example.idl" -> "example.idl.case.model"),
+          ("other.ns" -> "other.ns.case")),
+        Map(("enum"-> "case object")))
+        val outDir = gen.defaultOutputDir + "/scavro/"
+      gen.fileToFile(infile, outDir)
+
+      val adt = util.Util.readFile("target/generated-sources/scavro/example/idl/case/model/ImportProtocol.scala")
+      val dep1 = util.Util.readFile("target/generated-sources/scavro/example/idl/case/model/Defaults.scala")
+      val dep2 = util.Util.readFile("target/generated-sources/scavro/other/ns/case/ExternalDependency.scala")
+      val dep3 = util.Util.readFile("target/generated-sources/scavro/other/ns/case/Suit.scala")
+  
+      val expectedADT = util.Util.readFile("avrohugger-core/src/test/expected/scavro/example/idl/case/model/ImportProtocol.scala")
+      val expectedDep1 = util.Util.readFile("avrohugger-core/src/test/expected/scavro/example/idl/case/model/Defaults.scala")
+      val expectedDep2 = util.Util.readFile("avrohugger-core/src/test/expected/scavro/other/ns/case/ExternalDependency.scala")
+      val expectedDep3 = util.Util.readFile("avrohugger-core/src/test/expected/scavro/other/ns/case/Suit.scala")
+
+      adt === expectedADT
       dep1 === expectedDep1
       dep2 === expectedDep2
       dep3 === expectedDep3

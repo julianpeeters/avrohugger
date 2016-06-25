@@ -1,0 +1,81 @@
+[error]   ! serialize and deserialize correctly via rpc
+[error]    java.lang.AbstractMethodError: Fatal execution error, caused by org.apache.avro.specific.SpecificFixed.getSchema()Lorg/apache/avro/Schema; (SpecificFixed.java:36)
+[error] org.apache.avro.specific.SpecificFixed.<init>(SpecificFixed.java:36)
+[error] org.apache.avro.ipc.MD5.<init>(MD5.java:16)
+[error] org.apache.avro.ipc.Responder.<init>(Responder.java:73)
+[error] org.apache.avro.ipc.generic.GenericResponder.<init>(GenericResponder.java:45)
+[error] org.apache.avro.ipc.specific.SpecificResponder.<init>(SpecificResponder.java:55)
+[error] scavro.RPCTest$$anonfun$1$$anonfun$apply$1.apply(RPCTest.scala:37)
+[error] scavro.RPCTest$$anonfun$1$$anonfun$apply$1.apply(RPCTest.scala:23)
+
+
+//TODO: Possible to get Avro RPC working with Scavro?
+
+package scavro
+
+import org.specs2.mutable.Specification
+
+import java.io.IOException
+import java.net.InetSocketAddress
+import java.lang.reflect.Proxy
+
+import org.apache.avro.specific.SpecificData
+import org.apache.avro.ipc.NettyServer
+import org.apache.avro.ipc.NettyTransceiver
+import org.apache.avro.ipc.Server
+import org.apache.avro.ipc.specific.SpecificRequestor
+import org.apache.avro.ipc.specific.SpecificResponder
+
+import example.proto.Mail
+import example.proto.model.Message
+
+class RPCTest extends Specification {
+  
+  // adapted from https://github.com/phunt/avro-rpc-quickstart
+  "A case class " should {
+    "serialize and deserialize correctly via rpc" in {
+      
+      class MailImpl extends Mail {
+        // in this simple example just return details of the message
+        def send(message: Message): CharSequence = {
+          System.out.println("Sending message")
+          val response: CharSequence = message.body
+          response.toString
+        }
+      }
+      
+      System.out.println("Starting server")
+      // usually this would be another app, but for simplicity
+      val protocol = Mail.PROTOCOL
+      val responder = new SpecificResponder(protocol, new MailImpl(), SpecificData.get)
+      val server = new NettyServer(responder, new InetSocketAddress(65111))
+      System.out.println("Server started")
+
+      val client = new NettyTransceiver(new InetSocketAddress(65111))
+
+      // client code - attach to the server and send a message
+      val requestor = new SpecificRequestor(protocol, client, SpecificData.get)
+      val mailProxy: Mail = Proxy.newProxyInstance(
+        SpecificData.get.getClassLoader,
+        Array(classOf[Mail]),
+        requestor).asInstanceOf[Mail]
+
+      val message = new Message("avro_user", "pat", "hello_world")
+
+      System.out.println("Calling proxy.send with message:  " + message.toString)
+      System.out.println("Result: " + mailProxy.send(message).toString)
+      
+      val received: String = mailProxy.send(message).toString
+      
+
+      // cleanup
+      client.close
+      server.close
+      System.out.println("Server stopped")
+      
+      received === message.body
+      
+    }
+  }
+
+}

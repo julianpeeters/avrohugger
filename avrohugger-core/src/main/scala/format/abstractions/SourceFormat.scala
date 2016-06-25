@@ -162,7 +162,8 @@ trait SourceFormat {
     def registerSchema(schema: Schema): Unit = {
       val typeName = typeMatcher.customEnumStyleMap.get("enum") match {
         case Some("java enum") => schema.getName
-        case _ => renameEnum(schema)
+        case Some("case object") => schema.getName
+        case _ => renameEnum(schema, "Value")
       }
       val classSymbol = RootClass.newClass(typeName)
       classStore.accept(schema, classSymbol)
@@ -175,10 +176,10 @@ trait SourceFormat {
     }
   }
   
-  def renameEnum(schema: Schema) = {
+  def renameEnum(schema: Schema, selector: String) = {
     schema.getType match {
       case RECORD => schema.getName
-      case ENUM => schema.getName + ".Value"
+      case ENUM => schema.getName + "." + selector
       case _ => sys.error("Only RECORD and ENUM can be top-level definitions")
     }
   }

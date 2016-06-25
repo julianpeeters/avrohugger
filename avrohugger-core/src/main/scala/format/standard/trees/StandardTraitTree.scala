@@ -38,4 +38,24 @@ object StandardTraitTree {
     treeWithScalaDoc
   }
   
+  def toCaseObjectEnumDef(schema: Schema,
+    maybeBaseTrait: Option[String]): List[Tree] = {
+    val adtRootTree: Tree = maybeBaseTrait match {
+      case Some(baseTrait) =>
+        TRAITDEF(schema.getName).withFlags(Flags.SEALED).withParents(baseTrait)
+      case None =>
+        TRAITDEF(schema.getName).withFlags(Flags.SEALED)
+    }
+    val adtSubTypes: List[Tree] = schema.getEnumSymbols
+      .map(enumSymbol => enumSymbol.toString)
+      .map(enumSymbolString => {
+        (CASEOBJECTDEF(enumSymbolString).withParents(schema.getName): Tree)
+      }).toList
+    val objectTree = OBJECTDEF(schema.getName) := Block(adtSubTypes:_*)
+    val adtRootTreeWithScalaDoc: Tree = ScalaDocGenerator.docToScalaDoc(
+      Left(schema),
+      adtRootTree)
+    List(adtRootTreeWithScalaDoc, objectTree)
+  }
+  
 }
