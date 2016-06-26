@@ -1,0 +1,5 @@
+{"type":"record", "name":"Invalid", "namespace": "avro.examples.flight",
+  "fields": [
+    {"name": "bogus", "type": "invalid_type"}
+  ]
+}

@@ -246,7 +246,6 @@ to flow data into a system that doesn't support them (e.g., Hive).
 
 * Support more Avro types: fixed, decimal via logical types.
 * Support for RPC using the Scavro format.
-* Support option for using case objects to represent enums
 * Support for expanding Standard ADT strings into SpecificRecord and Scavro ADTs
 
 ## Testing
@@ -267,7 +266,7 @@ Contributors:
 - [Stefano Galarraga](https://github.com/galarragas)
 - [Brian London](https://github.com/BrianLondon)
 - [Matt Allen](https://github.com/Matt343)
-
+- [Lars Albertsson](https://github.com/lallea)
 
 ##### Criticism is appreciated.
 
