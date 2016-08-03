@@ -102,7 +102,7 @@ _Note:_ Currently [Treehugger](http://eed3si9n.com/treehugger/comments.html#Scal
 
 ##### Get the dependency with:
 
-    "com.julianpeeters" % "avrohugger-core" %% "0.11.0"
+    "com.julianpeeters" %% "avrohugger-core" % "0.11.0"
 
 
 ##### Description:
