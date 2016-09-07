@@ -18,7 +18,7 @@ import treehuggerDSL._
 import scala.collection.JavaConversions._
 
 object StandardScalaTreehugger extends ScalaTreehugger {
-  
+
   val schemahugger = StandardSchemahugger
   val protocolhugger = StandardProtocolhugger
   val importer = StandardImporter
@@ -26,13 +26,14 @@ object StandardScalaTreehugger extends ScalaTreehugger {
   def asScalaCodeString(
 		classStore: ClassStore,
     namespace: Option[String],
-    schemaOrProtocol: Either[Schema, Protocol], 
+    schemaOrProtocol: Either[Schema, Protocol],
     typeMatcher: TypeMatcher,
-    schemaStore: SchemaStore): String = {
-      
+    schemaStore: SchemaStore,
+    restrictedFields: Boolean): String = {
+
     val imports = importer.getImports(
       schemaOrProtocol, namespace, schemaStore, typeMatcher)
-      
+
     val topLevelDefs: List[Tree] = schemaOrProtocol match {
       case Left(schema) => schemahugger.toTrees(
         classStore,
@@ -40,7 +41,8 @@ object StandardScalaTreehugger extends ScalaTreehugger {
         schema,
         typeMatcher,
         None,
-        None
+        None,
+        restrictedFields
       )
       case Right(protocol) => protocolhugger.toTrees(
         classStore,
@@ -48,10 +50,11 @@ object StandardScalaTreehugger extends ScalaTreehugger {
         protocol,
         typeMatcher,
         None,
-        None
+        None,
+        restrictedFields
       )
     }
-      
+
     // wrap the imports and class definition in a block with comment and package
     val tree = {
       val blockContent = imports ++ topLevelDefs

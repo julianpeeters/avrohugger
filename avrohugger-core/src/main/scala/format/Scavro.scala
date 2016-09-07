@@ -19,26 +19,27 @@ object Scavro extends SourceFormat {
 
   val toolName = "generate-scavro"
   val toolShortDescription = "Generates Scala wrapper code for the given schema."
-  
+
   val scalaTreehugger = ScavroScalaTreehugger
 
   def asCompilationUnits(
-    classStore: ClassStore, 
-    namespace: Option[String], 
+    classStore: ClassStore,
+    namespace: Option[String],
     schemaOrProtocol: Either[Schema, Protocol],
     schemaStore: SchemaStore,
     maybeOutDir: Option[String],
-    typeMatcher: TypeMatcher): List[CompilationUnit] = {
-      
+    typeMatcher: TypeMatcher,
+    restrictedFields: Boolean): List[CompilationUnit] = {
+
     registerTypes(schemaOrProtocol, classStore, typeMatcher)
-        
-    // By default, Scavro generates Scala classes in packages that are the same 
-    // as the Java package with `model` appended. 
+
+    // By default, Scavro generates Scala classes in packages that are the same
+    // as the Java package with `model` appended.
     val scavroModelNamespace = ScavroNamespaceRenamer.renameNamespace(
       namespace,
       schemaOrProtocol,
       typeMatcher)
-      
+
     def maybeCustomEnumStyle = typeMatcher.customEnumStyleMap.get("enum")
 
     schemaOrProtocol match {
@@ -51,14 +52,15 @@ object Scavro extends SourceFormat {
               schemaOrProtocol,
               typeMatcher,
               schemaStore,
-              maybeOutDir)
+              maybeOutDir,
+              restrictedFields)
             List(scalaCompilationUnit)
           }
           case ENUM => {
             maybeCustomEnumStyle match {
-              // java enums can't be represented as trees so they can't be 
-              // handled by treehugger. Their compilation unit must de generated 
-              // separately, and they will be excluded from scala compilation 
+              // java enums can't be represented as trees so they can't be
+              // handled by treehugger. Their compilation unit must de generated
+              // separately, and they will be excluded from scala compilation
               // units.
               case Some("java enum") => {
                 val javaCompilationUnit = getJavaEnumCompilationUnit(
@@ -76,11 +78,12 @@ object Scavro extends SourceFormat {
                   schemaOrProtocol,
                   typeMatcher,
                   schemaStore,
-                  maybeOutDir)
+                  maybeOutDir,
+                  restrictedFields)
                 List(scalaCompilationUnit)
               }
             }
-            
+
           }
           case _ => sys.error("Only RECORD or ENUM can be toplevel definitions")
         }
@@ -92,11 +95,12 @@ object Scavro extends SourceFormat {
           Right(protocol),
           typeMatcher,
           schemaStore,
-          maybeOutDir)
+          maybeOutDir,
+          restrictedFields)
         maybeCustomEnumStyle match {
-          // java enums can't be represented as trees so they can't be 
-          // handled by treehugger. Their compilation unit must de generated 
-          // separately, and they will be excluded from scala compilation 
+          // java enums can't be represented as trees so they can't be
+          // handled by treehugger. Their compilation unit must de generated
+          // separately, and they will be excluded from scala compilation
           // units.
           case Some("java enum") => {
             val localSubtypes = getLocalSubtypes(protocol)
@@ -108,15 +112,15 @@ object Scavro extends SourceFormat {
                 schema,
                 maybeOutDir,
                 typeMatcher)
-            })            
+            })
             scalaCompilationUnit +: javaCompilationUnits
           }
           case _ => List(scalaCompilationUnit)
         }
       }
-    }  
+    }
   }
-  
+
   def getName(
     schemaOrProtocol: Either[Schema, Protocol],
     typeMatcher: TypeMatcher): String = {
@@ -138,19 +142,21 @@ object Scavro extends SourceFormat {
   }
 
   def compile(
-    classStore: ClassStore, 
+    classStore: ClassStore,
     namespace: Option[String],
     schemaOrProtocol: Either[Schema, Protocol],
     outDir: String,
     schemaStore: SchemaStore,
-    typeMatcher: TypeMatcher): Unit = {
+    typeMatcher: TypeMatcher,
+    restrictedFields: Boolean): Unit = {
     val compilationUnits: List[CompilationUnit] = asCompilationUnits(
       classStore,
       namespace,
       schemaOrProtocol,
       schemaStore,
       Some(outDir),
-      typeMatcher)  
+      typeMatcher,
+      restrictedFields)
     compilationUnits.foreach(writeToFile)
   }
 

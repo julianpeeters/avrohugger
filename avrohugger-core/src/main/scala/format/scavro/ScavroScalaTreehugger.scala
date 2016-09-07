@@ -17,7 +17,7 @@ import treehuggerDSL._
 import scala.collection.JavaConversions._
 
 object ScavroScalaTreehugger extends ScalaTreehugger {
-  
+
   val schemahugger = ScavroSchemahugger
   val protocolhugger = ScavroProtocolhugger
 	val importer = ScavroImporter
@@ -29,7 +29,8 @@ object ScavroScalaTreehugger extends ScalaTreehugger {
     namespace: Option[String],
     schemaOrProtocol: Either[Schema, Protocol],
     typeMatcher: TypeMatcher,
-    schemaStore: SchemaStore): String = {
+    schemaStore: SchemaStore,
+    restrictedFields: Boolean): String = {
 
     val imports: List[Import] = importer.getImports(
       schemaOrProtocol, namespace, schemaStore, typeMatcher)
@@ -41,7 +42,8 @@ object ScavroScalaTreehugger extends ScalaTreehugger {
         schema,
         typeMatcher,
         None,
-        None
+        None,
+        restrictedFields
       )
       case Right(protocol) => protocolhugger.toTrees(
         classStore,
@@ -49,7 +51,8 @@ object ScavroScalaTreehugger extends ScalaTreehugger {
         protocol,
         typeMatcher,
         None,
-        None
+        None,
+        restrictedFields
       )
     }
     // wrap the imports and classdef in a block with a comment and a package
@@ -58,8 +61,8 @@ object ScavroScalaTreehugger extends ScalaTreehugger {
       if (namespace.isDefined) BLOCK(blockContent).inPackage(namespace.get)
       else BLOCK(blockContent:_*).withoutPackage
     }.withDoc("MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY")
-    
+
     treeToString(tree)
   }
-  
+
 }

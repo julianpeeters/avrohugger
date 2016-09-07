@@ -20,20 +20,21 @@ import treehugger.forest.Tree
   */
 trait ScalaTreehugger {
 
-  ///////////////////////////// abstract members ///////////////////////////////  
+  ///////////////////////////// abstract members ///////////////////////////////
   def asScalaCodeString(
     classStore: ClassStore,
     namespace: Option[String],
     schemaOrProtocol: Either[Schema, Protocol],
     typeMatcher: TypeMatcher,
-    schemaStore: SchemaStore): String
+    schemaStore: SchemaStore,
+    restrictedFields: Boolean): String
 
   val importer: Importer
 
   val protocolhugger: Protocolhugger
 
   val schemahugger: Schemahugger
-      
 
-  
+
+
 }

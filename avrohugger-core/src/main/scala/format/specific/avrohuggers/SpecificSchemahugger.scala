@@ -13,26 +13,28 @@ import org.apache.avro.Schema
 import treehugger.forest.Tree
 
 object SpecificSchemahugger extends Schemahugger {
-  
+
   def toTrees(
     classStore: ClassStore,
     namespace: Option[String],
     schema: Schema,
     typeMatcher: TypeMatcher,
     maybeBaseTrait: Option[String],
-    maybeFlags: Option[List[Long]]): List[Tree] = {
-        
+    maybeFlags: Option[List[Long]],
+    restrictedFields: Boolean): List[Tree] = {
+
     val caseClassDef = SpecificCaseClassTree.toCaseClassDef(
       classStore,
       namespace,
       schema,
       typeMatcher,
       maybeBaseTrait,
-      maybeFlags)
-      
+      maybeFlags,
+      restrictedFields)
+
     val companionDef = SpecificObjectTree.toCaseCompanionDef(schema, maybeFlags)
-    
+
     List(caseClassDef, companionDef)
   }
-  
+
 }

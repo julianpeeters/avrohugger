@@ -17,19 +17,22 @@ import scala.collection.JavaConversions._
 import scala.language.postfixOps
 
 object ScavroCaseClassTree {
-  
+
   def toCaseClassDef(
-    classStore: ClassStore, 
-    namespace: Option[String], 
+    classStore: ClassStore,
+    namespace: Option[String],
     schema: Schema,
     ScalaClass: Symbol,
-    JavaClass: Symbol, 
+    JavaClass: Symbol,
     typeMatcher: TypeMatcher,
     maybeBaseTrait: Option[String],
-    maybeFlags: Option[List[Long]]) = {
+    maybeFlags: Option[List[Long]],
+    restrictedFields: Boolean) = {
 
     val mixin = TYPE_REF(REF("AvroSerializeable"))
     val avroFields = schema.getFields.toList
+
+    val shouldGenerateSimpleClass = restrictedFields && avroFields.size > 22
 
     val scalaClassParams: List[ValDef] = avroFields.map { f =>
       val fieldName = f.name
@@ -46,7 +49,14 @@ object ScavroCaseClassTree {
     // There could be base traits, flags, or both, and could have no fields
     val caseClassDef = (maybeBaseTrait, maybeFlags) match {
       case (Some(baseTrait), Some(flags)) =>
-        if (!avroFields.isEmpty) {
+        if (shouldGenerateSimpleClass) {
+          CLASSDEF(ScalaClass)
+            .withFlags(flags:_*)
+            .withParams(scalaClassParams)
+            .withParents(mixin)
+            .withParents(baseTrait)
+        }
+        else if (!avroFields.isEmpty) {
           CASECLASSDEF(ScalaClass)
             .withFlags(flags:_*)
             .withParams(scalaClassParams)
@@ -61,7 +71,13 @@ object ScavroCaseClassTree {
             .withParents(baseTrait)
         }
       case (Some(baseTrait), None) =>
-        if (!avroFields.isEmpty) {
+        if (shouldGenerateSimpleClass) {
+          CLASSDEF(ScalaClass)
+            .withParams(scalaClassParams)
+            .withParents(mixin)
+            .withParents(baseTrait)
+        }
+        else if (!avroFields.isEmpty) {
           CASECLASSDEF(ScalaClass)
             .withParams(scalaClassParams)
             .withParents(mixin)
@@ -74,28 +90,39 @@ object ScavroCaseClassTree {
             .withParents(baseTrait)
         }
       case (None, Some(flags)) =>
-        if (!avroFields.isEmpty) {
+        if (shouldGenerateSimpleClass) {
+          CLASSDEF(ScalaClass)
+            .withFlags(flags:_*)
+            .withParams(scalaClassParams)
+            .withParents(mixin)
+        }
+        else if (!avroFields.isEmpty) {
           CASECLASSDEF(ScalaClass)
             .withFlags(flags:_*)
             .withParams(scalaClassParams)
-            .withParents(mixin) 
+            .withParents(mixin)
         }
         else { // for "empty" records: empty params and no no-arg ctor
           CASECLASSDEF(ScalaClass)
             .withFlags(flags:_*)
             .withParams(PARAM(""))
-            .withParents(mixin) 
+            .withParents(mixin)
         }
       case (None, None) =>
-        if (!avroFields.isEmpty) {
+        if (shouldGenerateSimpleClass) {
+          CLASSDEF(ScalaClass)
+            .withParams(scalaClassParams)
+            .withParents(mixin)
+        }
+        else if (!avroFields.isEmpty) {
           CASECLASSDEF(ScalaClass)
             .withParams(scalaClassParams)
-            .withParents(mixin) 
+            .withParents(mixin)
         }
         else { // for "empty" records: empty params and no no-arg ctor
           CASECLASSDEF(ScalaClass)
             .withParams(PARAM(""))
-            .withParents(mixin) 
+            .withParents(mixin)
         }
     }
 
@@ -110,7 +137,7 @@ object ScavroCaseClassTree {
     val treeWithScalaDoc = ScalaDocGenerator.docToScalaDoc(
       Left(schema),
       caseClassTree)
-      
+
     treeWithScalaDoc
   }
 
