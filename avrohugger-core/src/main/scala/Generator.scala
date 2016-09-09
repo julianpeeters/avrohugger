@@ -42,16 +42,14 @@ class Generator(format: SourceFormat,
   //////////////// methods for writing definitions out to file /////////////////
   def schemaToFile(
     schema: Schema,
-    outDir: String = defaultOutputDir,
-    restrictedFields: Boolean = false): Unit = {
+    outDir: String = defaultOutputDir): Unit = {
     FileGenerator.schemaToFile(
-      schema, outDir, format, classStore, schemaStore, typeMatcher, restrictedFields)
+      schema, outDir, format, classStore, schemaStore, typeMatcher, restrictedFieldNumber)
   }
 
   def protocolToFile(
     protocol: Protocol,
-    outDir: String = defaultOutputDir/*,
-    restrictedFields: Boolean = false*/): Unit = {
+    outDir: String = defaultOutputDir): Unit = {
     FileGenerator.protocolToFile(
       protocol,
       outDir,
@@ -64,8 +62,7 @@ class Generator(format: SourceFormat,
 
   def stringToFile(
     schemaStr: String,
-    outDir: String = defaultOutputDir/*,
-    restrictedFields: Boolean = false*/): Unit = {
+    outDir: String = defaultOutputDir): Unit = {
     FileGenerator.stringToFile(
       schemaStr,
       outDir,
@@ -79,8 +76,7 @@ class Generator(format: SourceFormat,
 
   def fileToFile(
     inFile: File,
-    outDir: String = defaultOutputDir/*,
-    restrictedFields: Boolean = false*/): Unit = {
+    outDir: String = defaultOutputDir): Unit = {
     FileGenerator.fileToFile(
       inFile,
       outDir,
