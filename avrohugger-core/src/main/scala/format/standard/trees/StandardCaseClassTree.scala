@@ -97,7 +97,7 @@ object StandardCaseClassTree {
       }
       case (None, None) => {
         if (shouldGenerateSimpleClass) {
-          CASECLASSDEF(classSymbol)
+          CLASSDEF(classSymbol)
             .withParams(params)
         }
         else if (!avroFields.isEmpty) {
