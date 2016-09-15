@@ -12,10 +12,11 @@ import java.io.File
 
 // Unable to overload this class' methods because outDir uses a default value
 class Generator(format: SourceFormat,
-  avroScalaCustomTypes: Map[String, Class[_]] = Map.empty,
-  avroScalaCustomNamespace: Map[String, String] = Map.empty,
-  avroScalaCustomEnumStyle: Map[String, String] = Map.empty) {
-  
+                avroScalaCustomTypes: Map[String, Class[_]] = Map.empty,
+                avroScalaCustomNamespace: Map[String, String] = Map.empty,
+                avroScalaCustomEnumStyle: Map[String, String] = Map.empty,
+                restrictedFieldNumber: Boolean = false) {
+
   val sourceFormat = format
   val defaultOutputDir = "target/generated-sources"
   lazy val fileParser = new FileInputParser
@@ -24,7 +25,7 @@ class Generator(format: SourceFormat,
   val classStore = new ClassStore
   val schemaStore = new SchemaStore
   val typeMatcher = new TypeMatcher
-  
+
   // update format defaults
   format match {
     case Scavro =>
@@ -43,9 +44,9 @@ class Generator(format: SourceFormat,
     schema: Schema,
     outDir: String = defaultOutputDir): Unit = {
     FileGenerator.schemaToFile(
-      schema, outDir, format, classStore, schemaStore, typeMatcher)
+      schema, outDir, format, classStore, schemaStore, typeMatcher, restrictedFieldNumber)
   }
-  
+
   def protocolToFile(
     protocol: Protocol,
     outDir: String = defaultOutputDir): Unit = {
@@ -55,7 +56,8 @@ class Generator(format: SourceFormat,
       format,
       classStore,
       schemaStore,
-      typeMatcher)
+      typeMatcher,
+      restrictedFieldNumber)
   }
 
   def stringToFile(
@@ -64,11 +66,12 @@ class Generator(format: SourceFormat,
     FileGenerator.stringToFile(
       schemaStr,
       outDir,
-      format, 
+      format,
       classStore,
       schemaStore,
       stringParser,
-      typeMatcher)
+      typeMatcher,
+      restrictedFieldNumber)
   }
 
   def fileToFile(
@@ -77,22 +80,23 @@ class Generator(format: SourceFormat,
     FileGenerator.fileToFile(
       inFile,
       outDir,
-      format, 
+      format,
       classStore,
       schemaStore,
       fileParser,
-      typeMatcher)
+      typeMatcher,
+      restrictedFieldNumber)
   }
 
   //////// methods for writing to a list of definitions in String format ///////
   def schemaToStrings(schema: Schema): List[String] = {
     StringGenerator.schemaToStrings(
-      schema, format, classStore, schemaStore, typeMatcher)
+      schema, format, classStore, schemaStore, typeMatcher, restrictedFieldNumber)
   }
-  
+
   def protocolToStrings(protocol: Protocol): List[String] = {
     StringGenerator.protocolToStrings(
-      protocol, format, classStore, schemaStore, typeMatcher)
+      protocol, format, classStore, schemaStore, typeMatcher, restrictedFieldNumber)
   }
 
   def stringToStrings(schemaStr: String): List[String] = {
@@ -102,7 +106,8 @@ class Generator(format: SourceFormat,
       classStore,
       schemaStore,
       stringParser,
-      typeMatcher)
+      typeMatcher,
+      restrictedFieldNumber)
   }
 
   def fileToStrings(inFile: File): List[String] = {
@@ -112,7 +117,8 @@ class Generator(format: SourceFormat,
       classStore,
       schemaStore,
       fileParser,
-      typeMatcher)
+      typeMatcher,
+      restrictedFieldNumber)
   }
 
 }

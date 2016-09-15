@@ -43,31 +43,33 @@ trait SourceFormat {
 
   ////////////////////////////// abstract members //////////////////////////////
   def asCompilationUnits(
-    classStore: ClassStore, 
-    namespace: Option[String], 
+    classStore: ClassStore,
+    namespace: Option[String],
     schemaOrProtocol: Either[Schema, Protocol],
     schemaStore: SchemaStore,
     maybeOutDir: Option[String],
-    typeMatcher: TypeMatcher): List[CompilationUnit]
-    
+    typeMatcher: TypeMatcher,
+    restrictedFields: Boolean): List[CompilationUnit]
+
   def compile(
-    classStore: ClassStore, 
-    namespace: Option[String], 
+    classStore: ClassStore,
+    namespace: Option[String],
     schemaOrProtocol: Either[Schema, Protocol],
     outDir: String,
     schemaStore: SchemaStore,
-    typeMatcher: TypeMatcher): Unit
+    typeMatcher: TypeMatcher,
+    restrictedFields: Boolean): Unit
 
   def getName(
-    schemaOrProtocol: Either[Schema, Protocol], 
+    schemaOrProtocol: Either[Schema, Protocol],
     typeMatcher: TypeMatcher): String
-      
+
   val scalaTreehugger: ScalaTreehugger
 
   val toolName: String
 
-  val toolShortDescription: String  
-  
+  val toolShortDescription: String
+
   ///////////////////////////// concrete members ///////////////////////////////
   def fileExt(
     schemaOrProtocol: Either[Schema, Protocol],
@@ -109,14 +111,14 @@ trait SourceFormat {
     }
 
   }
-  
+
   def getLocalSubtypes(protocol: Protocol): List[Schema] = {
     val protocolNS = protocol.getNamespace
     val types = protocol.getTypes.toList
     def isTopLevelNamespace(schema: Schema) = schema.getNamespace == protocolNS
     types.filter(isTopLevelNamespace)
   }
-  
+
   def getJavaEnumCompilationUnit(
     classStore: ClassStore,
     namespace: Option[String],
@@ -131,9 +133,9 @@ trait SourceFormat {
       schema)
     CompilationUnit(maybeFilePath, codeString)
   }
-  
+
   // Uses treehugger trees so can't handle java enums, therefore Java enums
-  // must be generated separately, and Scala enums must NOT be generated within 
+  // must be generated separately, and Scala enums must NOT be generated within
   // the compilation unit if enum style is set to "java enum".
   def getScalaCompilationUnit(
     classStore: ClassStore,
@@ -141,7 +143,8 @@ trait SourceFormat {
     schemaOrProtocol: Either[Schema, Protocol],
     typeMatcher: TypeMatcher,
     schemaStore: SchemaStore,
-    maybeOutDir: Option[String]): CompilationUnit = {
+    maybeOutDir: Option[String],
+    restrictedFields: Boolean): CompilationUnit = {
     val scalaFilePath =
       getFilePath(namespace, schemaOrProtocol, maybeOutDir, typeMatcher)
     val scalaString = scalaTreehugger.asScalaCodeString(
@@ -149,12 +152,13 @@ trait SourceFormat {
       namespace,
       schemaOrProtocol,
       typeMatcher,
-      schemaStore)
+      schemaStore,
+      restrictedFields)
     CompilationUnit(scalaFilePath, scalaString)
   }
-  
+
   def isEnum(schema: Schema) = schema.getType == Schema.Type.ENUM
-  
+
   def registerTypes(
     schemaOrProtocol: Either[Schema, Protocol],
     classStore: ClassStore,
@@ -175,7 +179,7 @@ trait SourceFormat {
       })
     }
   }
-  
+
   def renameEnum(schema: Schema, selector: String) = {
     schema.getType match {
       case RECORD => schema.getName
@@ -183,7 +187,7 @@ trait SourceFormat {
       case _ => sys.error("Only RECORD and ENUM can be top-level definitions")
     }
   }
-  
+
   def writeToFile(compilationUnit: CompilationUnit): Unit = {
     val path = compilationUnit.maybeFilePath match {
       case Some(filePath) => filePath
@@ -192,13 +196,13 @@ trait SourceFormat {
     val contents = compilationUnit.codeString.getBytes()
     try { // delete old and/or create new
       Files.deleteIfExists(path)
-      Files.write(path, contents, StandardOpenOption.CREATE) 
-      () 
+      Files.write(path, contents, StandardOpenOption.CREATE)
+      ()
     }
     catch {
       case ex: FileNotFoundException => sys.error("File not found:" + ex)
       case ex: IOException => sys.error("Problem using the file: " + ex)
     }
   }
-  
+
 }

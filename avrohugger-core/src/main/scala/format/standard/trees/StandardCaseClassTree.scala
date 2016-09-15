@@ -18,27 +18,37 @@ import scala.collection.JavaConversions._
 object StandardCaseClassTree {
 
   def toCaseClassDef(
-    classStore: ClassStore, 
-    namespace: Option[String], 
+    classStore: ClassStore,
+    namespace: Option[String],
     schema: Schema,
     typeMatcher: TypeMatcher,
     maybeBaseTrait: Option[String],
-    maybeFlags: Option[List[Long]]) = {
-      
+    maybeFlags: Option[List[Long]],
+    restrictedFields: Boolean) = {
+
     // register new type
     val classSymbol = RootClass.newClass(schema.getName)
-    
-    val params: List[ValDef] = schema.getFields.toList.map(f => {
+    val avroFields = schema.getFields.toList
+
+    val shouldGenerateSimpleClass = restrictedFields && avroFields.size > 22
+
+    val params: List[ValDef] = avroFields.map(f => {
       val fieldName = f.name
       val fieldType = typeMatcher.toScalaType(classStore, namespace, f.schema)
       val defaultValue = DefaultValueMatcher.getDefaultValue(f, typeMatcher)
       PARAM(fieldName, fieldType) := defaultValue
     })
-    
+
     // There could be base traits, flags, or both, and could have no fields
     val caseClassDef = (maybeBaseTrait, maybeFlags) match {
       case (Some(baseTrait), Some(flags)) => {
-        if (!schema.getFields.toList.isEmpty) {
+        if (shouldGenerateSimpleClass) {
+          CLASSDEF(classSymbol)
+            .withFlags(flags:_*)
+            .withParams(params)
+            .withParents(baseTrait)
+        }
+        else if (!avroFields.isEmpty) {
           CASECLASSDEF(classSymbol)
             .withFlags(flags:_*)
             .withParams(params)
@@ -52,7 +62,12 @@ object StandardCaseClassTree {
         }
       }
       case (Some(baseTrait), None) => {
-        if (!schema.getFields.toList.isEmpty) {
+        if (shouldGenerateSimpleClass) {
+          CLASSDEF(classSymbol)
+            .withParams(params)
+            .withParents(baseTrait)
+        }
+        else if (!avroFields.isEmpty) {
           CASECLASSDEF(classSymbol)
             .withParams(params)
             .withParents(baseTrait)
@@ -64,7 +79,12 @@ object StandardCaseClassTree {
         }
       }
       case (None, Some(flags)) => {
-        if (!schema.getFields.toList.isEmpty) {
+        if (shouldGenerateSimpleClass) {
+          CLASSDEF(classSymbol)
+            .withFlags(flags:_*)
+            .withParams(params)
+        }
+        else if (!avroFields.isEmpty) {
           CASECLASSDEF(classSymbol)
             .withFlags(flags:_*)
             .withParams(params)
@@ -76,7 +96,11 @@ object StandardCaseClassTree {
         }
       }
       case (None, None) => {
-        if (!schema.getFields.toList.isEmpty) {
+        if (shouldGenerateSimpleClass) {
+          CLASSDEF(classSymbol)
+            .withParams(params)
+        }
+        else if (!avroFields.isEmpty) {
           CASECLASSDEF(classSymbol)
             .withParams(params)
         }
@@ -86,14 +110,14 @@ object StandardCaseClassTree {
         }
       }
     }
-    
+
     val classTree = caseClassDef.tree
 
 
     val treeWithScalaDoc = ScalaDocGenerator.docToScalaDoc(
       Left(schema),
       classTree)
-      
+
     treeWithScalaDoc
   }
 

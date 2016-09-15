@@ -16,14 +16,15 @@ import definitions._
 import treehuggerDSL._
 
 object ScavroSchemahugger extends Schemahugger{
-  
+
   def toTrees(
     classStore: ClassStore,
     namespace: Option[String],
     schema: Schema,
     typeMatcher: TypeMatcher,
     maybeBaseTrait: Option[String],
-    maybeFlags: Option[List[Long]]): List[Tree] = {
+    maybeFlags: Option[List[Long]],
+    restrictedFields: Boolean): List[Tree] = {
     val ScalaClass = RootClass.newClass(schema.getName)
     val JavaClass = RootClass.newClass("J" + schema.getName)
     schema.getType match {
@@ -36,7 +37,8 @@ object ScavroSchemahugger extends Schemahugger{
           JavaClass,
           typeMatcher,
           maybeBaseTrait,
-          maybeFlags)
+          maybeFlags,
+          restrictedFields)
         val companionDef = ScavroObjectTree.toCompanionDef(
           classStore,
           schema,
@@ -62,5 +64,5 @@ object ScavroSchemahugger extends Schemahugger{
         sys.error("Only RECORD and ENUM can be top-level definitions")
     }
   }
-  
+
 }

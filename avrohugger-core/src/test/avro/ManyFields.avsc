@@ -1,0 +1,101 @@
+{
+  "protocol" : "ManyFieldsProtocol",
+  "namespace" : "test.avsc",
+  "type" : "record",
+  "name" : "ManyFields",
+  "doc" : "Used to test Scala 2.10 support",
+  "fields" : [ {
+    "name" : "field01",
+    "type" : "string"
+    }, {
+      "name" : "field02",
+      "type" : "int"
+    }, {
+      "name" : "field03",
+      "type" : "double"
+    }, {
+      "name" : "field04",
+      "type" : [ "null", "string" ]
+    }, {
+      "name" : "field05",
+      "type" : [ "null", "int" ]
+    }, {
+      "name" : "field06",
+      "type" : [ "null", "double" ]
+    }, {
+      "name" : "field07",
+      "type" : "long"
+    }, {
+      "name" : "field08",
+      "type" : "string"
+    }, {
+      "name" : "field09",
+      "type" : {
+        "type" : "enum",
+        "name" : "SomeEnum",
+        "symbols" : [ "yes", "no", "maybe" ]
+       }
+    }, {
+      "name" : "field10",
+      "type" : "string"
+    }, {
+      "name" : "field11",
+      "type" : "string"
+    }, {
+      "name" : "field12",
+      "type" : "string"
+    }, {
+      "name" : "field13",
+      "type" : "string"
+    }, {
+      "name" : "field14",
+      "type" : "string"
+    }, {
+      "name" : "field15",
+      "type" : "int"
+    }, {
+      "name" : "field16",
+      "type" : "double"
+    }, {
+      "name" : "field17",
+      "type" : "string"
+    }, {
+      "name" : "field18",
+      "type" : "int"
+    }, {
+      "name" : "field19",
+      "type" : "double"
+    }, {
+      "name" : "fiel20",
+      "type" : "string"
+    }, {
+      "name" : "field21",
+      "type" : "int"
+    }, {
+      "name" : "field22",
+      "type" : "string"
+    }, {
+      "name" : "field23",
+      "type" : "string"
+    }, {
+      "name" : "field24",
+      "type" : "double"
+    }, {
+      "name" : "field25",
+      "type" : "string"
+    }, {
+      "name" : "field26",
+      "type" : "double"
+    }, {
+      "name" : "field27",
+      "type" : "string"
+    }, {
+      "name" : "field28",
+      "type" : "double"
+    }, {
+      "name" : "field29",
+      "type" : "string"
+    } ]
+  } ],
+  "messages" : { }
+}

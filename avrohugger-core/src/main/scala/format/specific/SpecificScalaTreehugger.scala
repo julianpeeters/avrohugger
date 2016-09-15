@@ -18,19 +18,20 @@ import treehuggerDSL._
 import scala.collection.JavaConversions._
 
 object SpecificScalaTreehugger extends ScalaTreehugger {
-  
+
   val schemahugger = SpecificSchemahugger
   val protocolhugger = SpecificProtocolhugger
   val importer = SpecificImporter
-  
+
   // SpecificCompiler can't return a tree for Java enums, so return
   // a String here for a consistent api vis a vis *ToFile and *ToStrings
   def asScalaCodeString(
-    classStore: ClassStore, 
-    namespace: Option[String], 
+    classStore: ClassStore,
+    namespace: Option[String],
     schemaOrProtocol: Either[Schema, Protocol],
     typeMatcher: TypeMatcher,
-    schemaStore: SchemaStore): String = {
+    schemaStore: SchemaStore,
+    restrictedFields: Boolean): String = {
 
     // imports in case a field type is from a different namespace
     val imports: List[Import] = importer.getImports(
@@ -46,7 +47,8 @@ object SpecificScalaTreehugger extends ScalaTreehugger {
         schema,
         typeMatcher,
         None,
-        None
+        None,
+        restrictedFields
       )
       case Right(protocol) => protocolhugger.toTrees(
         classStore,
@@ -54,10 +56,11 @@ object SpecificScalaTreehugger extends ScalaTreehugger {
         protocol,
         typeMatcher,
         None,
-        None
+        None,
+        restrictedFields
       )
     }
-    
+
     // wrap the definitions in a block with a comment and a package
     val tree = {
       val blockContent = imports ++ topLevelDefs

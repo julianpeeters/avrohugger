@@ -1,0 +1,40 @@
+@namespace("test.avdl")
+protocol ManyFieldsProtocol {
+
+  enum SomeEnum {
+    yes, no, maybe
+  }
+
+  /** Used to test Scala 2.10 support */
+  record ManyFields {
+    string field01;
+    int field02;
+    double field03;
+    union {null, string} field04;
+    union {null, int} field05;
+    union {null, double} field06;
+    long field07;
+    string field08;
+    SomeEnum field09;
+    string field10;
+    string field11;
+    string field12;
+    string field13;
+    string field14;
+    int field15;
+    double field16;
+    string field17;
+    int field18;
+    double field19;
+    string fiel20;
+    int field21;
+    string field22;
+    string field23;
+    double field24;
+    string field25;
+    double field26;
+    string field27;
+    double field28;
+    string field29;
+  }
+}

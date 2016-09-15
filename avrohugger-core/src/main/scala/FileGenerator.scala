@@ -24,27 +24,29 @@ private[avrohugger] object FileGenerator {
     format: SourceFormat,
     classStore: ClassStore,
     schemaStore: SchemaStore,
-    typeMatcher: TypeMatcher): Unit = {
+    typeMatcher: TypeMatcher,
+    restrictedFields: Boolean): Unit = {
     val topNS: Option[String] = DependencyInspector.getReferredNamespace(schema)
-    val topLevelSchemas: List[Schema] = 
+    val topLevelSchemas: List[Schema] =
       NestedSchemaExtractor.getNestedSchemas(schema, schemaStore)
     // most-nested classes processed first
     topLevelSchemas.reverse.distinct.foreach(schema => {
       // pass in the top-level schema's namespace if the nested schema has none
       val ns = DependencyInspector.getReferredNamespace(schema) orElse topNS
-      format.compile(classStore, ns, Left(schema), outDir, schemaStore, typeMatcher)
+      format.compile(classStore, ns, Left(schema), outDir, schemaStore, typeMatcher, restrictedFields)
     })
   }
-  
+
   def protocolToFile(
     protocol: Protocol,
     outDir: String,
     format: SourceFormat,
     classStore: ClassStore,
     schemaStore: SchemaStore,
-    typeMatcher: TypeMatcher): Unit = {
+    typeMatcher: TypeMatcher,
+    restrictedFields: Boolean): Unit = {
     val ns = Option(protocol.getNamespace)
-    format.compile(classStore, ns, Right(protocol), outDir, schemaStore, typeMatcher)
+    format.compile(classStore, ns, Right(protocol), outDir, schemaStore, typeMatcher, restrictedFields)
   }
 
   def stringToFile(
@@ -54,15 +56,16 @@ private[avrohugger] object FileGenerator {
     classStore: ClassStore,
     schemaStore: SchemaStore,
     stringParser: StringInputParser,
-    typeMatcher: TypeMatcher): Unit = {
+    typeMatcher: TypeMatcher,
+    restrictedFields: Boolean): Unit = {
     val schemaOrProtocols = stringParser.getSchemaOrProtocols(str, schemaStore)
     schemaOrProtocols.foreach(schemaOrProtocol => {
       schemaOrProtocol match {
         case Left(schema) => {
-          schemaToFile(schema, outDir, format, classStore, schemaStore, typeMatcher)
+          schemaToFile(schema, outDir, format, classStore, schemaStore, typeMatcher, restrictedFields)
         }
         case Right(protocol) => {
-          protocolToFile(protocol, outDir, format, classStore, schemaStore, typeMatcher)
+          protocolToFile(protocol, outDir, format, classStore, schemaStore, typeMatcher, restrictedFields)
         }
       }
     })
@@ -75,15 +78,16 @@ private[avrohugger] object FileGenerator {
     classStore: ClassStore,
     schemaStore: SchemaStore,
     fileParser: FileInputParser,
-    typeMatcher: TypeMatcher): Unit = {      
+    typeMatcher: TypeMatcher,
+    restrictedFields: Boolean): Unit = {
     val schemaOrProtocols: List[Either[Schema, Protocol]] =
       fileParser.getSchemaOrProtocols(inFile, format, classStore)
     schemaOrProtocols.foreach(schemaOrProtocol => schemaOrProtocol match {
       case Left(schema) => {
-        schemaToFile(schema, outDir, format, classStore, schemaStore, typeMatcher)
+        schemaToFile(schema, outDir, format, classStore, schemaStore, typeMatcher, restrictedFields)
       }
       case Right(protocol) => {
-        protocolToFile(protocol, outDir, format, classStore, schemaStore, typeMatcher)
+        protocolToFile(protocol, outDir, format, classStore, schemaStore, typeMatcher, restrictedFields)
       }
     })
   }

@@ -17,7 +17,7 @@ import java.nio.file.Path
 import scala.collection.JavaConversions._
 
 object SpecificRecord extends SourceFormat{
-  
+
   val toolName = "generate-specific"
 
   val toolShortDescription = "Generates Scala code extending SpecificRecordBase."
@@ -25,13 +25,14 @@ object SpecificRecord extends SourceFormat{
   val scalaTreehugger = SpecificScalaTreehugger
 
   def asCompilationUnits(
-    classStore: ClassStore, 
-    ns: Option[String], 
+    classStore: ClassStore,
+    ns: Option[String],
     schemaOrProtocol: Either[Schema, Protocol],
     schemaStore: SchemaStore,
     maybeOutDir: Option[String],
-    typeMatcher: TypeMatcher): List[CompilationUnit] = {
-    
+    typeMatcher: TypeMatcher,
+    restrictedFields: Boolean): List[CompilationUnit] = {
+
     registerTypes(schemaOrProtocol, classStore, typeMatcher)
 
     val maybeCustom = ns match {
@@ -55,7 +56,8 @@ object SpecificRecord extends SourceFormat{
         namespace,
         Right(protocol),
         typeMatcher,
-        schemaStore)
+        schemaStore,
+        restrictedFields)
       val rpcTraitCompUnit = CompilationUnit(maybePath, rpcTraitString)
       val scalaCompUnits = localNonEnums.map(schema => {
         val scalaCompilationUnit = getScalaCompilationUnit(
@@ -64,7 +66,8 @@ object SpecificRecord extends SourceFormat{
           Left(schema),
           typeMatcher,
           schemaStore,
-          maybeOutDir)
+          maybeOutDir,
+          restrictedFields)
         scalaCompilationUnit
       })
       val javaCompUnits = localEnums.map(schema => {
@@ -78,7 +81,7 @@ object SpecificRecord extends SourceFormat{
       val rpcTypeCompUnits = scalaCompUnits ::: javaCompUnits
       rpcTraitCompUnit +: rpcTypeCompUnits
     }
- 
+
     schemaOrProtocol match {
       case Left(schema) => {
         schema.getType match {
@@ -89,7 +92,8 @@ object SpecificRecord extends SourceFormat{
               schemaOrProtocol,
               typeMatcher,
               schemaStore,
-              maybeOutDir)
+              maybeOutDir,
+              restrictedFields)
             List(scalaCompilationUnit)
           }
           case ENUM => {
@@ -125,14 +129,15 @@ object SpecificRecord extends SourceFormat{
             Right(protocol),
             typeMatcher,
             schemaStore,
-            maybeOutDir)
+            maybeOutDir,
+            restrictedFields)
           scalaCompilationUnit +: javaCompilationUnits
         }
         else protocolToRPC(protocol)
       }
     }
   }
-  
+
   def getName(
     schemaOrProtocol: Either[Schema, Protocol],
     typeMatcher: TypeMatcher): String = {
@@ -153,21 +158,23 @@ object SpecificRecord extends SourceFormat{
       }
     }
   }
-  
+
   def compile(
-    classStore: ClassStore, 
-    ns: Option[String], 
+    classStore: ClassStore,
+    ns: Option[String],
     schemaOrProtocol: Either[Schema, Protocol],
     outDir: String,
     schemaStore: SchemaStore,
-    typeMatcher: TypeMatcher): Unit = {
+    typeMatcher: TypeMatcher,
+    restrictedFields: Boolean): Unit = {
     val compilationUnits: List[CompilationUnit] = asCompilationUnits(
-      classStore, 
-      ns, 
+      classStore,
+      ns,
       schemaOrProtocol,
       schemaStore,
       Some(outDir),
-      typeMatcher)
+      typeMatcher,
+      restrictedFields)
     compilationUnits.foreach(writeToFile)
   }
 

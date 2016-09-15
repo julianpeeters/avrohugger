@@ -17,22 +17,23 @@ import treehuggerDSL._
 import scala.collection.JavaConversions._
 
 object SpecificProtocolhugger extends Protocolhugger {
-  
+
   def toTrees(
     classStore: ClassStore,
     namespace: Option[String],
     protocol: Protocol,
     typeMatcher: TypeMatcher,
     maybeBaseTrait: Option[String],
-    maybeFlags: Option[List[Long]]): List[Tree] = {
-      
+    maybeFlags: Option[List[Long]],
+    restrictedFields: Boolean): List[Tree] = {
+
     val name: String = protocol.getName
     val messages = protocol.getMessages.toMap
     val maybeProtocolDoc = Option(protocol.getDoc)
 
     if (messages.isEmpty) {
       val localSubTypes = getLocalSubtypes(protocol)
-      // protocols with more than 1 schema defined (Java Enums don't count) and 
+      // protocols with more than 1 schema defined (Java Enums don't count) and
       // without messages are generated as ADTs
       val localNonEnums = localSubTypes.filterNot(isEnum)
 
@@ -47,7 +48,8 @@ object SpecificProtocolhugger extends Protocolhugger {
             schema,
             typeMatcher,
             maybeNewBaseTrait,
-            maybeNewFlags)
+            maybeNewFlags,
+            restrictedFields)
         })
         sealedTraitDef +: subTypeDefs
       }
@@ -56,10 +58,10 @@ object SpecificProtocolhugger extends Protocolhugger {
         // no sealed trait tree, but could still need a protocol doc at top
         val docTrees = {
           Option(protocol.getDoc) match {
-            case Some(doc) => 
+            case Some(doc) =>
               List(ScalaDocGenerator.docToScalaDoc(Right(protocol), EmptyTree))
             case None => List.empty
-          }	
+          }
         }
         docTrees ::: localNonEnums.flatMap(schema => {
           SpecificSchemahugger.toTrees(
@@ -68,7 +70,8 @@ object SpecificProtocolhugger extends Protocolhugger {
             schema,
             typeMatcher,
             maybeBaseTrait,
-            maybeFlags)
+            maybeFlags,
+            restrictedFields)
           })
         }
     }
@@ -82,5 +85,5 @@ object SpecificProtocolhugger extends Protocolhugger {
       List(rpcTraitDef, companionDef)
     }
   }
-  
+
 }

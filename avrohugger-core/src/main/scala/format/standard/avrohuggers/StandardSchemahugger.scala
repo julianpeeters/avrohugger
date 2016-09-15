@@ -16,24 +16,26 @@ import definitions._
 import treehuggerDSL._
 
 object StandardSchemahugger extends Schemahugger {
-  
+
   def toTrees(
     classStore: ClassStore,
     namespace: Option[String],
     schema: Schema,
     typeMatcher: TypeMatcher,
     maybeBaseTrait: Option[String],
-    maybeFlags: Option[List[Long]]): List[Tree] = { // as case class definition
+    maybeFlags: Option[List[Long]],
+    restrictedFields: Boolean): List[Tree] = { // as case class definition
 
     schema.getType match {
-      case RECORD => 
+      case RECORD =>
         val classDef = StandardCaseClassTree.toCaseClassDef(
           classStore,
           namespace,
           schema,
           typeMatcher,
           maybeBaseTrait,
-          maybeFlags)
+          maybeFlags,
+          restrictedFields)
         List(classDef)
       case ENUM => typeMatcher.customEnumStyleMap.get("enum") match {
         case Some("java enum") =>
@@ -51,5 +53,5 @@ object StandardSchemahugger extends Schemahugger {
       case _ => sys.error("Only RECORD or ENUM can be toplevel definitions")
     }
   }
-  
+
 }
