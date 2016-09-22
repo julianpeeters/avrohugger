@@ -29,6 +29,7 @@ Table of contents
       * [Customizable type mapping](#customizable-type-mapping)
       * [Customizable namespace mapping](#customizable-namespace-mapping)
       * [Customizable enum style](#customizable-enum-style)
+      * [Generate Classes Instead of Case Classes](generate-classes-instead-of-case-classes)
     * ['avrohugger-tools'](#avrohugger-tools)
     * ['sbt-avrohugger'](#sbt-avrohugger)
     * ['avro2caseclass'](#avro2caseclass)
@@ -102,7 +103,7 @@ _Note:_ Currently [Treehugger](http://eed3si9n.com/treehugger/comments.html#Scal
 
 ##### Get the dependency with:
 
-    "com.julianpeeters" %% "avrohugger-core" % "0.11.0"
+    "com.julianpeeters" %% "avrohugger-core" % "0.12.0"
 
 
 ##### Description:
@@ -173,26 +174,32 @@ namespace map (please see warnings below):
     val generator = new Generator(Standard, avroScalaCustomEnumStyle = custom)  
 
 
+##### Generate Classes Instead of Case Classes
+
+Generate simple classes instead of case classes when fields.size > 22, useful for generating code for Scala 2.10 from large schemas.
+
+    val generator = new Generator(SpecificRecord, restrictedFieldNumber = true) 
+
 
 #### `avrohugger-tools`
 
 
-Download the avrohugger-tools jar for Scala [2.10](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.10/0.11.0/avrohugger-tools_2.10-0.11.0-assembly.jar) or Scala [2.11](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.11/0.11.0/avrohugger-tools_2.11-0.11.0-assembly.jar)(>20MB!) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
+Download the avrohugger-tools jar for Scala [2.10](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.10/0.12.0/avrohugger-tools_2.10-0.12.0-assembly.jar) or Scala [2.11](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.11/0.12.0/avrohugger-tools_2.11-0.12.0-assembly.jar)(>20MB!) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
 
 
 'generate' generates Scala case class definitions:
 
-`java -jar /path/to/avrohugger-tools_2.11-0.11.0-assembly.jar generate schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.11-0.12.0-assembly.jar generate schema user.avsc . `
 
 
 'generate-specific' generates definitions that extend SpecificRecordBase:
 
-`java -jar /path/to/avrohugger-tools_2.11-0.11.0-assembly.jar generate-specific schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.11-0.12.0-assembly.jar generate-specific schema user.avsc . `
 
 
 'generate-scavro' generates definitions that extend Scavro's AvroSerializable:
 
-`java -jar /path/to/avrohugger-tools_2.11-0.11.0-assembly.jar generate-scavro schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.11-0.12.0-assembly.jar generate-scavro schema user.avsc . `
 
 #### `sbt-avrohugger`
 
