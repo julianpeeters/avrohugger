@@ -113,6 +113,7 @@ object SpecificCaseClassTree {
             .withFlags(flags:_*)
             .withParams(params)
             .withParents(baseClass)
+            .withParents("Serializable")
         }
         else if (avroFields.nonEmpty) {
           CASECLASSDEF(classSymbol)
@@ -131,6 +132,7 @@ object SpecificCaseClassTree {
           CLASSDEF(classSymbol)
             .withParams(params)
             .withParents(baseClass)
+            .withParents("Serializable")
         }
         else if (!avroFields.isEmpty) {
           CASECLASSDEF(classSymbol)
