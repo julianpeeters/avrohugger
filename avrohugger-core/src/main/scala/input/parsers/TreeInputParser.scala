@@ -8,8 +8,6 @@ import reflectivecompilation.schemagen.{
 }
 import stores.{ SchemaStore, TypecheckDependencyStore}
 
-import collection.JavaConversions._
-
 import scala.reflect._
 import scala.reflect.api._
 import scala.reflect.runtime.universe._

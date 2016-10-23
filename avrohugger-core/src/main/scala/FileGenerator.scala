@@ -13,8 +13,6 @@ import java.io.{File, FileNotFoundException, IOException}
 import org.apache.avro.{ Protocol, Schema }
 import org.apache.avro.Schema.Type.ENUM
 
-import scala.collection.JavaConversions._
-
 // Unable to overload this class' methods because outDir uses a default value
 private[avrohugger] object FileGenerator {
 

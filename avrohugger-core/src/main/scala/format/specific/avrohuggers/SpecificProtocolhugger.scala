@@ -14,7 +14,7 @@ import treehugger.forest._
 import definitions._
 import treehuggerDSL._
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 object SpecificProtocolhugger extends Protocolhugger {
 
@@ -28,7 +28,7 @@ object SpecificProtocolhugger extends Protocolhugger {
     restrictedFields: Boolean): List[Tree] = {
 
     val name: String = protocol.getName
-    val messages = protocol.getMessages.toMap
+    val messages = protocol.getMessages.asScala.toMap
     val maybeProtocolDoc = Option(protocol.getDoc)
 
     if (messages.isEmpty) {

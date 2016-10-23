@@ -2,8 +2,7 @@ package avrohugger
 package stores
 
 import java.util.concurrent.ConcurrentHashMap
-import collection.JavaConversions._
- 
+
 import scala.reflect.runtime.universe._
 
 class TypecheckDependencyStore {

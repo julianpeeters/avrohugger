@@ -11,7 +11,7 @@ import org.codehaus.jackson.JsonNode
 import org.codehaus.jackson.map.ObjectMapper
 import org.codehaus.jackson.node.{ NullNode, ObjectNode, TextNode }
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 object DefaultValueMatcher {
   
@@ -34,7 +34,7 @@ object DefaultValueMatcher {
         case Schema.Type.ENUM => (REF(schema.getName) DOT node.getTextValue)
         case Schema.Type.NULL => LIT(null)
         case Schema.Type.UNION => {
-          val unionSchemas = schema.getTypes.toList
+          val unionSchemas = schema.getTypes.asScala.toList
           if (unionSchemas.length == 2 &&
             unionSchemas.exists(schema => schema.getType == Schema.Type.NULL) &&
             unionSchemas.exists(schema => schema.getType != Schema.Type.NULL)) {
@@ -57,10 +57,10 @@ object DefaultValueMatcher {
           val collectionType = {
             DefaultParamMatcher.checkCustomArrayType(maybeCustom, ListClass)
           }
-          collectionType APPLY(node.getElements.toSeq.map(e => fromJsonNode(e, schema.getElementType)))
+          collectionType APPLY(node.getElements.asScala.toSeq.map(e => fromJsonNode(e, schema.getElementType)))
         }
         case Schema.Type.MAP => {
-          val kvps = node.getFields.toList.map(e => LIT(e.getKey) ANY_-> fromJsonNode(e.getValue, schema.getValueType))
+          val kvps = node.getFields.asScala.toList.map(e => LIT(e.getKey) ANY_-> fromJsonNode(e.getValue, schema.getValueType))
           MAKE_MAP(kvps)
         }
         case Schema.Type.RECORD  => {
@@ -73,7 +73,7 @@ object DefaultValueMatcher {
             case _ => throw new Exception(s"Invalid default value for field: $field, value: $node")
           }
 
-          val fieldValues = fields.map { f =>
+          val fieldValues = fields.asScala.map { f =>
             fromJsonNode(jsObject.get(f.name), f.schema)
           }
           NEW(schema.getName, fieldValues: _*)
