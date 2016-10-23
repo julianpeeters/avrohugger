@@ -7,7 +7,7 @@ import org.apache.avro.tool.Tool
 import org.specs2._
 import mutable._
 import specification._
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.util.Try
 
 /**
@@ -20,7 +20,7 @@ class StandardGeneratorToolSpec extends mutable.Specification {
   private def doCompile(args: List[String])  = {
     val tool = new GeneratorTool(Standard)
     Try{
-      tool.run(null, null, null, Seq(args:_*))
+      tool.run(null, null, null, Seq(args:_*).asJava)
     }
   }
 

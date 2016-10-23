@@ -12,7 +12,7 @@ import treehuggerDSL._
 
 import org.apache.avro.Schema
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 
 class JavaConverter(
@@ -41,7 +41,7 @@ class JavaConverter(
       
     schema.getType match {
       case Schema.Type.ENUM  => {
-        val conversionCases = schema.getEnumSymbols.map(enumSymbol => {
+        val conversionCases = schema.getEnumSymbols.asScala.map(enumSymbol => {
           CASE(REF(schema.getName) DOT(enumSymbol)) ==> {
             (REF("J" + schema.getName) DOT(enumSymbol))
           }
@@ -51,8 +51,8 @@ class JavaConverter(
       case Schema.Type.RECORD => {
         val scalaClass = classStore.generatedClasses(schema)
         val javaClass = REF("J" + scalaClass.toString)
-        val ids = schema.getFields.map(field => ID(field.name))
-        val fieldConversions = schema.getFields.flatMap(field => {
+        val ids = schema.getFields.asScala.map(field => ID(field.name))
+        val fieldConversions = schema.getFields.asScala.flatMap(field => {
           val updatedPath = field.schema.getFullName :: fieldPath
           if (fieldPath.contains(field.schema.getFullName)) List.empty
           else List(convertToJava(field.schema, REF(field.name), updatedPath))
@@ -66,9 +66,9 @@ class JavaConverter(
         tree MATCH(conversionCases:_*)
       }
       case Schema.Type.UNION => {
-        val types = schema.getTypes
+        val types = schema.getTypes.asScala
         // check if it's the kind of union that we support (nullable fields)
-        if (types.length != 2 || 
+        if (types.length != 2 ||
            !types.map(x => x.getType).contains(Schema.Type.NULL) || 
             types.filterNot(x => x.getType == Schema.Type.NULL).length != 1) {
           sys.error("Unions beyond nullable fields are not supported")

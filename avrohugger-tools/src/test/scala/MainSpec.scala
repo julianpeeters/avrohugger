@@ -3,14 +3,14 @@ import java.io.{ByteArrayOutputStream, PrintStream}
 import avrohugger.tool.{Directory, Runner}
 import org.specs2._
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 
 class MainSpec extends mutable.Specification {
   "tool descriptions" should {
     "fit in 80 characters" in {
       val r: Runner = new Runner(null, null, null)
-      val descResults = r.toolsMap.values().toSeq.map(t => {
+      val descResults = r.toolsMap.values().asScala.map(t => {
         if (r.maxLen + 2 + t.getShortDescription().length() > 80) true
         else false
       })

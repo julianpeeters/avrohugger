@@ -9,7 +9,7 @@ import org.apache.avro.Schema.Field
 import org.apache.avro.Schema.Type.{ ENUM, RECORD }
 
 import scala.language.postfixOps
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 object ScalaDocGenerator {
 
@@ -18,7 +18,7 @@ object ScalaDocGenerator {
     tree: Tree): Tree = {
 
     def aFieldHasDoc(schema: Schema): Boolean = {
-      schema.getFields.exists(field => {
+      schema.getFields.asScala.exists(field => {
         val maybeFieldDoc = Option(field.doc)
         isDoc(maybeFieldDoc)
       })
@@ -38,7 +38,7 @@ object ScalaDocGenerator {
 
     // Need arbitrary number of fields, so can't use DocTags, must return String
     def getFieldFauxDocTags(schema: Schema): List[String] = {
-      val docStrings = schema.getFields.toList.map(field => {
+      val docStrings = schema.getFields.asScala.toList.map(field => {
         val fieldName = field.name
         val fieldDoc = Option(field.doc).getOrElse("")
         s"@param $fieldName $fieldDoc"

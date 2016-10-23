@@ -18,7 +18,7 @@ import java.util.Set;
 import java.util.LinkedHashSet;
 import java.util.List;
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.util.Try
 
 /**
@@ -63,16 +63,16 @@ class GeneratorTool(sourceFormat: SourceFormat,
     
     if ("datafile".equals(method)) {
       for (src: File <- determineInputs(inputs, DATAFILE_FILTER)) {
-        generator.fileToFile(src, args.last)
+        generator.fileToFile(src, args.asScala.last)
       }
     } else if ("schema".equals(method)) {
       for (src: File <- determineInputs(inputs, SCHEMA_FILTER)) {
-        generator.fileToFile(src, args.last)
+        generator.fileToFile(src, args.asScala.last)
       }
     } 
     else if ("protocol".equals(method)) {
       for (src: File <- determineInputs(inputs, PROTOCOL_FILTER)) {
-        generator.fileToFile(src, args.last)
+        generator.fileToFile(src, args.asScala.last)
       }
     } 
     else {
@@ -98,7 +98,7 @@ class GeneratorTool(sourceFormat: SourceFormat,
    */
   private def determineInputs(inputs: List[File], filter: FilenameFilter): Array[File] = {
     val fileSet: Set[File] = new LinkedHashSet[File](); // preserve order and uniqueness
-    for (file: File <- inputs) {
+    for (file: File <- inputs.asScala) {
       // if directory, look at contents to see what files match extension
       if (file.isDirectory()) {
         for (f: File <- file.listFiles(filter)) {
@@ -112,7 +112,7 @@ class GeneratorTool(sourceFormat: SourceFormat,
     }
     if (fileSet.size() > 0) {
       System.err.println("Input files to compile:");
-      for (file: File <- fileSet) {
+      for (file: File <- fileSet.asScala) {
         System.err.println("  " + file);
       }
     }
@@ -120,7 +120,7 @@ class GeneratorTool(sourceFormat: SourceFormat,
       System.err.println("No input files found.");
     }
 
-    Array[File](fileSet.toList:_*);
+    Array[File](fileSet.asScala.toList:_*);
   }
 
   val SCHEMA_FILTER: FileExtensionFilter  =

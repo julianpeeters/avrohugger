@@ -17,7 +17,7 @@ import treehugger.forest._
 import definitions.RootClass
 import treehuggerDSL._
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 /** Parent to all ouput formats' importers
   *
@@ -43,7 +43,7 @@ trait Importer {
   
   ////////////////////////////// concrete members //////////////////////////////
   def getFieldSchemas(schema: Schema): List[Schema] = {
-    schema.getFields.toList.map(field => field.schema)
+    schema.getFields.asScala.toList.map(field => field.schema)
   }
     
   def getRecordImports(
@@ -93,7 +93,7 @@ trait Importer {
     schemaOrProtocol match {
       case Left(schema) =>
         schema::(NestedSchemaExtractor.getNestedSchemas(schema, schemaStore))
-      case Right(protocol) => protocol.getTypes.toList.flatMap(schema => {
+      case Right(protocol) => protocol.getTypes.asScala.toList.flatMap(schema => {
         schema::(NestedSchemaExtractor.getNestedSchemas(schema, schemaStore))
       })
     }

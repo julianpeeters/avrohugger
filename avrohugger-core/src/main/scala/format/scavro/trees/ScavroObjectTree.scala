@@ -13,7 +13,7 @@ import treehuggerDSL._
 
 import org.apache.avro.Schema
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 object ScavroObjectTree {
 
@@ -45,7 +45,7 @@ object ScavroObjectTree {
     
     val objectTree = objectDef := BLOCK(
       TYPEVAR(schema.getName) := REF("Value"),
-      VAL(schema.getEnumSymbols.mkString(", ")) := REF("Value")
+      VAL(schema.getEnumSymbols.asScala.mkString(", ")) := REF("Value")
     )
     
     val treeWithScalaDoc = ScalaDocGenerator.docToScalaDoc(
@@ -74,7 +74,7 @@ object ScavroObjectTree {
       TYPE_REF(LAMBDA(PARAM("j", JavaClass)) ==> TYPE_REF(ScalaClass))
 
     val javaClassAccessors: List[Tree] =
-      schema.getFields.toList.map(avroField => {
+      schema.getFields.asScala.toList.map(avroField => {
         val nameGet = "get" + avroField.name.head.toUpper + avroField.name.tail
         val getterTree = REF("j") DOT nameGet
         val scalaConverter = new ScalaConverter(typeMatcher)

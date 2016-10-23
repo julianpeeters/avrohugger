@@ -14,7 +14,6 @@ import org.apache.avro.{ Protocol, Schema }
 import org.apache.avro.Schema.Type.{ ENUM, RECORD }
 
 import java.nio.file.Path
-import scala.collection.JavaConversions._
 
 object SpecificRecord extends SourceFormat{
 
@@ -111,7 +110,7 @@ object SpecificRecord extends SourceFormat{
       }
       case Right(protocol) => {
         // SpecificRecord requires java enums as of Avro 1.7.7, thus hard-coded
-        val messages = protocol.getMessages.toMap
+        val messages = protocol.getMessages
         if (messages.isEmpty) {
           val localSubtypes = getLocalSubtypes(protocol)
           val localEnums = localSubtypes.filter(isEnum)
@@ -145,7 +144,7 @@ object SpecificRecord extends SourceFormat{
       case Left(schema) => schema.getName
       case Right(protocol) => {
         def isEnum(schema: Schema) = schema.getType == Schema.Type.ENUM
-        val messages = protocol.getMessages.toMap
+        val messages = protocol.getMessages
         if (!messages.isEmpty) protocol.getName // for RPC trait
         else {
           val localRecords = getLocalSubtypes(protocol).filterNot(isEnum)
