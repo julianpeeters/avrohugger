@@ -4,17 +4,16 @@ package matchers
 import treehugger.forest._
 import definitions._
 import treehuggerDSL._
-
 import org.apache.avro.Schema
-
 import org.codehaus.jackson.JsonNode
 import org.codehaus.jackson.map.ObjectMapper
-import org.codehaus.jackson.node.{ NullNode, ObjectNode, TextNode }
+import org.codehaus.jackson.node.{NullNode, ObjectNode, TextNode}
 
 import scala.collection.JavaConversions._
+import scala.collection.mutable.ListBuffer
 
 object DefaultValueMatcher {
-  
+
   // This code was stolen from here:
   // https://github.com/julianpeeters/avro-scala-macro-annotations/blob/104fa325a00044ff6d31184fa7ff7b6852e9acd5/macros/src/main/scala/avro/scala/macro/annotations/provider/matchers/FromJsonMatcher.scala
   def getDefaultValue(field: Schema.Field, typeMatcher: TypeMatcher): Tree = {
@@ -30,7 +29,10 @@ object DefaultValueMatcher {
         case Schema.Type.DOUBLE => LIT(node.getDoubleValue)
         case Schema.Type.BOOLEAN => LIT(node.getBooleanValue)
         case Schema.Type.STRING => LIT(node.getTextValue)
-
+        case Schema.Type.BYTES => {
+          val x = node.getTextValue.getBytes.map((e: Byte) => LIT(e))
+          REF("Array[Byte]") APPLY x
+        }
         case Schema.Type.ENUM => (REF(schema.getName) DOT node.getTextValue)
         case Schema.Type.NULL => LIT(null)
         case Schema.Type.UNION => {
@@ -78,7 +80,8 @@ object DefaultValueMatcher {
           }
           NEW(schema.getName, fieldValues: _*)
         }
-        case x => throw new Exception("Can't extract a default field, type not yet supported: " + x)
+        case x =>
+          throw new Exception("Can't extract a default field, type not yet supported: " + x)
       }
     }
 
