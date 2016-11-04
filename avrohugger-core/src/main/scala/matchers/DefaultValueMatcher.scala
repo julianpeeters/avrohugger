@@ -30,7 +30,10 @@ object DefaultValueMatcher {
         case Schema.Type.DOUBLE => LIT(node.getDoubleValue)
         case Schema.Type.BOOLEAN => LIT(node.getBooleanValue)
         case Schema.Type.STRING => LIT(node.getTextValue)
-
+        case Schema.Type.BYTES => {
+          val x = node.getTextValue.getBytes.map((e: Byte) => LIT(e))
+          REF("Array[Byte]") APPLY x
+        }
         case Schema.Type.ENUM => (REF(schema.getName) DOT node.getTextValue)
         case Schema.Type.NULL => LIT(null)
         case Schema.Type.UNION => {
