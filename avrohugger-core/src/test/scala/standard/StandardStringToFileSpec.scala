@@ -165,10 +165,6 @@ class StandardStringToFileSpec extends mutable.Specification {
       val gen = new Generator(Standard)
       val outDir = gen.defaultOutputDir + "/standard/"
       gen.stringToFile(inputString, outDir) must throwA(new java.lang.RuntimeException("Imports not supported in String IDLs, only avdl files."))
-    
-      val source = util.Util.readFile("target/generated-sources/standard/example/idl/ImportProtocol.scala")
-    
-      source === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/ImportProtocol.scala")
     }
 
     "15. correctly generate an empty case class definition" in {
