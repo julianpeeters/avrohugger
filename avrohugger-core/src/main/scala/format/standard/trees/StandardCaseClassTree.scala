@@ -13,7 +13,7 @@ import treehuggerDSL._
 
 import org.apache.avro.Schema
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 object StandardCaseClassTree {
 
@@ -28,7 +28,7 @@ object StandardCaseClassTree {
 
     // register new type
     val classSymbol = RootClass.newClass(schema.getName)
-    val avroFields = schema.getFields.toList
+    val avroFields = schema.getFields.asScala.toList
 
     val shouldGenerateSimpleClass = restrictedFields && avroFields.size > 22
 

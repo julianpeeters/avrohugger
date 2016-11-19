@@ -17,7 +17,7 @@ case class Player(var number: Int, var first_name: String, var last_name: String
         last_name
       }.asInstanceOf[AnyRef]
       case pos if pos == 3 => {
-        scala.collection.JavaConversions.bufferAsJavaList({
+        scala.collection.JavaConverters.bufferAsJavaList({
           nicknames map { x =>
             x
           }
@@ -40,7 +40,7 @@ case class Player(var number: Int, var first_name: String, var last_name: String
       case pos if pos == 3 => this.nicknames = {
         value match {
           case (array: java.util.List[_]) => {
-            List((scala.collection.JavaConversions.asScalaIterator(array.iterator).toSeq map { x =>
+            List((scala.collection.JavaConverters.asScalaIterator(array.iterator).toSeq map { x =>
               x
             }: _*))
           }

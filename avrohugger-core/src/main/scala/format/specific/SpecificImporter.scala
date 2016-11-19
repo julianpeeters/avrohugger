@@ -15,7 +15,7 @@ import treehugger.forest._
 import definitions._
 import treehuggerDSL._
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 object SpecificImporter extends Importer {
 
@@ -37,8 +37,8 @@ object SpecificImporter extends Importer {
         else deps
       }
       case Right(protocol) => {
-        val types = protocol.getTypes.toList
-        val messages = protocol.getMessages.toMap
+        val types = protocol.getTypes.asScala.toList
+        val messages = protocol.getMessages.asScala.toMap
         if (messages.isEmpty) switchImport :: deps // for ADT
         else List.empty // for RPC
       }

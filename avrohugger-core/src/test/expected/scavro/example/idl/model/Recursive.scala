@@ -7,8 +7,6 @@ import org.oedura.scavro.{AvroMetadata, AvroReader, AvroSerializeable}
 
 import example.idl.{Recursive => JRecursive}
 
-import scala.collection.JavaConversions._
-
 case class Recursive(name: String, recursive: Option[Recursive]) extends AvroSerializeable {
   type J = JRecursive
   override def toAvro: JRecursive = {

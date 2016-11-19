@@ -18,7 +18,7 @@ import treehugger.forest._
 import definitions._
 import treehuggerDSL._
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 object ScavroImporter extends Importer {
   
@@ -38,33 +38,6 @@ object ScavroImporter extends Importer {
     schemaStore: SchemaStore,
     typeMatcher: TypeMatcher): List[Import] = {
     
-    def checkJavaConversions(schemaOrProtocol: Either[Schema, Protocol]) = {
-      def getFieldTypes(schema: Schema): List[Schema.Type] = {
-        if (isRecord(schema)) {
-          val fieldSchemas = getFieldSchemas(schema)
-          fieldSchemas.map(fieldSchema => fieldSchema.getType)
-        }
-        else List.empty
-      }
-      val fieldTypes: List[Schema.Type] = schemaOrProtocol match {
-        case Left(schema) => getFieldTypes(schema)
-        case Right(protocol) => {
-          protocol.getTypes.toList.filter(isRecord).flatMap(schema => {
-            getFieldTypes(schema)
-          })
-        }
-      }
-      val hasArrayField = fieldTypes.contains(Schema.Type.ARRAY)
-      val hasMapField = fieldTypes.contains(Schema.Type.MAP)
-      val hasUnionField = fieldTypes.contains(Schema.Type.UNION)
-      val convPackage = RootClass.newClass("scala.collection.JavaConversions")
-      val javaConversionsImport = IMPORT(convPackage, "_")
-      if( hasArrayField || hasMapField || hasUnionField) {
-        Some(javaConversionsImport)
-      }
-      else None
-    }
-      
     lazy val SchemaClass = RootClass.newClass("org.apache.avro.Schema")
     lazy val ScavroPackage = RootClass.newPackage("org.oedura.scavro")
 
@@ -76,8 +49,7 @@ object ScavroImporter extends Importer {
       "AvroSerializeable")
       
     lazy val baseImports = List(schemaImport, scavroImport)
-    lazy val maybeJavaConversionsImport = checkJavaConversions(schemaOrProtocol)
-    
+
     // gets all record schemas, including the root schema, which need renaming
     def getAllRecordSchemas(topLevelSchemas: List[Schema]): List[Schema] = {
       topLevelSchemas
@@ -126,7 +98,7 @@ object ScavroImporter extends Importer {
     val recordImports = scalaImports ++ renamedJavaImports
     
     if (allRecordSchemas.isEmpty) List.empty
-    else baseImports ++ recordImports ++ maybeJavaConversionsImport
+    else baseImports ++ recordImports
   }
   
 

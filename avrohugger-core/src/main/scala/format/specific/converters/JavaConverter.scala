@@ -9,7 +9,7 @@ import treehuggerDSL._
 
 import org.apache.avro.Schema
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 
 object JavaConverter {
@@ -20,14 +20,15 @@ object JavaConverter {
   def convertToJava(schema: Schema, tree: Tree): Tree  = {
     schema.getType match {
       case Schema.Type.UNION => {
+        val types = schema.getTypes.asScala
         // check if it's the kind of union that we support (i.e. nullable fields)
-        if (schema.getTypes.length != 2 ||
-           !schema.getTypes.map(x => x.getType).contains(Schema.Type.NULL) ||
-            schema.getTypes.filterNot(x => x.getType == Schema.Type.NULL).length != 1) {
+        if (types.length != 2 ||
+           !types.map(x => x.getType).contains(Schema.Type.NULL) ||
+            types.filterNot(x => x.getType == Schema.Type.NULL).length != 1) {
           sys.error("Unions beyond nullable fields are not supported")
         }
         else {
-          val maybeType = schema.getTypes.find(x => x.getType != Schema.Type.NULL)
+          val maybeType = types.find(x => x.getType != Schema.Type.NULL)
           if (maybeType.isDefined) {
           val conversionCases = List(
             CASE(SOME(ID("x"))) ==> convertToJava(maybeType.get, REF("x")),
@@ -44,7 +45,7 @@ object JavaConverter {
             convertToJava(schema.getElementType, REF("x"))
           )))
         }
-        REF("scala.collection.JavaConversions.bufferAsJavaList") APPLY(applyParam DOT "toBuffer")
+        REF("scala.collection.JavaConverters.bufferAsJavaList") APPLY(applyParam DOT "toBuffer")
       }
       case Schema.Type.MAP      => {
         val HashMapClass = RootClass.newClass("java.util.HashMap[String, Any]")

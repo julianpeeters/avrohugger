@@ -13,14 +13,14 @@ import treehuggerDSL._
 import org.apache.avro.{ Protocol, Schema }
 import org.apache.avro.Schema.Type.{ ENUM, RECORD }
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 object SpecificTraitTree {
 
   def toADTRootDef(protocol: Protocol) = {    
     val sealedTraitTree =  TRAITDEF(protocol.getName).withFlags(Flags.SEALED)
     val adtRootTree = {
-      val types = protocol.getTypes.toList
+      val types = protocol.getTypes.asScala.toList
       // filter out enums since they will be written as java and not in the adt
       val nonEnums = types.filterNot(schema => schema.getType == ENUM)
       if (nonEnums.forall(schema => schema.getType == RECORD)) {
@@ -78,7 +78,7 @@ object SpecificTraitTree {
     }
     
     def asRequestParam(message: Protocol#Message): ValDef = {
-      val request = message.getRequest.getFields.toList.headOption match {
+      val request = message.getRequest.getFields.asScala.headOption match {
         case Some(avroField) => avroField
         case None => sys.error("""Expected a request field, found no fields.""")
       }
@@ -98,7 +98,7 @@ object SpecificTraitTree {
     }
     
     // Message defs
-    val messageDefs: List[Tree] = protocol.getMessages.toList.map(kvPair => {
+    val messageDefs: List[Tree] = protocol.getMessages.asScala.toList.map(kvPair => {
       val defName = kvPair._1
       val message = kvPair._2
       val requestParam = asRequestParam(message)
@@ -108,7 +108,7 @@ object SpecificTraitTree {
     })
     
     // Callback defs
-    val callbackDefs: List[Tree] = protocol.getMessages.toList.map(kvPair => {
+    val callbackDefs: List[Tree] = protocol.getMessages.asScala.toList.map(kvPair => {
       val defName = kvPair._1
       val message = kvPair._2
       val requestParam = asRequestParam(message)

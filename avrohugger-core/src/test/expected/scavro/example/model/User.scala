@@ -7,8 +7,6 @@ import org.oedura.scavro.{AvroMetadata, AvroReader, AvroSerializeable}
 
 import example.{User => JUser}
 
-import scala.collection.JavaConversions._
-
 case class User(name: String, favorite_number: Option[Int], favorite_color: Option[String]) extends AvroSerializeable {
   type J = JUser
   override def toAvro: JUser = {

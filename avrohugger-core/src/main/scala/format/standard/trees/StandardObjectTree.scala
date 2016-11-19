@@ -11,7 +11,7 @@ import treehuggerDSL._
 
 import org.apache.avro.Schema
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 object StandardObjectTree {
 
@@ -42,7 +42,7 @@ object StandardObjectTree {
     
     val objectTree = objectDef := BLOCK(
       TYPEVAR(schema.getName) := REF("Value"),
-      VAL(schema.getEnumSymbols.mkString(", ")) := REF("Value")
+      VAL(schema.getEnumSymbols.asScala.mkString(", ")) := REF("Value")
     )
 
     val treeWithScalaDoc = ScalaDocGenerator.docToScalaDoc(

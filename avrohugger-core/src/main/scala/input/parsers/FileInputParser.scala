@@ -14,7 +14,7 @@ import org.apache.avro.file.DataFileReader
 
 import java.io.File
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 class FileInputParser {
   
@@ -30,7 +30,7 @@ class FileInputParser {
       schema.getType match {
         //if top-level record is wrapped in a union with no other types
         case UNION => {
-          val types = schema.getTypes.toList
+          val types = schema.getTypes.asScala.toList
           if (types.length == 1) types.head
           else sys.error("""Unions, beyond nullable fields, are not supported. 
             |Found a union of more than one type: """.trim.stripMargin + types)
@@ -78,14 +78,14 @@ class FileInputParser {
             val imported = importedSchemaOrProtocols.flatMap(avroDef => {
               avroDef match {
                 case Left(importedSchema) => List(importedSchema)
-                case Right(importedProtocol) => importedProtocol.getTypes.toList
+                case Right(importedProtocol) => importedProtocol.getTypes.asScala
               }
             })
-            val types = protocol.getTypes.toList
+            val types = protocol.getTypes.asScala.toList
             val localTypes = imported.foldLeft(types)((remaining, imported) => {
               remaining.filterNot(remainingType => remainingType == imported)
             })
-            protocol.setTypes(localTypes)
+            protocol.setTypes(localTypes.asJava)
             protocol
           }
           val localProtocol = stripImports(protocol, importedSchemaOrProtocols)
