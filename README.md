@@ -275,6 +275,7 @@ Contributors:
 - [Matt Allen](https://github.com/Matt343)
 - [Lars Albertsson](https://github.com/lallea)
 - [alancnet](https://github.com/alancnet)
+- [Eugene Platonov](https://github.com/jozic)
 
 ##### Criticism is appreciated.
 
