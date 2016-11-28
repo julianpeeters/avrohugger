@@ -60,11 +60,11 @@ final case class DefaultTest(var suit: DefaultEnum = DefaultEnum.SPADES, var num
         embedded
       }.asInstanceOf[AnyRef]
       case pos if pos == 6 => {
-        scala.collection.JavaConverters.bufferAsJavaList({
+        scala.collection.JavaConverters.bufferAsJavaListConverter({
           defaultArray map { x =>
             x
           }
-        }.toBuffer)
+        }.toBuffer).asJava
       }.asInstanceOf[AnyRef]
       case pos if pos == 7 => {
         optionalEnum match {
@@ -113,7 +113,7 @@ final case class DefaultTest(var suit: DefaultEnum = DefaultEnum.SPADES, var num
       case pos if pos == 6 => this.defaultArray = {
         value match {
           case (array: java.util.List[_]) => {
-            List((scala.collection.JavaConverters.asScalaIterator(array.iterator).toSeq map { x =>
+            List((scala.collection.JavaConverters.asScalaIteratorConverter(array.iterator).asScala.toSeq map { x =>
               x
             }: _*))
           }
@@ -128,7 +128,7 @@ final case class DefaultTest(var suit: DefaultEnum = DefaultEnum.SPADES, var num
       case pos if pos == 8 => this.defaultMap = {
         value match {
           case (map: java.util.Map[_,_]) => {
-            scala.collection.JavaConverters.mapAsScalaMap(map).toMap map { kvp =>
+            scala.collection.JavaConverters.mapAsScalaMapConverter(map).asScala.toMap map { kvp =>
               val key = kvp._1.toString
               val value = kvp._2
               (key, value.toString)

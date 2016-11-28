@@ -109,7 +109,7 @@ final object DefaultTest {
         })
       }, j.getDefaultMap match {
         case (map: java.util.Map[_,_]) => {
-          scala.collection.JavaConverters.mapAsScalaMap(map).toMap map { kvp =>
+          scala.collection.JavaConverters.mapAsScalaMapConverter(map).asScala.toMap map { kvp =>
             val key = kvp._1.toString
             val value = kvp._2
             (key, value.toString)

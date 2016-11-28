@@ -50,7 +50,7 @@ object ScalaConverter {
         val elementConversion = convertFromJava(classStore, namespace, elementSchema, REF("x"), typeMatcher)
         val seqArgs = {
           SEQARG(
-            REF("scala.collection.JavaConverters.asScalaIterator").APPLY(applyParam).DOT("toSeq")
+            REF("scala.collection.JavaConverters.asScalaIteratorConverter").APPLY(applyParam).DOT("asScala").DOT("toSeq")
               .MAP(LAMBDA(PARAM("x")) ==> BLOCK(elementConversion))
           )
         }
@@ -70,8 +70,9 @@ object ScalaConverter {
         val JavaMap = RootClass.newClass("java.util.Map[_,_]")
         val resultExpr = {
           BLOCK(
-            REF("scala.collection.JavaConverters.mapAsScalaMap")
+            REF("scala.collection.JavaConverters.mapAsScalaMapConverter")
             .APPLY(REF("map"))
+            .DOT("asScala")
             .DOT("toMap")
             .MAP(LAMBDA(PARAM("kvp")) ==> BLOCK(
               VAL("key") := REF("kvp._1").DOT("toString"),

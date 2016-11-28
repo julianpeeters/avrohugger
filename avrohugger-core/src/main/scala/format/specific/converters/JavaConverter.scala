@@ -45,7 +45,7 @@ object JavaConverter {
             convertToJava(schema.getElementType, REF("x"))
           )))
         }
-        REF("scala.collection.JavaConverters.bufferAsJavaList") APPLY(applyParam DOT "toBuffer")
+        REF("scala.collection.JavaConverters.bufferAsJavaListConverter").APPLY(applyParam DOT "toBuffer").DOT("asJava")
       }
       case Schema.Type.MAP      => {
         val HashMapClass = RootClass.newClass("java.util.HashMap[String, Any]")

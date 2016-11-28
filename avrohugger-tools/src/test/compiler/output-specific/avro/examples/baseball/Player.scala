@@ -17,11 +17,11 @@ case class Player(var number: Int, var first_name: String, var last_name: String
         last_name
       }.asInstanceOf[AnyRef]
       case pos if pos == 3 => {
-        scala.collection.JavaConverters.bufferAsJavaList({
+        scala.collection.JavaConverters.bufferAsJavaListConverter({
           nicknames map { x =>
             x
           }
-        }.toBuffer)
+        }.toBuffer).asJava
       }.asInstanceOf[AnyRef]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
     }
@@ -40,7 +40,7 @@ case class Player(var number: Int, var first_name: String, var last_name: String
       case pos if pos == 3 => this.nicknames = {
         value match {
           case (array: java.util.List[_]) => {
-            List((scala.collection.JavaConverters.asScalaIterator(array.iterator).toSeq map { x =>
+            List((scala.collection.JavaConverters.asScalaIteratorConverter(array.iterator).asScala.toSeq map { x =>
               x
             }: _*))
           }

@@ -8,7 +8,10 @@ import avrohugger.format.SpecificRecord
 import org.specs2._
 
 class SchemaGenSpec extends mutable.Specification {
-
+  // Scala 2.10 can't parse package declarations, so rather than than maintain 
+  // a separate branch, these tests (that pass for 2.11) get commented out until 
+  // 2.10 is phased out.
+  skipAll
   "Schema generator" should {
     
 
@@ -126,13 +129,6 @@ class SchemaGenSpec extends mutable.Specification {
           |  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Raise\",\"doc\":\"Auto-Generated Schema\",\"fields\":[]}")
           |}""".stripMargin.trim
     }
-
-
-/*
-
-// Scala 2.10 can't parse package declarations, so rather than than maintain 
-// a separate branch, these tests (that pass for 2.11) get commented out until 
-// 2.10 is phased out.
   
     "Expand a standard case class with immutable fields to implement SpecificRecord" in {
       val schemaString = 
@@ -145,7 +141,6 @@ class SchemaGenSpec extends mutable.Specification {
           |case class Person(name: String)""".stripMargin
       val gen = new Generator(SpecificRecord)
       val List(source) = gen.stringToStrings(schemaString)
-
        
       source ===
         """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
@@ -204,7 +199,6 @@ class SchemaGenSpec extends mutable.Specification {
           |case class Vehicle(name: String)""".stripMargin
       val gen = new Generator(SpecificRecord)
       val List(sourceVehicle, sourcePerson) = gen.stringToStrings(schemaString)
-
        
       sourcePerson ===
         """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
@@ -1216,7 +1210,7 @@ class SchemaGenSpec extends mutable.Specification {
           |}
           |""".stripMargin
     }
-  */
+
   }
 
 }
