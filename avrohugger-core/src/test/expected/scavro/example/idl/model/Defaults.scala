@@ -7,8 +7,6 @@ import org.oedura.scavro.{AvroMetadata, AvroReader, AvroSerializeable}
 
 import example.idl.{DefaultEnum => JDefaultEnum, DefaultTest => JDefaultTest, Embedded => JEmbedded}
 
-import scala.collection.JavaConversions._
-
 sealed trait Defaults
 
 final object DefaultEnum extends Enumeration with Defaults {
@@ -109,7 +107,7 @@ final object DefaultTest {
         })
       }, j.getDefaultMap match {
         case (map: java.util.Map[_,_]) => {
-          scala.collection.JavaConversions.mapAsScalaMap(map).toMap map { kvp =>
+          scala.collection.JavaConverters.mapAsScalaMapConverter(map).asScala.toMap map { kvp =>
             val key = kvp._1.toString
             val value = kvp._2
             (key, value.toString)

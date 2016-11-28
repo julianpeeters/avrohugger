@@ -10,8 +10,6 @@ import treehugger.forest._
 import definitions._
 import treehuggerDSL._
 
-import scala.collection.JavaConversions._
-
 
 object DefaultParamMatcher {
   

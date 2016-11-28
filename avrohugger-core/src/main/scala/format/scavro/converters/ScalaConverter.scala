@@ -12,7 +12,7 @@ import treehuggerDSL._
 import org.apache.avro.Schema
 
 import scala.language.postfixOps
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 class ScalaConverter(typeMatcher: TypeMatcher) {
 
@@ -23,13 +23,13 @@ class ScalaConverter(typeMatcher: TypeMatcher) {
 
     schema.getType match {
       case Schema.Type.ENUM  => {
-        val conversionCases = schema.getEnumSymbols.map(enumSymbol => {
+        val conversionCases = schema.getEnumSymbols.asScala.map(enumSymbol => {
           CASE(REF("J" + schema.getName) DOT(enumSymbol)) ==> (REF(schema.getName) DOT(enumSymbol))
         })
         tree MATCH(conversionCases)
       }
       case Schema.Type.RECORD => {
-        val params = schema.getFields.flatMap(field => {
+        val params = schema.getFields.asScala.flatMap(field => {
           val updatedPath = field.schema.getFullName :: fieldPath
           val accessorName = "get" + field.name.head.toUpper + field.name.tail
           val updatedTree = tree DOT(accessorName)
@@ -39,15 +39,16 @@ class ScalaConverter(typeMatcher: TypeMatcher) {
         REF(schema.getName) APPLY params
       }
       case Schema.Type.UNION  => {
+        val types = schema.getTypes.asScala
         // check if it's the kind of union that we support (i.e. nullable fields)
-        if (schema.getTypes.length != 2 || 
-           !schema.getTypes.map(x => x.getType).contains(Schema.Type.NULL) || 
-            schema.getTypes.filterNot(x => x.getType == Schema.Type.NULL).length != 1) {
+        if (types.length != 2 ||
+           !types.map(x => x.getType).contains(Schema.Type.NULL) ||
+            types.filterNot(x => x.getType == Schema.Type.NULL).length != 1) {
               sys.error("Unions beyond nullable fields are not supported")
         }
         // the union represents a nullable field, the kind of union supported in avrohugger
         else {
-          val typeParamSchema = schema.getTypes.find(x => x.getType != Schema.Type.NULL).get
+          val typeParamSchema = types.find(x => x.getType != Schema.Type.NULL).get
           val nullConversion = CASE(NULL) ==> NONE
           val someConversion = CASE(WILDCARD) ==> SOME(convertFromJava(typeParamSchema, tree, fieldPath))
           val conversionCases = List(nullConversion, someConversion)
@@ -76,8 +77,9 @@ class ScalaConverter(typeMatcher: TypeMatcher) {
         val JavaMap = RootClass.newClass("java.util.Map[_,_]")
         val resultExpr = {
           BLOCK(
-            REF("scala.collection.JavaConversions.mapAsScalaMap")
+            REF("scala.collection.JavaConverters.mapAsScalaMapConverter")
             .APPLY(REF("map"))
+            .DOT("asScala")
             .DOT("toMap")
             .MAP(LAMBDA(PARAM("kvp")) ==> BLOCK(
               VAL("key") := REF("kvp._1").DOT("toString"), 

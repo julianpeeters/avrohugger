@@ -13,8 +13,6 @@ import definitions.RootClass
 import org.apache.avro.{ Protocol, Schema }
 import org.apache.avro.Schema.Type.{ ENUM, RECORD }
 
-import scala.collection.JavaConversions._
-
 object Scavro extends SourceFormat {
 
   val toolName = "generate-scavro"

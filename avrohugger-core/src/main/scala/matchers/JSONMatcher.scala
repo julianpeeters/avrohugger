@@ -9,8 +9,6 @@ import scala.reflect.runtime._
 import org.codehaus.jackson.JsonNode
 import org.codehaus.jackson.node._
 
-import collection.JavaConversions._
- 
 object JsonMatcher {
 
   def toJsonNode(namespace: Option[Name], dv: Tree, schemaStore: SchemaStore) : JsonNode = {
@@ -57,7 +55,7 @@ object JsonMatcher {
         xs.zipWithIndex.map( x => {
           val value = x._1
           val index = x._2
-          val nestedRecordField = schemaStore.schemas(getFullName(name.toString)).getFields()(index)
+          val nestedRecordField = schemaStore.schemas(getFullName(name.toString)).getFields.get(index)
           // values from the tree, field names from cross referencing tree's pos with schema field pos
           // (they always correspond since the schema is defined based on the fields in a class def)
           jsonObject.put(nestedRecordField.name, toJsonNode(namespace, value, schemaStore))

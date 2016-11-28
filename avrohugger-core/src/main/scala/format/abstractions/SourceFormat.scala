@@ -16,7 +16,7 @@ import treehugger.forest._
 import definitions._
 import treehuggerDSL._
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 /** Parent to all ouput formats
   *
@@ -114,7 +114,7 @@ trait SourceFormat {
 
   def getLocalSubtypes(protocol: Protocol): List[Schema] = {
     val protocolNS = protocol.getNamespace
-    val types = protocol.getTypes.toList
+    val types = protocol.getTypes.asScala.toList
     def isTopLevelNamespace(schema: Schema) = schema.getNamespace == protocolNS
     types.filter(isTopLevelNamespace)
   }
@@ -174,7 +174,7 @@ trait SourceFormat {
     }
     schemaOrProtocol match {
       case Left(schema) => registerSchema(schema)
-      case Right(protocol) => protocol.getTypes.toList.foreach(schema => {
+      case Right(protocol) => protocol.getTypes.asScala.foreach(schema => {
         registerSchema(schema)
       })
     }

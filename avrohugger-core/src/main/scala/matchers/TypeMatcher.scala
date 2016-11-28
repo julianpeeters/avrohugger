@@ -7,12 +7,12 @@ import treehugger.forest._
 import treehuggerDSL._
 import definitions._
 
-import org.apache.avro.Schema 
-import org.apache.avro.Schema.{Type => AvroType} 
+import org.apache.avro.Schema
+import org.apache.avro.Schema.{Type => AvroType}
 
 import java.util.concurrent.ConcurrentHashMap
 import scala.collection.convert.Wrappers.JConcurrentMapWrapper
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 class TypeMatcher {
 
@@ -88,7 +88,7 @@ class TypeMatcher {
         case Schema.Type.RECORD   => classStore.generatedClasses(schema)
         case Schema.Type.ENUM     => classStore.generatedClasses(schema)
         case Schema.Type.UNION    => { 
-          val unionSchemas = schema.getTypes.toList
+          val unionSchemas = schema.getTypes.asScala.toList
           // unions are represented as Scala Option[T], and thus unions must be 
           // of two types, one of them NULL
           val isTwoTypes = unionSchemas.length == 2
@@ -148,7 +148,7 @@ class TypeMatcher {
         case Schema.Type.RECORD   => TYPE_REF(javaRename(schema))
         case Schema.Type.ENUM     => TYPE_REF(javaRename(schema))
         case Schema.Type.UNION    => { 
-          val unionSchemas = schema.getTypes.toList
+          val unionSchemas = schema.getTypes.asScala.toList
           // unions are represented as Scala Option[T], and thus unions must be 
           // of two types, one of them NULL
           val isTwoTypes = unionSchemas.length == 2

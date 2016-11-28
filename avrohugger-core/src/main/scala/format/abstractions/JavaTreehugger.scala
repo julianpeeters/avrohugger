@@ -19,8 +19,6 @@ import java.io.{
 import org.apache.avro.{ Protocol, Schema }
 import org.apache.avro.compiler.specific.SpecificCompiler
 
-import scala.collection.JavaConversions._
-
 // Java required for generating Enums (Specific API requires Java enums)
 // Note that the Apache Avro SpecificCompiler does not add doc comments
 object JavaTreehugger {

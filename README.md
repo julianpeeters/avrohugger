@@ -11,8 +11,8 @@
 **Alternative Distributions:**
 
 * `sbt-avrohugger`: Generate source code at compile time with an sbt plugin [found here](https://github.com/julianpeeters/sbt-avrohugger).
+* `avrohugger-maven-plugin`: Generate source code at compile time with a maven plugin [found here](https://github.com/makubi/avrohugger-maven-plugin).
 * `avro2caseclass`: Generate source code from a web app, [found here](https://github.com/julianpeeters/avro2caseclass).
-
 
 Table of contents
 =================

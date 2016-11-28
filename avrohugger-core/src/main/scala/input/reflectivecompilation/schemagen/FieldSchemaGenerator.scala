@@ -15,7 +15,6 @@ import java.util.{Arrays => JArrays}
 
 import scala.reflect.runtime.universe._
 import scala.tools.reflect.ToolBox
-import scala.collection.JavaConversions._
 
 class FieldSchemaGenerator() {
  

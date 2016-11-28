@@ -15,7 +15,6 @@ import treehuggerDSL._
 
 import format.abstractions.avrohuggers.Protocolhugger
 
-import scala.collection.JavaConversions._
 
 object StandardProtocolhugger extends Protocolhugger {
 

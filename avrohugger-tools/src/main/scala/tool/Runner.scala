@@ -11,7 +11,7 @@ import java.io.{InputStream, PrintStream}
 import org.apache.avro.tool.Tool
 
 import scala.util.{Failure, Success, Try}
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 
 /** Command-line driver.*/
@@ -62,7 +62,7 @@ class Runner(in: InputStream, out: PrintStream, err: PrintStream) {
       err.println("----------------")
 
       err.println("Available tools:")
-      for (k <- toolsMap.values()) {
+      for (k <- toolsMap.asScala.values) {
         err.printf("%" + maxLen + "s  %s\n", k.getName(), k.getShortDescription())
       }
 
