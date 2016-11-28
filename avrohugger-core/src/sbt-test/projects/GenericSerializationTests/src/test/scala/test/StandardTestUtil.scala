@@ -25,7 +25,6 @@ object StandardTestUtil extends Specification {
   }
 
   def read(file: File, records: List[GenericRecord]) = {
-    
     val dummyRecord = new GenericDatumReader[GenericRecord]
     val schema = new DataFileReader(file, dummyRecord).getSchema
     val userDatumReader = new GenericDatumReader[GenericRecord](schema)
@@ -42,7 +41,6 @@ object StandardTestUtil extends Specification {
     }
     dataFileReader.close()
     sameRecord must ===(record)
-  
   }
 
   def verifyWriteAndRead(records: List[GenericRecord]) = {

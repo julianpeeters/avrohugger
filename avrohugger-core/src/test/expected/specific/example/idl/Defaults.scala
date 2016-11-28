@@ -31,8 +31,8 @@ final object Embedded {
   val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Embedded\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"inner\",\"type\":\"int\"}]}")
 }
 
-final case class DefaultTest(var suit: DefaultEnum = DefaultEnum.SPADES, var number: Int = 0, var str: String = "str", var optionString: Option[String] = None, var optionStringValue: Option[String] = Some("default"), var embedded: Embedded = new Embedded(1), var defaultArray: List[Int] = List(1, 3, 4, 5), var optionalEnum: Option[DefaultEnum] = None, var defaultMap: Map[String, String] = Map("Hello" -> "world", "Merry" -> "Christmas")) extends org.apache.avro.specific.SpecificRecordBase with Defaults {
-  def this() = this(DefaultEnum.SPADES, 0, "str", None, Some("default"), new Embedded(1), List(1, 3, 4, 5), None, Map("Hello" -> "world", "Merry" -> "Christmas"))
+final case class DefaultTest(var suit: DefaultEnum = DefaultEnum.SPADES, var number: Int = 0, var str: String = "str", var optionString: Option[String] = None, var optionStringValue: Option[String] = Some("default"), var embedded: Embedded = new Embedded(1), var defaultArray: List[Int] = List(1, 3, 4, 5), var optionalEnum: Option[DefaultEnum] = None, var defaultMap: Map[String, String] = Map("Hello" -> "world", "Merry" -> "Christmas"), var byt: Array[Byte] = Array[Byte](-61, -65)) extends org.apache.avro.specific.SpecificRecordBase with Defaults {
+  def this() = this(DefaultEnum.SPADES, 0, "str", None, Some("default"), new Embedded(1), List(1, 3, 4, 5), None, Map("Hello" -> "world", "Merry" -> "Christmas"), Array[Byte](-61, -65))
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
       case pos if pos == 0 => {
@@ -80,6 +80,9 @@ final case class DefaultTest(var suit: DefaultEnum = DefaultEnum.SPADES, var num
           map.put(key, value)
         }
         map
+      }.asInstanceOf[AnyRef]
+      case pos if pos == 9 => {
+        java.nio.ByteBuffer.wrap(byt)
       }.asInstanceOf[AnyRef]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
     }
@@ -136,6 +139,13 @@ final case class DefaultTest(var suit: DefaultEnum = DefaultEnum.SPADES, var num
           }
         }
       }.asInstanceOf[Map[String, String]]
+      case pos if pos == 9 => this.byt = {
+        value match {
+          case (buffer: java.nio.ByteBuffer) => {
+            buffer.array()
+          }
+        }
+      }.asInstanceOf[Array[Byte]]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
@@ -144,5 +154,5 @@ final case class DefaultTest(var suit: DefaultEnum = DefaultEnum.SPADES, var num
 }
 
 final object DefaultTest {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"DefaultTest\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"suit\",\"type\":{\"type\":\"enum\",\"name\":\"DefaultEnum\",\"symbols\":[\"SPADES\",\"DIAMONDS\",\"CLUBS\",\"HEARTS\"]},\"default\":\"SPADES\"},{\"name\":\"number\",\"type\":\"int\",\"default\":0},{\"name\":\"str\",\"type\":\"string\",\"default\":\"str\"},{\"name\":\"optionString\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"optionStringValue\",\"type\":[\"string\",\"null\"],\"default\":\"default\"},{\"name\":\"embedded\",\"type\":{\"type\":\"record\",\"name\":\"Embedded\",\"fields\":[{\"name\":\"inner\",\"type\":\"int\"}]},\"default\":{\"inner\":1}},{\"name\":\"defaultArray\",\"type\":{\"type\":\"array\",\"items\":\"int\"},\"default\":[1,3,4,5]},{\"name\":\"optionalEnum\",\"type\":[\"null\",\"DefaultEnum\"],\"default\":null},{\"name\":\"defaultMap\",\"type\":{\"type\":\"map\",\"values\":\"string\"},\"default\":{\"Hello\":\"world\",\"Merry\":\"Christmas\"}}]}")
+  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"DefaultTest\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"suit\",\"type\":{\"type\":\"enum\",\"name\":\"DefaultEnum\",\"symbols\":[\"SPADES\",\"DIAMONDS\",\"CLUBS\",\"HEARTS\"]},\"default\":\"SPADES\"},{\"name\":\"number\",\"type\":\"int\",\"default\":0},{\"name\":\"str\",\"type\":\"string\",\"default\":\"str\"},{\"name\":\"optionString\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"optionStringValue\",\"type\":[\"string\",\"null\"],\"default\":\"default\"},{\"name\":\"embedded\",\"type\":{\"type\":\"record\",\"name\":\"Embedded\",\"fields\":[{\"name\":\"inner\",\"type\":\"int\"}]},\"default\":{\"inner\":1}},{\"name\":\"defaultArray\",\"type\":{\"type\":\"array\",\"items\":\"int\"},\"default\":[1,3,4,5]},{\"name\":\"optionalEnum\",\"type\":[\"null\",\"DefaultEnum\"],\"default\":null},{\"name\":\"defaultMap\",\"type\":{\"type\":\"map\",\"values\":\"string\"},\"default\":{\"Hello\":\"world\",\"Merry\":\"Christmas\"}},{\"name\":\"byt\",\"type\":\"bytes\",\"default\":\"ÿ\"}]}")
 }
