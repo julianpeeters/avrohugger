@@ -274,6 +274,7 @@ Contributors:
 - [Brian London](https://github.com/BrianLondon)
 - [Matt Allen](https://github.com/Matt343)
 - [Lars Albertsson](https://github.com/lallea)
+- [alancnet](https://github.com/alancnet)
 
 ##### Criticism is appreciated.
 
