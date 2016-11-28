@@ -36,7 +36,7 @@ final object Embedded {
   }
 }
 
-final case class DefaultTest(suit: DefaultEnum.Value = DefaultEnum.SPADES, number: Int = 0, str: String = "str", optionString: Option[String] = None, optionStringValue: Option[String] = Some("default"), embedded: Embedded = new Embedded(1), defaultArray: Array[Int] = Array(1, 3, 4, 5), optionalEnum: Option[DefaultEnum.Value] = None, defaultMap: Map[String, String] = Map("Hello" -> "world", "Merry" -> "Christmas")) extends AvroSerializeable with Defaults {
+final case class DefaultTest(suit: DefaultEnum.Value = DefaultEnum.SPADES, number: Int = 0, str: String = "str", optionString: Option[String] = None, optionStringValue: Option[String] = Some("default"), embedded: Embedded = new Embedded(1), defaultArray: Array[Int] = Array(1, 3, 4, 5), optionalEnum: Option[DefaultEnum.Value] = None, defaultMap: Map[String, String] = Map("Hello" -> "world", "Merry" -> "Christmas"), byt: Array[Byte] = Array[Byte](-61, -65)) extends AvroSerializeable with Defaults {
   type J = JDefaultTest
   override def toAvro: JDefaultTest = {
     new JDefaultTest(suit match {
@@ -74,7 +74,7 @@ final case class DefaultTest(suit: DefaultEnum.Value = DefaultEnum.SPADES, numbe
         map.put(key, value)
       }
       map
-    })
+    }, java.nio.ByteBuffer.wrap(byt))
   }
 }
 
@@ -114,6 +114,10 @@ final object DefaultTest {
             val value = kvp._2
             (key, value.toString)
           }
+        }
+      }, j.getByt match {
+        case (buffer: java.nio.ByteBuffer) => {
+          buffer.array()
         }
       })
     }
