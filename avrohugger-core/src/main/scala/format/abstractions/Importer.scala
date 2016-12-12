@@ -88,27 +88,34 @@ trait Importer {
       })
   }
   
-  // gets record schemas, excluding the root schema, which may be dependencies
-  def getRecordSchemas(topLevelSchemas: List[Schema]): List[Schema] = {
-    def nextSchemas(s: Schema) = getRecordSchemas(List(s))
+  // gets record schemas which may be dependencies
+  def getRecordSchemas(
+    topLevelSchemas: List[Schema],
+    alreadyImported: List[Schema] = List.empty[Schema]): List[Schema] = {
+    def nextSchemas(s: Schema, us: List[Schema]) = getRecordSchemas(List(s), us)
     topLevelSchemas
       .flatMap(schema => {
         schema.getType match {
           case RECORD =>
-            val fieldSchemas = getFieldSchemas(schema)
-              .flatMap(nextSchemas).toSeq
-            Seq(schema) ++ fieldSchemas
+            val fieldSchemasWithChildSchemas = getFieldSchemas(schema).toSeq
+              .filter(s => alreadyImported.contains(s))
+              .flatMap(s => nextSchemas(s, alreadyImported :+ s))
+            Seq(schema) ++ fieldSchemasWithChildSchemas
           case ENUM =>
             Seq(schema)
           case UNION =>
             schema.getTypes.asScala
-              .flatMap(nextSchemas).toSeq
+              .find(s => s.getType != NULL).toSeq
+              .filter(s => alreadyImported.contains(s))
+              .flatMap(s => nextSchemas(schema, alreadyImported :+ s))
           case MAP =>
             Seq(schema.getValueType)
-              .flatMap(nextSchemas).toSeq
+              .filter(s => alreadyImported.contains(s))
+              .flatMap(s => nextSchemas(schema, alreadyImported :+ s))
           case ARRAY =>
             Seq(schema.getElementType)
-              .flatMap(nextSchemas).toSeq
+              .filter(s => alreadyImported.contains(s))
+              .flatMap(s => nextSchemas(schema, alreadyImported :+ s))
           case _ =>
             Seq.empty[Schema]
         }
