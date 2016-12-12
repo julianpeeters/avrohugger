@@ -8,7 +8,7 @@ import matchers.{ CustomNamespaceMatcher, TypeMatcher }
 import stores.SchemaStore
 
 import org.apache.avro.{ Schema, Protocol }
-import org.apache.avro.Schema.Type.{ ENUM, RECORD }
+import org.apache.avro.Schema.Type.{ ENUM, RECORD, UNION, MAP, ARRAY }
 
 import treehugger.forest._
 import definitions.RootClass
@@ -42,6 +42,10 @@ trait Importer {
   def getFieldSchemas(schema: Schema): List[Schema] = {
     schema.getFields.asScala.toList.map(field => field.schema)
   }
+
+  def getTypeSchemas(schema: Schema): List[Schema] = {
+    schema.getTypes.asScala.toList
+  }
     
   def getRecordImports(
     recordSchemas: List[Schema],
@@ -74,7 +78,7 @@ trait Importer {
       checkNamespace(schema).isDefined     &&
       checkNamespace(schema) != namespace
     }
-    
+
     recordSchemas
       .filter(schema => requiresImportDef(schema))
       .groupBy(schema => checkNamespace(schema).get)
@@ -86,11 +90,33 @@ trait Importer {
   
   // gets record schemas, excluding the root schema, which may be dependencies
   def getRecordSchemas(topLevelSchemas: List[Schema]): List[Schema] = {
+    def nextSchemas(s: Schema) = getRecordSchemas(List(s))
     topLevelSchemas
-      .filter(isRecord)
-      .flatMap(schema => getFieldSchemas(schema)
-      .filter(schema => isEnum(schema) || isRecord(schema)))
+      .flatMap(schema => {
+        schema.getType match {
+          case RECORD => {
+            val fields = getFieldSchemas(schema)
+              .flatMap(nextSchemas).toSeq
+            Seq(schema) ++ fields
+          }
+          case UNION => {
+            schema.getTypes.asScala
+              .flatMap(nextSchemas).toSeq
+          }
+          case MAP => {
+            Seq(schema.getValueType)
+              .flatMap(nextSchemas).toSeq
+          }
+          case ARRAY => {
+            Seq(schema.getElementType)
+              .flatMap(nextSchemas).toSeq
+          }
+          case _ => Seq.empty[Schema]
+        }
+      })
+      .filter(schema => isEnum(schema) || isRecord(schema))
       .distinct
+      .toList
   }
   
   def getTopLevelSchemas(
