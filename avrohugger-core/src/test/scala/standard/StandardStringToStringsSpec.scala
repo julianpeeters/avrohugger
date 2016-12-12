@@ -151,6 +151,13 @@ class StandardStringToStringsSpec extends mutable.Specification {
       val expected = util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/Defaults.scala")
       source === expected
     }
+
+    import util.GlobalTests
+    for ((test, idx) <- GlobalTests.tests.zipWithIndex) {
+      s"${idx + 17}. ${test.description}" in {
+        test.toSpec(Standard).checkStringToStrings
+      }
+    }
   }
 
 }

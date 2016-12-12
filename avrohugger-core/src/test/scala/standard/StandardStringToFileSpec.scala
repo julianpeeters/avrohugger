@@ -189,6 +189,11 @@ class StandardStringToFileSpec extends mutable.Specification {
       adt === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/Defaults.scala")
     }
     
-  
+    import util.GlobalTests
+    for ((test, idx) <- GlobalTests.tests.zipWithIndex) {
+      s"${idx + 17}. ${test.description}" in {
+        test.toSpec(Standard).checkStringToFile
+      }
+    }
   }
 }

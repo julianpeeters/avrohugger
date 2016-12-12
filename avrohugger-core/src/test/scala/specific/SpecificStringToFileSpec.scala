@@ -196,6 +196,12 @@ class SpecificStringToFileSpec extends mutable.Specification {
       sourceRecord === util.Util.readFile("avrohugger-core/src/test/expected/specific/example/idl/Defaults.scala")
       sourceEnum === util.Util.readFile("avrohugger-core/src/test/expected/specific/example/idl/DefaultEnum.java")
     }
-  
+
+    import util.GlobalTests
+    for ((test, idx) <- GlobalTests.tests.zipWithIndex) {
+      s"${idx + 17}. ${test.description}" in {
+        test.toSpec(SpecificRecord).checkStringToFile
+      }
+    }
   }
 }
