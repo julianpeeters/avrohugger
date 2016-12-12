@@ -1,0 +1,34 @@
+{
+  "type": "record",
+  "name": "Event",
+  "namespace": "protocol",
+  "fields": [
+    {
+      "name": "sc",
+      "type": {
+        "name": "SR",
+        "fields": [
+          {
+            "name": "constraints",
+            "type": [
+              "null",
+              {
+                "name": "C",
+                "fields": [
+                  {
+                    "name": "blah",
+                    "type": "string"
+                  }
+                ],
+                "type": "record",
+                "namespace": "model"
+              }
+            ]
+          }
+        ],
+        "type": "record",
+        "namespace": "model.v2"
+      }
+    }
+  ]
+}
