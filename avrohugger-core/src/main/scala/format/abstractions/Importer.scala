@@ -94,24 +94,23 @@ trait Importer {
     topLevelSchemas
       .flatMap(schema => {
         schema.getType match {
-          case RECORD => {
-            val fields = getFieldSchemas(schema)
+          case RECORD =>
+            val fieldSchemas = getFieldSchemas(schema)
               .flatMap(nextSchemas).toSeq
-            Seq(schema) ++ fields
-          }
-          case UNION => {
+            Seq(schema) ++ fieldSchemas
+          case ENUM =>
+            Seq(schema)
+          case UNION =>
             schema.getTypes.asScala
               .flatMap(nextSchemas).toSeq
-          }
-          case MAP => {
+          case MAP =>
             Seq(schema.getValueType)
               .flatMap(nextSchemas).toSeq
-          }
-          case ARRAY => {
+          case ARRAY =>
             Seq(schema.getElementType)
               .flatMap(nextSchemas).toSeq
-          }
-          case _ => Seq.empty[Schema]
+          case _ =>
+            Seq.empty[Schema]
         }
       })
       .filter(schema => isEnum(schema) || isRecord(schema))
