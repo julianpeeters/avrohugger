@@ -22,7 +22,7 @@ object Scavro extends SourceFormat {
 
   def asCompilationUnits(
     classStore: ClassStore,
-    namespace: Option[String],
+    maybeNamespace: Option[String],
     schemaOrProtocol: Either[Schema, Protocol],
     schemaStore: SchemaStore,
     maybeOutDir: Option[String],
@@ -31,12 +31,13 @@ object Scavro extends SourceFormat {
 
     registerTypes(schemaOrProtocol, classStore, typeMatcher)
 
-    // By default, Scavro generates Scala classes in packages that are the same
-    // as the Java package with `model` appended.
-    val scavroModelNamespace = ScavroNamespaceRenamer.renameNamespace(
-      namespace,
-      schemaOrProtocol,
-      typeMatcher)
+    // By default, Scavro format generates Scala classes in packages that are 
+    // the same as the Java package with `model` appended.
+    val maybeScavroModelNamespace: Option[String] =
+      ScavroNamespaceRenamer.renameNamespace(
+        maybeNamespace,
+        schemaOrProtocol,
+        typeMatcher)
 
     def maybeCustomEnumStyle = typeMatcher.customEnumStyleMap.get("enum")
 
@@ -46,7 +47,7 @@ object Scavro extends SourceFormat {
           case RECORD => {
             val scalaCompilationUnit = getScalaCompilationUnit(
               classStore,
-              scavroModelNamespace,
+              maybeScavroModelNamespace,
               schemaOrProtocol,
               typeMatcher,
               schemaStore,
@@ -63,7 +64,7 @@ object Scavro extends SourceFormat {
               case Some("java enum") => {
                 val javaCompilationUnit = getJavaEnumCompilationUnit(
                   classStore,
-                  scavroModelNamespace,
+                  maybeScavroModelNamespace,
                   schema,
                   maybeOutDir,
                   typeMatcher)
@@ -72,7 +73,7 @@ object Scavro extends SourceFormat {
               case _ => {
                 val scalaCompilationUnit = getScalaCompilationUnit(
                   classStore,
-                  scavroModelNamespace,
+                  maybeScavroModelNamespace,
                   schemaOrProtocol,
                   typeMatcher,
                   schemaStore,
@@ -89,7 +90,7 @@ object Scavro extends SourceFormat {
       case Right(protocol) => {
         val scalaCompilationUnit = getScalaCompilationUnit(
           classStore,
-          scavroModelNamespace,
+          maybeScavroModelNamespace,
           Right(protocol),
           typeMatcher,
           schemaStore,
@@ -106,7 +107,7 @@ object Scavro extends SourceFormat {
             val javaCompilationUnits = localEnums.map(schema => {
               getJavaEnumCompilationUnit(
                 classStore,
-                scavroModelNamespace,
+                maybeScavroModelNamespace,
                 schema,
                 maybeOutDir,
                 typeMatcher)
@@ -141,7 +142,7 @@ object Scavro extends SourceFormat {
 
   def compile(
     classStore: ClassStore,
-    namespace: Option[String],
+    maybeNamespace: Option[String],
     schemaOrProtocol: Either[Schema, Protocol],
     outDir: String,
     schemaStore: SchemaStore,
@@ -149,7 +150,7 @@ object Scavro extends SourceFormat {
     restrictedFields: Boolean): Unit = {
     val compilationUnits: List[CompilationUnit] = asCompilationUnits(
       classStore,
-      namespace,
+      maybeNamespace,
       schemaOrProtocol,
       schemaStore,
       Some(outDir),

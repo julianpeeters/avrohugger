@@ -2,10 +2,7 @@ package avrohugger
 package format
 package abstractions
 
-import avrohugger.input.DependencyInspector.{
-  getReferredNamespace,
-  getReferredTypeName
-}
+import avrohugger.input.DependencyInspector
 import avrohugger.input.NestedSchemaExtractor
 import matchers.{ CustomNamespaceMatcher, TypeMatcher }
 import stores.SchemaStore
@@ -51,30 +48,39 @@ trait Importer {
     namespace: Option[String],
     typeMatcher: TypeMatcher): List[Import] = {
     
-    
     def checkNamespace(schema: Schema): Option[String] = {
-      val maybeCustom = typeMatcher.customNamespaceMap.get(schema.getNamespace)
-      getReferredNamespace(schema) match {
-        case Some(ns) => CustomNamespaceMatcher.checkCustomNamespace(
-          maybeCustom, Some(ns))
-        case None => None
-      }
+      val maybeReferredNamespace =
+        DependencyInspector.getReferredNamespace(schema)
+      CustomNamespaceMatcher.checkCustomNamespace(
+        maybeReferredNamespace,
+        typeMatcher,
+        maybeDefaultNamespace = maybeReferredNamespace)
+    }
+    
+    def asImportDef(packageName: String, fields: List[Schema]): Import = {
+      val maybeUpdatedPackageName = CustomNamespaceMatcher.checkCustomNamespace(
+        Some(packageName),
+        typeMatcher,
+        maybeDefaultNamespace = Some(packageName))
+      val updatedPkg = maybeUpdatedPackageName.getOrElse(packageName)
+      val importedPackageSym = RootClass.newClass(updatedPkg)
+      val importedTypes =
+        fields.map(field => DependencyInspector.getReferredTypeName(field))
+      IMPORT(importedPackageSym, importedTypes)
+    }
+    
+    def requiresImportDef(schema: Schema): Boolean = {
+      (isRecord(schema) || isEnum(schema)) &&
+      checkNamespace(schema).isDefined     &&
+      checkNamespace(schema) != namespace
     }
     
     recordSchemas
-      .filter(schema => isRecord(schema) || isEnum(schema))
-      .filter(schema => checkNamespace(schema).isDefined)
-      .filter(schema => checkNamespace(schema) != namespace)
+      .filter(schema => requiresImportDef(schema))
       .groupBy(schema => checkNamespace(schema).get)
-      .toList.map(group => group match {
-        case(packageName, fields) => {
-          val maybeCustomNS = typeMatcher.customNamespaceMap.get(packageName)
-          val Some(updatedPkg) = CustomNamespaceMatcher.checkCustomNamespace(
-            maybeCustomNS, Some(packageName))
-          val importedPackageSym = RootClass.newClass(updatedPkg)
-          val importedTypes = fields.map(field => getReferredTypeName(field))
-          IMPORT(importedPackageSym, importedTypes)
-        }
+      .toList
+      .map(group => group match {
+        case(packageName, fields) => asImportDef(packageName, fields)
       })
   }
   

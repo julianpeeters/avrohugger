@@ -34,11 +34,7 @@ object SpecificRecord extends SourceFormat{
 
     registerTypes(schemaOrProtocol, classStore, typeMatcher)
 
-    val maybeCustom = ns match {
-      case Some(schemaNS) => typeMatcher.customNamespaceMap.get(schemaNS)
-      case None => ns
-    }
-    val namespace = CustomNamespaceMatcher.checkCustomNamespace(maybeCustom, ns)
+    val namespace = CustomNamespaceMatcher.checkCustomNamespace(ns, typeMatcher, ns)
 
     // generate as RPC trait and separate class/enum strings
     def protocolToRPC(protocol: Protocol): List[CompilationUnit] = {

@@ -11,12 +11,12 @@ object ScavroNamespaceRenamer {
   // as the Java package with `model` appended.
   // TypeMatcher is here because it holds the custom namespace map
   def renameNamespace(
-    namespace: Option[String],
+    maybeNamespace: Option[String],
     schemaOrProtocol: Either[Schema, Protocol],
     typeMatcher: TypeMatcher): Option[String] = {
       
     val scavroModelDefaultPackage = "model"
-    val scavroModelDefaultNamespace = namespace match {
+    val someScavroModelDefaultNamespace = maybeNamespace match {
       case Some(ns) => Some(ns + "." + scavroModelDefaultPackage)
       case None => sys.error("Scavro requires a namespace because Java " + 
         "classes cannot be imported from the default package")
@@ -28,12 +28,12 @@ object ScavroNamespaceRenamer {
       }
       ns match {
         case Some(schemaNS) => {
-          val maybeCustomNS = typeMatcher.customNamespaceMap.get(schemaNS)
           CustomNamespaceMatcher.checkCustomNamespace(
-            maybeCustomNS,
-            scavroModelDefaultNamespace)
+            ns,
+            typeMatcher,
+            maybeDefaultNamespace = someScavroModelDefaultNamespace)
         }
-        case None => scavroModelDefaultNamespace
+        case None => someScavroModelDefaultNamespace
       }
     }
     
