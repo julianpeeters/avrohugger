@@ -32,10 +32,10 @@ case class NoSpaces1(var single_line_comment_property: String, var multi_line_pr
   def this() = this("", "")
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
-      case pos if pos == 0 => {
+      case pos$ if pos$ == 0 => {
         single_line_comment_property
       }.asInstanceOf[AnyRef]
-      case pos if pos == 1 => {
+      case pos$ if pos$ == 1 => {
         multi_line_property
       }.asInstanceOf[AnyRef]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
@@ -43,10 +43,10 @@ case class NoSpaces1(var single_line_comment_property: String, var multi_line_pr
   }
   def put(field$: Int, value: Any): Unit = {
     (field$: @switch) match {
-      case pos if pos == 0 => this.single_line_comment_property = {
+      case pos$ if pos$ == 0 => this.single_line_comment_property = {
         value.toString
       }.asInstanceOf[String]
-      case pos if pos == 1 => this.multi_line_property = {
+      case pos$ if pos$ == 1 => this.multi_line_property = {
         value.toString
       }.asInstanceOf[String]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")

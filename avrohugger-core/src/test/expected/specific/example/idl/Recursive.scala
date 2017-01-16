@@ -7,10 +7,10 @@ case class Recursive(var name: String, var recursive: Option[Recursive]) extends
   def this() = this("", None)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
-      case pos if pos == 0 => {
+      case pos$ if pos$ == 0 => {
         name
       }.asInstanceOf[AnyRef]
-      case pos if pos == 1 => {
+      case pos$ if pos$ == 1 => {
         recursive match {
           case Some(x) => x
           case None => null
@@ -21,10 +21,10 @@ case class Recursive(var name: String, var recursive: Option[Recursive]) extends
   }
   def put(field$: Int, value: Any): Unit = {
     (field$: @switch) match {
-      case pos if pos == 0 => this.name = {
+      case pos$ if pos$ == 0 => this.name = {
         value.toString
       }.asInstanceOf[String]
-      case pos if pos == 1 => this.recursive = {
+      case pos$ if pos$ == 1 => this.recursive = {
         value match {
           case null => None
           case _ => Some(value)
