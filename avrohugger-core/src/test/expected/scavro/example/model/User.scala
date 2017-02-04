@@ -28,12 +28,12 @@ object User {
     override val avroClass: Class[JUser] = classOf[JUser]
     override val schema: Schema = JUser.getClassSchema()
     override val fromAvro: (JUser) => User = {
-      (j: JUser) => User(j.getName.toString, j.getFavorite_number match {
+      (j: JUser) => User(j.getName.toString, j.getFavoriteNumber match {
         case null => None
-        case _ => Some(j.getFavorite_number.toInt)
-      }, j.getFavorite_color match {
+        case _ => Some(j.getFavoriteNumber.toInt)
+      }, j.getFavoriteColor match {
         case null => None
-        case _ => Some(j.getFavorite_color.toString)
+        case _ => Some(j.getFavoriteColor.toString)
       })
     }
   }

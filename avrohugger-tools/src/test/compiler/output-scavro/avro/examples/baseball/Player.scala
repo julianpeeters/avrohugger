@@ -30,7 +30,7 @@ object Player {
     override val avroClass: Class[JPlayer] = classOf[JPlayer]
     override val schema: Schema = JPlayer.getClassSchema()
     override val fromAvro: (JPlayer) => Player = {
-      (j: JPlayer) => Player(j.getNumber.toInt, j.getFirst_name.toString, j.getLast_name.toString, Array((j.getNicknames: _*)) map { x =>
+      (j: JPlayer) => Player(j.getNumber.toInt, j.getFirstName.toString, j.getLastName.toString, Array((j.getNicknames: _*)) map { x =>
         Nickname(x.getName.toString)
       })
     }
