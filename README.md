@@ -276,6 +276,8 @@ Contributors:
 - [Lars Albertsson](https://github.com/lallea)
 - [alancnet](https://github.com/alancnet)
 - [Eugene Platonov](https://github.com/jozic)
+- [Matt Coffin](https://github.com/mcoffin)
+- [Tim Chan](https://github.com/timchan-lumoslabs)
 
 ##### Criticism is appreciated.
 
