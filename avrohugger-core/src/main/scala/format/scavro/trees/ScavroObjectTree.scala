@@ -75,7 +75,7 @@ object ScavroObjectTree {
 
     val javaClassAccessors: List[Tree] =
       schema.getFields.asScala.toList.map(avroField => {
-        val nameGet = "get" + avroField.name.head.toUpper + avroField.name.tail
+        val nameGet = "get" + avroField.name.split("_").map(_.capitalize).mkString("")
         val getterTree = REF("j") DOT nameGet
         val scalaConverter = new ScalaConverter(typeMatcher)
         scalaConverter.convertFromJava(avroField.schema, getterTree)
