@@ -117,4 +117,40 @@ class SpecificUserDefinedTypesSpec extends Specification {
     }
   }
   
+  "A case class with fields that are records imported from avdl of a different namespace" should {
+    "serialize and deserialize correctly" in {
+      val record1 = DependentRecord(other.ns.ExternalDependency(1), 2)
+      val record2 = DependentRecord(other.ns.ExternalDependency(3), 4)
+      val records = List(record1, record2)
+      SpecificTestUtil.verifyWriteAndRead(records)
+    }
+  }
+  
+  "A case class with fields that are imported enums from avsc" should {
+    "serialize and deserialize correctly" in {
+      val record1 = DependentRecord2(other.ns.Suit.SPADES, "John")
+      val record2 = DependentRecord2(other.ns.Suit.HEARTS, "Sandy")
+      val records = List(record1, record2)
+      SpecificTestUtil.verifyWriteAndRead(records)
+    }
+  }
+
+  "A case class with fields that are imported records from avdl in the same namespace" should {
+    "serialize and deserialize correctly" in {
+      val record1 = DependentRecord3(Embedded(1), true)
+      val record2 = DependentRecord3(Embedded(2), false)
+      val records = List(record1, record2)
+      SpecificTestUtil.verifyWriteAndRead(records)
+    }
+  }
+  
+  "A case class with fields that are imported records from avdl in the same namespace" should {
+    "serialize and deserialize correctly" in {
+      val record1 = DependentRecord4(ComplexExternalDependency(model.v2.NestedRecord(Option(model.UnionRecord("hurrah")))))
+      val record2 = DependentRecord4(ComplexExternalDependency(model.v2.NestedRecord(None)))
+      val records = List(record1, record2)
+      SpecificTestUtil.verifyWriteAndRead(records)
+    }
+  }
+  
 }

@@ -4,6 +4,7 @@ protocol ImportProtocol {
   import idl "defaults.avdl";
   import idl "imported.avdl";
   import schema "imported.avsc";
+  import schema "importedcomplex.avsc";
 
   record DependentRecord {
     other.ns.ExternalDependency dependency; // refers to the record defined in imported.avdl
@@ -18,5 +19,9 @@ protocol ImportProtocol {
   record DependentRecord3 { // refers to the record defined in defaults.avdl
     Embedded dependency;
     boolean value;
+  }
+  
+  record DependentRecord4 { // refers to the record defined in importedcomplex.avsc
+    ComplexExternalDependency dependency;
   }
 }

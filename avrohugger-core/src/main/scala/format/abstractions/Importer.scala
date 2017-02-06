@@ -81,7 +81,7 @@ trait Importer {
 
     recordSchemas
       .filter(schema => requiresImportDef(schema))
-      .groupBy(schema => checkNamespace(schema).get)
+      .groupBy(schema => checkNamespace(schema).getOrElse(schema.getNamespace))
       .toList
       .map(group => group match {
         case(packageName, fields) => asImportDef(packageName, fields)

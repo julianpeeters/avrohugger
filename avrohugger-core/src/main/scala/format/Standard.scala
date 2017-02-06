@@ -33,7 +33,10 @@ object Standard extends SourceFormat {
     registerTypes(schemaOrProtocol, classStore, typeMatcher)
 
     val namespace =
-      CustomNamespaceMatcher.checkCustomNamespace(ns, typeMatcher, ns)
+      CustomNamespaceMatcher.checkCustomNamespace(
+        ns,
+        typeMatcher,
+        maybeDefaultNamespace = ns)
 
     def maybeCustomEnumStyle = typeMatcher.customEnumStyleMap.get("enum")
 

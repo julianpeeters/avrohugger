@@ -131,14 +131,45 @@ class StandardUserDefinedTypesSpec extends Specification {
     }
   }
   
-  "A case class with a fields are imported classes" should {
-    "serialize and deserialize correctly" in {
-      val record1 = DependentRecord(other.ns.ExternalDependency(1), 2)
-      val record2 = DependentRecord(other.ns.ExternalDependency(3), 4)
-      val format = RecordFormat[DependentRecord]
-      val records = List(format.to(record1), format.to(record2))
-      StandardTestUtil.verifyWriteAndRead(records)
-    }
-  }
+  // "A case class with fields that are records imported from avdl of a different namespace" should {
+  //   "serialize and deserialize correctly" in {
+  //     val record1 = DependentRecord(other.ns.ExternalDependency(1), 2)
+  //     val record2 = DependentRecord(other.ns.ExternalDependency(3), 4)
+  //     val format = RecordFormat[DependentRecord]
+  //     val records = List(format.to(record1), format.to(record2))
+  //     StandardTestUtil.verifyWriteAndRead(records)
+  //   }
+  // }
+  // 
+  // // Error: could not find implicit value for parameter fromRecord: com.sksamuel.avro4s.FromRecord[test.DependentRecord2]
+  // // "A case class with fields that are imported enums from avsc" should {
+  // //   "serialize and deserialize correctly" in {
+  // //     val record1 = DependentRecord2(other.ns.Suit.SPADES, "John")
+  // //     val record2 = DependentRecord2(other.ns.Suit.HEARTS, "Sandy")
+  // //     val format = RecordFormat[DependentRecord2]
+  // //     val records = List(format.to(record1), format.to(record2))
+  // //     StandardTestUtil.verifyWriteAndRead(records)
+  // //   }
+  // // }
+  // 
+  // "A case class with fields that are imported records from avdl in the same namespace" should {
+  //   "serialize and deserialize correctly" in {
+  //     val record1 = DependentRecord3(Embedded(1), true)
+  //     val record2 = DependentRecord3(Embedded(2), false)
+  //     val format = RecordFormat[DependentRecord3]
+  //     val records = List(format.to(record1), format.to(record2))
+  //     StandardTestUtil.verifyWriteAndRead(records)
+  //   }
+  // }
+  // 
+  // "A case class with fields that are imported records from avdl in the same namespace" should {
+  //   "serialize and deserialize correctly" in {
+  //     val record1 = DependentRecord4(ComplexExternalDependency(model.v2.NestedRecord(Option(model.UnionRecord("hurrah")))))
+  //     val record2 = DependentRecord4(ComplexExternalDependency(model.v2.NestedRecord(None)))
+  //     val format = RecordFormat[DependentRecord4]
+  //     val records = List(format.to(record1), format.to(record2))
+  //     StandardTestUtil.verifyWriteAndRead(records)
+  //   }
+  // }
   
 }

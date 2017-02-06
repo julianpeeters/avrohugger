@@ -16,8 +16,8 @@ class Scavro58Test extends Specification {
 
       val filename = "AvroTypeProviderTest58.avro"
       val records = record :: Nil
-
       // Convert to json
+      
       records.foreach(f => println(f.toJson))
 
       // Write the avro file
@@ -336,7 +336,7 @@ class ScavroMap13Test extends Specification {
 
 class ScavroDependentRecordTest extends Specification {
 
-  "A case class with a fields are imported classes" should {
+  "A case class with fields that are records imported from avdl of a different namespace" should {
     "serialize and deserialize correctly" in {
       val record1 = DependentRecord(alt.ns.model.ExternalDependency(1), 2)
       val record2 = DependentRecord(alt.ns.model.ExternalDependency(3), 4)
@@ -355,6 +355,81 @@ class ScavroDependentRecordTest extends Specification {
       // Read the avro file and do some processing
       val reader: AvroReader[DependentRecord] =
         AvroReader[DependentRecord]
+      val sameRecords = reader.read(filename)
+
+      sameRecords must ===(records)
+    }
+  }
+  
+  "A case class with fields that are imported enums from avsc" should {
+    "serialize and deserialize correctly" in {
+      val record1 = DependentRecord2(other.ns.Suit.SPADES, "John")
+      val record2 = DependentRecord2(other.ns.Suit.HEARTS, "Sandy")
+      
+      val filename = "import.avro"
+
+      
+      val records = List(record1, record2)
+      // Convert to json
+      records.foreach(f => println(f.toJson))
+
+      // Write the avro file
+      val writer = AvroWriter[DependentRecord2](filename)
+      writer.write(records)
+
+      // Read the avro file and do some processing
+      val reader: AvroReader[DependentRecord2] =
+        AvroReader[DependentRecord2]
+      val sameRecords = reader.read(filename)
+
+      sameRecords must ===(records)
+    }
+  }
+  
+  "A case class with fields that are imported records from avdl in the same namespace" should {
+    "serialize and deserialize correctly" in {
+      val record1 = DependentRecord3(Embedded(1), true)
+      val record2 = DependentRecord3(Embedded(2), false)
+      
+      val filename = "import.avro"
+
+      
+      val records = List(record1, record2)
+      // Convert to json
+      records.foreach(f => println(f.toJson))
+
+      // Write the avro file
+      val writer = AvroWriter[DependentRecord3](filename)
+      writer.write(records)
+
+      // Read the avro file and do some processing
+      val reader: AvroReader[DependentRecord3] =
+        AvroReader[DependentRecord3]
+      val sameRecords = reader.read(filename)
+
+      sameRecords must ===(records)
+    }
+  }
+  
+  "A case class with fields that are imported records from avdl in the same namespace" should {
+    "serialize and deserialize correctly" in {
+      val record1 = DependentRecord4(ComplexExternalDependency(model.v2.NestedRecord(Option(model.UnionRecord("hurrah")))))
+      val record2 = DependentRecord4(ComplexExternalDependency(model.v2.NestedRecord(None)))
+      
+      val filename = "import.avro"
+
+      
+      val records = List(record1, record2)
+      // Convert to json
+      records.foreach(f => println(f.toJson))
+
+      // Write the avro file
+      val writer = AvroWriter[DependentRecord4](filename)
+      writer.write(records)
+
+      // Read the avro file and do some processing
+      val reader: AvroReader[DependentRecord4] =
+        AvroReader[DependentRecord4]
       val sameRecords = reader.read(filename)
 
       sameRecords must ===(records)

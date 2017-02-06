@@ -1,0 +1,34 @@
+{
+  "type": "record",
+  "name": "ComplexExternalDependency",
+  "namespace": "test",
+  "fields": [
+    {
+      "name": "nestedrecord",
+      "type": {
+        "name": "NestedRecord",
+        "fields": [
+          {
+            "name": "nestedunion",
+            "type": [
+              "null",
+              {
+                "name": "UnionRecord",
+                "fields": [
+                  {
+                    "name": "blah",
+                    "type": "string"
+                  }
+                ],
+                "type": "record",
+                "namespace": "model"
+              }
+            ]
+          }
+        ],
+        "type": "record",
+        "namespace": "model.v2"
+      }
+    }
+  ]
+}
