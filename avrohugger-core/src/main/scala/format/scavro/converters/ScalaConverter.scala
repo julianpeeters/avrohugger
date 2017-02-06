@@ -31,7 +31,7 @@ class ScalaConverter(typeMatcher: TypeMatcher) {
       case Schema.Type.RECORD => {
         val params = schema.getFields.asScala.flatMap(field => {
           val updatedPath = field.schema.getFullName :: fieldPath
-          val accessorName = "get" + field.name.split("_").map(_.capitalize).mkString("")
+          val accessorName = ScavroMethodRenamer.generateMethodName(schema, field, "get", "")
           val updatedTree = tree DOT(accessorName)
           if (fieldPath.contains(field.schema.getFullName)) List.empty
           else List(convertFromJava(field.schema, updatedTree, updatedPath))

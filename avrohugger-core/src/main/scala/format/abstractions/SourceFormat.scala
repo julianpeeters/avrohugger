@@ -37,6 +37,7 @@ import scala.collection.JavaConverters._
   * isEnum
   * registerTypes
   * renameEnum
+  * RESERVED_WORDS
   * writeToFile
   */
 trait SourceFormat {
@@ -187,6 +188,18 @@ trait SourceFormat {
       case _ => sys.error("Only RECORD and ENUM can be top-level definitions")
     }
   }
+  
+  // From: https://github.com/apache/avro/blob/33d495840c896b693b7f37b5ec786ac1acacd3b4/lang/java/avro/src/main/java/org/apache/avro/specific/SpecificData.java#L70
+  val RESERVED_WORDS: Set[String] = Set("abstract", "assert", "boolean", "break", "byte", "case", "catch",
+        "char", "class", "const", "continue", "default", "do", "double",
+        "else", "enum", "extends", "false", "final", "finally", "float",
+        "for", "goto", "if", "implements", "import", "instanceof", "int",
+        "interface", "long", "native", "new", "null", "package", "private",
+        "protected", "public", "return", "short", "static", "strictfp",
+        "super", "switch", "synchronized", "this", "throw", "throws",
+        "transient", "true", "try", "void", "volatile", "while",
+        /* classnames use internally by the avro code generator */
+        "Builder")
 
   def writeToFile(compilationUnit: CompilationUnit): Unit = {
     val path = compilationUnit.maybeFilePath match {
