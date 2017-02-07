@@ -21,7 +21,7 @@ import treehuggerDSL._
 import scala.collection.JavaConverters._
 
 object ScavroImporter extends Importer {
-  
+
   def asRenamedImportTree(imported: Import) = {
     val packageSym = imported.expr
     val typeNames = imported.selectors.map(s => treeToString(s.name))
@@ -31,13 +31,38 @@ object ScavroImporter extends Importer {
     })
     IMPORT(packageSym, renames)
   }
-  
+
   def getImports(
     schemaOrProtocol: Either[Schema, Protocol],
     currentNamespace: Option[String],
     schemaStore: SchemaStore,
     typeMatcher: TypeMatcher): List[Import] = {
-    
+
+    def checkJavaConversions(schemaOrProtocol: Either[Schema, Protocol]) = {
+      def getFieldTypes(schema: Schema): List[Schema.Type] = {
+        if (isRecord(schema)) {
+          val fieldSchemas = getFieldSchemas(schema)
+          fieldSchemas.map(fieldSchema => fieldSchema.getType)
+        }
+        else List.empty
+      }
+      val fieldTypes: List[Schema.Type] = schemaOrProtocol match {
+        case Left(schema) => getFieldTypes(schema)
+        case Right(protocol) => {
+          protocol.getTypes.asScala.toList.filter(isRecord(_)).flatMap(schema => {
+            getFieldTypes(schema)
+          })
+        }
+      }
+      val hasArrayField = fieldTypes.contains(Schema.Type.ARRAY)
+      val hasMapField = fieldTypes.contains(Schema.Type.MAP)
+      val hasUnionField = fieldTypes.contains(Schema.Type.UNION)
+      val convPackage = RootClass.newClass("scala.collection.JavaConverters")
+      val javaConvertersImport = IMPORT(convPackage, "_")
+      if(hasArrayField) Some(javaConvertersImport)
+      else None
+    }
+
     lazy val SchemaClass = RootClass.newClass("org.apache.avro.Schema")
     lazy val ScavroPackage = RootClass.newPackage("org.oedura.scavro")
 
@@ -47,8 +72,9 @@ object ScavroImporter extends Importer {
       "AvroMetadata",
       "AvroReader",
       "AvroSerializeable")
-      
+
     lazy val baseImports = List(schemaImport, scavroImport)
+    lazy val maybeJavaConversionsImport = checkJavaConversions(schemaOrProtocol)
 
     // gets all record schemas, including the root schema, which need renaming
     def getAllRecordSchemas(topLevelSchemas: List[Schema]): List[Schema] = {
@@ -86,22 +112,19 @@ object ScavroImporter extends Importer {
         })
     }
     val topLevelSchemas = getTopLevelSchemas(schemaOrProtocol, schemaStore)
-    
+
     val allRecordSchemas = getAllRecordSchemas(topLevelSchemas)
     val allRecordImports =
       getRecordImports(allRecordSchemas, currentNamespace, typeMatcher)
     val renamedJavaImports = allRecordImports.map(asRenamedImportTree)
-    
+
     val scalaRecords = getRecordSchemas(topLevelSchemas)
     val scalaImports = getScalaRecordImports(scalaRecords, currentNamespace)
-    
+
     val recordImports = scalaImports ++ renamedJavaImports
-    
+
     if (allRecordSchemas.isEmpty) List.empty
-    else baseImports ++ recordImports
+    else baseImports ++ recordImports ++ maybeJavaConversionsImport
   }
-  
 
-
-  
 }

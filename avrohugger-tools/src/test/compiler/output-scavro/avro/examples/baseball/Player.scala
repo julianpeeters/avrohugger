@@ -7,6 +7,8 @@ import org.oedura.scavro.{AvroMetadata, AvroReader, AvroSerializeable}
 
 import avro.examples.baseball.{Nickname => JNickname, Player => JPlayer}
 
+import scala.collection.JavaConverters._
+
 case class Player(number: Int, first_name: String, last_name: String, nicknames: Array[Nickname]) extends AvroSerializeable {
   type J = JPlayer
   override def toAvro: JPlayer = {
@@ -30,7 +32,7 @@ object Player {
     override val avroClass: Class[JPlayer] = classOf[JPlayer]
     override val schema: Schema = JPlayer.getClassSchema()
     override val fromAvro: (JPlayer) => Player = {
-      (j: JPlayer) => Player(j.getNumber.toInt, j.getFirstName.toString, j.getLastName.toString, Array((j.getNicknames: _*)) map { x =>
+      (j: JPlayer) => Player(j.getNumber.toInt, j.getFirstName.toString, j.getLastName.toString, Array((j.getNicknames.asScala: _*)) map { x =>
         Nickname(x.getName.toString)
       })
     }

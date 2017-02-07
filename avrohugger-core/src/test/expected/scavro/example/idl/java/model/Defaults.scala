@@ -5,6 +5,8 @@ import org.apache.avro.Schema
 
 import org.oedura.scavro.{AvroMetadata, AvroReader, AvroSerializeable}
 
+import scala.collection.JavaConverters._
+
 sealed trait Defaults extends AvroSerializeable with Product with Serializable
 
 final case class Embedded(inner: Int) extends AvroSerializeable with Defaults {
@@ -88,7 +90,7 @@ final object DefaultTest {
       }, j.getOptionStringValue match {
         case null => None
         case _ => Some(j.getOptionStringValue.toString)
-      }, Embedded(j.getEmbedded.getInner.toInt), Array((j.getDefaultArray: _*)) map { x =>
+      }, Embedded(j.getEmbedded.getInner.toInt), Array((j.getDefaultArray.asScala: _*)) map { x =>
         x.toInt
       }, j.getOptionalEnum match {
         case null => None

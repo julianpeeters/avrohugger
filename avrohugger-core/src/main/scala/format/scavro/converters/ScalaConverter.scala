@@ -19,7 +19,7 @@ class ScalaConverter(typeMatcher: TypeMatcher) {
   def convertFromJava(
     schema: Schema,
     tree: Tree,
-    fieldPath: List[String] = List.empty): Tree = { 
+    fieldPath: List[String] = List.empty): Tree = {
 
     schema.getType match {
       case Schema.Type.ENUM  => {
@@ -63,13 +63,13 @@ class ScalaConverter(typeMatcher: TypeMatcher) {
       case Schema.Type.LONG => tree DOT "toLong"
 
       case Schema.Type.ARRAY => {
-        val seqArgs = SEQARG(tree)
+        val seqArgs = SEQARG(tree DOT "asScala")
         val collection = typeMatcher.customTypeMap.get("array") match {
           case Some(c) if c == classOf[Array[_]]  => ARRAY(seqArgs)
           case Some(c) if c == classOf[List[_]]   => LIST(seqArgs)
           case Some(c) if c == classOf[Vector[_]] => VECTOR(seqArgs)
           // default array mapping is currently List, but only for historical reasons
-          case _                                  => LIST(seqArgs) 
+          case _                                  => LIST(seqArgs)
         }
         collection MAP(LAMBDA(PARAM("x")) ==> BLOCK(convertFromJava(schema.getElementType, REF("x"), fieldPath)))
       }
@@ -82,13 +82,13 @@ class ScalaConverter(typeMatcher: TypeMatcher) {
             .DOT("asScala")
             .DOT("toMap")
             .MAP(LAMBDA(PARAM("kvp")) ==> BLOCK(
-              VAL("key") := REF("kvp._1").DOT("toString"), 
+              VAL("key") := REF("kvp._1").DOT("toString"),
               VAL("value") := REF("kvp._2"),
               PAREN(REF("key"), convertFromJava(schema.getValueType, REF("value"), fieldPath)))
             )
           )
         }
-        val mapConversion = CASE(ID("map") withType(JavaMap)) ==> resultExpr 
+        val mapConversion = CASE(ID("map") withType(JavaMap)) ==> resultExpr
         tree MATCH(mapConversion)
       }
       case Schema.Type.FIXED    => sys.error("the FIXED datatype is not yet supported")
