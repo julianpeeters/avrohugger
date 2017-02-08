@@ -38,27 +38,50 @@ object ScavroImporter extends Importer {
     schemaStore: SchemaStore,
     typeMatcher: TypeMatcher): List[Import] = {
 
-    def checkJavaConversions(schemaOrProtocol: Either[Schema, Protocol]) = {
-      def getFieldTypes(schema: Schema): List[Schema.Type] = {
-        if (isRecord(schema)) {
-          val fieldSchemas = getFieldSchemas(schema)
-          fieldSchemas.map(fieldSchema => fieldSchema.getType)
+    def checkJavaConversions(schemaOrProtocol: Either[Schema, Protocol]): Option[Import] = {
+
+      def checkForArrays(schema: Schema, used: List[Schema] = List.empty): List[Schema] = {
+        schema.getType match {
+          case Schema.Type.MAP =>
+            checkForArrays(schema.getValueType, used)
+          case Schema.Type.RECORD =>
+            getFieldSchemas(schema).flatMap(s => {
+              if (used.contains(s)) List(s)
+              else checkForArrays(s, used :+ s)
+            })
+          case Schema.Type.UNION =>
+            val types = schema.getTypes.asScala
+            if (types.length != 2 ||
+               !types.map(x => x.getType).contains(Schema.Type.NULL) ||
+                types.filterNot(x => x.getType == Schema.Type.NULL).length != 1) {
+              sys.error("Unions beyond nullable fields are not supported")
+            }
+            else {
+              val maybeType = types.find(x => x.getType != Schema.Type.NULL)
+              maybeType match {
+                case Some(s) => checkForArrays(s, used)
+                case None => sys.error("There was no type in this union")
+              }
+            }
+          case _ => List(schema)
         }
-        else List.empty
       }
-      val fieldTypes: List[Schema.Type] = schemaOrProtocol match {
-        case Left(schema) => getFieldTypes(schema)
+
+      val schemas: List[Schema] = schemaOrProtocol match {
+        case Left(schema) => checkForArrays(schema)
         case Right(protocol) => {
-          protocol.getTypes.asScala.toList.filter(isRecord(_)).flatMap(schema => {
-            getFieldTypes(schema)
-          })
+          protocol.getTypes.asScala.toList
+            .filter(schema => isRecord(schema))
+            .flatMap(schema => checkForArrays(schema))
         }
       }
-      val hasArrayField = fieldTypes.contains(Schema.Type.ARRAY)
-      val hasMapField = fieldTypes.contains(Schema.Type.MAP)
-      val hasUnionField = fieldTypes.contains(Schema.Type.UNION)
+
+      val hasArrayField: Boolean =
+        schemas.map(schema => schema.getType).contains(Schema.Type.ARRAY)
+
       val convPackage = RootClass.newClass("scala.collection.JavaConverters")
       val javaConvertersImport = IMPORT(convPackage, "_")
+
       if(hasArrayField) Some(javaConvertersImport)
       else None
     }
@@ -73,8 +96,10 @@ object ScavroImporter extends Importer {
       "AvroReader",
       "AvroSerializeable")
 
-    lazy val baseImports = List(schemaImport, scavroImport)
-    lazy val maybeJavaConversionsImport = checkJavaConversions(schemaOrProtocol)
+    lazy val baseImports: List[Import] =
+      List(schemaImport, scavroImport)
+    lazy val maybeJavaConversionsImport: Option[Import] =
+      checkJavaConversions(schemaOrProtocol)
 
     // gets all record schemas, including the root schema, which need renaming
     def getAllRecordSchemas(topLevelSchemas: List[Schema]): List[Schema] = {
