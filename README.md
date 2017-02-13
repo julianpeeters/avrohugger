@@ -22,7 +22,7 @@ Table of contents
   * [Protocol support](#protocol-support)
   * [Doc support](#doc-support)
   * [Usage](#usage)
-    * ['avrohugger-core'](#avrohugger-core)
+    * [`avrohugger-core`](#avrohugger-core)
       * [Get the dependency](#get-the-dependency-with)
       * [Description](#description)
       * [Example](#example)
@@ -30,19 +30,19 @@ Table of contents
       * [Customizable namespace mapping](#customizable-namespace-mapping)
       * [Customizable enum style](#customizable-enum-style)
       * [Generate Classes Instead of Case Classes](generate-classes-instead-of-case-classes)
-    * ['avrohugger-tools'](#avrohugger-tools)
-    * ['sbt-avrohugger'](#sbt-avrohugger)
-    * ['avro2caseclass'](#avro2caseclass)
+    * [`avrohugger-tools`](#avrohugger-tools)
+    * [`sbt-avrohugger`](#sbt-avrohugger)
+    * [`avro2caseclass`](#avro2caseclass)
   * [Warnings](#warnings)
   * [Best Practices](#best-practices)
   * [Future](#future)
   * [Testing](#testing)
   * [Credits](#credits)
-  
+
 
 ##### Generates Scala case classes in various formats:
 
-* `Standard` Vanilla case classes (for use with Apache Avro's [`GenericRecord` 
+* `Standard` Vanilla case classes (for use with Apache Avro's [`GenericRecord`
 API](http://avro.apache.org/docs/1.8.1/gettingstartedjava.html#Serializing+and+deserializing+without+code+generation), etc.)
 
 * `SpecificRecord` Case classes that implement `SpecificRecordBase` and
@@ -77,7 +77,7 @@ runtime, Java classes provided separately (see [Scavro Plugin](https://github.co
 
 * `.avdl`, `.avpr`, and json protocol strings are generated as ADTs if they define more than one Scala definition.
 
-* For `SpecificRecord`, if the protocol contains messages then no ADT is generated, and an RPC trait is generated instead. 
+* For `SpecificRecord`, if the protocol contains messages then no ADT is generated, and an RPC trait is generated instead.
 
 
 ##### Doc Support:
@@ -94,9 +94,9 @@ _Note:_ Currently [Treehugger](http://eed3si9n.com/treehugger/comments.html#Scal
 
 
 
-## Usage 
+## Usage
 
-**For Scala 2.10 and 2.11**
+**For Scala 2.10 and 2.11 (Generates Code Compatible with Scala 2.10, 2.11, and 2.12)**
 
 
 #### `avrohugger-core`
@@ -159,14 +159,22 @@ Namespaces can be reassigned by instantiating a `Generator` with a custom
 namespace map (please see warnings below):
 
 
-    val generator = new Generator(SpecificRecord, avroScalaCustomNamespace = Map("oldnamespace"->"newnamespace"))  
+    val generator = new Generator(SpecificRecord, avroScalaCustomNamespace = Map("oldnamespace"->"newnamespace"))
+
+
+_Scavro_: by default, a "model" package is appended to the namespace to create a
+ Scala namespace that does not conflict with Scavro's generated Java. To
+ override, either customize each package namespace separately (preempting the
+ use of the default package name), or override the package name like so:
+
+    val generator = new Generator(SpecificRecord, avroScalaCustomNamespace = Map("SCAVRO_DEFAULT_PACKAGE$"->"scavro"))
 
 
 ##### Customizable Enum Style:
 
-`SpecificRecord` format requires that enums be represented as Java enums. By 
- default, `Standard` and `Scavro` formats use Scala enumerations, but can be 
- reassigned to 'case object' or 'java enum' by instantiating a `Generator` 
+`SpecificRecord` format requires that enums be represented as Java enums. By
+ default, `Standard` and `Scavro` formats use Scala enumerations, but can be
+ reassigned to 'case object' or 'java enum' by instantiating a `Generator`
  with a custom enum style map:
 
 
@@ -178,7 +186,7 @@ namespace map (please see warnings below):
 
 Generate simple classes instead of case classes when fields.size > 22, useful for generating code for Scala 2.10 from large schemas.
 
-    val generator = new Generator(SpecificRecord, restrictedFieldNumber = true) 
+    val generator = new Generator(SpecificRecord, restrictedFieldNumber = true)
 
 
 #### `avrohugger-tools`
@@ -223,8 +231,8 @@ will fail since Scala fields are private. Therefore preempt it by passing in
 a Schema to DatumReaders and DatumWriters (as in the Avro example above).
 
 2) For the `SpecificRecord` format, generated case class fields must be
-mutable (`var`) in order to be compatible with the SpecificRecord API. _Note:_ 
-If your framework allows 'GenericRecord', [avro4s](https://github.com/sksamuel/avro4s) provides a type class that converts to and from immutable case classes cleanly 
+mutable (`var`) in order to be compatible with the SpecificRecord API. _Note:_
+If your framework allows 'GenericRecord', [avro4s](https://github.com/sksamuel/avro4s) provides a type class that converts to and from immutable case classes cleanly
 (though seems to fail on maps and case object enums as of v1.4.3).
 
 3) When the input is a case class definition string, import statements are
@@ -246,7 +254,7 @@ to flow data into a system that doesn't support them (e.g., Hive).
 
 2) Use namespaces to ensure compatibility when importing into Java/Scala.
 
-3) Use default field values in case of future schema evolution ([further reading](https://github.com/julianpeeters/avrohugger/issues/23)). 
+3) Use default field values in case of future schema evolution ([further reading](https://github.com/julianpeeters/avrohugger/issues/23)).
 
 
 ## Future
@@ -258,9 +266,9 @@ to flow data into a system that doesn't support them (e.g., Hive).
 ## Testing
 
 The `test` task will only run the tests in `src/test`.
-The `scripted` task runs all tests in `src/test`, as well as the serialization 
-tests in `src/sbt-test`. _Note:_ the scripted tests depend on a local version 
-of `sbt-avrohugger` that needs to be published with the updated version of 
+The `scripted` task runs all tests in `src/test`, as well as the serialization
+tests in `src/sbt-test`. _Note:_ the scripted tests depend on a local version
+of `sbt-avrohugger` that needs to be published with the updated version of
 `avrohugger` that is to be tested.
 
 #### Credits

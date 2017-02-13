@@ -30,6 +30,7 @@ class Generator(format: SourceFormat,
   format match {
     case Scavro =>
       typeMatcher.updateCustomTypeMap("array" -> classOf[Array[_]])
+      typeMatcher.updateCustomNamespaceMap("SCAVRO_DEFAULT_PACKAGE$" -> "model")
     case SpecificRecord =>
       typeMatcher.updateCustomEnumStyleMap("enum" -> "java enum")
     case _ => ()

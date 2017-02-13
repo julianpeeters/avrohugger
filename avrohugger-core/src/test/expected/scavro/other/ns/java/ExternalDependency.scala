@@ -5,6 +5,8 @@ import org.apache.avro.Schema
 
 import org.oedura.scavro.{AvroMetadata, AvroReader, AvroSerializeable}
 
+import other.ns.{ExternalDependency => JExternalDependency}
+
 case class ExternalDependency(number: Int) extends AvroSerializeable {
   type J = JExternalDependency
   override def toAvro: JExternalDependency = {

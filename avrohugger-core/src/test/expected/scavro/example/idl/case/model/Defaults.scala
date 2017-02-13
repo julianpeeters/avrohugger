@@ -5,6 +5,8 @@ import org.apache.avro.Schema
 
 import org.oedura.scavro.{AvroMetadata, AvroReader, AvroSerializeable}
 
+import example.idl.{DefaultEnum => JDefaultEnum, DefaultTest => JDefaultTest, Embedded => JEmbedded}
+
 import scala.collection.JavaConverters._
 
 sealed trait Defaults

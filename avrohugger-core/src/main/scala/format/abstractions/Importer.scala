@@ -30,14 +30,14 @@ import scala.collection.JavaConverters._
   * isRecord
   */
 trait Importer {
-  
+
   ///////////////////////////// abstract members ///////////////////////////////
   def getImports(
     schemaOrProtocol: Either[Schema, Protocol],
     currentNamespace: Option[String],
     schemaStore: SchemaStore,
     typeMatcher: TypeMatcher): List[Import]
-  
+
   ////////////////////////////// concrete members //////////////////////////////
   def getFieldSchemas(schema: Schema): List[Schema] = {
     schema.getFields.asScala.toList.map(field => field.schema)
@@ -46,12 +46,12 @@ trait Importer {
   def getTypeSchemas(schema: Schema): List[Schema] = {
     schema.getTypes.asScala.toList
   }
-    
+
   def getRecordImports(
     recordSchemas: List[Schema],
     namespace: Option[String],
     typeMatcher: TypeMatcher): List[Import] = {
-    
+
     def checkNamespace(schema: Schema): Option[String] = {
       val maybeReferredNamespace =
         DependencyInspector.getReferredNamespace(schema)
@@ -60,7 +60,7 @@ trait Importer {
         typeMatcher,
         maybeDefaultNamespace = maybeReferredNamespace)
     }
-    
+
     def asImportDef(packageName: String, fields: List[Schema]): Import = {
       val maybeUpdatedPackageName = CustomNamespaceMatcher.checkCustomNamespace(
         Some(packageName),
@@ -72,7 +72,7 @@ trait Importer {
         fields.map(field => DependencyInspector.getReferredTypeName(field))
       IMPORT(importedPackageSym, importedTypes)
     }
-    
+
     def requiresImportDef(schema: Schema): Boolean = {
       (isRecord(schema) || isEnum(schema)) &&
       checkNamespace(schema).isDefined     &&
@@ -87,7 +87,7 @@ trait Importer {
         case(packageName, fields) => asImportDef(packageName, fields)
       })
   }
-  
+
   // gets record schemas which may be dependencies
   def getRecordSchemas(
     topLevelSchemas: List[Schema],
@@ -124,7 +124,7 @@ trait Importer {
       .distinct
       .toList
   }
-  
+
   def getTopLevelSchemas(
     schemaOrProtocol: Either[Schema,  Protocol],
     schemaStore: SchemaStore): List[Schema] = {
@@ -135,7 +135,7 @@ trait Importer {
         schema::(NestedSchemaExtractor.getNestedSchemas(schema, schemaStore))
       })
     }
-          
+
   }
 
   def isEnum(schema: Schema): Boolean = ( schema.getType == ENUM )

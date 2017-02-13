@@ -1,6 +1,7 @@
-import sbtavrohugger.AvrohuggerSettings.{ 
+import sbtavrohugger.AvrohuggerSettings.{
   avroScalaCustomEnumStyle,
-  avroScalaCustomTypes 
+  avroScalaCustomNamespace,
+  avroScalaCustomTypes
 }
 
 organization := "com.julianpeeters"
@@ -24,6 +25,8 @@ sbtavrohugger.SbtAvrohugger.scavroSettings
 avroScalaCustomTypes in sbtavrohugger.SbtAvrohugger.avroConfig := Map("array"-> classOf[List[_]])
 
 avroScalaCustomEnumStyle in sbtavrohugger.SbtAvrohugger.avroConfig := Map("enum"-> "java enum")
+
+avroScalaCustomNamespace in sbtavrohugger.SbtAvrohugger.avroConfig := Map("SCAVRO_DEFAULT_PACKAGE$" -> "scavro")
 
 libraryDependencies ++= Seq(
   "org.oedura" %% "scavro" % "1.0.1",

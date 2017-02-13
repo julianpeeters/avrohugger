@@ -1,16 +1,15 @@
 package scavro
 
-import test._
 import org.specs2.mutable.Specification
 
 import org.oedura.scavro.{AvroReader, AvroWriter}
 
-import test.model._
+import test.scavro._
 
 class DefaultValuesSpec extends Specification {
   "A case class with default values" should {
     "deserialize correctly" in {
-      
+
       val filename = "DefaultTest.avro"
 
       val record = DefaultTest()
@@ -27,14 +26,14 @@ class DefaultValuesSpec extends Specification {
       // Read the avro file and do some processing
       val reader: AvroReader[DefaultTest] = AvroReader[DefaultTest]
       val sameRecord = reader.read(filename).head
-      
-      sameRecord.suit === SPADES
+
+      sameRecord.suit === test.scavro.DefaultEnum.SPADES
       sameRecord.number === 0
       sameRecord.str === "str"
       sameRecord.optionString === None
       sameRecord.optionStringValue === Some("default")
       sameRecord.embedded === Embedded(1)
-      sameRecord.defaultArray === Array(1,3,4,5)
+      sameRecord.defaultArray === List(1,3,4,5)
       sameRecord.optionalEnum === None
       sameRecord.defaultMap === Map("Hello" -> "world", "Merry" -> "Christmas")
       sameRecord.byt === "\u00FF".getBytes

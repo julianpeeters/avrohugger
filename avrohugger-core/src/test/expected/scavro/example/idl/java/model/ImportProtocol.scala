@@ -7,7 +7,9 @@ import org.oedura.scavro.{AvroMetadata, AvroReader, AvroSerializeable}
 
 import other.ns.java.{ExternalDependency, Suit}
 
-import other.ns.java.{ExternalDependency => JExternalDependency, Suit => JSuit}
+import example.idl.{DependentRecord => JDependentRecord, DependentRecord2 => JDependentRecord2, DependentRecord3 => JDependentRecord3, Embedded => JEmbedded}
+
+import other.ns.{ExternalDependency => JExternalDependency, Suit => JSuit}
 
 sealed trait ImportProtocol extends AvroSerializeable with Product with Serializable
 

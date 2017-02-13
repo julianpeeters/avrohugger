@@ -4,7 +4,7 @@ import org.specs2.mutable.Specification
 
 import org.oedura.scavro.{AvroReader, AvroWriter}
 
-import test.model._
+import scavrotest._
 
 
 class Scavro14Test extends Specification {

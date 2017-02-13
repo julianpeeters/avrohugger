@@ -1,6 +1,6 @@
 package scavro
 
-import test.model._
+import scavrotest._
 
 import org.specs2.mutable.Specification
 

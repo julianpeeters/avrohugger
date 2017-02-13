@@ -7,18 +7,22 @@ import matchers.{ CustomNamespaceMatcher, TypeMatcher }
 import org.apache.avro.{ Schema, Protocol }
 
 object ScavroNamespaceRenamer {
-  // By default, Scavro generates Scala classes in packages that are the same 
+  // By default, Scavro generates Scala classes in packages that are the same
   // as the Java package with `model` appended.
   // TypeMatcher is here because it holds the custom namespace map
   def renameNamespace(
     maybeNamespace: Option[String],
     schemaOrProtocol: Either[Schema, Protocol],
     typeMatcher: TypeMatcher): Option[String] = {
-      
-    val scavroModelDefaultPackage = "model"
+
+    val scavroModelDefaultPackage: String =
+      typeMatcher.customNamespaceMap
+        .get("SCAVRO_DEFAULT_PACKAGE$")
+        .getOrElse("model")
+        
     val someScavroModelDefaultNamespace = maybeNamespace match {
       case Some(ns) => Some(ns + "." + scavroModelDefaultPackage)
-      case None => sys.error("Scavro requires a namespace because Java " + 
+      case None => sys.error("Scavro requires a namespace because Java " +
         "classes cannot be imported from the default package")
     }
     val scavroModelNamespace = {
@@ -36,8 +40,8 @@ object ScavroNamespaceRenamer {
         case None => someScavroModelDefaultNamespace
       }
     }
-    
+
     scavroModelNamespace
   }
-  
+
 }
