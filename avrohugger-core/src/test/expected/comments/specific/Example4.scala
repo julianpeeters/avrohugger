@@ -10,7 +10,7 @@ final case class NoSpaces4(var comment_property1: String) extends org.apache.avr
   def this() = this("")
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
-      case pos if pos == 0 => {
+      case 0 => {
         comment_property1
       }.asInstanceOf[AnyRef]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
@@ -18,7 +18,7 @@ final case class NoSpaces4(var comment_property1: String) extends org.apache.avr
   }
   def put(field$: Int, value: Any): Unit = {
     (field$: @switch) match {
-      case pos if pos == 0 => this.comment_property1 = {
+      case 0 => this.comment_property1 = {
         value.toString
       }.asInstanceOf[String]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
@@ -36,7 +36,7 @@ final case class NoSpaces5(var comment_property2: String) extends org.apache.avr
   def this() = this("")
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
-      case pos if pos == 0 => {
+      case 0 => {
         comment_property2
       }.asInstanceOf[AnyRef]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
@@ -44,7 +44,7 @@ final case class NoSpaces5(var comment_property2: String) extends org.apache.avr
   }
   def put(field$: Int, value: Any): Unit = {
     (field$: @switch) match {
-      case pos if pos == 0 => this.comment_property2 = {
+      case 0 => this.comment_property2 = {
         value.toString
       }.asInstanceOf[String]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")

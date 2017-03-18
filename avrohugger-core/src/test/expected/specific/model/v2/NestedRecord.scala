@@ -9,7 +9,7 @@ case class NestedRecord(var nestedunion: Option[UnionRecord]) extends org.apache
   def this() = this(None)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
-      case pos if pos == 0 => {
+      case 0 => {
         nestedunion match {
           case Some(x) => x
           case None => null
@@ -20,7 +20,7 @@ case class NestedRecord(var nestedunion: Option[UnionRecord]) extends org.apache
   }
   def put(field$: Int, value: Any): Unit = {
     (field$: @switch) match {
-      case pos if pos == 0 => this.nestedunion = {
+      case 0 => this.nestedunion = {
         value match {
           case null => None
           case _ => Some(value)

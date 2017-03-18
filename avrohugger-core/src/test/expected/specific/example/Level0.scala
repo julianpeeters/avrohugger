@@ -7,7 +7,7 @@ case class Level0(var level1: Level1) extends org.apache.avro.specific.SpecificR
   def this() = this(new Level1)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
-      case pos if pos == 0 => {
+      case 0 => {
         level1
       }.asInstanceOf[AnyRef]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
@@ -15,7 +15,7 @@ case class Level0(var level1: Level1) extends org.apache.avro.specific.SpecificR
   }
   def put(field$: Int, value: Any): Unit = {
     (field$: @switch) match {
-      case pos if pos == 0 => this.level1 = {
+      case 0 => this.level1 = {
         value
       }.asInstanceOf[Level1]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")

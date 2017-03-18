@@ -7,7 +7,7 @@ case class ExternalDependency(var number: Int) extends org.apache.avro.specific.
   def this() = this(0)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
-      case pos if pos == 0 => {
+      case 0 => {
         number
       }.asInstanceOf[AnyRef]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
@@ -15,7 +15,7 @@ case class ExternalDependency(var number: Int) extends org.apache.avro.specific.
   }
   def put(field$: Int, value: Any): Unit = {
     (field$: @switch) match {
-      case pos if pos == 0 => this.number = {
+      case 0 => this.number = {
         value
       }.asInstanceOf[Int]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")

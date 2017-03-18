@@ -7,7 +7,7 @@ case class Compass(var direction: Direction) extends org.apache.avro.specific.Sp
   def this() = this(null)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
-      case pos if pos == 0 => {
+      case 0 => {
         direction
       }.asInstanceOf[AnyRef]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
@@ -15,7 +15,7 @@ case class Compass(var direction: Direction) extends org.apache.avro.specific.Sp
   }
   def put(field$: Int, value: Any): Unit = {
     (field$: @switch) match {
-      case pos if pos == 0 => this.direction = {
+      case 0 => this.direction = {
         value
       }.asInstanceOf[Direction]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")

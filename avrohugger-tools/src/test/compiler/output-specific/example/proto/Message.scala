@@ -7,13 +7,13 @@ case class Message(var to: String, var from: String, var body: String) extends o
   def this() = this("", "", "")
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
-      case pos if pos == 0 => {
+      case 0 => {
         to
       }.asInstanceOf[AnyRef]
-      case pos if pos == 1 => {
+      case 1 => {
         from
       }.asInstanceOf[AnyRef]
-      case pos if pos == 2 => {
+      case 2 => {
         body
       }.asInstanceOf[AnyRef]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
@@ -21,13 +21,13 @@ case class Message(var to: String, var from: String, var body: String) extends o
   }
   def put(field$: Int, value: Any): Unit = {
     (field$: @switch) match {
-      case pos if pos == 0 => this.to = {
+      case 0 => this.to = {
         value.toString
       }.asInstanceOf[String]
-      case pos if pos == 1 => this.from = {
+      case 1 => this.from = {
         value.toString
       }.asInstanceOf[String]
-      case pos if pos == 2 => this.body = {
+      case 2 => this.body = {
         value.toString
       }.asInstanceOf[String]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")

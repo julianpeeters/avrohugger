@@ -11,10 +11,10 @@ final case class DependentRecord(var dependency: ExternalDependency, var number:
   def this() = this(new ExternalDependency, 0)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
-      case pos if pos == 0 => {
+      case 0 => {
         dependency
       }.asInstanceOf[AnyRef]
-      case pos if pos == 1 => {
+      case 1 => {
         number
       }.asInstanceOf[AnyRef]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
@@ -22,10 +22,10 @@ final case class DependentRecord(var dependency: ExternalDependency, var number:
   }
   def put(field$: Int, value: Any): Unit = {
     (field$: @switch) match {
-      case pos if pos == 0 => this.dependency = {
+      case 0 => this.dependency = {
         value
       }.asInstanceOf[ExternalDependency]
-      case pos if pos == 1 => this.number = {
+      case 1 => this.number = {
         value
       }.asInstanceOf[Int]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
@@ -43,10 +43,10 @@ final case class DependentRecord2(var dependency: Suit, var name: String) extend
   def this() = this(null, "")
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
-      case pos if pos == 0 => {
+      case 0 => {
         dependency
       }.asInstanceOf[AnyRef]
-      case pos if pos == 1 => {
+      case 1 => {
         name
       }.asInstanceOf[AnyRef]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
@@ -54,10 +54,10 @@ final case class DependentRecord2(var dependency: Suit, var name: String) extend
   }
   def put(field$: Int, value: Any): Unit = {
     (field$: @switch) match {
-      case pos if pos == 0 => this.dependency = {
+      case 0 => this.dependency = {
         value
       }.asInstanceOf[Suit]
-      case pos if pos == 1 => this.name = {
+      case 1 => this.name = {
         value.toString
       }.asInstanceOf[String]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
@@ -75,10 +75,10 @@ final case class DependentRecord3(var dependency: Embedded, var value: Boolean) 
   def this() = this(new Embedded, false)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
-      case pos if pos == 0 => {
+      case 0 => {
         dependency
       }.asInstanceOf[AnyRef]
-      case pos if pos == 1 => {
+      case 1 => {
         value
       }.asInstanceOf[AnyRef]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
@@ -86,10 +86,10 @@ final case class DependentRecord3(var dependency: Embedded, var value: Boolean) 
   }
   def put(field$: Int, value: Any): Unit = {
     (field$: @switch) match {
-      case pos if pos == 0 => this.dependency = {
+      case 0 => this.dependency = {
         value
       }.asInstanceOf[Embedded]
-      case pos if pos == 1 => this.value = {
+      case 1 => this.value = {
         value
       }.asInstanceOf[Boolean]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")

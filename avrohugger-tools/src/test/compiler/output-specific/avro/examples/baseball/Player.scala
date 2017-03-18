@@ -7,16 +7,16 @@ case class Player(var number: Int, var first_name: String, var last_name: String
   def this() = this(0, "", "", List.empty)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
-      case pos if pos == 0 => {
+      case 0 => {
         number
       }.asInstanceOf[AnyRef]
-      case pos if pos == 1 => {
+      case 1 => {
         first_name
       }.asInstanceOf[AnyRef]
-      case pos if pos == 2 => {
+      case 2 => {
         last_name
       }.asInstanceOf[AnyRef]
-      case pos if pos == 3 => {
+      case 3 => {
         scala.collection.JavaConverters.bufferAsJavaListConverter({
           nicknames map { x =>
             x
@@ -28,16 +28,16 @@ case class Player(var number: Int, var first_name: String, var last_name: String
   }
   def put(field$: Int, value: Any): Unit = {
     (field$: @switch) match {
-      case pos if pos == 0 => this.number = {
+      case 0 => this.number = {
         value
       }.asInstanceOf[Int]
-      case pos if pos == 1 => this.first_name = {
+      case 1 => this.first_name = {
         value.toString
       }.asInstanceOf[String]
-      case pos if pos == 2 => this.last_name = {
+      case 2 => this.last_name = {
         value.toString
       }.asInstanceOf[String]
-      case pos if pos == 3 => this.nicknames = {
+      case 3 => this.nicknames = {
         value match {
           case (array: java.util.List[_]) => {
             List((scala.collection.JavaConverters.asScalaIteratorConverter(array.iterator).asScala.toSeq map { x =>
