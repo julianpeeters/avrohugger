@@ -12,13 +12,13 @@ case class twitter_schema(var username: String, var tweet: String, var timestamp
   def this() = this("", "", 0L)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
-      case pos if pos == 0 => {
+      case pos$ if pos$ == 0 => {
         username
       }.asInstanceOf[AnyRef]
-      case pos if pos == 1 => {
+      case pos$ if pos$ == 1 => {
         tweet
       }.asInstanceOf[AnyRef]
-      case pos if pos == 2 => {
+      case pos$ if pos$ == 2 => {
         timestamp
       }.asInstanceOf[AnyRef]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
@@ -26,13 +26,13 @@ case class twitter_schema(var username: String, var tweet: String, var timestamp
   }
   def put(field$: Int, value: Any): Unit = {
     (field$: @switch) match {
-      case pos if pos == 0 => this.username = {
+      case pos$ if pos$ == 0 => this.username = {
         value.toString
       }.asInstanceOf[String]
-      case pos if pos == 1 => this.tweet = {
+      case pos$ if pos$ == 1 => this.tweet = {
         value.toString
       }.asInstanceOf[String]
-      case pos if pos == 2 => this.timestamp = {
+      case pos$ if pos$ == 2 => this.timestamp = {
         value
       }.asInstanceOf[Long]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")

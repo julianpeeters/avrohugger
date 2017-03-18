@@ -7,10 +7,10 @@ case class Card(var suit: Suit, var number: Int) extends org.apache.avro.specifi
   def this() = this(null, 0)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
-      case pos if pos == 0 => {
+      case pos$ if pos$ == 0 => {
         suit
       }.asInstanceOf[AnyRef]
-      case pos if pos == 1 => {
+      case pos$ if pos$ == 1 => {
         number
       }.asInstanceOf[AnyRef]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
@@ -18,10 +18,10 @@ case class Card(var suit: Suit, var number: Int) extends org.apache.avro.specifi
   }
   def put(field$: Int, value: Any): Unit = {
     (field$: @switch) match {
-      case pos if pos == 0 => this.suit = {
+      case pos$ if pos$ == 0 => this.suit = {
         value
       }.asInstanceOf[Suit]
-      case pos if pos == 1 => this.number = {
+      case pos$ if pos$ == 1 => this.number = {
         value
       }.asInstanceOf[Int]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")

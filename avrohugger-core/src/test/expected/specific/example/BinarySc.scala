@@ -7,7 +7,7 @@ case class BinarySc(var data: Array[Byte]) extends org.apache.avro.specific.Spec
   def this() = this(null)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
-      case pos if pos == 0 => {
+      case pos$ if pos$ == 0 => {
         java.nio.ByteBuffer.wrap(data)
       }.asInstanceOf[AnyRef]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
@@ -15,7 +15,7 @@ case class BinarySc(var data: Array[Byte]) extends org.apache.avro.specific.Spec
   }
   def put(field$: Int, value: Any): Unit = {
     (field$: @switch) match {
-      case pos if pos == 0 => this.data = {
+      case pos$ if pos$ == 0 => this.data = {
         value match {
           case (buffer: java.nio.ByteBuffer) => {
             buffer.array()
