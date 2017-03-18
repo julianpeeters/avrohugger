@@ -9,7 +9,7 @@ case class AvroTypeProviderTestNoNamespace(var x: Int) extends org.apache.avro.s
   def this() = this(0)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
-      case pos$ if pos$ == 0 => {
+      case 0 => {
         x
       }.asInstanceOf[AnyRef]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
@@ -17,7 +17,7 @@ case class AvroTypeProviderTestNoNamespace(var x: Int) extends org.apache.avro.s
   }
   def put(field$: Int, value: Any): Unit = {
     (field$: @switch) match {
-      case pos$ if pos$ == 0 => this.x = {
+      case 0 => this.x = {
         value
       }.asInstanceOf[Int]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")

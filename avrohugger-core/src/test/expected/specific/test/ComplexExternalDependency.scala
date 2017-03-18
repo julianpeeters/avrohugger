@@ -11,7 +11,7 @@ case class ComplexExternalDependency(var nestedrecord: NestedRecord) extends org
   def this() = this(new NestedRecord)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
-      case pos if pos == 0 => {
+      case 0 => {
         nestedrecord
       }.asInstanceOf[AnyRef]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
@@ -19,7 +19,7 @@ case class ComplexExternalDependency(var nestedrecord: NestedRecord) extends org
   }
   def put(field$: Int, value: Any): Unit = {
     (field$: @switch) match {
-      case pos if pos == 0 => this.nestedrecord = {
+      case 0 => this.nestedrecord = {
         value
       }.asInstanceOf[NestedRecord]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")

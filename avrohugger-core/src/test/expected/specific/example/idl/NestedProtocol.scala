@@ -9,7 +9,7 @@ final case class Level2(var name: String) extends org.apache.avro.specific.Speci
   def this() = this("")
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
-      case pos$ if pos$ == 0 => {
+      case 0 => {
         name
       }.asInstanceOf[AnyRef]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
@@ -17,7 +17,7 @@ final case class Level2(var name: String) extends org.apache.avro.specific.Speci
   }
   def put(field$: Int, value: Any): Unit = {
     (field$: @switch) match {
-      case pos$ if pos$ == 0 => this.name = {
+      case 0 => this.name = {
         value.toString
       }.asInstanceOf[String]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
@@ -35,7 +35,7 @@ final case class Level1(var level2: Level2) extends org.apache.avro.specific.Spe
   def this() = this(new Level2)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
-      case pos$ if pos$ == 0 => {
+      case 0 => {
         level2
       }.asInstanceOf[AnyRef]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
@@ -43,7 +43,7 @@ final case class Level1(var level2: Level2) extends org.apache.avro.specific.Spe
   }
   def put(field$: Int, value: Any): Unit = {
     (field$: @switch) match {
-      case pos$ if pos$ == 0 => this.level2 = {
+      case 0 => this.level2 = {
         value
       }.asInstanceOf[Level2]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
@@ -61,7 +61,7 @@ final case class Level0(var level1: Level1) extends org.apache.avro.specific.Spe
   def this() = this(new Level1)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
-      case pos$ if pos$ == 0 => {
+      case 0 => {
         level1
       }.asInstanceOf[AnyRef]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
@@ -69,7 +69,7 @@ final case class Level0(var level1: Level1) extends org.apache.avro.specific.Spe
   }
   def put(field$: Int, value: Any): Unit = {
     (field$: @switch) match {
-      case pos$ if pos$ == 0 => this.level1 = {
+      case 0 => this.level1 = {
         value
       }.asInstanceOf[Level1]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")

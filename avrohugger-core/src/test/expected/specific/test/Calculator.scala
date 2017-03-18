@@ -9,7 +9,7 @@ final case class Added(var value: Int) extends org.apache.avro.specific.Specific
   def this() = this(0)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
-      case pos$ if pos$ == 0 => {
+      case 0 => {
         value
       }.asInstanceOf[AnyRef]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
@@ -17,7 +17,7 @@ final case class Added(var value: Int) extends org.apache.avro.specific.Specific
   }
   def put(field$: Int, value: Any): Unit = {
     (field$: @switch) match {
-      case pos$ if pos$ == 0 => this.value = {
+      case 0 => this.value = {
         value
       }.asInstanceOf[Int]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
@@ -35,7 +35,7 @@ final case class Subtracted(var value: Int) extends org.apache.avro.specific.Spe
   def this() = this(0)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
-      case pos$ if pos$ == 0 => {
+      case 0 => {
         value
       }.asInstanceOf[AnyRef]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
@@ -43,7 +43,7 @@ final case class Subtracted(var value: Int) extends org.apache.avro.specific.Spe
   }
   def put(field$: Int, value: Any): Unit = {
     (field$: @switch) match {
-      case pos$ if pos$ == 0 => this.value = {
+      case 0 => this.value = {
         value
       }.asInstanceOf[Int]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
@@ -61,7 +61,7 @@ final case class Divided(var value: Int) extends org.apache.avro.specific.Specif
   def this() = this(0)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
-      case pos$ if pos$ == 0 => {
+      case 0 => {
         value
       }.asInstanceOf[AnyRef]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
@@ -69,7 +69,7 @@ final case class Divided(var value: Int) extends org.apache.avro.specific.Specif
   }
   def put(field$: Int, value: Any): Unit = {
     (field$: @switch) match {
-      case pos$ if pos$ == 0 => this.value = {
+      case 0 => this.value = {
         value
       }.asInstanceOf[Int]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
@@ -87,7 +87,7 @@ final case class Multiplied(var value: Int) extends org.apache.avro.specific.Spe
   def this() = this(0)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
-      case pos$ if pos$ == 0 => {
+      case 0 => {
         value
       }.asInstanceOf[AnyRef]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
@@ -95,7 +95,7 @@ final case class Multiplied(var value: Int) extends org.apache.avro.specific.Spe
   }
   def put(field$: Int, value: Any): Unit = {
     (field$: @switch) match {
-      case pos$ if pos$ == 0 => this.value = {
+      case 0 => this.value = {
         value
       }.asInstanceOf[Int]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")

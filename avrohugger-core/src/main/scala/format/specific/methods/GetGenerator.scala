@@ -13,7 +13,7 @@ object GetGenerator {
   def toDef(indexedFields: List[IndexedField]) = {
     def asGetCase(field: IndexedField) = {
             
-      CASE (ID("pos$"), IF(REF("pos$") INT_== LIT(field.idx))) ==> {
+      CASE (LIT(field.idx)) ==> {
         BLOCK(convertToJava(field.avroField.schema, REF(field.avroField.name))).AS(AnyRefClass)
       }
     }
