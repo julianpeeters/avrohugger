@@ -10,9 +10,9 @@
 
 **Alternative Distributions:**
 
-* `sbt-avrohugger`: Generate source code at compile time with an sbt plugin [found here](https://github.com/julianpeeters/sbt-avrohugger).
-* `avrohugger-maven-plugin`: Generate source code at compile time with a maven plugin [found here](https://github.com/makubi/avrohugger-maven-plugin).
-* `avro2caseclass`: Generate source code from a web app, [found here](https://github.com/julianpeeters/avro2caseclass).
+* sbt: `sbt-avrohugger` - Generate source code at compile time with an sbt plugin [found here](https://github.com/julianpeeters/sbt-avrohugger).
+* maven: `avrohugger-maven-plugin` - Generate source code at compile time with a maven plugin [found here](https://github.com/makubi/avrohugger-maven-plugin).
+* on the web: `avro2caseclass` - Generate source code from a web app, [found here](https://github.com/julianpeeters/avro2caseclass).
 
 Table of contents
 =================
@@ -30,9 +30,8 @@ Table of contents
       * [Customizable namespace mapping](#customizable-namespace-mapping)
       * [Customizable enum style](#customizable-enum-style)
       * [Generate Classes Instead of Case Classes](generate-classes-instead-of-case-classes)
-    * [`avrohugger-tools`](#avrohugger-tools)
-    * [`sbt-avrohugger`](#sbt-avrohugger)
-    * [`avro2caseclass`](#avro2caseclass)
+    * [`avrohugger-filesorter`](#avrohugger-filesorter)
+    * [`avrohugger-tools`](#sbt-tools)
   * [Warnings](#warnings)
   * [Best Practices](#best-practices)
   * [Future](#future)
@@ -103,7 +102,7 @@ _Note:_ Currently [Treehugger](http://eed3si9n.com/treehugger/comments.html#Scal
 
 ##### Get the dependency with:
 
-    "com.julianpeeters" %% "avrohugger-core" % "0.15.1"
+    "com.julianpeeters" %% "avrohugger-core" % "0.16.0"
 
 
 ##### Description:
@@ -127,8 +126,8 @@ where 'T' can be `File`, `Schema`, or `String`.
 
 
 
-    import avrohugger._
-    import format._
+    import avrohugger.Generator
+    import format.SpecificRecord
 
     val schemaFile = new File("path/to/schema")
     val generator = new Generator(SpecificRecord)
@@ -189,39 +188,47 @@ Generate simple classes instead of case classes when fields.size > 22, useful fo
     val generator = new Generator(SpecificRecord, restrictedFieldNumber = true)
 
 
+#### `avrohugger-filesorter`
+
+
+##### Get the dependency with:
+
+    "com.julianpeeters" %% "avrohugger-filesorter" % "0.16.0"
+    
+
+##### Description:
+
+To ensure dependent schemas are compiled in the proper order (thus avoiding `org.apache.avro.SchemaParseException: Undefined name: "com.example.MyRecord"` parser errors), sort avsc and avdl files with the `sortSchemaFiles` method on `AvscFileSorter` and `AvdlFileSorter`respectively.
+
+
+##### Example:
+
+
+    import avrohugger.filesorter.AvscFileSorter
+    import java.io.File
+    
+    val sorted: List[File] = AvscFileSorter.sortSchemaFiles((srcDir ** "*.avsc")
+
+
 #### `avrohugger-tools`
 
 
-Download the avrohugger-tools jar for Scala [2.10](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.10/0.15.1/avrohugger-tools_2.10-0.15.1-assembly.jar) or Scala [2.11](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.11/0.15.1/avrohugger-tools_2.11-0.15.1-assembly.jar)(>20MB!) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
+Download the avrohugger-tools jar for Scala [2.10](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.10/0.16.0/avrohugger-tools_2.10-0.16.0-assembly.jar) or Scala [2.11](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.11/0.16.0/avrohugger-tools_2.11-0.16.0-assembly.jar)(>20MB!) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
 
 
 'generate' generates Scala case class definitions:
 
-`java -jar /path/to/avrohugger-tools_2.11-0.15.1-assembly.jar generate schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.11-0.16.0-assembly.jar generate schema user.avsc . `
 
 
 'generate-specific' generates definitions that extend SpecificRecordBase:
 
-`java -jar /path/to/avrohugger-tools_2.11-0.15.1-assembly.jar generate-specific schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.11-0.16.0-assembly.jar generate-specific schema user.avsc . `
 
 
 'generate-scavro' generates definitions that extend Scavro's AvroSerializable:
 
-`java -jar /path/to/avrohugger-tools_2.11-0.15.1-assembly.jar generate-scavro schema user.avsc . `
-
-#### `sbt-avrohugger`
-
-Also available as an sbt plugin [found here](https://github.com/julianpeeters/sbt-avrohugger)
-that adds a `generate` or `generate-specific` task to `compile` (an alternative
-to [macros](https://github.com/julianpeeters/avro-scala-macro-annotations)).
-
-
-#### `avro2caseclass`
-
-Code generation is also available via a web app
-[found here](https://github.com/julianpeeters/avro2caseclass). Hosted at
-Heroku on a hobbyist account, so it may take ~20 seconds to fire up the first
-time.
+`java -jar /path/to/avrohugger-tools_2.11-0.16.0-assembly.jar generate-scavro schema user.avsc . `
 
 
 ## Warnings
@@ -262,12 +269,13 @@ to flow data into a system that doesn't support them (e.g., Hive).
 * Support more Avro types: fixed, decimal via logical types.
 * Support for RPC using the Scavro format.
 * Support for expanding Standard ADT strings into SpecificRecord and Scavro ADTs
+* Integration with Kafka's schema registry
 
 ## Testing
 
 The `test` task will only run the tests in `src/test`.
-The `scripted` task runs all tests in `src/test`, as well as the serialization
-tests in `src/sbt-test`. _Note:_ the scripted tests depend on a local version
+The `scripted` task runs tests in `src/test`, as well as the serialization
+tests in `avrohugger-core/src/sbt-test`. _Note:_ the scripted tests depend on a local version
 of `sbt-avrohugger` that needs to be published with the updated version of
 `avrohugger` that is to be tested.
 
@@ -283,9 +291,16 @@ Contributors:
 - [Matt Allen](https://github.com/Matt343)
 - [Lars Albertsson](https://github.com/lallea)
 - [alancnet](https://github.com/alancnet)
+- [C-zito](https://github.com/C-Zito)
 - [Eugene Platonov](https://github.com/jozic)
 - [Matt Coffin](https://github.com/mcoffin)
 - [Tim Chan](https://github.com/timchan-lumoslabs)
+- [Jerome Wacongne](https://github.com/ch4mpy)
+- [Ryan Koval](http://github.ryankoval.com)
+- [Saket](https://github.com/skate056)
+- [Jon Morra](https://github.com/jon-morra-zefr)
+- [Simonas Gelazevicius](https://github.com/simsasg)
+
 
 ##### Criticism is appreciated.
 
