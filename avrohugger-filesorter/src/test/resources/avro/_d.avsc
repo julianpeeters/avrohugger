@@ -1,0 +1,11 @@
+{
+    "type": "record",
+    "namespace": "com.cavorite",
+    "name": "_D",
+    "doc": "Simple dependency",
+    "fields": [{
+            "name": "_c",
+            "type": "_C"
+        }
+    ]
+}

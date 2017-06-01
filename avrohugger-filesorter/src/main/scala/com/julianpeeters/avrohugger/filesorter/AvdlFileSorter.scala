@@ -1,4 +1,4 @@
-package com.julianpeeters.avrohugger.filesorter
+package avrohugger.filesorter
 
 import java.io.File
 
@@ -13,7 +13,7 @@ import scala.io.Source
   * correct order.
   * Created by Jon Morra on 2/7/17.
   */
-object AVDLFileSorter {
+object AvdlFileSorter {
   def sortSchemaFiles(filesTraversable: Traversable[File]): Seq[File] = {
     val files = filesTraversable.toList
     val importsMap = files.map{ file =>

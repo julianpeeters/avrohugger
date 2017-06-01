@@ -8,7 +8,7 @@ object BuildSettings {
 
   val buildSettings = Defaults.defaultSettings ++ scriptedSettings ++ Seq(
     organization := "com.julianpeeters",
-    version := "0.15.1",
+    version := "0.16.0-SNAPSHOT",
     scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-Ywarn-value-discard"),
     scalaVersion := "2.11.8",
     crossScalaVersions := Seq("2.10.6", scalaVersion.value),
@@ -72,7 +72,7 @@ object MyBuild extends Build {
     "avrohugger",
     file("."),
     settings = buildSettings
-  ) aggregate(core, tools, filesorter)
+  ) aggregate(core, filesorter, tools)
 
   lazy val core: Project = Project(
     "avrohugger-core",
@@ -80,7 +80,6 @@ object MyBuild extends Build {
     settings = buildSettings ++ Seq(
       libraryDependencies += "com.eed3si9n" %% "treehugger" % "0.4.1")
   )
-
 
   lazy val filesorter: Project = Project(
     "avrohugger-filesorter",

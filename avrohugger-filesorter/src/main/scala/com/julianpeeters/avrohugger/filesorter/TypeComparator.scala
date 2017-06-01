@@ -1,4 +1,4 @@
-package com.julianpeeters.avrohugger.filesorter
+package avrohugger.filesorter
 
 import spray.json._
 

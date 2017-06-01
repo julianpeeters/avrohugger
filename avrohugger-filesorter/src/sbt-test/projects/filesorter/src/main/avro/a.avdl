@@ -1,0 +1,10 @@
+@namespace( "foo.bar" )
+protocol AProtocol {
+    record A {
+        union { null, int } id = null;
+        union { null, string } name = null;
+    }
+    record D {
+        union { null, string } type = null;
+    }
+}

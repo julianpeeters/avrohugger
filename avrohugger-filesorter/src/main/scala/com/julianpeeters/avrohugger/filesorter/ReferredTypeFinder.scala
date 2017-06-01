@@ -1,4 +1,4 @@
-package com.julianpeeters.avrohugger.filesorter
+package avrohugger.filesorter
 
 import spray.json.DefaultJsonProtocol._
 import spray.json._
@@ -13,7 +13,9 @@ object ReferredTypeFinder {
     val Fields = "fields"
     val Type = "type"
     val Items = "items"
+    val Values = "values"
     val Array = "array"
+    val Map = "map"
     val Enum = "enum"
     val Record = "record"
     val Name = "name"
@@ -27,6 +29,7 @@ object ReferredTypeFinder {
         case JsString(Keys.Array) => findReferredTypes(fields(Keys.Items))
         case JsString(Keys.Enum) => List(fields(Keys.Name).convertTo[String])
         case JsString(Keys.Record) => findReferredTypes(fields(Keys.Fields))
+        case JsString(Keys.Map) => findReferredTypes(fields(Keys.Values))
         case nestedDefinition => findReferredTypes(nestedDefinition)
       }
     }

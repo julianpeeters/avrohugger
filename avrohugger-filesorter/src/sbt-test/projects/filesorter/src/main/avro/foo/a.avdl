@@ -1,0 +1,7 @@
+@namespace( "foo.bar.baz" )
+protocol BProtocol {
+    import idl "../a.avdl";
+    record B {
+        union { null, foo.bar.A } a = null;
+    }
+}

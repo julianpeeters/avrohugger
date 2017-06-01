@@ -1,4 +1,4 @@
-package com.julianpeeters.avrohugger.filesorter
+package avrohugger.filesorter
 
 import TypeComparator.strContainsType
 
@@ -15,13 +15,13 @@ import scala.io.Source
   * correct order. Code adapted from https://github.com/ch4mpy/sbt-avro/blob/master/src/main/scala/com/c4soft/sbtavro/SbtAvro.scala
   * by Jerome Wascongne
   */
-object AVSCFileSorter {
+object AvscFileSorter {
 
   def sortSchemaFiles(files: Traversable[File]): Seq[File] = {
     val sortedButReversed = mutable.MutableList.empty[File]
     def normalizeInput(files: List[File]) = files.sortBy(file => file.getName)
     var pending: Traversable[File] = normalizeInput(files.toList)
-    while(pending.nonEmpty) {
+    while (pending.nonEmpty) {
       val (used, unused) = usedUnusedSchemas(pending)
       sortedButReversed ++= unused
       pending = used
@@ -46,7 +46,7 @@ object AVSCFileSorter {
     val namespace = namespaceRegex.findFirstMatchIn(txt)
     val name = nameRegex.findFirstMatchIn(txt)
     val nameGroup = name.get.group(1)
-    if(namespace.isEmpty) {
+    if (namespace.isEmpty) {
       nameGroup
     } else {
       s"${namespace.get.group(1)}.$nameGroup"
