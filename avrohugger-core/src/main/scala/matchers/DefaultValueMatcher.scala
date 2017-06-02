@@ -17,7 +17,9 @@ object DefaultValueMatcher {
   
   // This code was stolen from here:
   // https://github.com/julianpeeters/avro-scala-macro-annotations/blob/104fa325a00044ff6d31184fa7ff7b6852e9acd5/macros/src/main/scala/avro/scala/macro/annotations/provider/matchers/FromJsonMatcher.scala
-  def getDefaultValue(field: Schema.Field, typeMatcher: TypeMatcher): Tree = {
+  def getDefaultValue(field: Schema.Field,
+                      typeMatcher: TypeMatcher,
+                      useFullName: Boolean = false): Tree = {
 
     val nullNode = new TextNode("null")
 
@@ -34,7 +36,9 @@ object DefaultValueMatcher {
           val x = node.getTextValue.getBytes.map((e: Byte) => LIT(e))
           REF("Array[Byte]") APPLY x
         }
-        case Schema.Type.ENUM => (REF(schema.getName) DOT node.getTextValue)
+        case Schema.Type.ENUM =>
+          val refName = if (useFullName) schema.getFullName else schema.getName
+          REF(refName) DOT node.getTextValue
         case Schema.Type.NULL => LIT(null)
         case Schema.Type.UNION => {
           val unionSchemas = schema.getTypes.asScala.toList
