@@ -1,0 +1,11 @@
+{
+  "name" : "F",
+  "type" : "record",
+  "namespace" : "com.cavorite",
+  "fields" : [
+    {
+      "name": "any",
+      "type": "int"
+    }
+  ]
+}

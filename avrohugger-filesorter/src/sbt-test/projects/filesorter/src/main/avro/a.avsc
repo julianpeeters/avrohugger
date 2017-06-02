@@ -1,0 +1,37 @@
+{
+    "type": "record",
+    "namespace": "com.cavorite",
+    "name": "A",
+    "doc": "Top-level schema testing fully-qualified dependent schema names",
+    "fields": [{
+            "doc": "fully-qualified dependent union field",
+            "name": "b",
+            "type": ["null", "com.cavorite.B"]
+        },{
+            "doc": "fully-qualified dependent record field",
+            "name": "c",
+            "type": "com.cavorite.C"
+        },{
+            "doc": "fully-qualified dependent array field",
+            "name": "d",
+            "type": {
+              "type": "array",
+              "items": "com.cavorite.D"
+            }
+        },{
+            "doc": "fully-qualified dependent enum field",
+            "name": "e",
+            "type": {
+              "type": "array",
+              "items": "com.cavorite.E"
+            }
+        },{
+            "doc": "fully-qualified dependent map field",
+            "name": "f",
+            "type": {
+              "type": "map",
+              "values": "com.cavorite.F"
+            }
+        }
+    ]
+}

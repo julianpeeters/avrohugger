@@ -1,0 +1,27 @@
+{
+    "type": "record",
+    "namespace": "com.cavorite",
+    "name": "_A",
+    "doc": "Top-level schema testing simple dependent schema names",
+    "fields": [{
+            "doc": "dependent union field",
+            "name": "_b",
+            "type": ["null", "_B"]
+        },{
+            "doc": "dependent record field",
+            "name": "_c",
+            "type": "_C"
+        },{
+            "doc": "dependent array field",
+            "name": "_d",
+            "type": {
+              "type": "array",
+              "items": "_D"
+            }
+        },{
+            "doc": "dependent enum field",
+            "name": "_e",
+            "type": "_E"
+        }
+    ]
+}
