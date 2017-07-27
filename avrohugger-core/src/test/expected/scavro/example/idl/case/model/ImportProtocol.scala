@@ -16,9 +16,7 @@ sealed trait ImportProtocol extends AvroSerializeable with Product with Serializ
 final case class DependentRecord(dependency: ExternalDependency, number: Int) extends AvroSerializeable with ImportProtocol {
   type J = JDependentRecord
   override def toAvro: JDependentRecord = {
-    new JDependentRecord(dependency match {
-      case ExternalDependency(number) => new JExternalDependency(number)
-    }, number)
+    new JDependentRecord(dependency.toAvro, number)
   }
 }
 
@@ -30,7 +28,7 @@ final object DependentRecord {
     override val avroClass: Class[JDependentRecord] = classOf[JDependentRecord]
     override val schema: Schema = JDependentRecord.getClassSchema()
     override val fromAvro: (JDependentRecord) => DependentRecord = {
-      (j: JDependentRecord) => DependentRecord(ExternalDependency(j.getDependency.getNumber.toInt), j.getNumber.toInt)
+      (j: JDependentRecord) => DependentRecord(ExternalDependency.metadata.fromAvro(j.getDependency), j.getNumber.toInt)
     }
   }
 }
@@ -68,9 +66,7 @@ final object DependentRecord2 {
 final case class DependentRecord3(dependency: Embedded, value: Boolean) extends AvroSerializeable with ImportProtocol {
   type J = JDependentRecord3
   override def toAvro: JDependentRecord3 = {
-    new JDependentRecord3(dependency match {
-      case Embedded(inner) => new JEmbedded(inner)
-    }, value)
+    new JDependentRecord3(dependency.toAvro, value)
   }
 }
 
@@ -82,7 +78,7 @@ final object DependentRecord3 {
     override val avroClass: Class[JDependentRecord3] = classOf[JDependentRecord3]
     override val schema: Schema = JDependentRecord3.getClassSchema()
     override val fromAvro: (JDependentRecord3) => DependentRecord3 = {
-      (j: JDependentRecord3) => DependentRecord3(Embedded(j.getDependency.getInner.toInt), j.getValue)
+      (j: JDependentRecord3) => DependentRecord3(Embedded.metadata.fromAvro(j.getDependency), j.getValue)
     }
   }
 }

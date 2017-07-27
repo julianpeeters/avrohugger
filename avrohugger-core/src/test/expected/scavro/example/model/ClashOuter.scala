@@ -17,18 +17,7 @@ case class ClashOuter(inner: Option[Array[Option[ClashInner]]]) extends AvroSeri
         val array: java.util.List[JClashInner] = new java.util.ArrayList[JClashInner]
         x foreach { element =>
           array.add(element match {
-            case Some(x) => x match {
-              case ClashInner(some, other, id) => new JClashInner(some match {
-                case Some(x) => x
-                case None => null
-              }, other match {
-                case Some(x) => x
-                case None => null
-              }, id match {
-                case Some(x) => x
-                case None => null
-              })
-            }
+            case Some(x) => x.toAvro
             case None => null
           })
         }
@@ -52,16 +41,7 @@ object ClashOuter {
         case _ => Some(Array((j.getInner.asScala: _*)) map { x =>
           x match {
             case null => None
-            case _ => Some(ClashInner(x.getSome match {
-              case null => None
-              case _ => Some(x.getSome.toInt)
-            }, x.getOther match {
-              case null => None
-              case _ => Some(x.getOther.toInt)
-            }, x.getId match {
-              case null => None
-              case _ => Some(x.getId.toInt)
-            }))
+            case _ => Some(ClashInner.metadata.fromAvro(x))
           }
         })
       })
