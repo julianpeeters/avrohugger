@@ -2,12 +2,7 @@ package avrohugger
 package test
 package scavro
 
-import java.io.File
-
-import avrohugger.Generator
 import avrohugger.format.Scavro
-import avrohugger.StringGenerator
-
 import org.specs2._
 
 class ScavroStringToStringsSpec extends mutable.Specification {
@@ -148,6 +143,16 @@ class ScavroStringToStringsSpec extends mutable.Specification {
 
       val expected = util.Util.readFile("avrohugger-core/src/test/expected/scavro/example/idl/model/Defaults.scala")
       source === expected
+    }
+
+    "17. correctly generate with messy schema" in {
+      val inputString = util.Util.readFile("avrohugger-core/src/test/avro/clash.avsc")
+      val gen = new Generator(Scavro)
+      val List(source0, source1, source2) = gen.stringToStrings(inputString)
+
+      source0 === util.Util.readFile("avrohugger-core/src/test/expected/scavro/example/model/ClashInner.scala")
+      source1 === util.Util.readFile("avrohugger-core/src/test/expected/scavro/example/model/ClashOuter.scala")
+      source2 === util.Util.readFile("avrohugger-core/src/test/expected/scavro/example/model/ClashRecord.scala")
     }
 
     import util.GlobalTests
