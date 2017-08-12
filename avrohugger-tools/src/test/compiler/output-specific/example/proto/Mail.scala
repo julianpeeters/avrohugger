@@ -1,9 +1,12 @@
 /** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
 package example.proto
 
-@SuppressWarnings(Array("all")) @org.apache.avro.specific.AvroGenerated trait Mail {
+@SuppressWarnings(Array("all"))
+@org.apache.avro.specific.AvroGenerated
+trait Mail {
   def send(message: example.proto.Message): java.lang.CharSequence
-  @SuppressWarnings(Array("all")) trait Callback extends Mail {
+  @SuppressWarnings(Array("all"))
+  trait Callback extends Mail {
     final val PROTOCOL: org.apache.avro.Protocol = example.proto.Mail.PROTOCOL
     /** @throws java.io.IOException The async call could not be completed. */
     def send(message: example.proto.Message, callback: org.apache.avro.ipc.Callback[java.lang.CharSequence]): Unit
