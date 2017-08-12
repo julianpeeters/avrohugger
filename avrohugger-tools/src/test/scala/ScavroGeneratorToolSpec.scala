@@ -4,8 +4,6 @@ import avrohugger.tool.{Main, Directory, GeneratorTool}
 import org.apache.avro.tool.Tool
 
 import org.specs2._
-import mutable._
-import specification._
 import scala.collection.JavaConverters._
 import scala.util.Try
 
@@ -22,52 +20,47 @@ class ScavroGeneratorToolSpec extends mutable.Specification {
       tool.run(null, null, null, Seq(args:_*).asJava)
     }
   }
-
-  "the generated Scala files" should {
-    
-    
-    
-    "match the expected single protocol file" in {
-      doCompile(Array[String] ("protocol",
-        Directory.TEST_INPUT_DIR.toString() + "/mail.avpr",
-        Directory.TEST_OUTPUT_SCAVRO_BASE_DIR.getPath()
-      ))
-      Util.readFile(Directory.TEST_OUTPUT_SCAVRO_MESSAGE) === Util.readFile(Directory.TEST_EXPECTED_SCAVRO_MESSAGE)
-    }
-
-    "match the expected single datafile file" in {
-      doCompile(Array[String] ("datafile",
-        Directory.TEST_INPUT_DIR.toString() + "/twitter.avro",
-        Directory.TEST_OUTPUT_SCAVRO_BASE_DIR.getPath()
-      ))
-      Util.readFile(Directory.TEST_OUTPUT_SCAVRO_TWITTER) === Util.readFile(Directory.TEST_EXPECTED_SCAVRO_TWITTER)
-    }
-
-    "match the expected single schema file" in {
-      doCompile(Array[String] ("schema",
-        Directory.TEST_INPUT_DIR.toString() + "/nickname.avsc",
-        Directory.TEST_OUTPUT_SCAVRO_BASE_DIR.getPath()
-      ))
-      Util.readFile(Directory.TEST_OUTPUT_SCAVRO_NICKNAME) === Util.readFile(Directory.TEST_EXPECTED_SCAVRO_NICKNAME)
-    }
-
-    "match the expected dependent files" in {
-      doCompile(Array[String]("schema",
-        Directory.TEST_INPUT_DIR.toString() + "/nickname.avsc",
-        Directory.TEST_INPUT_DIR.toString() + "/player.avsc",
-        Directory.TEST_OUTPUT_SCAVRO_BASE_DIR.getPath()
-      ))
-      Util.readFile(Directory.TEST_OUTPUT_SCAVRO_PLAYER)  === Util.readFile(Directory.TEST_EXPECTED_SCAVRO_PLAYER)
-    }
-
-    "match the expected file and directory" in {
-      doCompile(Array[String]("schema",
-        Directory.TEST_INPUT_DIR.toString() + "/nickname.avsc",
-        Directory.TEST_INPUT_DIR.toString(),
-        Directory.TEST_OUTPUT_SCAVRO_BASE_DIR.getPath()
-      ))
-      Util.readFile(Directory.TEST_OUTPUT_SCAVRO_PLAYER)  === Util.readFile(Directory.TEST_EXPECTED_SCAVRO_PLAYER)
-    }
-
+  
+  "match the expected single protocol file" in {
+    doCompile(Array[String] ("protocol",
+      Directory.TEST_INPUT_DIR.toString() + "/mail.avpr",
+      Directory.TEST_OUTPUT_SCAVRO_BASE_DIR.getPath()
+    ))
+    Util.readFile(Directory.TEST_OUTPUT_SCAVRO_MESSAGE) === Util.readFile(Directory.TEST_EXPECTED_SCAVRO_MESSAGE)
   }
+
+  "match the expected single datafile file" in {
+    doCompile(Array[String] ("datafile",
+      Directory.TEST_INPUT_DIR.toString() + "/twitter.avro",
+      Directory.TEST_OUTPUT_SCAVRO_BASE_DIR.getPath()
+    ))
+    Util.readFile(Directory.TEST_OUTPUT_SCAVRO_TWITTER) === Util.readFile(Directory.TEST_EXPECTED_SCAVRO_TWITTER)
+  }
+
+  "match the expected single schema file" in {
+    doCompile(Array[String] ("schema",
+      Directory.TEST_INPUT_DIR.toString() + "/nickname.avsc",
+      Directory.TEST_OUTPUT_SCAVRO_BASE_DIR.getPath()
+    ))
+    Util.readFile(Directory.TEST_OUTPUT_SCAVRO_NICKNAME) === Util.readFile(Directory.TEST_EXPECTED_SCAVRO_NICKNAME)
+  }
+
+  "match the expected dependent files" in {
+    doCompile(Array[String]("schema",
+      Directory.TEST_INPUT_DIR.toString() + "/nickname.avsc",
+      Directory.TEST_INPUT_DIR.toString() + "/player.avsc",
+      Directory.TEST_OUTPUT_SCAVRO_BASE_DIR.getPath()
+    ))
+    Util.readFile(Directory.TEST_OUTPUT_SCAVRO_PLAYER)  === Util.readFile(Directory.TEST_EXPECTED_SCAVRO_PLAYER)
+  }
+
+  "match the expected file and directory" in {
+    doCompile(Array[String]("schema",
+      Directory.TEST_INPUT_DIR.toString() + "/nickname.avsc",
+      Directory.TEST_INPUT_DIR.toString(),
+      Directory.TEST_OUTPUT_SCAVRO_BASE_DIR.getPath()
+    ))
+    Util.readFile(Directory.TEST_OUTPUT_SCAVRO_PLAYER)  === Util.readFile(Directory.TEST_EXPECTED_SCAVRO_PLAYER)
+  }
+
 }

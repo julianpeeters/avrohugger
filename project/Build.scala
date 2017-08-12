@@ -10,8 +10,8 @@ object BuildSettings {
     organization := "com.julianpeeters",
     version := "0.17.0-SNAPSHOT",
     scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-Ywarn-value-discard"),
-    scalaVersion := "2.11.11",
-    crossScalaVersions := Seq("2.10.6", scalaVersion.value),
+    scalaVersion := "2.12.3",
+    crossScalaVersions := Seq("2.10.6", "2.11.11", scalaVersion.value),
     resolvers += Resolver.typesafeIvyRepo("releases"),
     libraryDependencies += "org.apache.avro" % "avro" % avroVersion,
     libraryDependencies += "org.apache.avro" % "avro-compiler" % avroVersion,
@@ -21,9 +21,8 @@ object BuildSettings {
       CrossVersion.partialVersion(scalaVersion.value) match {
         case Some((2, scalaMajor)) if scalaMajor == 10 =>
           libraryDependencies.value ++ Seq (
-            "org.scalamacros" %% "quasiquotes" % "2.0.0" cross CrossVersion.binary
-          )
-        case Some((2, 11)) =>
+            "org.scalamacros" %% "quasiquotes" % "2.0.0" cross CrossVersion.binary)
+        case _ =>
           libraryDependencies.value ++ Seq()
       }
     },
@@ -31,7 +30,7 @@ object BuildSettings {
     libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value,
     libraryDependencies += "org.codehaus.jackson" % "jackson-core-asl" % "1.9.13",
     // for testing
-    libraryDependencies += "org.specs2" %% "specs2" % "2.4" % "test",
+    libraryDependencies += "org.specs2" %% "specs2-core" % "3.9.4" % "test",
     publishMavenStyle := true,
     publishArtifact in Test := false,
     publishTo <<= version { (v: String) =>
