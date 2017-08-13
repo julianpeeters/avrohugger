@@ -1,0 +1,196 @@
+package avrohugger
+package test
+
+import java.io.File
+
+import avrohugger._
+import avrohugger.format.SpecificRecord
+import org.specs2._
+
+class SchemaGenSpec extends Specification {
+  // Scala 2.10 can't parse package declarations, so rather than than maintain 
+  // a separate branch, these tests (that pass for 2.11) get commented out until 
+  // 2.10 is phased out.
+  def is = s2"""
+
+    Schema generator should
+      Expand a standard case class in the default package to implement SpecificRecord $e1
+      Expand an empty case class in the default package to implement SpecificRecord $e2
+      Expand an empty case class in the default package to implement SpecificRecord $e3
+      Expand a standard case class with immutable fields to implement SpecificRecord $e4
+      Expand a two packages to implement SpecificRecord $e5
+      Expand a two dependent packages to implement SpecificRecord $e6
+
+      Expand a standard case class in more than one package to implement SpecificRecord $e8
+      Expand a standard case class in a package with dots to implement SpecificRecord $e9
+      Expand two case classes in the default package to implement SpecificRecord $e10
+      Expand two case classes with immutable fields to implement SpecificRecord $e11
+      Expand two dependent case classes in the default package to implement SpecificRecord $e12
+      Expand two dependent case classes in a package to implement SpecificRecord $e13
+      Expand two dependent case classes in a complex package to implement SpecificRecord $e14
+      Expand a standard case class with mutable fields to implement SpecificRecord $e15
+      Expand a case class with mixed mutable and immutable fields to implement SpecificRecord $e16
+      Expand a scala enum to implement SpecificRecord $e17
+      Expand a case class with an enum field to implement SpecificRecord $e18
+  """
+  
+  def e1 = {
+    val schemaString = util.Util.readFile("avrohugger-core/src/test/schemagen/Person.scala")
+    val gen = new Generator(SpecificRecord)
+    val List(source) = gen.stringToStrings(schemaString)
+    source === util.Util.readFile("avrohugger-core/src/test/expected/schemagen/Person.scala")
+  }
+  
+  def e2 = {
+    val schemaString = util.Util.readFile("avrohugger-core/src/test/schemagen/Reset.scala")
+    val gen = new Generator(SpecificRecord)
+    val List(source) = gen.stringToStrings(schemaString)
+    source === util.Util.readFile("avrohugger-core/src/test/expected/schemagen/Reset.scala")
+  }
+
+  def e3 = {
+    val schemaString = util.Util.readFile("avrohugger-core/src/test/schemagen/Raise.scala")
+    val gen = new Generator(SpecificRecord)
+    val List(source) = gen.stringToStrings(schemaString)
+    source === util.Util.readFile("avrohugger-core/src/test/expected/schemagen/Raise.scala")
+  }
+
+  def e4 = {
+    val schemaString = util.Util.readFile("avrohugger-core/src/test/schemagen/example/Person.scala")
+    val gen = new Generator(SpecificRecord)
+    val List(source) = gen.stringToStrings(schemaString)
+    source === util.Util.readFile("avrohugger-core/src/test/expected/schemagen/example/Person.scala")
+  }
+
+  def e5 = {
+    val personString = util.Util.readFile("avrohugger-core/src/test/schemagen/example/Person.scala")
+    val vehicleString = util.Util.readFile("avrohugger-core/src/test/schemagen/test/Vehicle.scala")
+    val schemaString = s"$personString\n\n$vehicleString" 
+    val gen = new Generator(SpecificRecord)
+    val List(sourceVehicle, sourcePerson) = gen.stringToStrings(schemaString)
+    sourcePerson === util.Util.readFile("avrohugger-core/src/test/expected/schemagen/example/Person.scala")
+    sourceVehicle === util.Util.readFile("avrohugger-core/src/test/expected/schemagen/test/Vehicle.scala")
+  }
+
+  def e6 = {
+    val driverString = util.Util.readFile("avrohugger-core/src/test/schemagen/example/Driver.scala")
+    val vehicleString = util.Util.readFile("avrohugger-core/src/test/schemagen/test/major/Vehicle.scala")
+    val schemaString = s"$driverString\n\n$vehicleString" 
+    val gen = new Generator(SpecificRecord)
+    val List(sourceVehicle, sourceDriver) = gen.stringToStrings(schemaString)
+    sourceDriver === util.Util.readFile("avrohugger-core/src/test/expected/schemagen/example/Driver.scala")
+    sourceVehicle === util.Util.readFile("avrohugger-core/src/test/expected/schemagen/test/major/Vehicle.scala")
+  }
+
+ 
+    //TODO: handle imports. Eight possible package depths, eight possible 
+    //      import depths per import. Perhaps not feasible unless it becomes easier
+    //      to match arbitrary packages and arbitrary imports. 
+/*
+    // imports are not supported as of Scala 2.11.x: not legal package stat: import test.major.Vehicle
+  Expand a two dependent packages with imports to implement SpecificRecord $e7
+  def e7 = {
+    val garageString = util.Util.readFile("avrohugger-core/src/test/schemagen/example/Garage.scala")
+    val vehicleString = util.Util.readFile("avrohugger-core/src/test/schemagen/test/major/Vehicle.scala")
+    val schemaString =  s"$garageString\n\n$vehicleString"
+    val gen = new Generator(SpecificRecord)
+    val List(sourceVehicle, sourceGarage) = gen.stringToStrings(schemaString)
+    sourceGarage === util.Util.readFile("avrohugger-core/src/test/expected/schemagen/example/Garage.scala")
+    sourceVehicle === util.Util.readFile("avrohugger-core/src/test/expected/schemagen/test/major/Vehicle.scala")          
+  }
+*/
+
+  def e8 = {
+    val schemaString = util.Util.readFile("avrohugger-core/src/test/schemagen/test/testsub/Person.scala")
+    val gen = new Generator(SpecificRecord)
+    val List(source) = gen.stringToStrings(schemaString)
+    source === util.Util.readFile("avrohugger-core/src/test/expected/schemagen/test/testsub/Person.scala")
+  }
+
+  def e9 = {
+    val schemaString = util.Util.readFile("avrohugger-core/src/test/schemagen/test/example/testsub/Person.scala")
+    val gen = new Generator(SpecificRecord)
+    val List(source) = gen.stringToStrings(schemaString)
+    source === util.Util.readFile("avrohugger-core/src/test/expected/schemagen/test/example/testsub/Person.scala")
+  }
+
+  def e10 = {
+    val personString = util.Util.readFile("avrohugger-core/src/test/schemagen/Person.scala")
+    val raiseString = util.Util.readFile("avrohugger-core/src/test/schemagen/Raise.scala")
+    val schemaString = s"$personString\n\n$raiseString" 
+    val gen = new Generator(SpecificRecord)
+    val List(source2, source1) = gen.stringToStrings(schemaString)
+    source1 === util.Util.readFile("avrohugger-core/src/test/expected/schemagen/Person.scala")
+    source2 === util.Util.readFile("avrohugger-core/src/test/expected/schemagen/Raise.scala")
+  }
+
+  def e11 = {
+    val personString = util.Util.readFile("avrohugger-core/src/test/schemagen/example/Person.scala")
+    val petString = util.Util.readFile("avrohugger-core/src/test/schemagen/example/Pet.scala")
+    val schemaString = s"$personString\n\n$petString"
+    val gen = new Generator(SpecificRecord)
+    val List(source2, source1) = gen.stringToStrings(schemaString)
+    source1 === util.Util.readFile("avrohugger-core/src/test/expected/schemagen/example/Person.scala")
+    source2 === util.Util.readFile("avrohugger-core/src/test/expected/schemagen/example/Pet.scala")
+  }
+
+  def e12 = {
+    val petOwnerString = """case class PetOwner(pet: Pet)"""
+    val petString = util.Util.readFile("avrohugger-core/src/test/schemagen/Pet.scala")
+    val schemaString = s"$petOwnerString\n\n$petString"
+    val gen = new Generator(SpecificRecord)
+    val List(source2, source1) = gen.stringToStrings(schemaString)
+    source1 === util.Util.readFile("avrohugger-core/src/test/expected/schemagen/PetOwner.scala")
+    source2 === util.Util.readFile("avrohugger-core/src/test/expected/schemagen/Pet.scala")
+  }
+  
+  def e13 = {
+    val petOwnerString = """package test; case class PetOwner(pet: Pet)"""
+    val petString = util.Util.readFile("avrohugger-core/src/test/schemagen/Pet.scala")
+    val schemaString = s"$petOwnerString\n\n$petString"
+    val gen = new Generator(SpecificRecord)
+    val List(source2, source1) = gen.stringToStrings(schemaString)
+    source1 === util.Util.readFile("avrohugger-core/src/test/expected/schemagen/test/Person.scala")
+    source2 === util.Util.readFile("avrohugger-core/src/test/expected/schemagen/test/Pet.scala")
+  }
+  
+  def e14 = {
+    val petOwnerString = """package test.one.a; case class PetOwner(pet: Pet)"""
+    val petString = util.Util.readFile("avrohugger-core/src/test/schemagen/Pet.scala")
+    val schemaString = s"$petOwnerString\n\n$petString"
+    val gen = new Generator(SpecificRecord)
+    val List(source2, source1) = gen.stringToStrings(schemaString)
+    source1 === util.Util.readFile("avrohugger-core/src/test/expected/schemagen/test/one/a/Person.scala")
+    source2 === util.Util.readFile("avrohugger-core/src/test/expected/schemagen/test/one/a/Pet.scala")
+  }
+
+  def e15 = {
+    val schemaString = util.Util.readFile("avrohugger-core/src/test/schemagen/test/Leader.scala")
+    val gen = new Generator(SpecificRecord)
+    val List(source) = gen.stringToStrings(schemaString)
+    source === util.Util.readFile("avrohugger-core/src/test/expected/schemagen/test/Leader.scala")
+  }
+  
+  def e16 = {
+    val schemaString = util.Util.readFile("avrohugger-core/src/test/schemagen/test/Experiment.scala")
+    val gen = new Generator(SpecificRecord)
+    val List(source) = gen.stringToStrings(schemaString)
+    source === util.Util.readFile("avrohugger-core/src/test/expected/schemagen/test/Experiment.scala")
+  }
+  
+  def e17 = {
+    val codeString = util.Util.readFile("avrohugger-core/src/test/schemagen/example/Suit.scala")
+    val gen = new Generator(SpecificRecord)
+    val List(source) = gen.stringToStrings(codeString)
+    source === util.Util.readFile("avrohugger-core/src/test/expected/schemagen/example/Suit.scala")
+  }
+  
+  def e18 = {
+    val codeString = util.Util.readFile("avrohugger-core/src/test/schemagen/deck/Card.scala")
+    val gen = new Generator(SpecificRecord)
+    val List(sourceEnum, sourceRecord) = gen.stringToStrings(codeString)
+    sourceRecord === util.Util.readFile("avrohugger-core/src/test/expected/schemagen/deck/Card.scala")
+    sourceEnum === util.Util.readFile("avrohugger-core/src/test/expected/schemagen/deck/Suit.scala")
+  }
+
+}

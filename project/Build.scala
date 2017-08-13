@@ -10,8 +10,8 @@ object BuildSettings {
     organization := "com.julianpeeters",
     version := "0.17.0-SNAPSHOT",
     scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-Ywarn-value-discard"),
-    scalaVersion := "2.12.3",
-    crossScalaVersions := Seq("2.10.6", "2.11.11", scalaVersion.value),
+    scalaVersion := "2.11.11",
+    crossScalaVersions := Seq("2.10.6", scalaVersion.value),
     resolvers += Resolver.typesafeIvyRepo("releases"),
     libraryDependencies += "org.apache.avro" % "avro" % avroVersion,
     libraryDependencies += "org.apache.avro" % "avro-compiler" % avroVersion,
@@ -30,7 +30,7 @@ object BuildSettings {
     libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value,
     libraryDependencies += "org.codehaus.jackson" % "jackson-core-asl" % "1.9.13",
     // for testing
-    libraryDependencies += "org.specs2" %% "specs2-core" % "3.9.4" % "test",
+    libraryDependencies += "org.specs2" %% "specs2-core" % "3.8.6" % "test",
     publishMavenStyle := true,
     publishArtifact in Test := false,
     publishTo <<= version { (v: String) =>

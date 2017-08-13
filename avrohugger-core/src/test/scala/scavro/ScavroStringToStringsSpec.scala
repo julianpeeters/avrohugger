@@ -10,18 +10,38 @@ import avrohugger.StringGenerator
 
 import org.specs2._
 
-class ScavroStringToStringsSpec extends mutable.Specification {
-    
+class ScavroStringToStringsSpec extends Specification {
+  
+  def is = s2"""
+    Scavro Generator stringToStrings method should
+      correctly generate from a protocol with messages $e1
+      correctly generate a simple case class definition in a package $e2
+      correctly generate a simple case class definition in the default package $e3
+      correctly generate a nested case class definition from a schema $e4
+      correctly generate a nested case class from IDL $e5
+      correctly generate a recursive case class from IDL $e6
+      correctly generate enums from schema $e7
+      correctly generate enums from protocol $e8
+      correctly generate enums from IDL $e9
+      correctly generate nested enums $e10
+      correctly generate bytes from schema $e11
+      correctly generate bytes from protocol $e12
+      correctly generate bytes from IDL $e13
+      correctly generate records depending on others defined in a different- and same-namespaced AVDL and AVSC $e14
+      correctly generate an empty case class definition $e15
+      correctly generate default values $e16
+  """
+  
   // tests common to fileToX and stringToX
-  "1. correctly generate from a protocol with messages" in {
+  def e1 = {
     val inputString = util.Util.readFile("avrohugger-core/src/test/avro/mail.avpr")
     val gen = new Generator(Scavro)
     val List(source) = gen.stringToStrings(inputString)
     val expected = util.Util.readFile("avrohugger-core/src/test/expected/scavro/example/proto/model/Message.scala")
     source === expected
   }
-
-  "2. correctly generate a simple case class definition in a package" in {
+  
+  def e2 = {
     val inputString = util.Util.readFile("avrohugger-core/src/test/avro/user.avsc")
     val gen = new Generator(Scavro)
     val List(source) = gen.stringToStrings(inputString)
@@ -29,13 +49,13 @@ class ScavroStringToStringsSpec extends mutable.Specification {
     source === expected
   }
   
-  "3. correctly generate a simple case class definition in the default package" in {
+  def e3 = {
     val inputString = util.Util.readFile("avrohugger-core/src/test/avro/AvroTypeProviderTestNoNamespace.avsc")
     val gen = new Generator(Scavro)
     gen.stringToStrings(inputString) must throwA(new java.lang.RuntimeException("Scavro requires a namespace because Java classes cannot be imported from the default package"))
   }
   
-  "4. correctly generate a nested case class definition from a schema" in {
+  def e4 = {
     val inputString = util.Util.readFile("avrohugger-core/src/test/avro/nested.avsc")
     val gen = new Generator(Scavro)
     val List(source2, source1, source0) = gen.stringToStrings(inputString)
@@ -49,7 +69,7 @@ class ScavroStringToStringsSpec extends mutable.Specification {
     source2 === expected2
   }
   
-  "5. correctly generate a nested case class from IDL" in {
+  def e5 = {
     val inputString = util.Util.readFile("avrohugger-core/src/test/avro/nested.avdl")
     val gen = new Generator(Scavro)
     val List(source) = gen.stringToStrings(inputString)
@@ -57,15 +77,15 @@ class ScavroStringToStringsSpec extends mutable.Specification {
     source === expected      
   }
   
-  "6. correctly generate a recursive case class from IDL" in {
+  def e6 = {
     val inputString = util.Util.readFile("avrohugger-core/src/test/avro/recursive.avdl")
     val gen = new Generator(Scavro)
     val List(source) = gen.stringToStrings(inputString)
     val expected = util.Util.readFile("avrohugger-core/src/test/expected/scavro/example/idl/model/Recursive.scala")
     source === expected
   }
-
-  "7. correctly generate enums from schema" in {
+  
+  def e7 = {
     val inputString = util.Util.readFile("avrohugger-core/src/test/avro/enums.avsc")
     val gen = new Generator(Scavro)
     val List(source) = gen.stringToStrings(inputString)
@@ -73,7 +93,7 @@ class ScavroStringToStringsSpec extends mutable.Specification {
     source === expected
   }
   
-  "8. correctly generate enums from protocol" in {
+  def e8 = {
     val inputString = util.Util.readFile("avrohugger-core/src/test/avro/enums.avpr")
     val gen = new Generator(Scavro)
     val List(source) = gen.stringToStrings(inputString)
@@ -81,7 +101,7 @@ class ScavroStringToStringsSpec extends mutable.Specification {
     source === expected
   }
   
-  "9. correctly generate enums from IDL" in {
+  def e9 = {
     val inputString = util.Util.readFile("avrohugger-core/src/test/avro/enums.avdl")
     val gen = new Generator(Scavro)
     val List(source) = gen.stringToStrings(inputString)
@@ -89,7 +109,7 @@ class ScavroStringToStringsSpec extends mutable.Specification {
     source === expected
   }
   
-  "10. correctly generate nested enums" in {
+  def e10 = {
     val inputString = util.Util.readFile("avrohugger-core/src/test/avro/enums_nested.avsc")
     val gen = new Generator(Scavro)
     val List(sourceEnum, sourceRecord) = gen.stringToStrings(inputString)
@@ -101,7 +121,7 @@ class ScavroStringToStringsSpec extends mutable.Specification {
     sourceRecord === expectedRecord
   }
   
-  "11. correctly generate bytes from schema" in {
+  def e11 = {
     val inputString = util.Util.readFile("avrohugger-core/src/test/avro/bytes.avsc")
     val gen = new Generator(Scavro)
     val List(source) = gen.stringToStrings(inputString)
@@ -109,7 +129,7 @@ class ScavroStringToStringsSpec extends mutable.Specification {
     source === expected
   }
   
-  "12. correctly generate bytes from protocol" in {
+  def e12 = {
     val inputString = util.Util.readFile("avrohugger-core/src/test/avro/bytes.avpr")
     val gen = new Generator(Scavro)
     val List(source) = gen.stringToStrings(inputString)
@@ -117,7 +137,7 @@ class ScavroStringToStringsSpec extends mutable.Specification {
     source === expected
   }
   
-  "13. correctly generate bytes from IDL" in {
+  def e13 = {
     val inputString = util.Util.readFile("avrohugger-core/src/test/avro/bytes.avdl")
     val gen = new Generator(Scavro)
     val List(source) = gen.stringToStrings(inputString)
@@ -125,13 +145,13 @@ class ScavroStringToStringsSpec extends mutable.Specification {
     source === expected
   }
   
-  "14. correctly generate records depending on others defined in a different- and same-namespaced AVDL and AVSC" in {
+  def e14 = {
     val inputString = util.Util.readFile("avrohugger-core/src/test/avro/import.avdl")
     val gen = new Generator(Scavro)
     gen.stringToStrings(inputString) must throwA(new java.lang.RuntimeException("Imports not supported in String IDLs, only avdl files."))
   }
   
-  "15. correctly generate an empty case class definition" in {
+  def e15 = {
     val inputString = util.Util.readFile("avrohugger-core/src/test/avro/AvroTypeProviderTestEmptyRecord.avdl")
     val gen = new Generator(Scavro)
     val List(source) = gen.stringToStrings(inputString)
@@ -139,7 +159,7 @@ class ScavroStringToStringsSpec extends mutable.Specification {
     source === expected
   }
   
-  "16. correctly generate default values" in {
+  def e16 = {
     val inputString = util.Util.readFile("avrohugger-core/src/test/avro/defaults.avdl")
     val gen = new Generator(Scavro)
     val List(source) = gen.stringToStrings(inputString)
@@ -148,10 +168,4 @@ class ScavroStringToStringsSpec extends mutable.Specification {
     source === expected
   }
 
-  import util.GlobalTests
-  for ((test, idx) <- GlobalTests.tests.zipWithIndex) {
-    s"${idx + 17}. ${test.description}" in {
-      test.toSpec(Scavro).checkStringToStrings
-    }
-  }
 }
