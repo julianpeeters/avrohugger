@@ -29,7 +29,7 @@ Table of contents
       * [Customizable type mapping](#customizable-type-mapping)
       * [Customizable namespace mapping](#customizable-namespace-mapping)
       * [Customizable enum style](#customizable-enum-style)
-      * [Generate Classes Instead of Case Classes](generate-classes-instead-of-case-classes)
+      * [Generate Classes Instead of Case Classes](#generate-classes-instead-of-case-classes)
     * [`avrohugger-filesorter`](#avrohugger-filesorter)
     * [`avrohugger-tools`](#sbt-tools)
   * [Warnings](#warnings)
