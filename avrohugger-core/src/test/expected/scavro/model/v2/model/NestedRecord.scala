@@ -15,9 +15,7 @@ case class NestedRecord(nestedunion: Option[UnionRecord]) extends AvroSerializea
   type J = JNestedRecord
   override def toAvro: JNestedRecord = {
     new JNestedRecord(nestedunion match {
-      case Some(x) => x match {
-        case UnionRecord(blah) => new JUnionRecord(blah)
-      }
+      case Some(x) => x.toAvro
       case None => null
     })
   }
@@ -33,7 +31,7 @@ object NestedRecord {
     override val fromAvro: (JNestedRecord) => NestedRecord = {
       (j: JNestedRecord) => NestedRecord(j.getNestedunion match {
         case null => None
-        case _ => Some(UnionRecord(j.getNestedunion.getBlah.toString))
+        case _ => Some(UnionRecord.metadata.fromAvro(j.getNestedunion))
       })
     }
   }

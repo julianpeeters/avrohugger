@@ -29,14 +29,7 @@ class ScalaConverter(typeMatcher: TypeMatcher) {
         tree MATCH(conversionCases)
       }
       case Schema.Type.RECORD => {
-        val params = schema.getFields.asScala.flatMap(field => {
-          val updatedPath = field.schema.getFullName :: fieldPath
-          val accessorName = ScavroMethodRenamer.generateMethodName(schema, field, "get", "")
-          val updatedTree = tree DOT(accessorName)
-          if (fieldPath.contains(field.schema.getFullName)) List.empty
-          else List(convertFromJava(field.schema, updatedTree, updatedPath))
-        })
-        REF(schema.getName) APPLY params
+        REF(schema.getName).DOT("metadata").DOT("fromAvro").APPLY(tree)
       }
       case Schema.Type.UNION  => {
         val types = schema.getTypes.asScala

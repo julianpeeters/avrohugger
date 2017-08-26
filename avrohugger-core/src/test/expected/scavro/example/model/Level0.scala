@@ -10,11 +10,7 @@ import example.{Level0 => JLevel0, Level1 => JLevel1, Level2 => JLevel2}
 case class Level0(level1: Level1) extends AvroSerializeable {
   type J = JLevel0
   override def toAvro: JLevel0 = {
-    new JLevel0(level1 match {
-      case Level1(level2) => new JLevel1(level2 match {
-        case Level2(name) => new JLevel2(name)
-      })
-    })
+    new JLevel0(level1.toAvro)
   }
 }
 
@@ -26,7 +22,7 @@ object Level0 {
     override val avroClass: Class[JLevel0] = classOf[JLevel0]
     override val schema: Schema = JLevel0.getClassSchema()
     override val fromAvro: (JLevel0) => Level0 = {
-      (j: JLevel0) => Level0(Level1(Level2(j.getLevel1.getLevel2.getName.toString)))
+      (j: JLevel0) => Level0(Level1.metadata.fromAvro(j.getLevel1))
     }
   }
 }

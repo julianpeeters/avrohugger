@@ -18,14 +18,7 @@ import test.{ComplexExternalDependency => JComplexExternalDependency}
 case class ComplexExternalDependency(nestedrecord: NestedRecord) extends AvroSerializeable {
   type J = JComplexExternalDependency
   override def toAvro: JComplexExternalDependency = {
-    new JComplexExternalDependency(nestedrecord match {
-      case NestedRecord(nestedunion) => new JNestedRecord(nestedunion match {
-        case Some(x) => x match {
-          case UnionRecord(blah) => new JUnionRecord(blah)
-        }
-        case None => null
-      })
-    })
+    new JComplexExternalDependency(nestedrecord.toAvro)
   }
 }
 
@@ -37,10 +30,7 @@ object ComplexExternalDependency {
     override val avroClass: Class[JComplexExternalDependency] = classOf[JComplexExternalDependency]
     override val schema: Schema = JComplexExternalDependency.getClassSchema()
     override val fromAvro: (JComplexExternalDependency) => ComplexExternalDependency = {
-      (j: JComplexExternalDependency) => ComplexExternalDependency(NestedRecord(j.getNestedrecord.getNestedunion match {
-        case null => None
-        case _ => Some(UnionRecord(j.getNestedrecord.getNestedunion.getBlah.toString))
-      }))
+      (j: JComplexExternalDependency) => ComplexExternalDependency(NestedRecord.metadata.fromAvro(j.getNestedrecord))
     }
   }
 }

@@ -11,14 +11,7 @@ case class Recursive(name: String, recursive: Option[Recursive]) extends AvroSer
   type J = JRecursive
   override def toAvro: JRecursive = {
     new JRecursive(name, recursive match {
-      case Some(x) => x match {
-        case Recursive(name, recursive) => new JRecursive(name, recursive match {
-          case Some(x) => x match {
-            case Recursive(name, recursive) => new JRecursive(name)
-          }
-          case None => null
-        })
-      }
+      case Some(x) => x.toAvro
       case None => null
     })
   }
@@ -34,10 +27,7 @@ object Recursive {
     override val fromAvro: (JRecursive) => Recursive = {
       (j: JRecursive) => Recursive(j.getName.toString, j.getRecursive match {
         case null => None
-        case _ => Some(Recursive(j.getRecursive.getName.toString, j.getRecursive.getRecursive match {
-          case null => None
-          case _ => Some(Recursive(j.getRecursive.getRecursive.getName.toString))
-        }))
+        case _ => Some(Recursive.metadata.fromAvro(j.getRecursive))
       })
     }
   }

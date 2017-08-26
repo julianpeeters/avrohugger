@@ -2,18 +2,14 @@ package avrohugger
 package test
 package scavro
 
-import java.io.File
-
-import avrohugger.Generator
 import avrohugger.format.Scavro
-import avrohugger.StringGenerator
-
 import org.specs2._
 
 class ScavroStringToStringsSpec extends Specification {
   
   def is = s2"""
     Scavro Generator stringToStrings method should
+      correctly generate with messy schema $eA
       correctly generate from a protocol with messages $e1
       correctly generate a simple case class definition in a package $e2
       correctly generate a simple case class definition in the default package $e3
@@ -31,6 +27,16 @@ class ScavroStringToStringsSpec extends Specification {
       correctly generate an empty case class definition $e15
       correctly generate default values $e16
   """
+  
+  // tests specific to Scavro
+  def eA = {
+    val inputString = util.Util.readFile("avrohugger-core/src/test/avro/clash.avsc")
+    val gen = new Generator(Scavro)
+    val List(source0, source1, source2) = gen.stringToStrings(inputString)
+    source0 === util.Util.readFile("avrohugger-core/src/test/expected/scavro/example/model/ClashInner.scala")
+    source1 === util.Util.readFile("avrohugger-core/src/test/expected/scavro/example/model/ClashOuter.scala")
+    source2 === util.Util.readFile("avrohugger-core/src/test/expected/scavro/example/model/ClashRecord.scala")
+  }
   
   // tests common to fileToX and stringToX
   def e1 = {
@@ -163,7 +169,6 @@ class ScavroStringToStringsSpec extends Specification {
     val inputString = util.Util.readFile("avrohugger-core/src/test/avro/defaults.avdl")
     val gen = new Generator(Scavro)
     val List(source) = gen.stringToStrings(inputString)
-
     val expected = util.Util.readFile("avrohugger-core/src/test/expected/scavro/example/idl/model/Defaults.scala")
     source === expected
   }

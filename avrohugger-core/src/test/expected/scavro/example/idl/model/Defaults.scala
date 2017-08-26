@@ -50,9 +50,7 @@ final case class DefaultTest(suit: DefaultEnum.Value = DefaultEnum.SPADES, numbe
     }, optionStringValue match {
       case Some(x) => x
       case None => null
-    }, embedded match {
-      case Embedded(inner) => new JEmbedded(inner)
-    }, {
+    }, embedded.toAvro, {
       val array: java.util.List[java.lang.Integer] = new java.util.ArrayList[java.lang.Integer]
       defaultArray foreach { element =>
         array.add(element)
@@ -97,7 +95,7 @@ final object DefaultTest {
       }, j.getOptionStringValue match {
         case null => None
         case _ => Some(j.getOptionStringValue.toString)
-      }, Embedded(j.getEmbedded.getInner.toInt), Array((j.getDefaultArray.asScala: _*)) map { x =>
+      }, Embedded.metadata.fromAvro(j.getEmbedded), Array((j.getDefaultArray.asScala: _*)) map { x =>
         x.toInt
       }, j.getOptionalEnum match {
         case null => None
