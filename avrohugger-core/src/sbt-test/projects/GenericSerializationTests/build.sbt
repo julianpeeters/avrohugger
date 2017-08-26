@@ -1,4 +1,4 @@
-sbtavrohugger.SbtAvrohugger.avroSettings
+sourceGenerators in Compile += (avroScalaGenerate in Compile).taskValue
 
 organization := "com.julianpeeters"
 

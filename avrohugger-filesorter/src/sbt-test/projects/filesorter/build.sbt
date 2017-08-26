@@ -1,3 +1,3 @@
 name := "filesorter-test"
 
-sbtavrohugger.SbtAvrohugger.avroSettings
+sourceGenerators in Compile += (avroScalaGenerate in Compile).taskValue

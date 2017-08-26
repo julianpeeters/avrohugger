@@ -1,8 +1,8 @@
 import sbtavrohugger.AvrohuggerSettings.avroScalaCustomEnumStyle
 
-sbtavrohugger.SbtAvrohugger.avroSettings
+sourceGenerators in Compile += (avroScalaGenerate in Compile).taskValue
 
-(avroScalaCustomEnumStyle in avroConfig) := Map("enum"->"java enum")
+avroScalaCustomEnumStyle in Compile := Map("enum"->"java enum")
 
 organization := "com.julianpeeters"
 

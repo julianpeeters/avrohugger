@@ -16,11 +16,11 @@ sbtavro.SbtAvro.avroSettings
 
 version in sbtavro.SbtAvro.avroConfig := "1.8.0"
 
-sbtavrohugger.SbtAvrohugger.scavroSettings
+sourceGenerators in Compile += (avroScalaGenerateScavro in Compile).taskValue
 
-avroScalaCustomTypes in sbtavrohugger.SbtAvrohugger.avroConfig := Map("array" -> classOf[List[_]])
+avroScalaScavroCustomTypes in Compile := Map("array" -> classOf[List[_]])
 
-avroScalaCustomNamespace in sbtavrohugger.SbtAvrohugger.avroConfig := Map("model.v2" -> "scavromodelv2", "model" -> "scavromodel", "test" -> "scavrotest")
+avroScalaScavroCustomNamespace in Compile := Map("model.v2" -> "scavromodelv2", "model" -> "scavromodel", "test" -> "scavrotest")
 
 libraryDependencies ++= Seq(
   "org.oedura" %% "scavro" % "1.0.1",

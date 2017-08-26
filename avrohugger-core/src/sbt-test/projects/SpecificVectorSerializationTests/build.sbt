@@ -1,8 +1,8 @@
 import sbtavrohugger.AvrohuggerSettings.avroScalaCustomTypes
 
-sbtavrohugger.SbtAvrohugger.specificAvroSettings
+sourceGenerators in Compile += (avroScalaGenerateSpecific in Compile).taskValue
 
-(avroScalaCustomTypes in avroConfig) := Map("array" -> classOf[Vector[_]])
+avroScalaSpecificCustomTypes in Compile := Map("array" -> classOf[Vector[_]])
 
 organization := "com.julianpeeters"
 

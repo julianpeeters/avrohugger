@@ -1,8 +1,8 @@
 import sbtavrohugger.AvrohuggerSettings.avroScalaCustomEnumStyle
 
-sbtavrohugger.SbtAvrohugger.avroSettings
+sourceGenerators in Compile += (avroScalaGenerate in Compile).taskValue
 
-(avroScalaCustomEnumStyle in avroConfig) := Map("enum"->"case object")
+avroScalaCustomEnumStyle in Compile := Map("enum"->"case object")
 
 organization := "com.julianpeeters"
 

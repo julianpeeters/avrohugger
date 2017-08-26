@@ -1,14 +1,14 @@
-import sbtavrohugger.AvrohuggerSettings.avroScalaCustomNamespace
+sourceGenerators in Compile += (avroScalaGenerateSpecific in Compile).taskValue
 
-sbtavrohugger.SbtAvrohugger.specificAvroSettings
+avroSpecificScalaSource in Compile := new java.io.File(s"${baseDirectory.value}/myoutputdir")
 
-(scalaSource in avroConfig) := new java.io.File("myoutputdir")
-
-(avroScalaCustomNamespace in avroConfig) := Map("example"->"overridden")
+avroScalaSpecificCustomNamespace in Compile := Map("example"->"overridden")
 
 organization := "com.julianpeeters"
 
 name := "override-settings"
 
 version := "0.1-SNAPSHOT"
+
+libraryDependencies += "org.apache.avro" % "avro" % "1.7.7"
 

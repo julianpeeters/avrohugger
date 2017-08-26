@@ -1,9 +1,3 @@
-import sbtavrohugger.AvrohuggerSettings.{
-  avroScalaCustomEnumStyle,
-  avroScalaCustomNamespace,
-  avroScalaCustomTypes
-}
-
 organization := "com.julianpeeters"
 
 name := "datatype-scavro-serializaton-tests"
@@ -20,13 +14,13 @@ sbtavro.SbtAvro.avroSettings
 
 version in sbtavro.SbtAvro.avroConfig := "1.8.0"
 
-sbtavrohugger.SbtAvrohugger.scavroSettings
+sourceGenerators in Compile += (avroScalaGenerateScavro in Compile).taskValue
 
-avroScalaCustomTypes in sbtavrohugger.SbtAvrohugger.avroConfig := Map("array"-> classOf[List[_]])
+avroScalaScavroCustomTypes in Compile := Map("array"-> classOf[List[_]])
 
-avroScalaCustomEnumStyle in sbtavrohugger.SbtAvrohugger.avroConfig := Map("enum"-> "case object")
+avroScalaScavroCustomEnumStyle in Compile := Map("enum"-> "case object")
 
-avroScalaCustomNamespace in sbtavrohugger.SbtAvrohugger.avroConfig := Map("SCAVRO_DEFAULT_PACKAGE$" -> "scavro")
+avroScalaScavroCustomNamespace in Compile := Map("SCAVRO_DEFAULT_PACKAGE$" -> "scavro")
 
 libraryDependencies ++= Seq(
   "org.oedura" %% "scavro" % "1.0.1",
