@@ -15,9 +15,7 @@ case class Player(number: Int, first_name: String, last_name: String, nicknames:
     new JPlayer(number, first_name, last_name, {
       val array: java.util.List[JNickname] = new java.util.ArrayList[JNickname]
       nicknames foreach { element =>
-        array.add(element match {
-          case Nickname(name) => new JNickname(name)
-        })
+        array.add(element.toAvro)
       }
       array
     })
@@ -33,7 +31,7 @@ object Player {
     override val schema: Schema = JPlayer.getClassSchema()
     override val fromAvro: (JPlayer) => Player = {
       (j: JPlayer) => Player(j.getNumber.toInt, j.getFirstName.toString, j.getLastName.toString, Array((j.getNicknames.asScala: _*)) map { x =>
-        Nickname(x.getName.toString)
+        Nickname.metadata.fromAvro(x)
       })
     }
   }

@@ -1,5 +1,3 @@
-import sbtavrohugger.AvrohuggerSettings.{avroScalaCustomNamespace, avroScalaCustomTypes}
-
 organization := "com.julianpeeters"
 
 name := "datatype-scavro-serializaton-tests"

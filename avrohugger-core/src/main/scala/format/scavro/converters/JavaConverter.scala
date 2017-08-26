@@ -49,21 +49,7 @@ class JavaConverter(
         tree MATCH(conversionCases)
       }
       case Schema.Type.RECORD => {
-        val scalaClass = classStore.generatedClasses(schema)
-        val javaClass = REF("J" + scalaClass.toString)
-        val ids = schema.getFields.asScala.map(field => ID(field.name))
-        val fieldConversions = schema.getFields.asScala.flatMap(field => {
-          val updatedPath = field.schema.getFullName :: fieldPath
-          if (fieldPath.contains(field.schema.getFullName)) List.empty
-          else List(convertToJava(field.schema, REF(field.name), updatedPath))
-        //  REF(field.name)
-        })
-        val conversionCases = List(
-          CASE(scalaClass UNAPPLY(ids)) ==> {
-            NEW(javaClass APPLY(fieldConversions))
-          }
-        )
-        tree MATCH(conversionCases:_*)
+        tree DOT "toAvro"
       }
       case Schema.Type.UNION => {
         val types = schema.getTypes.asScala

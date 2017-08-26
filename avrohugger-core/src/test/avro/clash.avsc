@@ -1,0 +1,48 @@
+{
+  "type": "record",
+  "name": "ClashRecord",
+  "namespace": "example.avro",
+  "fields": [
+    {
+      "name": "some",
+      "type": "int"
+    },
+    {
+      "name": "outer",
+      "type": {
+        "type": "record",
+        "name": "ClashOuter",
+        "fields": [
+          {
+            "name": "inner",
+            "type": ["null", {
+              "type": "array",
+              "items": ["null", {
+                "type": "record",
+                "name": "ClashInner",
+                "fields": [
+                  {
+                    "name": "some",
+                    "type": ["null", "int"]
+                  },
+                  {
+                    "name": "other",
+                    "type": ["null", "int"]
+                  },
+                  {
+                    "name": "id",
+                    "type": ["null", "int"]
+                  }
+                ]
+              }]
+            }]
+          }
+        ]
+      }
+    },
+    {
+      "name": "id",
+      "type": "int"
+    }
+  ]
+}

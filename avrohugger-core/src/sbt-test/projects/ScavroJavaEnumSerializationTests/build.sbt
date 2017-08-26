@@ -16,9 +16,9 @@ version in sbtavro.SbtAvro.avroConfig := "1.8.0"
 
 sourceGenerators in Compile += (avroScalaGenerateScavro in Compile).taskValue
 
-avroScalaCustomTypes in Compile := Map("array"-> classOf[List[_]])
+avroScalaScavroCustomTypes in Compile := Map("array"-> classOf[List[_]])
 
-avroScalaCustomEnumStyle in Compile := Map("enum"-> "java enum")
+avroScalaScavroCustomEnumStyle in Compile := Map("enum"-> "java enum")
 
 avroScalaCustomNamespace in Compile := Map("SCAVRO_DEFAULT_PACKAGE$" -> "scavro")
 
