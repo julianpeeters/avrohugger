@@ -1,1 +1,1 @@
-"org.scala-sbt" % "scripted-plugin" % sbtVersion
+libraryDependencies += "org.scala-sbt" % "scripted-plugin" % sbtVersion.value
