@@ -1,5 +1,3 @@
-import sbtavrohugger.AvrohuggerSettings.avroScalaCustomEnumStyle
-
 sourceGenerators in Compile += (avroScalaGenerate in Compile).taskValue
 
 avroScalaCustomEnumStyle in Compile := Map("enum"->"case object")

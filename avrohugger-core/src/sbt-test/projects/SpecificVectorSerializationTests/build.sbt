@@ -1,5 +1,3 @@
-import sbtavrohugger.AvrohuggerSettings.avroScalaCustomTypes
-
 sourceGenerators in Compile += (avroScalaGenerateSpecific in Compile).taskValue
 
 avroScalaSpecificCustomTypes in Compile := Map("array" -> classOf[Vector[_]])

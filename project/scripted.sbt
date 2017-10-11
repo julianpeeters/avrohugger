@@ -1,0 +1,1 @@
+"org.scala-sbt" % "scripted-plugin" % sbtVersion

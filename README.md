@@ -6,13 +6,14 @@
 **Schema-to-case-class code generation for working with Avro in Scala.**
 
 * `avrohugger-core`: Generate source code at runtime for evaluation at a later step.
+* `avrohugger-filesorter`: Sort schema files for proper compilation order.
 * `avrohugger-tools`: Generate source code at the command line with the avrohugger-tools jar.
 
 **Alternative Distributions:**
 
-* sbt: `sbt-avrohugger` - Generate source code at compile time with an sbt plugin [found here](https://github.com/julianpeeters/sbt-avrohugger).
-* maven: `avrohugger-maven-plugin` - Generate source code at compile time with a maven plugin [found here](https://github.com/makubi/avrohugger-maven-plugin).
-* on the web: `avro2caseclass` - Generate source code from a web app, [found here](https://github.com/julianpeeters/avro2caseclass).
+* **sbt**: `sbt-avrohugger` - Generate source code at compile time with an sbt plugin [found here](https://github.com/julianpeeters/sbt-avrohugger).
+* **maven**: `avrohugger-maven-plugin` - Generate source code at compile time with a maven plugin [found here](https://github.com/makubi/avrohugger-maven-plugin).
+* **on the web**: `avro2caseclass` - Generate source code from a web app, [found here](https://github.com/julianpeeters/avro2caseclass).
 
 Table of contents
 =================
@@ -120,7 +121,7 @@ or
 `tToStrings(input: T): List[String]`
 
 
-where 'T' can be `File`, `Schema`, or `String`.
+where `T` can be `File`, `Schema`, or `String`.
 
 ##### Example
 
@@ -144,7 +145,7 @@ protocol, IDL, or a set of case classes that you'd like to have implement
 
 ##### Customizable Type Mapping:
 
-Avro 'array' is represented by Scala `List` by default. `array` can be
+Avro `array` is represented by Scala `List` by default. `array` can be
 reassigned to either `Array` or `Vector` by instantiating a `Generator` with a
 custom type map:
 
@@ -173,7 +174,7 @@ _Scavro_: by default, a "model" package is appended to the namespace to create a
 
 `SpecificRecord` format requires that enums be represented as Java enums. By
  default, `Standard` and `Scavro` formats use Scala enumerations, but can be
- reassigned to 'case object' or 'java enum' by instantiating a `Generator`
+ reassigned to `case object` or `java enum` by instantiating a `Generator`
  with a custom enum style map:
 
 
@@ -216,17 +217,17 @@ To ensure dependent schemas are compiled in the proper order (thus avoiding `org
 Download the avrohugger-tools jar for Scala [2.10](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.10/0.16.0/avrohugger-tools_2.10-0.16.0-assembly.jar) or Scala [2.11](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.11/0.16.0/avrohugger-tools_2.11-0.16.0-assembly.jar)(>20MB!) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
 
 
-'generate' generates Scala case class definitions:
+`generate` generates Scala case class definitions:
 
 `java -jar /path/to/avrohugger-tools_2.11-0.16.0-assembly.jar generate schema user.avsc . `
 
 
-'generate-specific' generates definitions that extend SpecificRecordBase:
+`generate-specific` generates definitions that extend SpecificRecordBase:
 
 `java -jar /path/to/avrohugger-tools_2.11-0.16.0-assembly.jar generate-specific schema user.avsc . `
 
 
-'generate-scavro' generates definitions that extend Scavro's AvroSerializable:
+`generate-scavro` generates definitions that extend Scavro's AvroSerializable:
 
 `java -jar /path/to/avrohugger-tools_2.11-0.16.0-assembly.jar generate-scavro schema user.avsc . `
 
@@ -239,7 +240,7 @@ a Schema to DatumReaders and DatumWriters (as in the Avro example above).
 
 2) For the `SpecificRecord` format, generated case class fields must be
 mutable (`var`) in order to be compatible with the SpecificRecord API. _Note:_
-If your framework allows 'GenericRecord', [avro4s](https://github.com/sksamuel/avro4s) provides a type class that converts to and from immutable case classes cleanly
+If your framework allows `GenericRecord`, [avro4s](https://github.com/sksamuel/avro4s) provides a type class that converts to and from immutable case classes cleanly
 (though seems to fail on maps and case object enums as of v1.4.3).
 
 3) When the input is a case class definition string, import statements are
