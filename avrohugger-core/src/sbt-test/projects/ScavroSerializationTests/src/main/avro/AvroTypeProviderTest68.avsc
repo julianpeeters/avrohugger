@@ -1,1 +1,0 @@
-{"type":"record","name":"AvroTypeProviderTest68","namespace":"test","doc":"Auto-generated schema","fields":[{"name":"x","type":["null",{"type":"array","items":["null","AvroTypeProviderTest00"]}],"doc":"Auto-Generated Field"},{"name":"y","type":{"type":"array","items":["null","AvroTypeProviderTest01"]},"doc":"Auto-Generated Field"}]}

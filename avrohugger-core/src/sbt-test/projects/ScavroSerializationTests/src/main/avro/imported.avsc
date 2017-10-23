@@ -1,6 +1,0 @@
-{
-  "namespace": "other.ns",
-  "name": "Suit",
-  "type": "enum",
-  "symbols" : ["SPADES", "DIAMONDS", "CLUBS", "HEARTS"]
-}

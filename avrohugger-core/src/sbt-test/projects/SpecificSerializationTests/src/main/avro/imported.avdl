@@ -1,8 +1,0 @@
-@namespace("other.ns")
-
-protocol ImportedProtocol {
-
-  record ExternalDependency {
-    int number;
-  }
-}
