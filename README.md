@@ -32,10 +32,9 @@ Table of contents
       * [Customizable enum style](#customizable-enum-style)
       * [Generate Classes Instead of Case Classes](#generate-classes-instead-of-case-classes)
     * [`avrohugger-filesorter`](#avrohugger-filesorter)
-    * [`avrohugger-tools`](#sbt-tools)
+    * [`avrohugger-tools`](#avrohugger-tools)
   * [Warnings](#warnings)
   * [Best Practices](#best-practices)
-  * [Future](#future)
   * [Testing](#testing)
   * [Credits](#credits)
 
@@ -96,14 +95,15 @@ _Note:_ Currently [Treehugger](http://eed3si9n.com/treehugger/comments.html#Scal
 
 ## Usage
 
-**For Scala 2.10 and 2.11 (Generates Code Compatible with Scala 2.10, 2.11, and 2.12)**
+* **For Scala 2.10, 2.11, and 2.12**
+* **Generating Code Compatible with Scala 2.10, 2.11, and 2.12)**
 
 
 #### `avrohugger-core`
 
 ##### Get the dependency with:
 
-    "com.julianpeeters" %% "avrohugger-core" % "0.16.0"
+    "com.julianpeeters" %% "avrohugger-core" % "0.17.0"
 
 
 ##### Description:
@@ -194,7 +194,7 @@ Generate simple classes instead of case classes when fields.size > 22, useful fo
 
 ##### Get the dependency with:
 
-    "com.julianpeeters" %% "avrohugger-filesorter" % "0.16.0"
+    "com.julianpeeters" %% "avrohugger-filesorter" % "0.17.0"
     
 
 ##### Description:
@@ -214,22 +214,22 @@ To ensure dependent schemas are compiled in the proper order (thus avoiding `org
 #### `avrohugger-tools`
 
 
-Download the avrohugger-tools jar for Scala [2.10](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.10/0.16.0/avrohugger-tools_2.10-0.16.0-assembly.jar) or Scala [2.11](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.11/0.16.0/avrohugger-tools_2.11-0.16.0-assembly.jar)(>20MB!) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
+  Download the avrohugger-tools jar for Scala [2.10](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.10/0.17.0/avrohugger-tools_2.10-0.17.0-assembly.jar), Scala [2.11](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.11/0.17.0/avrohugger-tools_2.11-0.17.0-assembly.jar), or Scala [2.12](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.12/0.17.0/avrohugger-tools_2.12-0.17.0-assembly.jar) (>30MB!) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
 
 
-`generate` generates Scala case class definitions:
+* `generate` generates Scala case class definitions:
 
-`java -jar /path/to/avrohugger-tools_2.11-0.16.0-assembly.jar generate schema user.avsc . `
-
-
-`generate-specific` generates definitions that extend SpecificRecordBase:
-
-`java -jar /path/to/avrohugger-tools_2.11-0.16.0-assembly.jar generate-specific schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.12-0.17.0-assembly.jar generate schema user.avsc . `
 
 
-`generate-scavro` generates definitions that extend Scavro's AvroSerializable:
+* `generate-specific` generates definitions that extend Avro's `SpecificRecordBase`:
 
-`java -jar /path/to/avrohugger-tools_2.11-0.16.0-assembly.jar generate-scavro schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.12-0.17.0-assembly.jar generate-specific schema user.avsc . `
+
+
+* `generate-scavro` generates definitions that extend Scavro's `AvroSerializable`:
+
+`java -jar /path/to/avrohugger-tools_2.12-0.17.0-assembly.jar generate-scavro schema user.avsc . `
 
 
 ## Warnings
@@ -240,7 +240,8 @@ a Schema to DatumReaders and DatumWriters (as in the Avro example above).
 
 2) For the `SpecificRecord` format, generated case class fields must be
 mutable (`var`) in order to be compatible with the SpecificRecord API. _Note:_
-If your framework allows `GenericRecord`, [avro4s](https://github.com/sksamuel/avro4s) provides a type class that converts to and from immutable case classes cleanly
+If your framework allows `GenericRecord`, [avro4s](https://github.com/sksamuel/avro4s)
+provides a type class that converts to and from immutable case classes cleanly
 (though seems to fail on maps and case object enums as of v1.4.3).
 
 3) When the input is a case class definition string, import statements are
@@ -265,16 +266,13 @@ to flow data into a system that doesn't support them (e.g., Hive).
 3) Use default field values in case of future schema evolution ([further reading](https://github.com/julianpeeters/avrohugger/issues/23)).
 
 
-## Future
-
-* Support more Avro types: fixed, decimal via logical types.
-* Support for RPC using the Scavro format.
-* Support for expanding Standard ADT strings into SpecificRecord and Scavro ADTs
-* Integration with Kafka's schema registry
-
 ## Testing
 
-The `test` task will only run the tests in `src/test`.
+* To test for regressions, please run `sbt:avrohugger> + test`.
+* To test that generated code can be de/serialized as expected, please run 
+`sbt:avrohugger> + publishLocal`, then clone sbt-avrohugger, update its
+avrohugger dependency to the local version, and please run
+`sbt:sbt-avrohugger> scripted`
 The `scripted` task runs tests in `src/test`, as well as the serialization
 tests in `avrohugger-core/src/sbt-test`. _Note:_ the scripted tests depend on a local version
 of `sbt-avrohugger` that needs to be published with the updated version of
@@ -301,6 +299,7 @@ Contributors:
 - [Saket](https://github.com/skate056)
 - [Jon Morra](https://github.com/jon-morra-zefr)
 - [Simonas Gelazevicius](https://github.com/simsasg)
+- [Daniel Davis](https://github.com/wabu)
 
 
 ##### Criticism is appreciated.
