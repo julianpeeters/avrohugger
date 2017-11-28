@@ -8,6 +8,8 @@ import avrohugger.input.NestedSchemaExtractor._
 import avrohugger.matchers.TypeMatcher
 import avrohugger.stores.SchemaStore
 
+import collection.JavaConverters._
+
 import org.apache.avro.{ Protocol, Schema }
 import org.apache.avro.Schema.Type.RECORD
 
@@ -22,9 +24,28 @@ object StandardImporter extends Importer {
     currentNamespace: Option[String],
     schemaStore: SchemaStore,
     typeMatcher: TypeMatcher): List[Import] = {
+
+    val shapelessCopSymbolsImport = RootClass.newClass("shapeless.{:+:, CNil}")
+    val shapelessImport = IMPORT(shapelessCopSymbolsImport)
+
     val topLevelSchemas = getTopLevelSchemas(schemaOrProtocol, schemaStore)
     val recordSchemas = getRecordSchemas(topLevelSchemas)
-    getRecordImports(recordSchemas, currentNamespace, typeMatcher)
+    val deps = getRecordImports(recordSchemas, currentNamespace, typeMatcher)
+
+    schemaOrProtocol match {
+      case Left(schema) => {
+        val includeShapeless =
+          schema.getFields.asScala.exists(_.schema().getType == Schema.Type.UNION)
+        if (schema.getType == RECORD && includeShapeless) shapelessImport :: deps
+        else deps
+      }
+      case Right(protocol) => {
+        val types = protocol.getTypes.asScala.toList
+        val includeShapeless = types.exists(_.getFields.asScala.exists(_.schema().getType == Schema.Type.UNION))
+        if (includeShapeless) shapelessImport :: deps
+        else deps
+      }
+    }
   }
 
 }
