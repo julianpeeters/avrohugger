@@ -1,16 +1,19 @@
 package avrohugger
 package matchers
 
-import stores.ClassStore
+import java.io.ByteArrayOutputStream
+import java.nio.charset.StandardCharsets
 
+import stores.ClassStore
 import treehugger.forest._
 import treehuggerDSL._
 import definitions._
-
 import org.apache.avro.Schema
 import org.apache.avro.Schema.{Type => AvroType}
-
 import java.util.concurrent.ConcurrentHashMap
+
+import treehugger.forest
+
 import scala.collection.convert.Wrappers.JConcurrentMapWrapper
 import scala.collection.JavaConverters._
 
@@ -46,6 +49,13 @@ class TypeMatcher {
   // updates the enum style map map to allow for avro to java or scala mappings
   def updateCustomEnumStyleMap(customEnumStyleMapEntry: (String, String)) {
     val _ = customEnumStyleMap += customEnumStyleMapEntry
+  }
+
+  def coproductType(tp: Type*): forest.Type =  {
+    val copTypes = tp.toList :+ typeRef(RootClass.newClass(newTypeName("CNil")))
+    val chain: forest.Tree = INFIX_CHAIN(":+:", copTypes.map(t => Ident(t.safeToString)))
+    val chainedS = treeToString(chain)
+    typeRef(RootClass.newClass(newTypeName(chainedS)))
   }
 
   def toScalaType(
@@ -87,18 +97,12 @@ class TypeMatcher {
         case Schema.Type.BYTES    => TYPE_ARRAY(ByteClass)
         case Schema.Type.RECORD   => classStore.generatedClasses(schema)
         case Schema.Type.ENUM     => classStore.generatedClasses(schema)
-        case Schema.Type.UNION    => { 
+        case Schema.Type.UNION    => {
+          //unions are represented as shapeless.Coproduct
           val unionSchemas = schema.getTypes.asScala.toList
-          // unions are represented as Scala Option[T], and thus unions must be 
-          // of two types, one of them NULL
-          val isTwoTypes = unionSchemas.length == 2
-          val oneTypeIsNull = unionSchemas.exists(_.getType == Schema.Type.NULL)
-          if (isTwoTypes && oneTypeIsNull) {
-            val maybeSchema = unionSchemas.find(_.getType != Schema.Type.NULL)
-            if (maybeSchema.isDefined ) optionType(matchType(maybeSchema.get))
-            else sys.error("no avro type found in this union")  
-          }
-          else sys.error("unions not yet supported beyond nullable fields")
+          val matchedTypes = unionSchemas.map(matchType)
+          val result = coproductType(matchedTypes: _*)
+          result
         }
         case x => sys.error( x + " is not supported or not a valid Avro type")
       }
