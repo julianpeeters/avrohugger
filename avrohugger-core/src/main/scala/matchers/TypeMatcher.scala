@@ -1,9 +1,6 @@
 package avrohugger
 package matchers
 
-import java.io.ByteArrayOutputStream
-import java.nio.charset.StandardCharsets
-
 import stores.ClassStore
 import treehugger.forest._
 import treehuggerDSL._

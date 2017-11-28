@@ -39,8 +39,6 @@ object StandardCaseClassTree {
       PARAM(fieldName, fieldType) := defaultValue
     })
 
-    println(params)
-
     // There could be base traits, flags, or both, and could have no fields
     val caseClassDef = (maybeBaseTrait, maybeFlags) match {
       case (Some(baseTrait), Some(flags)) => {

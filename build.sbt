@@ -2,13 +2,14 @@ lazy val avroVersion = "1.7.7"
 
 lazy val commonSettings = Seq(
   organization := "com.julianpeeters",
-  version := "0.17.0",
+  version := "0.17.0-SNAPSHOT",
   scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-Ywarn-value-discard"),
   scalaVersion := "2.12.4",
   crossScalaVersions := Seq("2.10.6", "2.11.11", scalaVersion.value),
   resolvers += Resolver.typesafeIvyRepo("releases"),
   libraryDependencies += "org.apache.avro" % "avro" % avroVersion,
   libraryDependencies += "org.apache.avro" % "avro-compiler" % avroVersion,
+  libraryDependencies += "com.chuusai" %% "shapeless" % "2.3.2" % Test,
   // for implementing SpecificRecord from standard case class definitions
   addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full),
   libraryDependencies := {
