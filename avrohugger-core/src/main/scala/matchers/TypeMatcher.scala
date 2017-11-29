@@ -48,22 +48,15 @@ class TypeMatcher {
     val _ = customEnumStyleMap += customEnumStyleMapEntry
   }
 
-  def coproductType(tp: Type*): forest.Type =  {
-    val copTypes = tp.toList :+ typeRef(RootClass.newClass(newTypeName("CNil")))
-    val chain: forest.Tree = INFIX_CHAIN(":+:", copTypes.map(t => Ident(t.safeToString)))
-    val chainedS = treeToString(chain)
-    typeRef(RootClass.newClass(newTypeName(chainedS)))
-  }
-
   def toScalaType(
     classStore: ClassStore,
     namespace: Option[String],
     schema: Schema): Type = {
-    // May contain nested schemas that will use the same namespace as the 
+    // May contain nested schemas that will use the same namespace as the
     // top-level schema. Thus, when a field is parsed, the namespace is passed.
     def matchType(schema: Schema): Type = {
 
-      schema.getType match { 
+      schema.getType match {
         case Schema.Type.ARRAY    => {
           // default array mapping is currently List, for historical reasons
           val avroElement = schema.getElementType
@@ -97,15 +90,56 @@ class TypeMatcher {
         case Schema.Type.UNION    => {
           //unions are represented as shapeless.Coproduct
           val unionSchemas = schema.getTypes.asScala.toList
-          val matchedTypes = unionSchemas.map(matchType)
-          val result = coproductType(matchedTypes: _*)
-          result
+          unionTypeImpl(unionSchemas, matchType)
         }
         case x => sys.error( x + " is not supported or not a valid Avro type")
       }
     }
     
     matchType(schema)
+  }
+
+  /**
+    * Handles unions with the following type translations
+    *
+    * union:null,T => Option[T]
+    * union:L,R => Either[L, R]
+    * union:A,B,C => A :+: B :+: C :+: CNil
+    * union:null,L,R => Option[Either[L, R]]
+    * union:null,A,B,C => Option[A :+: B :+: C :+: CNil]
+    *
+    * If a null is found at any position in the union the entire type is wrapped in Option and null removed from the
+    * types. Per the avro spec which is ambiguous about this:
+    *
+    * https://avro.apache.org/docs/1.8.1/spec.html#Unions
+    *
+    * (Note that when a default value is specified for a record field whose type is a union, the type of the default
+    * value must match the first element of the union. Thus, for unions containing "null", the "null" is usually listed
+    * first, since the default value of such unions is typically null.)
+    */
+  private[this] def unionTypeImpl(unionSchemas: List[Schema], typeMatcher: (Schema) => Type) : Type = {
+
+    def shapelessCoproductType(tp: Type*): forest.Type =  {
+      val copTypes = tp.toList :+ typeRef(RootClass.newClass(newTypeName("CNil")))
+      val chain: forest.Tree = INFIX_CHAIN(":+:", copTypes.map(t => Ident(t.safeToString)))
+      val chainedS = treeToString(chain)
+      typeRef(RootClass.newClass(newTypeName(chainedS)))
+    }
+
+    val includesNull: Boolean = unionSchemas.exists(_.getType == Schema.Type.NULL)
+
+    val nonNullableSchemas: List[Schema] = unionSchemas.filter(_.getType != Schema.Type.NULL)
+
+    val matchedType = nonNullableSchemas match {
+      case List(schemaA) =>
+        typeMatcher(schemaA)
+      case List(schemaA, schemaB) =>
+        eitherType(typeMatcher(schemaA), typeMatcher(schemaB))
+      case _ =>
+        shapelessCoproductType(nonNullableSchemas.map(typeMatcher): _*)
+    }
+
+    if (includesNull) optionType(matchedType) else matchedType
   }
 
 
