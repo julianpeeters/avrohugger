@@ -54,7 +54,7 @@ object StandardImporter extends Importer {
       }
       case Right(protocol) => {
         val types = protocol.getTypes.asScala.toList
-        if (types.exists(requiresShapelessImports)) shapelessImport :: deps
+        if (types.exists(s => s.getType == RECORD && requiresShapelessImports(s))) shapelessImport :: deps
         else deps
       }
     }
