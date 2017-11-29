@@ -9,7 +9,6 @@ lazy val commonSettings = Seq(
   resolvers += Resolver.typesafeIvyRepo("releases"),
   libraryDependencies += "org.apache.avro" % "avro" % avroVersion,
   libraryDependencies += "org.apache.avro" % "avro-compiler" % avroVersion,
-  libraryDependencies += "com.chuusai" %% "shapeless" % "2.3.2" % Test,
   // for implementing SpecificRecord from standard case class definitions
   addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full),
   libraryDependencies := {
