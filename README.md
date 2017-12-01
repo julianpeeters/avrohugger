@@ -30,6 +30,7 @@ Table of contents
       * [Customizable type mapping](#customizable-type-mapping)
       * [Customizable namespace mapping](#customizable-namespace-mapping)
       * [Customizable enum style](#customizable-enum-style)
+      * [Customizable union style](#customizable-union-style)
       * [Generate Classes Instead of Case Classes](#generate-classes-instead-of-case-classes)
     * [`avrohugger-filesorter`](#avrohugger-filesorter)
     * [`avrohugger-tools`](#avrohugger-tools)
@@ -54,21 +55,24 @@ runtime, Java classes provided separately (see [Scavro Plugin](https://github.co
 
 ##### Supports generating case classes with arbitrary fields of the following datatypes:
 
-
-* INT &rarr; Int
-* LONG &rarr; Long
-* FLOAT &rarr; Float
-* DOUBLE &rarr; Double
-* STRING &rarr; String
-* BOOLEAN &rarr; Boolean
-* NULL &rarr; Null
-* MAP &rarr; Map
-* ENUM &rarr; scala.Enumeration, Java Enum. See [Customizable Enum Style](https://github.com/julianpeeters/avrohugger#customizable-enum-style).
-* BYTES &rarr; Array[Byte]
-* FIXED &rarr; //TODO
-* ARRAY &rarr; List, `generate-scavro`: Array. See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping).
-* UNION &rarr; Option
-* RECORD &rarr; case class
+|Avro|`Standard`|`SpecificRecord`|`Scavro`|Notes|
+|----------|---------|----------|---------|---------|
+|INT|Int|Int|Int||
+|LONG|Long|Long|Long||
+|FLOAT|Float|Float|Float||
+|DOUBLE|Double|Double|Double||
+|STRING|String|String|String||
+|BOOLEAN|Boolean|Boolean|Boolean||
+|NULL|Null|Null|Null||
+|MAP|Map|Map|Map||
+|ENUM|scala.Enumeration|scala.Enumeration|Java Enum| See [Customizable Enum Style](https://github.com/julianpeeters/avrohugger#customizable-enum-style)|
+|BYTES|Array[Byte]|Array[Byte]|Array[Byte]||
+|FIXED|//TODO|//TODO|//TODO||
+|ARRAY|List|List|Array| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
+|UNION|Option|Option|Option|//TODO: Default values, [Customizable Union Style](https://github.com/julianpeeters/avrohugger#customizable-union-style)|
+|UNION|Either|//TODO|//TODO|//TODO: Default values, [Customizable Union Style](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
+|UNION|Shapeless Coproduct|//TODO|//TODO|//TODO: Default values, [Customizable Union Style](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
+|RECORD|case class|case class extending `SpecificRecordBase`|case class extending `AvroSerializeable`|
 
 
 
@@ -96,7 +100,7 @@ _Note:_ Currently [Treehugger](http://eed3si9n.com/treehugger/comments.html#Scal
 ## Usage
 
 * **For Scala 2.10, 2.11, and 2.12**
-* **Generating Code Compatible with Scala 2.10, 2.11, and 2.12)**
+* **Generating Code Compatible with Scala 2.10, 2.11, and 2.12**
 
 
 #### `avrohugger-core`
@@ -179,8 +183,18 @@ _Scavro_: by default, a "model" package is appended to the namespace to create a
 
 
     val custom = Map("enum" -> "java enum")
-    val generator = new Generator(Standard, avroScalaCustomEnumStyle = custom)  
+    val generator = new Generator(Standard, avroScalaCustomEnumStyle = custom)
+    
+    
+    
+##### Customizable Union Style:
 
+By default, if `NULL` is a member of the union then the resulting type will be
+an `Option` of the remaining types. This can behavior can be changed by:
+
+    \\TODO
+    
+    
 
 ##### Generate Classes Instead of Case Classes
 
@@ -300,7 +314,9 @@ Contributors:
 - [Jon Morra](https://github.com/jon-morra-zefr)
 - [Simonas Gelazevicius](https://github.com/simsasg)
 - [Daniel Davis](https://github.com/wabu)
-
+- [Raúl Raja Martínez](https://github.com/raulraja)
+- [Paul Snively](https://github.com/PaulAtBanno)
+- [Zach Cox](https://github.com/zcox)
 
 ##### Criticism is appreciated.
 
