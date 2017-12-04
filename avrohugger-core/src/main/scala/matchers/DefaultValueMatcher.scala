@@ -4,22 +4,21 @@ package matchers
 import treehugger.forest._
 import definitions._
 import treehuggerDSL._
-
 import org.apache.avro.Schema
-
 import org.codehaus.jackson.JsonNode
 import org.codehaus.jackson.map.ObjectMapper
-import org.codehaus.jackson.node.{ NullNode, ObjectNode, TextNode }
+import org.codehaus.jackson.node.{NullNode, ObjectNode, TextNode}
+import treehugger.forest
 
 import scala.collection.JavaConverters._
 
 object DefaultValueMatcher {
+
+  val nullNode = new TextNode("null")
   
   // This code was stolen from here:
   // https://github.com/julianpeeters/avro-scala-macro-annotations/blob/104fa325a00044ff6d31184fa7ff7b6852e9acd5/macros/src/main/scala/avro/scala/macro/annotations/provider/matchers/FromJsonMatcher.scala
   def getDefaultValue(field: Schema.Field, typeMatcher: TypeMatcher): Tree = {
-
-    val nullNode = new TextNode("null")
 
     def fromJsonNode(node: JsonNode, schema: Schema): Tree = {
       schema.getType match {
@@ -38,22 +37,8 @@ object DefaultValueMatcher {
         case Schema.Type.NULL => LIT(null)
         case Schema.Type.UNION => {
           val unionSchemas = schema.getTypes.asScala.toList
-          if (unionSchemas.length == 2 &&
-            unionSchemas.exists(schema => schema.getType == Schema.Type.NULL) &&
-            unionSchemas.exists(schema => schema.getType != Schema.Type.NULL)) {
-            val maybeSchema = unionSchemas.find(schema => schema.getType != Schema.Type.NULL)
-            maybeSchema match {
-              case Some(unionSchema) => {
-                node match {
-                  case `nullNode` => NONE
-                  case nn: NullNode => NONE
-                  case nonNullNode => SOME(fromJsonNode(nonNullNode, unionSchema))
-                }
-              }
-              case None => throw new Exception("no avro type found in this union")
-            }
-          }
-          else throw new Exception("Unsupported union field")
+          val result = unionDefaultArgsImpl(node, unionSchemas, fromJsonNode)
+          result
         }
         case Schema.Type.ARRAY => {
           val maybeCustom = typeMatcher.customTypeMap.get("array")
@@ -86,5 +71,49 @@ object DefaultValueMatcher {
     }
 
     fromJsonNode(field.defaultValue, field.schema)
+  }
+
+  /**
+    * Handles unions default values.
+    *
+    * Per the avro spec:
+    * (Note that when a default value is specified for a record field whose type is a union,
+    * the type of the default value must match the first element of the union)
+    */
+  private[this] def unionDefaultArgsImpl(node: JsonNode,
+                                         unionSchemas: List[Schema],
+                                         treeMatcher: (JsonNode, Schema) => Tree) : Tree = {
+
+    def COPRODUCT(defaultParam: Schema, tp: List[Type]): Tree =  {
+      val copTypes = tp :+ typeRef(RootClass.newClass(newTypeName("CNil")))
+      val chain: forest.Tree = INFIX_CHAIN(":+:", copTypes.map(t => Ident(t.safeToString)))
+      val chainedS = treeToString(chain)
+      val copType = typeRef(RootClass.newClass(newTypeName(chainedS)))
+      REF("Coproduct") APPLYTYPE copType APPLY treeMatcher(node, defaultParam)
+    }
+
+    val includesNull: Boolean = unionSchemas.exists(_.getType == Schema.Type.NULL)
+
+    val nonNullableSchemas: List[Schema] = unionSchemas.filter(_.getType != Schema.Type.NULL)
+
+    def matchedTree: Tree = nonNullableSchemas match {
+      case List(schemaA) => //Option
+        treeMatcher(node, schemaA)
+      case List(schemaA, schemaB) => //Either
+        LEFT(treeMatcher(node, schemaA))
+      case firstSchema :: _ => //Coproduct
+        COPRODUCT(firstSchema,
+          nonNullableSchemas
+            .map {s =>
+              typeRef(RootClass.newClass(newTypeName(s.getName)))
+          })
+    }
+
+    node match {
+      case `nullNode` => NONE
+      case _ : NullNode => NONE
+      case _ if includesNull => SOME(matchedTree)
+      case _ => matchedTree
+    }
   }
 }

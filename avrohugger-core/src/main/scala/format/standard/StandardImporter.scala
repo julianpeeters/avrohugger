@@ -40,7 +40,7 @@ object StandardImporter extends Importer {
     schemaStore: SchemaStore,
     typeMatcher: TypeMatcher): List[Import] = {
 
-    val shapelessCopSymbolsImport = RootClass.newClass("shapeless.{:+:, CNil}")
+    val shapelessCopSymbolsImport = RootClass.newClass("shapeless.{:+:, CNil, Coproduct}")
     val shapelessImport = IMPORT(shapelessCopSymbolsImport)
 
     val topLevelSchemas = getTopLevelSchemas(schemaOrProtocol, schemaStore)
