@@ -21,7 +21,7 @@ object StandardImporter extends Importer {
     * Otherwise the default values require no special imports
     * since they are codegen in terms of [[Option]] and [[Either]]
     */
-  private[this] def requiresShapelessImports(schema: Schema): Boolean = {
+  private[this] def requiresShapelessImports(schema: Schema, typeMatcher: TypeMatcher): Boolean = typeMatcher.unionsAsShapelessCoproduct || {
     val fields = schema.getFields.asScala
     val isUnion: Schema.Field => Boolean = _.schema().getType == Schema.Type.UNION
     val unionContainsNull: Schema.Field => Boolean = _.schema().getTypes.asScala.exists(_.getType == Schema.Type.NULL)
@@ -49,12 +49,12 @@ object StandardImporter extends Importer {
 
     schemaOrProtocol match {
       case Left(schema) => {
-        if (schema.getType == RECORD && requiresShapelessImports(schema)) shapelessImport :: deps
+        if (schema.getType == RECORD && requiresShapelessImports(schema, typeMatcher)) shapelessImport :: deps
         else deps
       }
       case Right(protocol) => {
         val types = protocol.getTypes.asScala.toList
-        if (types.exists(s => s.getType == RECORD && requiresShapelessImports(s))) shapelessImport :: deps
+        if (types.exists(s => s.getType == RECORD && requiresShapelessImports(s, typeMatcher))) shapelessImport :: deps
         else deps
       }
     }

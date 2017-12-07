@@ -14,7 +14,7 @@ import treehugger.forest
 import scala.collection.convert.Wrappers.JConcurrentMapWrapper
 import scala.collection.JavaConverters._
 
-class TypeMatcher(unionsAsShapelessCoproduct: Boolean = false) {
+class TypeMatcher(val unionsAsShapelessCoproduct: Boolean = false) {
 
   // holds user-defined custom type mappings, e.g. ("array"->classOf[Array[_]])
   val customTypeMap: scala.collection.concurrent.Map[String, Class[_]] = {
