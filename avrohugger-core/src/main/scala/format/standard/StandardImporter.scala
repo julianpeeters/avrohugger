@@ -21,7 +21,7 @@ object StandardImporter extends Importer {
     * Otherwise the default values require no special imports
     * since they are codegen in terms of [[Option]] and [[Either]]
     */
-  private[this] def requiresShapelessImports(schema: Schema, typeMatcher: TypeMatcher): Boolean = typeMatcher.unionsAsShapelessCoproduct || {
+  private[this] def requiresShapelessImports(schema: Schema, typeMatcher: TypeMatcher): Boolean = typeMatcher.standardUnionStyle == ShapelessCoproduct || {
     val fields = schema.getFields.asScala
     val isUnion: Schema.Field => Boolean = _.schema().getType == Schema.Type.UNION
     val unionContainsNull: Schema.Field => Boolean = _.schema().getTypes.asScala.exists(_.getType == Schema.Type.NULL)

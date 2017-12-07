@@ -6,6 +6,7 @@ import java.io.File
 
 import avrohugger._
 import avrohugger.format.Standard
+import avrohugger.format.standard.ShapelessCoproduct
 import org.specs2._
 
 class StandardFileToFileSpec extends Specification {
@@ -271,7 +272,7 @@ class StandardFileToFileSpec extends Specification {
 
   def e19 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/all_unions_as_coproduct.avdl")
-    val gen = new Generator(Standard, unionsAsShapelessCoproduct = true)
+    val gen = new Generator(Standard, standardUnionStyle = ShapelessCoproduct)
     val outDir = gen.defaultOutputDir + "/standard/"
     gen.fileToFile(infile, outDir)
 

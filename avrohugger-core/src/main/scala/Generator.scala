@@ -2,13 +2,13 @@ package avrohugger
 
 import avrohugger.format.abstractions.SourceFormat
 import avrohugger.format._
-import avrohugger.input.parsers.{ FileInputParser, StringInputParser}
+import avrohugger.input.parsers.{FileInputParser, StringInputParser}
 import avrohugger.matchers.TypeMatcher
-import avrohugger.stores.{ ClassStore, SchemaStore }
-
-import org.apache.avro.{ Protocol, Schema }
-
+import avrohugger.stores.{ClassStore, SchemaStore}
+import org.apache.avro.{Protocol, Schema}
 import java.io.File
+
+import format.standard._
 
 // Unable to overload this class' methods because outDir uses a default value
 class Generator(format: SourceFormat,
@@ -16,7 +16,7 @@ class Generator(format: SourceFormat,
                 avroScalaCustomNamespace: Map[String, String] = Map.empty,
                 avroScalaCustomEnumStyle: Map[String, String] = Map.empty,
                 restrictedFieldNumber: Boolean = false,
-                unionsAsShapelessCoproduct: Boolean = false) {
+                standardUnionStyle: UnionStyle = Default) {
 
   val sourceFormat = format
   val defaultOutputDir = "target/generated-sources"
@@ -25,7 +25,7 @@ class Generator(format: SourceFormat,
   lazy val schemaParser = new Schema.Parser
   val classStore = new ClassStore
   val schemaStore = new SchemaStore
-  val typeMatcher = new TypeMatcher(unionsAsShapelessCoproduct)
+  val typeMatcher = new TypeMatcher(standardUnionStyle)
 
   // update format defaults
   format match {

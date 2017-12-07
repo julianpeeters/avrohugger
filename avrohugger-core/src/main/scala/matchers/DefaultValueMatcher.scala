@@ -1,6 +1,7 @@
 package avrohugger
 package matchers
 
+import avrohugger.format.standard.{Default, ShapelessCoproduct}
 import treehugger.forest._
 import definitions._
 import treehuggerDSL._
@@ -120,9 +121,10 @@ object DefaultValueMatcher {
             })
     }
 
-    def matchedTree =
-      if (typeMatcher.unionsAsShapelessCoproduct) unionsAsShapelessCoproductStrategy
-      else unionsArityStrategy
+    def matchedTree = typeMatcher.standardUnionStyle match {
+      case Default => unionsArityStrategy
+      case ShapelessCoproduct => unionsAsShapelessCoproductStrategy
+    }
 
     node match {
       case `nullNode` => NONE

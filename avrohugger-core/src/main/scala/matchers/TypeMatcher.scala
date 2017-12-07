@@ -9,12 +9,13 @@ import org.apache.avro.Schema
 import org.apache.avro.Schema.{Type => AvroType}
 import java.util.concurrent.ConcurrentHashMap
 
+import avrohugger.format.standard.{Default, ShapelessCoproduct, UnionStyle}
 import treehugger.forest
 
 import scala.collection.convert.Wrappers.JConcurrentMapWrapper
 import scala.collection.JavaConverters._
 
-class TypeMatcher(val unionsAsShapelessCoproduct: Boolean = false) {
+class TypeMatcher(val standardUnionStyle: UnionStyle = Default) {
 
   // holds user-defined custom type mappings, e.g. ("array"->classOf[Array[_]])
   val customTypeMap: scala.collection.concurrent.Map[String, Class[_]] = {
@@ -146,9 +147,10 @@ class TypeMatcher(val unionsAsShapelessCoproduct: Boolean = false) {
         unionsAsShapelessCoproductStrategy
     }
 
-    val matchedType =
-      if (unionsAsShapelessCoproduct) unionsAsShapelessCoproductStrategy
-      else unionsArityStrategy
+    val matchedType = standardUnionStyle match {
+      case Default => unionsArityStrategy
+      case ShapelessCoproduct => unionsAsShapelessCoproductStrategy
+    }
 
     if (includesNull) optionType(matchedType) else matchedType
   }
