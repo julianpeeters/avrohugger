@@ -37,7 +37,7 @@ object DefaultValueMatcher {
         case Schema.Type.NULL => LIT(null)
         case Schema.Type.UNION => {
           val unionSchemas = schema.getTypes.asScala.toList
-          val result = unionDefaultArgsImpl(node, unionSchemas, fromJsonNode)
+          val result = unionDefaultArgsImpl(node, unionSchemas, fromJsonNode, typeMatcher)
           result
         }
         case Schema.Type.ARRAY => {
@@ -82,7 +82,8 @@ object DefaultValueMatcher {
     */
   private[this] def unionDefaultArgsImpl(node: JsonNode,
                                          unionSchemas: List[Schema],
-                                         treeMatcher: (JsonNode, Schema) => Tree) : Tree = {
+                                         treeMatcher: (JsonNode, Schema) => Tree,
+                                         typeMatcher: TypeMatcher) : Tree = {
 
     def COPRODUCT(defaultParam: Schema, tp: List[Type]): Tree =  {
       val copTypes = tp :+ typeRef(RootClass.newClass(newTypeName("CNil")))
@@ -96,7 +97,17 @@ object DefaultValueMatcher {
 
     val nonNullableSchemas: List[Schema] = unionSchemas.filter(_.getType != Schema.Type.NULL)
 
-    def matchedTree: Tree = nonNullableSchemas match {
+    def unionsAsShapelessCoproductStrategy = nonNullableSchemas match {
+      case firstSchema :: _ => //Coproduct
+        COPRODUCT(firstSchema,
+          nonNullableSchemas
+            .map { s =>
+              typeRef(RootClass.newClass(newTypeName(s.getName)))
+            })
+      case _ => throw new Exception("unrecognized shape for shapeless coproduct")
+    }
+
+    def unionsArityStrategy = nonNullableSchemas match {
       case List(schemaA) => //Option
         treeMatcher(node, schemaA)
       case List(schemaA, schemaB) => //Either
@@ -106,8 +117,12 @@ object DefaultValueMatcher {
           nonNullableSchemas
             .map {s =>
               typeRef(RootClass.newClass(newTypeName(s.getName)))
-          })
+            })
     }
+
+    val matchedTree =
+      if (typeMatcher.unionsAsShapelessCoproduct) unionsAsShapelessCoproductStrategy
+      else unionsArityStrategy
 
     node match {
       case `nullNode` => NONE
