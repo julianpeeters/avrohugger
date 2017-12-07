@@ -120,7 +120,7 @@ object DefaultValueMatcher {
             })
     }
 
-    val matchedTree =
+    def matchedTree =
       if (typeMatcher.unionsAsShapelessCoproduct) unionsAsShapelessCoproductStrategy
       else unionsArityStrategy
 
