@@ -47,6 +47,7 @@ object StandardImporter extends Importer {
     val recordSchemas = getRecordSchemas(topLevelSchemas)
     val deps = getRecordImports(recordSchemas, currentNamespace, typeMatcher)
 
+
     schemaOrProtocol match {
       case Left(schema) => {
         if (schema.getType == RECORD && requiresShapelessImports(schema, typeMatcher)) shapelessImport :: deps

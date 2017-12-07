@@ -23,15 +23,15 @@ final case class Event8() extends UnionsDefaultParamsValues
 
 final case class Event9() extends UnionsDefaultParamsValues
 
-final case class ShouldRenderAsOption(value: Option[Event1 :+: CNil] = None) extends UnionsDefaultParamsValues
+final case class ShouldRenderAsOption(value: Option[Event1] = None) extends UnionsDefaultParamsValues
 
-final case class ShouldRenderAsOption2(value: Option[Event1 :+: CNil] = Some(new Event1(0))) extends UnionsDefaultParamsValues
+final case class ShouldRenderAsOption2(value: Option[Event1] = Some(new Event1(0))) extends UnionsDefaultParamsValues
 
-final case class ShouldRenderAsOptionEither(value: Option[Event1 :+: Event2 :+: CNil] = None) extends UnionsDefaultParamsValues
+final case class ShouldRenderAsOptionEither(value: Option[Either[Event1, Event2]] = None) extends UnionsDefaultParamsValues
 
-final case class ShouldRenderAsOptionEither2(value: Option[Event1 :+: Event2 :+: CNil] = Some(Left(new Event1(1)))) extends UnionsDefaultParamsValues
+final case class ShouldRenderAsOptionEither2(value: Option[Either[Event1, Event2]] = Some(Left(new Event1(1)))) extends UnionsDefaultParamsValues
 
-final case class ShouldRenderAsOptionEither3(value: Option[Event1 :+: Event2 :+: CNil] = Some(Left(new Event1(2)))) extends UnionsDefaultParamsValues
+final case class ShouldRenderAsOptionEither3(value: Option[Either[Event1, Event2]] = Some(Left(new Event1(2)))) extends UnionsDefaultParamsValues
 
 final case class ShouldRenderAsOptionCoproduct(value: Option[Event1 :+: Event2 :+: Event3 :+: CNil] = None) extends UnionsDefaultParamsValues
 
@@ -39,7 +39,7 @@ final case class ShouldRenderAsOptionCoproduct2(value: Option[Event1 :+: Event2 
 
 final case class ShouldRenderAsOptionCoproduct3(value: Option[Event1 :+: Event2 :+: Event3 :+: CNil] = Some(Coproduct[Event1 :+: Event2 :+: Event3 :+: CNil](new Event1(4)))) extends UnionsDefaultParamsValues
 
-final case class ShouldRenderAsEither(value: Event1 :+: Event2 :+: CNil = Left(new Event1(5))) extends UnionsDefaultParamsValues
+final case class ShouldRenderAsEither(value: Either[Event1, Event2] = Left(new Event1(5))) extends UnionsDefaultParamsValues
 
 final case class ShouldRenderAsCoproduct(value: Event1 :+: Event2 :+: Event3 :+: Event4 :+: CNil = Coproduct[Event1 :+: Event2 :+: Event3 :+: Event4 :+: CNil](new Event1(6))) extends UnionsDefaultParamsValues
 
