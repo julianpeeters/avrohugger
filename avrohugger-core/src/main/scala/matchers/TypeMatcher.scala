@@ -52,11 +52,6 @@ class TypeMatcher(val unionsAsShapelessCoproduct: Boolean = false) {
     val _ = customEnumStyleMap += customEnumStyleMapEntry
   }
 
-  // updates the enum style map map to allow for avro to java or scala mappings
-  def updateCustomUnionStyleMap(customUnionStyleMapEntry: (String, String)) {
-    val _ = customUnionStyleMap += customUnionStyleMapEntry
-  }
-
   def toScalaType(
     classStore: ClassStore,
     namespace: Option[String],
