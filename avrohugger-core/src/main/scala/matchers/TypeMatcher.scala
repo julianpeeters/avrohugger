@@ -14,7 +14,7 @@ import treehugger.forest
 import scala.collection.convert.Wrappers.JConcurrentMapWrapper
 import scala.collection.JavaConverters._
 
-class TypeMatcher {
+class TypeMatcher(unionsAsShapelessCoproduct: Boolean = false) {
 
   // holds user-defined custom type mappings, e.g. ("array"->classOf[Array[_]])
   val customTypeMap: scala.collection.concurrent.Map[String, Class[_]] = {
@@ -31,7 +31,11 @@ class TypeMatcher {
   val customEnumStyleMap: scala.collection.concurrent.Map[String, String] = {
     JConcurrentMapWrapper(new ConcurrentHashMap[String, String]())
   }
-  
+
+  // holds user-selected union style, e.g. ("union"->"shapeless_coproduct")
+  val customUnionStyleMap: scala.collection.concurrent.Map[String, String] = {
+    JConcurrentMapWrapper(new ConcurrentHashMap[String, String]())
+  }
 
   // updates the type map to allow for custom avro to scala mappings
   def updateCustomTypeMap(avroToScalaMapEntry: (String, Class[_])) {
@@ -46,6 +50,11 @@ class TypeMatcher {
   // updates the enum style map map to allow for avro to java or scala mappings
   def updateCustomEnumStyleMap(customEnumStyleMapEntry: (String, String)) {
     val _ = customEnumStyleMap += customEnumStyleMapEntry
+  }
+
+  // updates the enum style map map to allow for avro to java or scala mappings
+  def updateCustomUnionStyleMap(customUnionStyleMapEntry: (String, String)) {
+    val _ = customUnionStyleMap += customUnionStyleMapEntry
   }
 
   def toScalaType(
@@ -130,14 +139,21 @@ class TypeMatcher {
 
     val nonNullableSchemas: List[Schema] = unionSchemas.filter(_.getType != Schema.Type.NULL)
 
-    val matchedType = nonNullableSchemas match {
+    def unionsAsShapelessCoproductStrategy =
+      shapelessCoproductType(nonNullableSchemas.map(typeMatcher): _*)
+
+    def unionsArityStrategy = nonNullableSchemas match {
       case List(schemaA) =>
         typeMatcher(schemaA)
       case List(schemaA, schemaB) =>
         eitherType(typeMatcher(schemaA), typeMatcher(schemaB))
       case _ =>
-        shapelessCoproductType(nonNullableSchemas.map(typeMatcher): _*)
+        unionsAsShapelessCoproductStrategy
     }
+
+    val matchedType =
+      if (unionsAsShapelessCoproduct) unionsAsShapelessCoproductStrategy
+      else unionsArityStrategy
 
     if (includesNull) optionType(matchedType) else matchedType
   }

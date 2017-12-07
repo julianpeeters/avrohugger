@@ -32,6 +32,7 @@ class StandardFileToFileSpec extends Specification {
       correctly generate default values $e16
       correctly generate union values without shapeless Coproduct $e17
       correctly generate union values with shapeless Coproduct $e18
+      correctly generate all union values with shapeless Coproduct when instructed by generator $e19
   """
   
   // tests specific to fileToX
@@ -265,6 +266,17 @@ class StandardFileToFileSpec extends Specification {
     val adt = util.Util.readFile("target/generated-sources/standard/example/idl/WithShapelessCoproduct.scala")
 
     adt === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/WithShapelessCoproduct.scala")
+  }
+
+  def e19 = {
+    val infile = new java.io.File("avrohugger-core/src/test/avro/all_unions_as_coproduct.avdl")
+    val gen = new Generator(Standard, unionsAsShapelessCoproduct = true)
+    val outDir = gen.defaultOutputDir + "/standard/"
+    gen.fileToFile(infile, outDir)
+
+    val adt = util.Util.readFile("target/generated-sources/standard/example/idl/AllUnionsWithShapelessCoproduct.scala")
+
+    adt === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/AllUnionsWithShapelessCoproduct.scala")
   }
 
 }

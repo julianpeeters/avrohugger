@@ -1,7 +1,7 @@
 package avrohugger
 
 import avrohugger.format.abstractions.SourceFormat
-import avrohugger.format.{ Scavro, SpecificRecord }
+import avrohugger.format._
 import avrohugger.input.parsers.{ FileInputParser, StringInputParser}
 import avrohugger.matchers.TypeMatcher
 import avrohugger.stores.{ ClassStore, SchemaStore }
@@ -15,7 +15,8 @@ class Generator(format: SourceFormat,
                 avroScalaCustomTypes: Map[String, Class[_]] = Map.empty,
                 avroScalaCustomNamespace: Map[String, String] = Map.empty,
                 avroScalaCustomEnumStyle: Map[String, String] = Map.empty,
-                restrictedFieldNumber: Boolean = false) {
+                restrictedFieldNumber: Boolean = false,
+                unionsAsShapelessCoproduct: Boolean = false) {
 
   val sourceFormat = format
   val defaultOutputDir = "target/generated-sources"
@@ -24,7 +25,7 @@ class Generator(format: SourceFormat,
   lazy val schemaParser = new Schema.Parser
   val classStore = new ClassStore
   val schemaStore = new SchemaStore
-  val typeMatcher = new TypeMatcher
+  val typeMatcher = new TypeMatcher(unionsAsShapelessCoproduct)
 
   // update format defaults
   format match {
