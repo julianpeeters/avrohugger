@@ -3,9 +3,10 @@ package format
 
 import format.abstractions.SourceFormat
 import format.standard._
+import matchers.{ CustomNamespaceMatcher, CustomTypeMatcher, TypeMatcher }
 import models.CompilationUnit
 import stores.{ ClassStore, SchemaStore }
-import matchers.{ CustomNamespaceMatcher, CustomTypeMatcher, TypeMatcher }
+import types._
 
 import treehugger.forest._
 import definitions.RootClass
@@ -38,7 +39,7 @@ object Standard extends SourceFormat {
         typeMatcher,
         maybeDefaultNamespace = ns)
 
-    def maybeCustomEnumStyle = typeMatcher.customEnumStyleMap.get("enum")
+    val enumType = typeMatcher.avroScalaTypes.enum
 
     schemaOrProtocol match {
       case Left(schema) => {
@@ -55,12 +56,12 @@ object Standard extends SourceFormat {
             List(scalaCompilationUnit)
           }
           case ENUM => {
-            maybeCustomEnumStyle match {
+            enumType match {
               // java enums can't be represented as trees so they can't be
               // handled by treehugger. Their compilation unit must de generated
               // separately, and they will be excluded from scala compilation
               // units.
-              case Some("java enum") => {
+              case JavaEnum => {
                 val javaCompilationUnit = getJavaEnumCompilationUnit(
                   classStore,
                   namespace,
@@ -95,11 +96,11 @@ object Standard extends SourceFormat {
           schemaStore,
           maybeOutDir,
           restrictedFields)
-        maybeCustomEnumStyle match {
+        enumType match {
           // java enums can't be represented as trees so they can't be handled
           // by treehugger. Their compilation unit must de generated
           // separately, and they will be excluded from scala compilation units.
-          case Some("java enum") => {
+          case JavaEnum => {
             val localSubtypes = getLocalSubtypes(protocol)
             val localEnums = localSubtypes.filter(isEnum)
             val javaCompilationUnits = localEnums.map(schema => {
@@ -136,6 +137,8 @@ object Standard extends SourceFormat {
       restrictedFields)
     compilationUnits.foreach(writeToFile)
   }
+  
+  val defaultTypes: AvroScalaTypes = AvroScalaTypes.defaults
 
   def getName(
     schemaOrProtocol: Either[Schema, Protocol],
@@ -143,10 +146,11 @@ object Standard extends SourceFormat {
     schemaOrProtocol match {
       case Left(schema) => schema.getName
       case Right(protocol) => {
-        val maybeCustomEnumStyle = typeMatcher.customEnumStyleMap.get("enum")
-        val localSubTypes = maybeCustomEnumStyle match {
-          case Some("java enum") => getLocalSubtypes(protocol).filterNot(isEnum)
-          case _ => getLocalSubtypes(protocol)
+        val localSubTypes = typeMatcher.avroScalaTypes.enum match {
+          case JavaEnum => getLocalSubtypes(protocol).filterNot(isEnum)
+          case ScalaCaseObjectEnum => getLocalSubtypes(protocol)
+          case ScalaEnumeration => getLocalSubtypes(protocol)
+
         }
         if (localSubTypes.length > 1) protocol.getName // for ADT
         else localSubTypes.headOption match {

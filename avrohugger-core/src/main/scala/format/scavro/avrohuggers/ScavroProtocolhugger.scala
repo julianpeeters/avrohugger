@@ -7,6 +7,7 @@ import format.abstractions.avrohuggers.Protocolhugger
 import matchers.TypeMatcher
 import stores.ClassStore
 import trees.ScavroTraitTree
+import types._
 
 import org.apache.avro.Protocol
 
@@ -28,9 +29,11 @@ object ScavroProtocolhugger extends Protocolhugger {
     val maybeNewFlags = Some(List(Flags.FINAL.toLong))
     val traitDef = ScavroTraitTree.toADTRootDef(protocol, typeMatcher)
     val localSubTypes = getLocalSubtypes(protocol)
-    val adtSubTypes = typeMatcher.customEnumStyleMap.get("enum") match {
-      case Some("java enum") => localSubTypes.filterNot(isEnum)
-      case _ => localSubTypes
+    val adtSubTypes = typeMatcher.avroScalaTypes.enum match {
+      case JavaEnum => localSubTypes.filterNot(isEnum)
+      case ScalaCaseObjectEnum => localSubTypes
+      case ScalaEnumeration => localSubTypes
+
     }
     if (adtSubTypes.length > 1) {
       traitDef +: localSubTypes.flatMap(schema => {

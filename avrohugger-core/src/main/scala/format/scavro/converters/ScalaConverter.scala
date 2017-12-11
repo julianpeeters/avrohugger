@@ -4,6 +4,7 @@ package scavro
 package converters
 
 import matchers.TypeMatcher
+import types._
 
 import treehugger.forest._
 import definitions._
@@ -57,12 +58,10 @@ class ScalaConverter(typeMatcher: TypeMatcher) {
 
       case Schema.Type.ARRAY => {
         val seqArgs = SEQARG(tree DOT "asScala")
-        val collection = typeMatcher.customTypeMap.get("array") match {
-          case Some(c) if c == classOf[Array[_]]  => ARRAY(seqArgs)
-          case Some(c) if c == classOf[List[_]]   => LIST(seqArgs)
-          case Some(c) if c == classOf[Vector[_]] => VECTOR(seqArgs)
-          // default array mapping is currently List, but only for historical reasons
-          case _                                  => LIST(seqArgs)
+        val collection = typeMatcher.avroScalaTypes.array match {
+          case ScalaArray  => ARRAY(seqArgs)
+          case ScalaList   => LIST(seqArgs)
+          case ScalaVector => VECTOR(seqArgs)
         }
         collection MAP(LAMBDA(PARAM("x")) ==> BLOCK(convertFromJava(schema.getElementType, REF("x"), fieldPath)))
       }

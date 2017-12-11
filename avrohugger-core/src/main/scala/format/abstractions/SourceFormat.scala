@@ -5,6 +5,7 @@ package abstractions
 import avrohugger.matchers.TypeMatcher
 import avrohugger.models.CompilationUnit
 import avrohugger.stores.{ ClassStore, SchemaStore }
+import avrohugger.types._
 
 import org.apache.avro.{ Protocol, Schema }
 import org.apache.avro.Schema.Type.{ ENUM, RECORD }
@@ -23,6 +24,7 @@ import scala.collection.JavaConverters._
   * _ABSTRACT MEMBERS_: to be implemented by a subclass
   * asCompilationUnits
   * compile
+  * defaultTypes
   * getName
   * scalaTreehugger
   * toolName
@@ -51,7 +53,7 @@ trait SourceFormat {
     maybeOutDir: Option[String],
     typeMatcher: TypeMatcher,
     restrictedFields: Boolean): List[CompilationUnit]
-
+    
   def compile(
     classStore: ClassStore,
     namespace: Option[String],
@@ -60,6 +62,8 @@ trait SourceFormat {
     schemaStore: SchemaStore,
     typeMatcher: TypeMatcher,
     restrictedFields: Boolean): Unit
+    
+  val defaultTypes: AvroScalaTypes
 
   def getName(
     schemaOrProtocol: Either[Schema, Protocol],
@@ -75,10 +79,12 @@ trait SourceFormat {
   def fileExt(
     schemaOrProtocol: Either[Schema, Protocol],
     typeMatcher: TypeMatcher) = {
-    val maybeCustomEnumStyle = typeMatcher.customEnumStyleMap.get("enum")
-    val enumExt = maybeCustomEnumStyle match {
-      case Some("java enum") => ".java"
-      case _ => ".scala"
+    val enumType = typeMatcher.avroScalaTypes.enum
+    val enumExt = enumType match {
+      case JavaEnum => ".java"
+      case ScalaCaseObjectEnum => ".scala"
+      case ScalaEnumeration => ".scala"
+
     }
     schemaOrProtocol match {
       case Left(schema) => schema.getType match {
@@ -165,10 +171,10 @@ trait SourceFormat {
     classStore: ClassStore,
     typeMatcher: TypeMatcher): Unit = {
     def registerSchema(schema: Schema): Unit = {
-      val typeName = typeMatcher.customEnumStyleMap.get("enum") match {
-        case Some("java enum") => schema.getName
-        case Some("case object") => schema.getName
-        case _ => renameEnum(schema, "Value")
+      val typeName = typeMatcher.avroScalaTypes.enum match {
+        case JavaEnum => schema.getName
+        case ScalaCaseObjectEnum => schema.getName
+        case ScalaEnumeration => renameEnum(schema, "Value")
       }
       val classSymbol = RootClass.newClass(typeName)
       classStore.accept(schema, classSymbol)

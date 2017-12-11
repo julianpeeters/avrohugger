@@ -4,42 +4,31 @@ import avrohugger.format.abstractions.SourceFormat
 import avrohugger.format._
 import avrohugger.input.parsers.{FileInputParser, StringInputParser}
 import avrohugger.matchers.TypeMatcher
+import avrohugger.types.AvroScalaTypes
 import avrohugger.stores.{ClassStore, SchemaStore}
 import org.apache.avro.{Protocol, Schema}
 import java.io.File
 
-import format.standard._
-
 // Unable to overload this class' methods because outDir uses a default value
 class Generator(format: SourceFormat,
-                avroScalaCustomTypes: Map[String, Class[_]] = Map.empty,
+                avroScalaCustomTypes: Option[AvroScalaTypes] = None,
                 avroScalaCustomNamespace: Map[String, String] = Map.empty,
-                avroScalaCustomEnumStyle: Map[String, String] = Map.empty,
-                restrictedFieldNumber: Boolean = false,
-                standardUnionStyle: UnionStyle = Default) {
+                restrictedFieldNumber: Boolean = false) {
+
+  val avroScalaTypes = avroScalaCustomTypes.getOrElse(format.defaultTypes)
 
   val sourceFormat = format
+  
+  
   val defaultOutputDir = "target/generated-sources"
   lazy val fileParser = new FileInputParser
   lazy val stringParser = new StringInputParser
   lazy val schemaParser = new Schema.Parser
   val classStore = new ClassStore
   val schemaStore = new SchemaStore
-  val typeMatcher = new TypeMatcher(standardUnionStyle)
+  val typeMatcher = new TypeMatcher(avroScalaTypes)
 
-  // update format defaults
-  format match {
-    case Scavro =>
-      typeMatcher.updateCustomTypeMap("array" -> classOf[Array[_]])
-      typeMatcher.updateCustomNamespaceMap("SCAVRO_DEFAULT_PACKAGE$" -> "model")
-    case SpecificRecord =>
-      typeMatcher.updateCustomEnumStyleMap("enum" -> "java enum")
-    case _ => ()
-  }
-  //update potential custom type mapping and/or custom namespace
-  avroScalaCustomTypes.foreach(typeMatcher.updateCustomTypeMap)
   avroScalaCustomNamespace.foreach(typeMatcher.updateCustomNamespaceMap)
-  avroScalaCustomEnumStyle.foreach(typeMatcher.updateCustomEnumStyleMap)
 
   //////////////// methods for writing definitions out to file /////////////////
   def schemaToFile(

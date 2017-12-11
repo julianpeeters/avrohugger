@@ -5,7 +5,7 @@ package converters
 
 import matchers.TypeMatcher
 import stores.ClassStore
-
+import types._
 import treehugger.forest._
 import definitions._
 import treehuggerDSL._
@@ -21,12 +21,12 @@ class JavaConverter(
   typeMatcher: TypeMatcher) {
   
   def checkCustomNumberType(
-    maybeCustomNumber: Option[Class[_]],
-    tree: Tree, nativeType: String): Tree = {
-    maybeCustomNumber match {
-      case Some(x) => tree DOT nativeType
-      case None    => tree
-    }
+    numberType: AvroScalaNumberType,
+    defaultNumberType: AvroScalaNumberType,
+    tree: Tree,
+    nativeType: String): Tree = {
+    if (numberType == defaultNumberType) tree
+    else tree DOT nativeType
   }
 
   // Recursive definition takes a field's schema, and a tree that represents the
@@ -109,10 +109,10 @@ class JavaConverter(
           REF("map")
         )
       }
-      case Schema.Type.INT    => checkCustomNumberType(typeMatcher.customTypeMap.get("int"), tree, "toInt")
-      case Schema.Type.FLOAT  => checkCustomNumberType(typeMatcher.customTypeMap.get("float"), tree, "toFloat")
-      case Schema.Type.DOUBLE => checkCustomNumberType(typeMatcher.customTypeMap.get("double"), tree, "toDouble")
-      case Schema.Type.LONG   => checkCustomNumberType(typeMatcher.customTypeMap.get("long"), tree, "toLong")
+      case Schema.Type.INT    => checkCustomNumberType(typeMatcher.avroScalaTypes.int, ScalaInt, tree, "toInt")
+      case Schema.Type.FLOAT  => checkCustomNumberType(typeMatcher.avroScalaTypes.float, ScalaFloat, tree, "toFloat")
+      case Schema.Type.DOUBLE => checkCustomNumberType(typeMatcher.avroScalaTypes.double, ScalaDouble, tree, "toDouble")
+      case Schema.Type.LONG   => checkCustomNumberType(typeMatcher.avroScalaTypes.long, ScalaLong, tree, "toLong")
       case Schema.Type.FIXED  => sys.error("the FIXED datatype is not yet supported")
       case Schema.Type.BYTES  => REF("java.nio.ByteBuffer") DOT "wrap" APPLY tree
       case _ => tree

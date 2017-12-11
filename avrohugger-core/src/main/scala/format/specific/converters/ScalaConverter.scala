@@ -5,6 +5,7 @@ package converters
 
 import matchers.TypeMatcher
 import stores.ClassStore
+import types._
 
 import treehugger.forest._
 import definitions._
@@ -19,17 +20,16 @@ import scala.collection.JavaConverters._
 object ScalaConverter {
 
   def checkCustomArrayType(
-    maybeCustomArray: Option[Class[_]],
+    arrayType: AvroScalaArrayType,
     elementType: Type,
     seqArgs: Typed,
     defaultConversion: Tree) = {
     val classTagIdent = REF(s"scala.reflect.ClassTag(classOf[$elementType])")
     val arrayConversion = ARRAY(seqArgs).APPLY(classTagIdent).AS(TYPE_ARRAY(elementType))
-    maybeCustomArray match {
-      case Some(c) if c == classOf[Array[_]]  => arrayConversion
-      case Some(c) if c == classOf[List[_]]   => LIST(seqArgs)
-      case Some(c) if c == classOf[Vector[_]] => VECTOR(seqArgs)
-      case _                                  => defaultConversion
+    arrayType match {
+      case ScalaArray  => arrayConversion
+      case ScalaList   => LIST(seqArgs)
+      case ScalaVector => VECTOR(seqArgs)
     }
   }
   
@@ -54,9 +54,9 @@ object ScalaConverter {
               .MAP(LAMBDA(PARAM("x")) ==> BLOCK(elementConversion))
           )
         }
-        val maybeCustomArrayType = typeMatcher.customTypeMap.get("array")
+        val arrayType = typeMatcher.avroScalaTypes.array
         val resultExpr = BLOCK(
-          checkCustomArrayType(maybeCustomArrayType, elementType, seqArgs, LIST(seqArgs))
+          checkCustomArrayType(arrayType, elementType, seqArgs, LIST(seqArgs))
         )
         val arrayConversion = CASE(ID("array") withType(JavaList)) ==> resultExpr
         val errorMessage = INTERP("s", LIT(s"expected array with type $JavaList, found "), LIT("array"))

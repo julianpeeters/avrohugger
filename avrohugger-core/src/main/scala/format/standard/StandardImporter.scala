@@ -5,6 +5,7 @@ package standard
 import avrohugger.format.abstractions.Importer
 import avrohugger.matchers.TypeMatcher
 import avrohugger.stores.SchemaStore
+import avrohugger.types._
 import org.apache.avro.Schema.Type.RECORD
 import org.apache.avro.{Protocol, Schema}
 import treehugger.forest._
@@ -21,18 +22,22 @@ object StandardImporter extends Importer {
     * Otherwise the default values require no special imports
     * since they are codegen in terms of [[Option]] and [[Either]]
     */
-  private[this] def requiresShapelessImports(schema: Schema, typeMatcher: TypeMatcher): Boolean = typeMatcher.standardUnionStyle == ShapelessCoproduct || {
-    val fields = schema.getFields.asScala
-    val isUnion: Schema.Field => Boolean = _.schema().getType == Schema.Type.UNION
-    val unionContainsNull: Schema.Field => Boolean = _.schema().getTypes.asScala.exists(_.getType == Schema.Type.NULL)
-    val containsUnion = fields.exists(isUnion)
-    val containsNull = fields.filter(isUnion).exists(unionContainsNull)
-    val innerFieldsSize = fields.find(isUnion).map(_.schema().getTypes.size()).getOrElse(0)
-    val requiresImports =
-      containsUnion &&
-        ((innerFieldsSize > 2 && !containsNull) || (innerFieldsSize > 3 && containsNull))
-    requiresImports
-  }
+  private[this] def requiresShapelessImports(schema: Schema, typeMatcher: TypeMatcher): Boolean =
+    typeMatcher.avroScalaTypes.union match {
+      case ShapelessCoproduct => true
+      case _ => {
+        val fields = schema.getFields.asScala
+        val isUnion: Schema.Field => Boolean = _.schema().getType == Schema.Type.UNION
+        val unionContainsNull: Schema.Field => Boolean = _.schema().getTypes.asScala.exists(_.getType == Schema.Type.NULL)
+        val containsUnion = fields.exists(isUnion)
+        val containsNull = fields.filter(isUnion).exists(unionContainsNull)
+        val innerFieldsSize = fields.find(isUnion).map(_.schema().getTypes.size()).getOrElse(0)
+        val requiresImports =
+          containsUnion &&
+            ((innerFieldsSize > 2 && !containsNull) || (innerFieldsSize > 3 && containsNull))
+        requiresImports
+      }
+    }
 
   def getImports(
     schemaOrProtocol: Either[Schema, Protocol],

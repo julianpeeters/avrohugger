@@ -4,6 +4,7 @@ package scavro
 package trees
 
 import matchers.TypeMatcher
+import types._
 
 import treehugger.forest._
 import definitions._
@@ -21,9 +22,11 @@ object ScavroTraitTree {
     def isEnum(schema: Schema) = schema.getType == ENUM
     val sealedTraitTree =  TRAITDEF(protocol.getName).withFlags(Flags.SEALED)
     val adtRootTree = {
-      val adtSubTypes = typeMatcher.customEnumStyleMap.get("enum") match {
-        case Some("java enum") => protocol.getTypes.asScala.toList.filterNot(isEnum)
-        case _ => protocol.getTypes.asScala.toList
+      val adtSubTypes = typeMatcher.avroScalaTypes.enum match {
+        case JavaEnum => protocol.getTypes.asScala.toList.filterNot(isEnum)
+        case ScalaCaseObjectEnum => protocol.getTypes.asScala.toList
+        case ScalaEnumeration => protocol.getTypes.asScala.toList
+
       }
       if (adtSubTypes.forall(schema => schema.getType == RECORD)) {
         sealedTraitTree

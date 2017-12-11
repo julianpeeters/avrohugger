@@ -2,6 +2,7 @@ package avrohugger
 package tool
 
 import format.abstractions.SourceFormat
+import types.AvroScalaTypes
 
 import org.apache.avro.tool.Tool
 import org.apache.avro.generic.GenericData.StringType;
@@ -26,7 +27,7 @@ import scala.util.Try
  * Adapted from https://github.com/apache/avro/blob/branch-1.7/lang/java/tools/src/main/java/org/apache/avro/tool/SpecificCompilerTool.java
  */
 class GeneratorTool(sourceFormat: SourceFormat, 
-  avroScalaCustomTypes: Map[String, Class[_]] = Map.empty,
+  avroScalaCustomTypes: Option[AvroScalaTypes] = None,
   avroScalaCustomNamespace: Map[String, String] = Map.empty) extends Tool {
 
   val generator = new Generator(sourceFormat, avroScalaCustomTypes, avroScalaCustomNamespace)

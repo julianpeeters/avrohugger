@@ -7,6 +7,7 @@ import format.abstractions.avrohuggers.Schemahugger
 import trees.{ StandardCaseClassTree, StandardObjectTree, StandardTraitTree }
 import matchers.TypeMatcher
 import stores.ClassStore
+import types._
 
 import org.apache.avro.{ Protocol, Schema }
 import org.apache.avro.Schema.Type.{ ENUM, RECORD }
@@ -37,12 +38,12 @@ object StandardSchemahugger extends Schemahugger {
           maybeFlags,
           restrictedFields)
         List(classDef)
-      case ENUM => typeMatcher.customEnumStyleMap.get("enum") match {
-        case Some("java enum") =>
+      case ENUM => typeMatcher.avroScalaTypes.enum match {
+        case JavaEnum =>
           List.empty
-        case Some("case object") =>
+        case ScalaCaseObjectEnum =>
           StandardTraitTree.toCaseObjectEnumDef(schema, maybeBaseTrait)
-        case _ =>
+        case ScalaEnumeration =>
           val objectDef = StandardObjectTree.toScalaEnumDef(
             classStore,
             schema,

@@ -2,6 +2,7 @@ package avrohugger
 package matchers
 
 import stores.ClassStore
+import types._
 
 import org.apache.avro.Schema
 import org.apache.avro.Schema.Type
@@ -14,18 +15,16 @@ import treehuggerDSL._
 object DefaultParamMatcher {
   
   
-  def checkCustomArrayType(
-    maybeCustomArray: Option[Class[_]],
-    defaultSym: Symbol) = {
-    maybeCustomArray match {
-      case Some(c) if c == classOf[Array[_]]  => ArrayClass
-      case Some(c) if c == classOf[List[_]]   => ListClass
-      case Some(c) if c == classOf[Vector[_]] => VectorClass
-      case _                                  => defaultSym
+  def checkCustomArrayType(arrayType: AvroScalaArrayType) = {
+    arrayType match {
+      case ScalaArray  => ArrayClass
+      case ScalaList   => ListClass
+      case ScalaVector => VectorClass
     }
   }
   
 
+  // for SpecificRecord
   def asDefaultParam(
     classStore: ClassStore,
     avroSchema: Schema,
@@ -45,12 +44,10 @@ object DefaultParamMatcher {
       case Type.BYTES   => NULL
       case Type.RECORD  => NEW(classStore.generatedClasses(avroSchema))
       case Type.UNION   => NONE
-      case Type.ARRAY   => {
-        checkCustomArrayType(typeMatcher.customTypeMap.get("array"), ListClass) DOT "empty"
-      }
-      case Type.MAP     => {
+      case Type.ARRAY   =>
+        checkCustomArrayType(typeMatcher.avroScalaTypes.array) DOT "empty"
+      case Type.MAP     =>
         MAKE_MAP(LIT("") ANY_-> asDefaultParam(classStore, avroSchema.getValueType, typeMatcher))
-      }
       
     }
     

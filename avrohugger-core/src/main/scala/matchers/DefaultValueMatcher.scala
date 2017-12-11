@@ -1,7 +1,7 @@
 package avrohugger
 package matchers
 
-import avrohugger.format.standard.{Default, ShapelessCoproduct}
+import avrohugger.types._
 import treehugger.forest._
 import definitions._
 import treehuggerDSL._
@@ -42,10 +42,7 @@ object DefaultValueMatcher {
           result
         }
         case Schema.Type.ARRAY => {
-          val maybeCustom = typeMatcher.customTypeMap.get("array")
-          val collectionType = {
-            DefaultParamMatcher.checkCustomArrayType(maybeCustom, ListClass)
-          }
+          val collectionType = DefaultParamMatcher.checkCustomArrayType(typeMatcher.avroScalaTypes.array)
           collectionType APPLY(node.getElements.asScala.toSeq.map(e => fromJsonNode(e, schema.getElementType)))
         }
         case Schema.Type.MAP => {
@@ -121,8 +118,8 @@ object DefaultValueMatcher {
             })
     }
 
-    def matchedTree = typeMatcher.standardUnionStyle match {
-      case Default => unionsArityStrategy
+    def matchedTree = typeMatcher.avroScalaTypes.union match {
+      case OptionEitherShapelessCoproduct => unionsArityStrategy
       case ShapelessCoproduct => unionsAsShapelessCoproductStrategy
     }
 

@@ -1,7 +1,8 @@
 package avrohugger
 package matchers
 
-import stores.ClassStore
+import avrohugger.stores.ClassStore
+import avrohugger.types._
 import treehugger.forest._
 import treehuggerDSL._
 import definitions._
@@ -9,48 +10,25 @@ import org.apache.avro.Schema
 import org.apache.avro.Schema.{Type => AvroType}
 import java.util.concurrent.ConcurrentHashMap
 
-import avrohugger.format.standard.{Default, ShapelessCoproduct, UnionStyle}
+
+
+//import avrohugger.format.standard.{Default, ShapelessCoproduct, UnionStyle}
 import treehugger.forest
 
 import scala.collection.convert.Wrappers.JConcurrentMapWrapper
 import scala.collection.JavaConverters._
 
-class TypeMatcher(val standardUnionStyle: UnionStyle = Default) {
+class TypeMatcher(val avroScalaTypes: AvroScalaTypes) {
 
-  // holds user-defined custom type mappings, e.g. ("array"->classOf[Array[_]])
-  val customTypeMap: scala.collection.concurrent.Map[String, Class[_]] = {
-    JConcurrentMapWrapper(new ConcurrentHashMap[String, Class[_]]())
-  }
-  
   // holds user-defined custom namespace mappings, 
   // e.g. ("com.example.idl"->"com.example.model")
   val customNamespaceMap: scala.collection.concurrent.Map[String, String] = {
     JConcurrentMapWrapper(new ConcurrentHashMap[String, String]())
   }
-  
-  // holds user-selected enum style, e.g. ("enum"->"java_enum")
-  val customEnumStyleMap: scala.collection.concurrent.Map[String, String] = {
-    JConcurrentMapWrapper(new ConcurrentHashMap[String, String]())
-  }
-
-  // holds user-selected union style, e.g. ("union"->"shapeless_coproduct")
-  val customUnionStyleMap: scala.collection.concurrent.Map[String, String] = {
-    JConcurrentMapWrapper(new ConcurrentHashMap[String, String]())
-  }
-
-  // updates the type map to allow for custom avro to scala mappings
-  def updateCustomTypeMap(avroToScalaMapEntry: (String, Class[_])) {
-    val _ = customTypeMap += avroToScalaMapEntry
-  }
 
   // updates the namespace map to allow for custom avro to scala mappings
   def updateCustomNamespaceMap(customNamespaceMapEntry: (String, String)) {
     val _ = customNamespaceMap += customNamespaceMapEntry
-  }
-  
-  // updates the enum style map map to allow for avro to java or scala mappings
-  def updateCustomEnumStyleMap(customEnumStyleMapEntry: (String, String)) {
-    val _ = customEnumStyleMap += customEnumStyleMapEntry
   }
 
   def toScalaType(
@@ -66,9 +44,7 @@ class TypeMatcher(val standardUnionStyle: UnionStyle = Default) {
           // default array mapping is currently List, for historical reasons
           val avroElement = schema.getElementType
           val scalaElementType = toScalaType(classStore, namespace, avroElement)
-          val collectionType = CustomTypeMatcher.checkCustomArrayType(
-            customTypeMap.get("array"),
-            TYPE_LIST)
+          val collectionType = CustomTypeMatcher.checkCustomArrayType(avroScalaTypes.array)
           collectionType(scalaElementType)
         }
         case Schema.Type.MAP      => {
@@ -78,14 +54,10 @@ class TypeMatcher(val standardUnionStyle: UnionStyle = Default) {
           TYPE_MAP(keyType, scalaValueType)
         }
         case Schema.Type.BOOLEAN  => BooleanClass
-        case Schema.Type.DOUBLE   => CustomTypeMatcher.checkCustomNumberType(
-          customTypeMap.get("double"), DoubleClass)
-        case Schema.Type.FLOAT    => CustomTypeMatcher.checkCustomNumberType(
-          customTypeMap.get("float"), FloatClass)
-        case Schema.Type.LONG     => CustomTypeMatcher.checkCustomNumberType(
-          customTypeMap.get("long"), LongClass)
-        case Schema.Type.INT      => CustomTypeMatcher.checkCustomNumberType(
-          customTypeMap.get("int"), IntClass)
+        case Schema.Type.DOUBLE   => CustomTypeMatcher.checkCustomNumberType(avroScalaTypes.double)
+        case Schema.Type.FLOAT    => CustomTypeMatcher.checkCustomNumberType(avroScalaTypes.float)
+        case Schema.Type.LONG     => CustomTypeMatcher.checkCustomNumberType(avroScalaTypes.long)
+        case Schema.Type.INT      => CustomTypeMatcher.checkCustomNumberType(avroScalaTypes.int)
         case Schema.Type.NULL     => NullClass
         case Schema.Type.STRING   => StringClass
         case Schema.Type.FIXED    => sys.error("FIXED datatype not supported")
@@ -147,8 +119,8 @@ class TypeMatcher(val standardUnionStyle: UnionStyle = Default) {
         unionsAsShapelessCoproductStrategy
     }
 
-    val matchedType = standardUnionStyle match {
-      case Default => unionsArityStrategy
+    val matchedType = avroScalaTypes.union match {
+      case OptionEitherShapelessCoproduct => unionsArityStrategy
       case ShapelessCoproduct => unionsAsShapelessCoproductStrategy
     }
 

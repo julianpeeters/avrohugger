@@ -3,9 +3,11 @@ package format
 
 import abstractions.SourceFormat
 import format.specific.SpecificScalaTreehugger
+import matchers.{ CustomNamespaceMatcher, TypeMatcher }
 import models.CompilationUnit
 import stores.{ ClassStore, SchemaStore }
-import matchers.{ CustomNamespaceMatcher, TypeMatcher }
+import types._
+
 
 import treehugger.forest._
 import definitions.RootClass
@@ -22,6 +24,8 @@ object SpecificRecord extends SourceFormat{
   val toolShortDescription = "Generates Scala code extending SpecificRecordBase."
 
   val scalaTreehugger = SpecificScalaTreehugger
+  
+  val defaultTypes: AvroScalaTypes = AvroScalaTypes.defaults.copy(enum = JavaEnum)
 
   def asCompilationUnits(
     classStore: ClassStore,

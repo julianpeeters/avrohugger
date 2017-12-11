@@ -4,6 +4,7 @@ import java.io.File
 
 import avrohugger._
 import avrohugger.format.Scavro
+import avrohugger.types._
 import org.specs2._
 
 class ScavroCustomEnumSpec extends Specification {
@@ -20,11 +21,10 @@ class ScavroCustomEnumSpec extends Specification {
     val infile = new java.io.File("avrohugger-core/src/test/avro/import.avdl")
     val gen = new Generator(
       Scavro,
-      Map.empty,
+      Some(Scavro.defaultTypes.copy(enum = JavaEnum)),
       Map(
         ("example.idl" -> "example.idl.java.model"),
-        ("other.ns" -> "other.ns.java")),
-      Map(("enum"-> "java enum")))
+        ("other.ns" -> "other.ns.java")))
     val List(dep3, dep2, dep1, dep1a, adt) = gen.fileToStrings(infile)
 
     val expectedADT = util.Util.readFile("avrohugger-core/src/test/expected/scavro/example/idl/java/model/ImportProtocol.scala")
@@ -45,11 +45,10 @@ class ScavroCustomEnumSpec extends Specification {
     val infile = new java.io.File("avrohugger-core/src/test/avro/import.avdl")
     val gen = new Generator(
       Scavro,
-      Map.empty,
+      Some(Scavro.defaultTypes.copy(enum = JavaEnum)),
       Map(
         ("example.idl" -> "example.idl.java.model"),
-        ("other.ns" -> "other.ns.java")),
-      Map(("enum"-> "java enum")))
+        ("other.ns" -> "other.ns.java")))
     val outDir = gen.defaultOutputDir + "/scavro/"
     gen.fileToFile(infile, outDir)
 
@@ -76,11 +75,10 @@ class ScavroCustomEnumSpec extends Specification {
     val infile = new java.io.File("avrohugger-core/src/test/avro/import.avdl")
     val gen = new Generator(
       Scavro,
-      Map.empty,
+      Some(Scavro.defaultTypes.copy(enum = ScalaCaseObjectEnum)),
       Map(
         ("example.idl" -> "example.idl.case.model"),
-        ("other.ns" -> "other.ns.case")),
-      Map(("enum"-> "case object")))
+        ("other.ns" -> "other.ns.case")))
     val List(dep3, dep2, dep1, adt) = gen.fileToStrings(infile)
 
     val expectedADT = util.Util.readFile("avrohugger-core/src/test/expected/scavro/example/idl/case/model/ImportProtocol.scala")
@@ -98,11 +96,10 @@ class ScavroCustomEnumSpec extends Specification {
     val infile = new java.io.File("avrohugger-core/src/test/avro/import.avdl")
     val gen = new Generator(
       Scavro,
-      Map.empty,
+      Some(Scavro.defaultTypes.copy(enum = ScalaCaseObjectEnum)),
       Map(
         ("example.idl" -> "example.idl.case.model"),
-        ("other.ns" -> "other.ns.case")),
-      Map(("enum"-> "case object")))
+        ("other.ns" -> "other.ns.case")))
       val outDir = gen.defaultOutputDir + "/scavro/"
     gen.fileToFile(infile, outDir)
 
