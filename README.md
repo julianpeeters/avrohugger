@@ -149,8 +149,11 @@ protocol, IDL, or a set of case classes that you'd like to have implement
 
 To reassign Scala types to Avro types, use the following:
     
-    val types = Some(SpecificRecord.defaultTypes.copy(array = ScalaVector))
-    val generator = new Generator(SpecificRecord, avroScalaCustomTypes = types)
+    import avrohugger.format.SpecificRecord
+    import avrohugger.types.ScalaVector
+    
+    val myScalaTypes = Some(SpecificRecord.defaultTypes.copy(array = ScalaVector))
+    val generator = new Generator(SpecificRecord, avroScalaCustomTypes = myScalaTypes)
     
 * `array` can be assigned to `ScalaArray`, `ScalaList`, and `ScalaVector`
 * `enum` can be assigned to `JavaEnum`, `ScalaCaseObjectEnum`, and `ScalaEnumeration`
