@@ -3,6 +3,7 @@ package format
 package specific
 package trees
 
+import generators.ScalaDocGenerator
 import org.apache.avro.{ Protocol, Schema }
 
 import treehugger.forest._

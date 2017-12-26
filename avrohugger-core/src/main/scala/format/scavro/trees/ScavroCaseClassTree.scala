@@ -3,6 +3,7 @@ package format
 package scavro
 package trees
 
+import generators.ScalaDocGenerator
 import converters.JavaConverter
 import matchers.{ DefaultValueMatcher, TypeMatcher }
 import stores.ClassStore

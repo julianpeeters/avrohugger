@@ -84,10 +84,10 @@ class GeneratorTool(sourceFormat: SourceFormat,
   }
 
   @Override
-  def getName: String = generator.sourceFormat.toolName;
+  def getName: String = generator.format.toolName;
 
   @Override
-  def getShortDescription: String = generator.sourceFormat.toolShortDescription;
+  def getShortDescription: String = generator.format.toolShortDescription;
 
   /**
    * For a List of files or directories, returns a File[] containing each file

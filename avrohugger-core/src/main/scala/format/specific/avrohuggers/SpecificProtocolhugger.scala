@@ -4,6 +4,7 @@ package specific
 package avrohuggers
 
 import format.abstractions.avrohuggers.Protocolhugger
+import generators.ScalaDocGenerator
 import trees.{ SpecificObjectTree, SpecificTraitTree }
 import matchers.TypeMatcher
 import stores.ClassStore

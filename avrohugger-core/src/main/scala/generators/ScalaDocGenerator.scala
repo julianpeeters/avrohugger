@@ -1,4 +1,5 @@
 package avrohugger
+package generators
 
 import treehugger.forest._
 import definitions._

@@ -3,6 +3,7 @@ package format
 package standard
 package avrohuggers
 
+import generators.ScalaDocGenerator
 import trees.StandardTraitTree
 import matchers.TypeMatcher
 import stores.ClassStore

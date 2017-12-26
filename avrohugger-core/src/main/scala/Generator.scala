@@ -2,6 +2,7 @@ package avrohugger
 
 import avrohugger.format.abstractions.SourceFormat
 import avrohugger.format._
+import avrohugger.generators.{FileGenerator, StringGenerator}
 import avrohugger.input.parsers.{FileInputParser, StringInputParser}
 import avrohugger.matchers.TypeMatcher
 import avrohugger.types.AvroScalaTypes
@@ -10,15 +11,12 @@ import org.apache.avro.{Protocol, Schema}
 import java.io.File
 
 // Unable to overload this class' methods because outDir uses a default value
-class Generator(format: SourceFormat,
-                avroScalaCustomTypes: Option[AvroScalaTypes] = None,
-                avroScalaCustomNamespace: Map[String, String] = Map.empty,
-                restrictedFieldNumber: Boolean = false) {
+case class Generator(format: SourceFormat,
+                     avroScalaCustomTypes: Option[AvroScalaTypes] = None,
+                     avroScalaCustomNamespace: Map[String, String] = Map.empty,
+                     restrictedFieldNumber: Boolean = false) {
 
   val avroScalaTypes = avroScalaCustomTypes.getOrElse(format.defaultTypes)
-
-  val sourceFormat = format
-  
   
   val defaultOutputDir = "target/generated-sources"
   lazy val fileParser = new FileInputParser
@@ -26,9 +24,7 @@ class Generator(format: SourceFormat,
   lazy val schemaParser = new Schema.Parser
   val classStore = new ClassStore
   val schemaStore = new SchemaStore
-  val typeMatcher = new TypeMatcher(avroScalaTypes)
-
-  avroScalaCustomNamespace.foreach(typeMatcher.updateCustomNamespaceMap)
+  val typeMatcher = new TypeMatcher(avroScalaTypes, avroScalaCustomNamespace)
 
   //////////////// methods for writing definitions out to file /////////////////
   def schemaToFile(

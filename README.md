@@ -63,13 +63,11 @@ runtime, Java classes provided separately (see [Scavro Plugin](https://github.co
 |BOOLEAN|Boolean|Boolean|Boolean||
 |NULL|Null|Null|Null||
 |MAP|Map|Map|Map||
-|ENUM|scala.Enumeration|Java Enum|scala.Enumeration| See [Customizable Enum Style](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
+|ENUM|scala.Enumeration<br>Scala case object<br>Java Enum|Java Enum|scala.Enumeration<br>Scala case object<br>Java Enum| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 |BYTES|Array[Byte]|Array[Byte]|Array[Byte]||
 |FIXED|//TODO|//TODO|//TODO||
-|ARRAY|List|List|Array| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
-|UNION|Option|Option|Option|//TODO: Default values, [Customizable Union Style](https://github.com/julianpeeters/avrohugger#customizable-union-style)|
-|UNION|Either|//TODO|//TODO|//TODO: Default values, [Customizable Union Style](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
-|UNION|Shapeless Coproduct|//TODO|//TODO|//TODO: Default values, [Customizable Union Style](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
+|ARRAY|List<br>Array<br>Vector|List<br>Array<br>Vector|Array<br>List<br>Vector| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
+|UNION|Option<br>Either<br>Shapeless Coproduct|Option|Option| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 |RECORD|case class|case class extending `SpecificRecordBase`|case class extending `AvroSerializeable`|
 
 

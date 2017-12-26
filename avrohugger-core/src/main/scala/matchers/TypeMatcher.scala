@@ -10,26 +10,15 @@ import org.apache.avro.Schema
 import org.apache.avro.Schema.{Type => AvroType}
 import java.util.concurrent.ConcurrentHashMap
 
-
-
-//import avrohugger.format.standard.{Default, ShapelessCoproduct, UnionStyle}
 import treehugger.forest
 
 import scala.collection.convert.Wrappers.JConcurrentMapWrapper
 import scala.collection.JavaConverters._
 
-class TypeMatcher(val avroScalaTypes: AvroScalaTypes) {
-
-  // holds user-defined custom namespace mappings, 
-  // e.g. ("com.example.idl"->"com.example.model")
-  val customNamespaceMap: scala.collection.concurrent.Map[String, String] = {
-    JConcurrentMapWrapper(new ConcurrentHashMap[String, String]())
-  }
-
-  // updates the namespace map to allow for custom avro to scala mappings
-  def updateCustomNamespaceMap(customNamespaceMapEntry: (String, String)) {
-    val _ = customNamespaceMap += customNamespaceMapEntry
-  }
+class TypeMatcher(
+  val avroScalaTypes: AvroScalaTypes,
+  //e.g. ("com.example.idl"->"com.example.model")
+  val customNamespaces: Map[String, String]) {
 
   def toScalaType(
     classStore: ClassStore,

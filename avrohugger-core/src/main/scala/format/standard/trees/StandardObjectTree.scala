@@ -3,6 +3,7 @@ package format
 package standard
 package trees
 
+import generators.ScalaDocGenerator
 import stores.ClassStore
 
 import treehugger.forest._

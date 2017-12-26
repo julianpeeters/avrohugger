@@ -3,6 +3,7 @@ package format
 package specific
 package trees
 
+import generators.ScalaDocGenerator
 import matchers.{ DefaultParamMatcher, DefaultValueMatcher, TypeMatcher }
 import methods.{ GetGenerator, GetSchemaGenerator, PutGenerator }
 import stores.ClassStore

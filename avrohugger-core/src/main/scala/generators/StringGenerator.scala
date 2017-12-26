@@ -1,4 +1,5 @@
 package avrohugger
+package generators
 
 import avrohugger.format.abstractions.SourceFormat
 import avrohugger.input.DependencyInspector

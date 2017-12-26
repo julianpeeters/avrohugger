@@ -16,7 +16,7 @@ object ScavroNamespaceRenamer {
     typeMatcher: TypeMatcher): Option[String] = {
 
     val scavroModelDefaultPackage: String =
-      typeMatcher.customNamespaceMap
+      typeMatcher.customNamespaces
         .get("SCAVRO_DEFAULT_PACKAGE$")
         .getOrElse("model")
         

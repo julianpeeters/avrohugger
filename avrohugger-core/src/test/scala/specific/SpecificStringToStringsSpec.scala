@@ -6,7 +6,7 @@ import java.io.File
 
 import avrohugger.Generator
 import avrohugger.format.SpecificRecord
-import avrohugger.StringGenerator
+import avrohugger.generators.StringGenerator
 
 import org.specs2._
 

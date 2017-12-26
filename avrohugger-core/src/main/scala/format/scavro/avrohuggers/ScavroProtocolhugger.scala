@@ -4,6 +4,7 @@ package scavro
 package avrohuggers
 
 import format.abstractions.avrohuggers.Protocolhugger
+import generators.ScalaDocGenerator
 import matchers.TypeMatcher
 import stores.ClassStore
 import trees.ScavroTraitTree

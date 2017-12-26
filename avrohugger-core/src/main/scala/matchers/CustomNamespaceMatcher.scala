@@ -13,7 +13,7 @@ object CustomNamespaceMatcher {
     def queryNamespaceMap(schemaNamespace: String): Option[String] = {
       val maybeCustomNamespace: Option[String] =
         maybeSchemaNamespace.flatMap(schemaNamespace =>
-          typeMatcher.customNamespaceMap.get(schemaNamespace))
+          typeMatcher.customNamespaces.get(schemaNamespace))
       maybeCustomNamespace match {
         case Some(customNamespace) => Some(customNamespace)
         case None => Some(schemaNamespace)
