@@ -157,7 +157,8 @@ To reassign Scala types to Avro types, use the following:
     
 * `array` can be assigned to `ScalaArray`, `ScalaList`, and `ScalaVector`
 * `enum` can be assigned to `JavaEnum`, `ScalaCaseObjectEnum`, and `ScalaEnumeration`
-* `union` can be assiged to `OptionEitherShapelessCoproduct` and `ShapelessCoproduct`
+* `union` can be assigned to `OptionEitherShapelessCoproduct` and `ShapelessCoproduct`
+* `int`, `long`, `float`, `double` can be assigned to `ScalaInt`, `ScalaLong`, `ScalaFloat`, `ScalaDouble`
 
 ##### Customizable Namespace Mapping:
 
