@@ -1,6 +1,7 @@
 package avrohugger
 package matchers
 
+import avrohugger.stores.ClassStore
 import avrohugger.types._
 import treehugger.forest._
 import definitions._
@@ -19,7 +20,11 @@ object DefaultValueMatcher {
   
   // This code was stolen from here:
   // https://github.com/julianpeeters/avro-scala-macro-annotations/blob/104fa325a00044ff6d31184fa7ff7b6852e9acd5/macros/src/main/scala/avro/scala/macro/annotations/provider/matchers/FromJsonMatcher.scala
-  def getDefaultValue(field: Schema.Field, typeMatcher: TypeMatcher): Tree = {
+  def getDefaultValue(
+    classStore: ClassStore,
+    namespace: Option[String],
+    field: Schema.Field,
+    typeMatcher: TypeMatcher): Tree = {
 
     def fromJsonNode(node: JsonNode, schema: Schema): Tree = {
       schema.getType match {
@@ -38,7 +43,7 @@ object DefaultValueMatcher {
         case Schema.Type.NULL => LIT(null)
         case Schema.Type.UNION => {
           val unionSchemas = schema.getTypes.asScala.toList
-          val result = unionDefaultArgsImpl(node, unionSchemas, fromJsonNode, typeMatcher)
+          val result = unionDefaultArgsImpl(node, unionSchemas, fromJsonNode, typeMatcher, classStore, namespace)
           result
         }
         case Schema.Type.ARRAY => {
@@ -81,7 +86,9 @@ object DefaultValueMatcher {
   private[this] def unionDefaultArgsImpl(node: JsonNode,
                                          unionSchemas: List[Schema],
                                          treeMatcher: (JsonNode, Schema) => Tree,
-                                         typeMatcher: TypeMatcher) : Tree = {
+                                         typeMatcher: TypeMatcher,
+                                         classStore: ClassStore,
+                                         namespace: Option[String]) : Tree = {
 
     def COPRODUCT(defaultParam: Schema, tp: List[Type]): Tree =  {
       val copTypes = tp :+ typeRef(RootClass.newClass(newTypeName("CNil")))
@@ -99,35 +106,32 @@ object DefaultValueMatcher {
       case firstSchema :: _ => //Coproduct
         COPRODUCT(firstSchema,
           nonNullableSchemas
-            .map { s =>
-              typeRef(RootClass.newClass(newTypeName(s.getName)))
-            })
+            .map(typeMatcher.toScalaType(classStore, namespace, _)))
       case _ => throw new Exception("unrecognized shape for shapeless coproduct")
     }
 
-    def unionsArityStrategy = nonNullableSchemas match {
-      case List(schemaA) => //Option
-        treeMatcher(node, schemaA)
-      case List(schemaA, schemaB) => //Either
-        LEFT(treeMatcher(node, schemaA))
-      case firstSchema :: _ => //Coproduct
-        COPRODUCT(firstSchema,
-          nonNullableSchemas
-            .map {s =>
-              typeRef(RootClass.newClass(newTypeName(s.getName)))
-            })
-    }
+    def unionsArityStrategy(classStore: ClassStore, namespace: Option[String]) =
+      nonNullableSchemas match {
+        case List(schemaA) => //Option
+          treeMatcher(node, schemaA)
+        case List(schemaA, schemaB) => //Either
+          LEFT(treeMatcher(node, schemaA))
+        case firstSchema :: _ => //Coproduct
+          COPRODUCT(firstSchema,
+            nonNullableSchemas
+              .map(typeMatcher.toScalaType(classStore, namespace, _)))
+      }
 
-    def matchedTree = typeMatcher.avroScalaTypes.union match {
-      case OptionEitherShapelessCoproduct => unionsArityStrategy
+    def matchedTree(classStore: ClassStore, namespace: Option[String]) = typeMatcher.avroScalaTypes.union match {
+      case OptionEitherShapelessCoproduct => unionsArityStrategy(classStore, namespace)
       case ShapelessCoproduct => unionsAsShapelessCoproductStrategy
     }
 
     node match {
       case `nullNode` => NONE
       case _ : NullNode => NONE
-      case _ if includesNull => SOME(matchedTree)
-      case _ => matchedTree
+      case _ if includesNull => SOME(matchedTree(classStore, namespace))
+      case _ => matchedTree(classStore, namespace)
     }
   }
 }

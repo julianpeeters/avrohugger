@@ -36,7 +36,11 @@ object SpecificCaseClassTree {
     val params: List[ValDef] = avroFields.map { f =>
       val fieldName = f.name
       val fieldType = typeMatcher.toScalaType(classStore, namespace, f.schema)
-      val defaultValue = DefaultValueMatcher.getDefaultValue(f, typeMatcher)
+      val defaultValue = DefaultValueMatcher.getDefaultValue(
+        classStore,
+        namespace,
+        f,
+        typeMatcher)
       VAR(fieldName, fieldType) := defaultValue
     }
 

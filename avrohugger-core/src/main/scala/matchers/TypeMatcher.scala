@@ -30,7 +30,6 @@ class TypeMatcher(
 
       schema.getType match {
         case Schema.Type.ARRAY    => {
-          // default array mapping is currently List, for historical reasons
           val avroElement = schema.getElementType
           val scalaElementType = toScalaType(classStore, namespace, avroElement)
           val collectionType = CustomTypeMatcher.checkCustomArrayType(avroScalaTypes.array)
@@ -49,7 +48,7 @@ class TypeMatcher(
         case Schema.Type.INT      => CustomTypeMatcher.checkCustomNumberType(avroScalaTypes.int)
         case Schema.Type.NULL     => NullClass
         case Schema.Type.STRING   => StringClass
-        case Schema.Type.FIXED    => sys.error("FIXED datatype not supported")
+        case Schema.Type.FIXED    => sys.error("FIXED datatype not yet supported")
         case Schema.Type.BYTES    => TYPE_ARRAY(ByteClass)
         case Schema.Type.RECORD   => classStore.generatedClasses(schema)
         case Schema.Type.ENUM     => classStore.generatedClasses(schema)

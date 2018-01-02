@@ -266,12 +266,9 @@ to flow data into a system that doesn't support them (e.g., Hive).
 * To test for regressions, please run `sbt:avrohugger> + test`.
 * To test that generated code can be de/serialized as expected, please run 
 `sbt:avrohugger> + publishLocal`, then clone sbt-avrohugger, update its
-avrohugger dependency to the local version, and please run
-`sbt:sbt-avrohugger> scripted`
-The `scripted` task runs tests in `src/test`, as well as the serialization
-tests in `avrohugger-core/src/sbt-test`. _Note:_ the scripted tests depend on a local version
-of `sbt-avrohugger` that needs to be published with the updated version of
-`avrohugger` that is to be tested.
+avrohugger dependency to the locally published version, and please run
+`sbt:sbt-avrohugger> scripted`, or, e.g., `scripted avrohugger/GenericSerializationTests`
+
 
 #### Credits
 Depends on [Avro](https://github.com/apache/avro) and [Treehugger](https://github.com/eed3si9n/treehugger). `avrohugger-tools` is based on [avro-tools](http://avro.apache.org/docs/1.7.7/gettingstartedjava.html#Serializing+and+deserializing+with+code+generation).
