@@ -109,7 +109,7 @@ class TypeMatcher(
 
     val matchedType = avroScalaTypes.union match {
       case OptionEitherShapelessCoproduct => unionsArityStrategy
-      case ShapelessCoproduct => unionsAsShapelessCoproductStrategy
+      case OptionShapelessCoproduct => unionsAsShapelessCoproductStrategy
     }
 
     if (includesNull) optionType(matchedType) else matchedType

@@ -24,7 +24,7 @@ object StandardImporter extends Importer {
     */
   private[this] def requiresShapelessImports(schema: Schema, typeMatcher: TypeMatcher): Boolean =
     typeMatcher.avroScalaTypes.union match {
-      case ShapelessCoproduct => true
+      case OptionShapelessCoproduct => true
       case OptionEitherShapelessCoproduct => {
         val fields = schema.getFields.asScala
         val isUnion: Schema.Field => Boolean = _.schema().getType == Schema.Type.UNION

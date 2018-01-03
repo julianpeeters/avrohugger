@@ -124,7 +124,7 @@ object DefaultValueMatcher {
 
     def matchedTree(classStore: ClassStore, namespace: Option[String]) = typeMatcher.avroScalaTypes.union match {
       case OptionEitherShapelessCoproduct => unionsArityStrategy(classStore, namespace)
-      case ShapelessCoproduct => unionsAsShapelessCoproductStrategy
+      case OptionShapelessCoproduct => unionsAsShapelessCoproductStrategy
     }
 
     node match {
