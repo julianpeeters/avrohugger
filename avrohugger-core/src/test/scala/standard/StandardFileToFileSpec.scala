@@ -272,7 +272,7 @@ class StandardFileToFileSpec extends Specification {
 
   def e19 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/all_unions_as_coproduct.avdl")
-    val avroScalaCustomTypes = Standard.defaultTypes.copy(union = ShapelessCoproduct)
+    val avroScalaCustomTypes = Standard.defaultTypes.copy(union = OptionShapelessCoproduct)
     val gen = new Generator(Standard, avroScalaCustomTypes = Some(avroScalaCustomTypes))
     val outDir = gen.defaultOutputDir + "/standard/"
     gen.fileToFile(infile, outDir)
