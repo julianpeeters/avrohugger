@@ -263,11 +263,13 @@ to flow data into a system that doesn't support them (e.g., Hive).
 
 ## Testing
 
-* To test for regressions, please run `sbt:avrohugger> + test`.
-* To test that generated code can be de/serialized as expected, please run 
-`sbt:avrohugger> + publishLocal`, then clone sbt-avrohugger, update its
-avrohugger dependency to the locally published version, and please run
-`sbt:sbt-avrohugger> scripted`, or, e.g., `scripted avrohugger/GenericSerializationTests`
+To test for regressions, please run `sbt:avrohugger> + test`.
+
+To test that generated code can be de/serialized as expected, please run:
+1) `sbt:avrohugger> + publishLocal`
+2) then clone sbt-avrohugger and update its avrohugger dependency to the locally
+published version
+3) finally run `sbt:sbt-avrohugger> scripted avrohugger/*`, or, e.g., `scripted avrohugger/GenericSerializationTests`
 
 
 #### Credits
