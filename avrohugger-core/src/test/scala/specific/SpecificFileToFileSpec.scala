@@ -30,6 +30,11 @@ class SpecificFileToFileSpec extends Specification {
       correctly generate records depending on others defined in a different- and same-namespaced AVDL and AVSC $e14
       correctly generate an empty case class definition $e15
       correctly generate default values $e16
+      
+      
+      
+      
+      correctly generate a protocol with no ADT when asked $e21
   """
   
   // tests specific to fileToX
@@ -107,7 +112,8 @@ class SpecificFileToFileSpec extends Specification {
   
   def e5 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/nested.avdl")
-    val gen = new Generator(SpecificRecord)
+    val myAvroScalaCustomTypes = SpecificRecord.defaultTypes.copy(protocol = types.ScalaADT)
+    val gen = new Generator(format = SpecificRecord, avroScalaCustomTypes = Some(myAvroScalaCustomTypes))
     val outDir = gen.defaultOutputDir + "/specific/"
     gen.fileToFile(infile, outDir)
     val source = util.Util.readFile("target/generated-sources/specific/example/idl/NestedProtocol.scala")
@@ -229,7 +235,8 @@ class SpecificFileToFileSpec extends Specification {
   
   def e15 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/AvroTypeProviderTestEmptyRecord.avdl")
-    val gen = new Generator(SpecificRecord)
+    val myAvroScalaCustomTypes = SpecificRecord.defaultTypes.copy(protocol = types.ScalaADT)
+    val gen = new Generator(format = SpecificRecord, avroScalaCustomTypes = Some(myAvroScalaCustomTypes))
     val outDir = gen.defaultOutputDir + "/specific/"
     gen.fileToFile(infile, outDir)
   
@@ -249,6 +256,21 @@ class SpecificFileToFileSpec extends Specification {
 
     sourceRecord === util.Util.readFile("avrohugger-core/src/test/expected/specific/example/idl/Defaults.scala")
     sourceEnum === util.Util.readFile("avrohugger-core/src/test/expected/specific/example/idl/DefaultEnum.java")
+  }
+  
+  
+  
+  
+  
+  def e21 = {
+    val infile = new java.io.File("avrohugger-core/src/test/avro/AvroTypeProviderTestProtocol.avdl")
+    val gen = new Generator(format = SpecificRecord)
+    val outDir = gen.defaultOutputDir + "/specific/"
+    gen.fileToFile(infile, outDir)
+  
+    val source = util.Util.readFile("target/generated-sources/specific/test/Joystick.scala")
+  
+    source === util.Util.readFile("avrohugger-core/src/test/expected/specific/test/Joystick.scala")
   }
 
 }

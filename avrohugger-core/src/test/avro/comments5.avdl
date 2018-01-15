@@ -1,0 +1,16 @@
+@namespace("com.example")
+/**
+Example adapted from https://github.com/delagoya. This is a comment for the whole protocol
+*/
+
+protocol Example5 {
+
+  record NoSpaces6 {
+    string comment_property1;
+  }
+  
+  record NoSpaces7 {
+    string comment_property2;
+  }
+  
+}

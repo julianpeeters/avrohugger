@@ -69,14 +69,14 @@ runtime, Java classes provided separately (see [Scavro Plugin](https://github.co
 |ARRAY|List<br>Array<br>Vector|List<br>Array<br>Vector|Array<br>List<br>Vector| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 |UNION|Option<br>Either<br>Shapeless Coproduct|Option|Option| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 |RECORD|case class|case class extending `SpecificRecordBase`|case class extending `AvroSerializeable`|
-
+|PROTOCOL||RPC trait|| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 
 
 ##### Protocol Support:
 
-* `.avdl`, `.avpr`, and json protocol strings are generated as ADTs if they define more than one Scala definition.
+* the records defined in `.avdl`, `.avpr`, and json protocol strings can be generated as ADTs if the protocols define more than one Scala definition (_note:_ message definitions are ignored when this setting is used). See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping).
 
-* For `SpecificRecord`, if the protocol contains messages then no ADT is generated, and an RPC trait is generated instead.
+* For `SpecificRecord`, if the protocol contains messages then an RPC trait is generated (instead of generating and ADT, or ignoring the message definitions).
 
 
 ##### Doc Support:
@@ -157,6 +157,7 @@ To reassign Scala types to Avro types, use the following:
 * `enum` can be assigned to `JavaEnum`, `ScalaCaseObjectEnum`, and `ScalaEnumeration`
 * `union` can be assigned to `OptionEitherShapelessCoproduct` and `OptionShapelessCoproduct`
 * `int`, `long`, `float`, `double` can be assigned to `ScalaInt`, `ScalaLong`, `ScalaFloat`, `ScalaDouble`
+* `protocol` can be assigned to `ScalaADT` and `NoTypeGenerated`
 
 ##### Customizable Namespace Mapping:
 

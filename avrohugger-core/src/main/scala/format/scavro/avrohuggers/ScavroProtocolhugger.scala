@@ -36,7 +36,7 @@ object ScavroProtocolhugger extends Protocolhugger {
       case ScalaEnumeration => localSubTypes
 
     }
-    if (adtSubTypes.length > 1) {
+    if (adtSubTypes.length > 1 && typeMatcher.avroScalaTypes.protocol == types.ScalaADT) {
       traitDef +: localSubTypes.flatMap(schema => {
         ScavroSchemahugger.toTrees(
           classStore,

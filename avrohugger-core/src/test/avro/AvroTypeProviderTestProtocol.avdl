@@ -1,0 +1,10 @@
+@namespace("test")
+protocol Joystick {
+    record Up {
+        int value;
+    }
+
+    record Down {
+        int value;
+    }
+}

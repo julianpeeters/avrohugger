@@ -4,6 +4,7 @@ import java.io.File
 
 import avrohugger._
 import avrohugger.format.SpecificRecord
+import avrohugger.types.ScalaADT
 import org.specs2._
 
 class SpecificCommentsSpec extends Specification {
@@ -14,6 +15,7 @@ class SpecificCommentsSpec extends Specification {
       use the comments from idl fields even if the record has none $e2
       use the comments from idl records even if the fields have none $e3
       use the comments from the whole protocol as comment to the sealed trait of an ADT $e4
+      use the comments from the whole protocol as comment to set of records $e5
   """
 
   def e1 = {
@@ -45,11 +47,21 @@ class SpecificCommentsSpec extends Specification {
   
   def e4 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/comments4.avdl")
-    val gen = new Generator(SpecificRecord)
+    val myAvroScalaCustomTypes = SpecificRecord.defaultTypes.copy(protocol = types.ScalaADT)
+    val gen = new Generator(format = SpecificRecord, avroScalaCustomTypes = Some(myAvroScalaCustomTypes))
     val outDir = gen.defaultOutputDir + "/specific/"
     gen.fileToFile(infile, outDir)
     val sourceRecord = scala.io.Source.fromFile(s"$outDir/com/example/Example4.scala").mkString
     sourceRecord ==== util.Util.readFile("avrohugger-core/src/test/expected/comments/specific/Example4.scala")
+  }
+  
+  def e5 = {
+    val infile = new java.io.File("avrohugger-core/src/test/avro/comments5.avdl")
+    val gen = new Generator(SpecificRecord)
+    val outDir = gen.defaultOutputDir + "/specific/"
+    gen.fileToFile(infile, outDir)
+    val sourceRecord = scala.io.Source.fromFile(s"$outDir/com/example/Example5.scala").mkString
+    sourceRecord ==== util.Util.readFile("avrohugger-core/src/test/expected/comments/specific/Example5.scala")
   }
     
 }

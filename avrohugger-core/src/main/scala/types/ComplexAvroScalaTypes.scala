@@ -24,3 +24,7 @@ case object ScalaVector extends AvroScalaArrayType
 // map
 sealed trait AvroScalaMapType extends Product with Serializable
 case object ScalaMap extends AvroScalaMapType
+// protocol
+sealed trait AvroScalaProtocolType extends Product with Serializable
+case object ScalaADT extends AvroScalaProtocolType
+case object NoTypeGenerated extends AvroScalaProtocolType

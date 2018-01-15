@@ -8,6 +8,7 @@ import generators.ScalaDocGenerator
 import trees.{ SpecificObjectTree, SpecificTraitTree }
 import matchers.TypeMatcher
 import stores.ClassStore
+import types.ScalaADT
 
 import org.apache.avro.{ Protocol, Schema }
 
@@ -38,7 +39,7 @@ object SpecificProtocolhugger extends Protocolhugger {
       // without messages are generated as ADTs
       val localNonEnums = localSubTypes.filterNot(isEnum)
 
-      if (localNonEnums.length > 1) {
+      if (localNonEnums.length > 1 && typeMatcher.avroScalaTypes.protocol == types.ScalaADT) {
         val maybeNewBaseTrait = Some(name)
         val maybeNewFlags = Some(List(Flags.FINAL.toLong))
         val sealedTraitDef = SpecificTraitTree.toADTRootDef(protocol)

@@ -17,7 +17,6 @@ case class Generator(format: SourceFormat,
                      restrictedFieldNumber: Boolean = false) {
 
   val avroScalaTypes = avroScalaCustomTypes.getOrElse(format.defaultTypes)
-  
   val defaultOutputDir = "target/generated-sources"
   lazy val fileParser = new FileInputParser
   lazy val stringParser = new StringInputParser

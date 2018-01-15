@@ -30,6 +30,11 @@ class SpecificStringToStringsSpec extends Specification {
       correctly generate records depending on others defined in a different- and same-namespaced AVDL and AVSC $e14
       correctly generate an empty case class definition $e15
       correctly generate default values $e16
+      
+      
+      
+      
+      correctly generate a protocol with no ADT when asked $e21
   """
   
   // tests common to fileToX and stringToX
@@ -77,7 +82,8 @@ class SpecificStringToStringsSpec extends Specification {
   
   def e5 = {
     val inputString = util.Util.readFile("avrohugger-core/src/test/avro/nested.avdl")
-    val gen = new Generator(SpecificRecord)
+    val myAvroScalaCustomTypes = SpecificRecord.defaultTypes.copy(protocol = types.ScalaADT)
+    val gen = new Generator(format = SpecificRecord, avroScalaCustomTypes = Some(myAvroScalaCustomTypes))
     val List(source) = gen.stringToStrings(inputString)
     val expected = util.Util.readFile("avrohugger-core/src/test/expected/specific/example/idl/NestedProtocol.scala")
     source === expected      
@@ -167,7 +173,8 @@ class SpecificStringToStringsSpec extends Specification {
   
   def e15 = {
     val inputString = util.Util.readFile("avrohugger-core/src/test/avro/AvroTypeProviderTestEmptyRecord.avdl")
-    val gen = new Generator(SpecificRecord)
+    val myAvroScalaCustomTypes = SpecificRecord.defaultTypes.copy(protocol = types.ScalaADT)
+    val gen = new Generator(format = SpecificRecord, avroScalaCustomTypes = Some(myAvroScalaCustomTypes))
     val List(source) = gen.stringToStrings(inputString)
     val expected = util.Util.readFile("avrohugger-core/src/test/expected/specific/test/Calculator.scala")
     source === expected
@@ -183,6 +190,20 @@ class SpecificStringToStringsSpec extends Specification {
   
     sourceRecord === expectedRecord
     sourceEnum === expectedEnum
+  }
+  
+  
+  
+  
+  
+  
+  def e21 = {
+    val inputString = util.Util.readFile("avrohugger-core/src/test/avro/AvroTypeProviderTestProtocol.avdl")
+    val gen = new Generator(format = SpecificRecord)
+  
+    val List(source) = gen.stringToStrings(inputString)
+  
+    source === util.Util.readFile("avrohugger-core/src/test/expected/specific/test/Joystick.scala")
   }
 
 }

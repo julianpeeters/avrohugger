@@ -38,7 +38,7 @@ object StandardProtocolhugger extends Protocolhugger {
       case ScalaEnumeration => localSubTypes
     }
 
-    if (adtSubTypes.length > 1) {
+    if (adtSubTypes.length > 1 && typeMatcher.avroScalaTypes.protocol == types.ScalaADT) {
       val maybeNewBaseTrait = Some(name)
       val maybeNewFlags = Some(List(Flags.FINAL.toLong))
       val traitDef = StandardTraitTree.toADTRootDef(protocol, typeMatcher)
