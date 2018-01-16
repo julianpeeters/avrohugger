@@ -34,7 +34,7 @@ import scala.collection.JavaConverters._
   * fileExt
   * getFilePath
   * getLocalSubtypes
-  * getJavaCompilationUnit
+  * getJavaEnumCompilationUnit
   * getScalaCompilationUnit
   * isEnum
   * registerTypes
@@ -78,14 +78,15 @@ trait SourceFormat {
   ///////////////////////////// concrete members ///////////////////////////////
   def fileExt(
     schemaOrProtocol: Either[Schema, Protocol],
-    typeMatcher: TypeMatcher) = {
+    typeMatcher: TypeMatcher): String = {
     val enumType = typeMatcher.avroScalaTypes.enum
-    val enumExt = enumType match {
+    def enumExt: String = enumType match {
       case JavaEnum => ".java"
       case ScalaCaseObjectEnum => ".scala"
       case ScalaEnumeration => ".scala"
-
+      case EnumAsScalaString => sys.error("Only RECORD and ENUM can be top-level definitions")
     }
+    
     schemaOrProtocol match {
       case Left(schema) => schema.getType match {
         case RECORD => ".scala"
@@ -94,6 +95,7 @@ trait SourceFormat {
       }
       case Right(protocol) => ".scala"
     }
+    
   }
 
   def getFilePath(
@@ -175,6 +177,7 @@ trait SourceFormat {
         case JavaEnum => schema.getName
         case ScalaCaseObjectEnum => schema.getName
         case ScalaEnumeration => renameEnum(schema, "Value")
+        case EnumAsScalaString => schema.getName
       }
       val classSymbol = RootClass.newClass(typeName)
       classStore.accept(schema, classSymbol)

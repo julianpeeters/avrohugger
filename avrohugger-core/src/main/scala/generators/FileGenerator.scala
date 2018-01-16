@@ -27,7 +27,7 @@ private[avrohugger] object FileGenerator {
     restrictedFields: Boolean): Unit = {
     val topNS: Option[String] = DependencyInspector.getReferredNamespace(schema)
     val topLevelSchemas: List[Schema] =
-      NestedSchemaExtractor.getNestedSchemas(schema, schemaStore)
+      NestedSchemaExtractor.getNestedSchemas(schema, schemaStore, typeMatcher)
     // most-nested classes processed first
     topLevelSchemas.reverse.distinct.foreach(schema => {
       // pass in the top-level schema's namespace if the nested schema has none

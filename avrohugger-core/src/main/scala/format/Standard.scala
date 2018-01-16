@@ -30,9 +30,7 @@ object Standard extends SourceFormat {
     maybeOutDir: Option[String],
     typeMatcher: TypeMatcher,
     restrictedFields: Boolean): List[CompilationUnit] = {
-
     registerTypes(schemaOrProtocol, classStore, typeMatcher)
-
     val namespace =
       CustomNamespaceMatcher.checkCustomNamespace(
         ns,
@@ -70,7 +68,7 @@ object Standard extends SourceFormat {
                   typeMatcher)
                 List(javaCompilationUnit)
               }
-              case _ => {
+              case ScalaCaseObjectEnum => {
                 val scalaCompilationUnit = getScalaCompilationUnit(
                   classStore,
                   namespace,
@@ -80,6 +78,20 @@ object Standard extends SourceFormat {
                   maybeOutDir,
                   restrictedFields)
                 List(scalaCompilationUnit)
+              }
+              case ScalaEnumeration => {
+                val scalaCompilationUnit = getScalaCompilationUnit(
+                  classStore,
+                  namespace,
+                  schemaOrProtocol,
+                  typeMatcher,
+                  schemaStore,
+                  maybeOutDir,
+                  restrictedFields)
+                List(scalaCompilationUnit)
+              }
+              case EnumAsScalaString => {
+                List.empty
               }
             }
 
@@ -113,7 +125,9 @@ object Standard extends SourceFormat {
             })
             scalaCompilationUnit +: javaCompilationUnits
           }
-          case _ => List(scalaCompilationUnit)
+          case ScalaCaseObjectEnum => List(scalaCompilationUnit)
+          case ScalaEnumeration => List(scalaCompilationUnit)
+          case EnumAsScalaString => List(scalaCompilationUnit)
         }
       }
     }
@@ -150,7 +164,7 @@ object Standard extends SourceFormat {
           case JavaEnum => getLocalSubtypes(protocol).filterNot(isEnum)
           case ScalaCaseObjectEnum => getLocalSubtypes(protocol)
           case ScalaEnumeration => getLocalSubtypes(protocol)
-
+          case EnumAsScalaString => getLocalSubtypes(protocol).filterNot(isEnum)
         }
         if (localSubTypes.length > 1) protocol.getName // for ADT
         else localSubTypes.headOption match {

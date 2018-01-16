@@ -111,6 +111,12 @@ object ScalaConverter {
           tree MATCH(conversionCases:_*)
         }
       }
+      case Schema.Type.ENUM => {
+        typeMatcher.avroScalaTypes.enum match {
+          case EnumAsScalaString => tree TOSTRING
+          case JavaEnum | ScalaEnumeration | ScalaCaseObjectEnum => tree
+        }
+      }
       case _ => tree
     }
   }

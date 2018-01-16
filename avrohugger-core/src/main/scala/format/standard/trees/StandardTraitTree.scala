@@ -25,6 +25,7 @@ object StandardTraitTree {
         case JavaEnum => protocol.getTypes.asScala.toList.filterNot(isEnum)
         case ScalaCaseObjectEnum => protocol.getTypes.asScala.toList
         case ScalaEnumeration => protocol.getTypes.asScala.toList
+        case EnumAsScalaString => protocol.getTypes.asScala.filterNot(isEnum)
       }
       if (adtSubTypes.forall(schema => schema.getType == RECORD)) {
         sealedTraitTree

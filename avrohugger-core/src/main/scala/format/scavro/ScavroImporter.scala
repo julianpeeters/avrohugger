@@ -6,6 +6,7 @@ import format.abstractions.Importer
 import avrohugger.input.{DependencyInspector, NestedSchemaExtractor}
 import avrohugger.matchers.{CustomNamespaceMatcher, TypeMatcher}
 import avrohugger.stores.SchemaStore
+import avrohugger.types._
 
 import org.apache.avro.{ Protocol, Schema }
 import org.apache.avro.Schema.Field
@@ -119,13 +120,20 @@ object ScavroImporter extends Importer {
         IMPORT(importedPackageSym, importedTypes)
       }
 
-      def requiresImportDef(schema: Schema): Boolean = {
-        (isRecord(schema) || isEnum(schema))  &&
-        Option(schema.getNamespace) != namespace
+      def requiresImportDef(
+        schema: Schema,
+        typeMatcher: TypeMatcher): Boolean = {
+        def isTopLevel(schema: Schema) = typeMatcher.avroScalaTypes.enum match {
+          case EnumAsScalaString =>
+            isRecord(schema)
+          case JavaEnum | ScalaEnumeration | ScalaCaseObjectEnum =>
+            (isRecord(schema) || (isEnum(schema)))
+        }
+        isTopLevel(schema)  && Option(schema.getNamespace) != namespace
       }
 
       recordSchemas
-        .filter(schema => requiresImportDef(schema))
+        .filter(schema => requiresImportDef(schema, typeMatcher))
         .groupBy(schema => Option(schema.getNamespace).getOrElse(""))
         .toList
         .map(group => group match {
@@ -161,7 +169,7 @@ object ScavroImporter extends Importer {
           }
         })
     }
-    val topLevelSchemas = getTopLevelSchemas(schemaOrProtocol, schemaStore)
+    val topLevelSchemas = getTopLevelSchemas(schemaOrProtocol, schemaStore, typeMatcher)
 
     val allRecordSchemas = getAllRecordSchemas(topLevelSchemas)
     val scalaRecordImports = getRecordImports(

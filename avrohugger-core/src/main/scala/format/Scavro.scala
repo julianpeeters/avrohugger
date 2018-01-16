@@ -73,7 +73,7 @@ object Scavro extends SourceFormat {
                   typeMatcher)
                 List(javaCompilationUnit)
               }
-              case _ => {
+              case ScalaEnumeration => {
                 val scalaCompilationUnit = getScalaCompilationUnit(
                   classStore,
                   maybeScavroModelNamespace,
@@ -83,6 +83,20 @@ object Scavro extends SourceFormat {
                   maybeOutDir,
                   restrictedFields)
                 List(scalaCompilationUnit)
+              }
+              case ScalaCaseObjectEnum => {
+                val scalaCompilationUnit = getScalaCompilationUnit(
+                  classStore,
+                  maybeScavroModelNamespace,
+                  schemaOrProtocol,
+                  typeMatcher,
+                  schemaStore,
+                  maybeOutDir,
+                  restrictedFields)
+                List(scalaCompilationUnit)
+              }
+              case EnumAsScalaString => {
+                List.empty
               }
             }
 
@@ -117,7 +131,9 @@ object Scavro extends SourceFormat {
             })
             scalaCompilationUnit +: javaCompilationUnits
           }
-          case _ => List(scalaCompilationUnit)
+          case ScalaCaseObjectEnum => List(scalaCompilationUnit)
+          case ScalaEnumeration    => List(scalaCompilationUnit)
+          case EnumAsScalaString   => List(scalaCompilationUnit)
         }
       }
     }
@@ -134,6 +150,7 @@ object Scavro extends SourceFormat {
           case JavaEnum => getLocalSubtypes(protocol).filterNot(isEnum)
           case ScalaCaseObjectEnum => getLocalSubtypes(protocol)
           case ScalaEnumeration => getLocalSubtypes(protocol)
+          case EnumAsScalaString => getLocalSubtypes(protocol).filterNot(isEnum)
         }
         if (localSubTypes.length > 1) protocol.getName
         else localSubTypes.headOption match {

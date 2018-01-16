@@ -23,11 +23,14 @@ class ScalaConverter(typeMatcher: TypeMatcher) {
     fieldPath: List[String] = List.empty): Tree = {
 
     schema.getType match {
-      case Schema.Type.ENUM  => {
-        val conversionCases = schema.getEnumSymbols.asScala.map(enumSymbol => {
-          CASE(REF("J" + schema.getName) DOT(enumSymbol)) ==> (REF(schema.getName) DOT(enumSymbol))
-        })
-        tree MATCH(conversionCases)
+      case Schema.Type.ENUM  => typeMatcher.avroScalaTypes.enum match {
+        case EnumAsScalaString => tree TOSTRING
+        case JavaEnum | ScalaEnumeration | ScalaCaseObjectEnum => {
+          val conversionCases = schema.getEnumSymbols.asScala.map(enumSymbol => {
+            CASE(REF("J" + schema.getName) DOT(enumSymbol)) ==> (REF(schema.getName) DOT(enumSymbol))
+          })
+          tree MATCH(conversionCases)
+        }
       }
       case Schema.Type.RECORD => {
         REF(schema.getName).DOT("metadata").DOT("fromAvro").APPLY(tree)

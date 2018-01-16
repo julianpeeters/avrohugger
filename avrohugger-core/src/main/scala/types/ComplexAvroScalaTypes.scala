@@ -12,6 +12,7 @@ sealed trait AvroScalaEnumType extends Product with Serializable
 case object ScalaEnumeration extends AvroScalaEnumType
 case object JavaEnum extends AvroScalaEnumType
 case object ScalaCaseObjectEnum extends AvroScalaEnumType
+case object EnumAsScalaString extends AvroScalaEnumType
 // union
 sealed trait AvroScalaUnionType extends Product with Serializable
 case object OptionShapelessCoproduct extends AvroScalaUnionType

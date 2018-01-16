@@ -127,12 +127,13 @@ trait Importer {
 
   def getTopLevelSchemas(
     schemaOrProtocol: Either[Schema,  Protocol],
-    schemaStore: SchemaStore): List[Schema] = {
+    schemaStore: SchemaStore,
+    typeMatcher: TypeMatcher): List[Schema] = {
     schemaOrProtocol match {
       case Left(schema) =>
-        schema::(NestedSchemaExtractor.getNestedSchemas(schema, schemaStore))
+        schema::(NestedSchemaExtractor.getNestedSchemas(schema, schemaStore, typeMatcher))
       case Right(protocol) => protocol.getTypes.asScala.toList.flatMap(schema => {
-        schema::(NestedSchemaExtractor.getNestedSchemas(schema, schemaStore))
+        schema::(NestedSchemaExtractor.getNestedSchemas(schema, schemaStore, typeMatcher))
       })
     }
 

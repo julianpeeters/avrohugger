@@ -37,6 +37,7 @@ object SpecificRecord extends SourceFormat{
     restrictedFields: Boolean): List[CompilationUnit] = {
 
     registerTypes(schemaOrProtocol, classStore, typeMatcher)
+    val enumType = typeMatcher.avroScalaTypes.enum
 
     val namespace = 
       CustomNamespaceMatcher.checkCustomNamespace(
@@ -100,14 +101,21 @@ object SpecificRecord extends SourceFormat{
             List(scalaCompilationUnit)
           }
           case ENUM => {
-            // SpecificRecord requires java enums as of Avro 1.7.7; hard-coded
-            val javaCompilationUnit = getJavaEnumCompilationUnit(
-              classStore,
-              namespace,
-              schema,
-              maybeOutDir,
-              typeMatcher)
-            List(javaCompilationUnit)
+            enumType match {
+              case JavaEnum =>
+                // SpecificRecord requires java enums as of Avro 1.7.7; hard-coded
+                val javaCompilationUnit = getJavaEnumCompilationUnit(
+                  classStore,
+                  namespace,
+                  schema,
+                  maybeOutDir,
+                  typeMatcher)
+                List(javaCompilationUnit)
+              case EnumAsScalaString =>
+                List.empty
+              case _ =>
+                sys.error("Only JavaEnum and EnumAsScalaString are supported for SpecificRecord format")
+            }
           }
           case _ => sys.error("Only RECORD or ENUM can be toplevel definitions")
         }
@@ -116,8 +124,20 @@ object SpecificRecord extends SourceFormat{
         // SpecificRecord requires java enums as of Avro 1.7.7, thus hard-coded
         val messages = protocol.getMessages
         if (messages.isEmpty) {
-          val localSubtypes = getLocalSubtypes(protocol)
-          val localEnums = localSubtypes.filter(isEnum)
+          val localSubtypes = enumType match {
+            case JavaEnum => getLocalSubtypes(protocol).filterNot(isEnum)
+            case ScalaCaseObjectEnum => List.empty
+            case ScalaEnumeration => List.empty
+            case EnumAsScalaString => getLocalSubtypes(protocol).filterNot(isEnum)
+          }
+          val localEnums = enumType match {
+            case JavaEnum =>
+               getLocalSubtypes(protocol).filter(isEnum)
+            case ScalaCaseObjectEnum => List.empty
+            case ScalaEnumeration => List.empty
+            case EnumAsScalaString =>
+              List.empty
+          }
           val javaCompilationUnits = localEnums.map(schema => {
             getJavaEnumCompilationUnit(
               classStore,

@@ -39,7 +39,12 @@ object DefaultValueMatcher {
           val x = node.getTextValue.getBytes.map((e: Byte) => LIT(e))
           REF("Array[Byte]") APPLY x
         }
-        case Schema.Type.ENUM => (REF(schema.getName) DOT node.getTextValue)
+        case Schema.Type.ENUM => typeMatcher.avroScalaTypes.enum match {
+          case JavaEnum => (REF(schema.getName) DOT node.getTextValue)
+          case ScalaEnumeration => (REF(schema.getName) DOT node.getTextValue)
+          case ScalaCaseObjectEnum => (REF(schema.getName) DOT node.getTextValue)
+          case EnumAsScalaString => LIT(node.getTextValue)
+        }
         case Schema.Type.NULL => LIT(null)
         case Schema.Type.UNION => {
           val unionSchemas = schema.getTypes.asScala.toList

@@ -50,6 +50,7 @@ object StandardSchemahugger extends Schemahugger {
             maybeBaseTrait,
             maybeFlags)
           List(objectDef)
+        case EnumAsScalaString => List.empty
       }
       case _ => sys.error("Only RECORD or ENUM can be toplevel definitions")
     }

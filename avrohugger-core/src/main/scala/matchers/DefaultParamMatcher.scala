@@ -23,6 +23,15 @@ object DefaultParamMatcher {
     }
   }
   
+  def checkCustomEnumType(enumType: AvroScalaEnumType) = {
+    enumType match {
+      case JavaEnum            => NULL // TODO Take first enum value?
+      case ScalaEnumeration    => NULL // TODO Take first enum value?
+      case ScalaCaseObjectEnum => NULL // TODO Take first enum value?
+      case EnumAsScalaString   => LIT("")
+    }
+  }
+  
 
   // for SpecificRecord
   def asDefaultParam(
@@ -40,7 +49,8 @@ object DefaultParamMatcher {
       case Type.STRING  => LIT("")
       case Type.NULL    => NULL
       case Type.FIXED   => sys.error("the FIXED datatype is not yet supported")
-      case Type.ENUM    => NULL // TODO Take first enum value?
+      case Type.ENUM    =>
+        checkCustomEnumType(typeMatcher.avroScalaTypes.enum)
       case Type.BYTES   => NULL
       case Type.RECORD  => NEW(classStore.generatedClasses(avroSchema))
       case Type.UNION   => NONE

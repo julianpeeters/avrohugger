@@ -4,6 +4,7 @@ lazy val commonSettings = Seq(
   organization := "com.julianpeeters",
   version := "1.0.0-RC2-SNAPSHOT",
   scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-Ywarn-value-discard"),
+  scalacOptions in Test ++= Seq("-Yrangepos"),
   scalaVersion := "2.12.4",
   crossScalaVersions := Seq("2.10.6", "2.11.11", scalaVersion.value),
   resolvers += Resolver.typesafeIvyRepo("releases"),

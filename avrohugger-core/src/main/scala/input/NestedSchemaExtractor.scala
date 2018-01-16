@@ -1,7 +1,9 @@
 package avrohugger
 package input
 
+import avrohugger.matchers.TypeMatcher
 import stores.SchemaStore
+import types.EnumAsScalaString
 
 import org.apache.avro.Schema
 import org.apache.avro.Schema.Type.{ARRAY, ENUM, MAP, RECORD, UNION}
@@ -10,8 +12,13 @@ import scala.collection.JavaConverters._
 
 object NestedSchemaExtractor {
   // if a record is found, extract nested RECORDs and ENUMS (i.e. top-level types) 
-  def getNestedSchemas(schema: Schema, schemaStore: SchemaStore): List[Schema] = {
-    def extract(schema: Schema, fieldPath: List[String] = List.empty): List[Schema] = {
+  def getNestedSchemas(
+    schema: Schema,
+    schemaStore: SchemaStore,
+    typeMatcher: TypeMatcher): List[Schema] = {
+    def extract(
+      schema: Schema,
+      fieldPath: List[String] = List.empty): List[Schema] = {
 
       schema.getType match {
         case RECORD =>
@@ -38,7 +45,10 @@ object NestedSchemaExtractor {
             }
           }
           val flatSchemas = fieldSchemas.flatMap(fieldSchema => flattenSchema(fieldSchema))
-          def topLevelTypes(schema: Schema) = (schema.getType == RECORD | schema.getType == ENUM)
+          def topLevelTypes(schema: Schema) = {
+            if (typeMatcher.avroScalaTypes.enum == EnumAsScalaString) schema.getType == RECORD
+            else (schema.getType == RECORD | schema.getType == ENUM)
+          }
           val nestedTopLevelSchemas = flatSchemas.filter(topLevelTypes)
           nestedTopLevelSchemas
         case ENUM => List(schema)

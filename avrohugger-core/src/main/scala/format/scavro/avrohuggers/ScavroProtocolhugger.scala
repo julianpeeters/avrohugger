@@ -34,7 +34,7 @@ object ScavroProtocolhugger extends Protocolhugger {
       case JavaEnum => localSubTypes.filterNot(isEnum)
       case ScalaCaseObjectEnum => localSubTypes
       case ScalaEnumeration => localSubTypes
-
+      case EnumAsScalaString => localSubTypes.filterNot(isEnum)
     }
     if (adtSubTypes.length > 1 && typeMatcher.avroScalaTypes.protocol == types.ScalaADT) {
       traitDef +: localSubTypes.flatMap(schema => {

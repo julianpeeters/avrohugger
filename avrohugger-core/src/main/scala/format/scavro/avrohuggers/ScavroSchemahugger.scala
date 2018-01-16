@@ -60,6 +60,7 @@ object ScavroSchemahugger extends Schemahugger{
             maybeBaseTrait,
             maybeFlags)
           List(objectDef)
+        case EnumAsScalaString => List.empty
       }
       case _ =>
         sys.error("Only RECORD and ENUM can be top-level definitions")

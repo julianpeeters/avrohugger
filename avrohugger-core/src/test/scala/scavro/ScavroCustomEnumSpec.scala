@@ -11,10 +11,12 @@ class ScavroCustomEnumSpec extends Specification {
 
   def is = s2"""
     A Scavro Generator should
-      correctly generate strings with java enums when asked for $e1
-      correctly generate files with java enums when asked for $e2
-      correctly generate strings with case object enums when asked for $e3
-      correctly generate files with case object enums when asked for $e4
+    correctly generate strings with java enums when asked for $e1
+    correctly generate files with java enums when asked for $e2
+    correctly generate strings with case object enums when asked for $e3
+    correctly generate files with case object enums when asked for $e4
+    correctly generate strings with enums as scala strings when asked for $e5
+    correctly generate files with enums as scala strings when asked for $e6
   """
   
   def e1 = {
@@ -118,4 +120,49 @@ class ScavroCustomEnumSpec extends Specification {
     dep2 === expectedDep2
     dep3 === expectedDep3
   }
+  
+  def e5 = {
+    val infile = new java.io.File("avrohugger-core/src/test/avro/import.avdl")
+    val gen = new Generator(
+      Scavro,
+      Some(Scavro.defaultTypes.copy(enum = EnumAsScalaString, protocol = ScalaADT)),
+      Map(
+        ("example.idl" -> "example.idl.string.model"),
+        ("other.ns" -> "other.ns.string")))
+    val List(dep2, dep1, adt) = gen.fileToStrings(infile)
+  
+    val expectedADT = util.Util.readFile("avrohugger-core/src/test/expected/scavro/example/idl/string/model/ImportProtocol.scala")
+    val expectedDep1 = util.Util.readFile("avrohugger-core/src/test/expected/scavro/example/idl/string/model/Defaults.scala")
+    val expectedDep2 = util.Util.readFile("avrohugger-core/src/test/expected/scavro/other/ns/string/ExternalDependency.scala")
+    
+    adt === expectedADT
+    dep1 === expectedDep1
+    dep2 === expectedDep2
+    
+  }
+  
+  def e6 = {
+    val infile = new java.io.File("avrohugger-core/src/test/avro/import.avdl")
+    val gen = new Generator(
+      Scavro,
+      Some(Scavro.defaultTypes.copy(enum = EnumAsScalaString, protocol = ScalaADT)),
+      Map(
+        ("example.idl" -> "example.idl.string.model"),
+        ("other.ns" -> "other.ns.string")))
+      val outDir = gen.defaultOutputDir + "/scavro/"
+    gen.fileToFile(infile, outDir)
+  
+    val adt = util.Util.readFile("target/generated-sources/scavro/example/idl/string/model/ImportProtocol.scala")
+    val dep1 = util.Util.readFile("target/generated-sources/scavro/example/idl/string/model/Defaults.scala")
+    val dep2 = util.Util.readFile("target/generated-sources/scavro/other/ns/string/ExternalDependency.scala")
+      
+    val expectedADT = util.Util.readFile("avrohugger-core/src/test/expected/scavro/example/idl/string/model/ImportProtocol.scala")
+    val expectedDep1 = util.Util.readFile("avrohugger-core/src/test/expected/scavro/example/idl/string/model/Defaults.scala")
+    val expectedDep2 = util.Util.readFile("avrohugger-core/src/test/expected/scavro/other/ns/string/ExternalDependency.scala")
+  
+    adt === expectedADT
+    dep1 === expectedDep1
+    dep2 === expectedDep2
+  }
+  
 }

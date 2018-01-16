@@ -28,6 +28,23 @@ class JavaConverter(
     if (numberType == defaultNumberType) tree
     else tree DOT nativeType
   }
+  
+  def checkCustomEnumType(
+    schema: Schema,
+    enumType: AvroScalaEnumType,
+    tree: Tree): Tree = {
+    enumType match {
+      case EnumAsScalaString => tree
+      case JavaEnum | ScalaEnumeration | ScalaCaseObjectEnum => {
+        val conversionCases = schema.getEnumSymbols.asScala.map(enumSymbol => {
+          CASE(REF(schema.getName) DOT(enumSymbol)) ==> {
+            (REF("J" + schema.getName) DOT(enumSymbol))
+          }
+        })
+        tree MATCH(conversionCases)
+      }
+    }
+  }
 
   // Recursive definition takes a field's schema, and a tree that represents the
   // source code to be written. The initial tree that is passed in is a 
@@ -41,12 +58,7 @@ class JavaConverter(
       
     schema.getType match {
       case Schema.Type.ENUM  => {
-        val conversionCases = schema.getEnumSymbols.asScala.map(enumSymbol => {
-          CASE(REF(schema.getName) DOT(enumSymbol)) ==> {
-            (REF("J" + schema.getName) DOT(enumSymbol))
-          }
-        })
-        tree MATCH(conversionCases)
+        checkCustomEnumType(schema, typeMatcher.avroScalaTypes.enum, tree)
       }
       case Schema.Type.RECORD => {
         tree DOT "toAvro"
