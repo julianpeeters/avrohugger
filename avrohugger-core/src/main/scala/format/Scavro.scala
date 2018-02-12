@@ -2,7 +2,11 @@ package avrohugger
 package format
 
 import format.abstractions.SourceFormat
-import format.scavro.{ ScavroNamespaceRenamer, ScavroScalaTreehugger }
+import format.scavro.{
+  ScavroNamespaceRenamer,
+  ScavroJavaTreehugger,
+  ScavroScalaTreehugger
+}
 import matchers.TypeMatcher
 import models.CompilationUnit
 import stores.{ ClassStore, SchemaStore }
@@ -18,6 +22,8 @@ object Scavro extends SourceFormat {
 
   val toolName = "generate-scavro"
   val toolShortDescription = "Generates Scala wrapper code for the given schema."
+  
+  val javaTreehugger = ScavroJavaTreehugger
 
   val scalaTreehugger = ScavroScalaTreehugger
   

@@ -63,13 +63,13 @@ runtime, Java classes provided separately (see [Scavro Plugin](https://github.co
 |BOOLEAN|Boolean|Boolean|Boolean||
 |NULL|Null|Null|Null||
 |MAP|Map|Map|Map||
-|ENUM|scala.Enumeration<br>Scala case object<br>Java Enum|Java Enum|scala.Enumeration<br>Scala case object<br>Java Enum| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
+|ENUM|scala.Enumeration<br>Scala case object<br>Java Enum<br>EnumAsScalaString|Java Enum<br>EnumAsScalaString|scala.Enumeration<br>Scala case object<br>Java Enum<br>EnumAsScalaString| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 |BYTES|Array[Byte]|Array[Byte]|Array[Byte]||
 |FIXED|//TODO|//TODO|//TODO||
 |ARRAY|List<br>Array<br>Vector|List<br>Array<br>Vector|Array<br>List<br>Vector| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 |UNION|Option<br>Either<br>Shapeless Coproduct|Option|Option| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 |RECORD|case class|case class extending `SpecificRecordBase`|case class extending `AvroSerializeable`|
-|PROTOCOL||RPC trait|| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
+|PROTOCOL|_N/A_<br>Scala ADT|RPC trait<br>Scala ADT|_N/A_<br>Scala ADT| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 
 
 ##### Protocol Support:
@@ -96,7 +96,7 @@ _Note:_ Currently [Treehugger](http://eed3si9n.com/treehugger/comments.html#Scal
 ## Usage
 
 * **For Scala 2.10, 2.11, and 2.12**
-* **Generating Code Compatible with Scala 2.10, 2.11, and 2.12**
+* **Generates Code Compatible with Scala 2.10, 2.11, and 2.12**
 
 
 #### `avrohugger-core`
@@ -235,8 +235,7 @@ a Schema to DatumReaders and DatumWriters (as in the Avro example above).
 2) For the `SpecificRecord` format, generated case class fields must be
 mutable (`var`) in order to be compatible with the SpecificRecord API. _Note:_
 If your framework allows `GenericRecord`, [avro4s](https://github.com/sksamuel/avro4s)
-provides a type class that converts to and from immutable case classes cleanly
-(though seems to fail on maps and case object enums as of v1.4.3).
+provides a type class that converts to and from immutable case classes cleanly.
 
 3) When the input is a case class definition `String`, import statements are
 not supported, please use fully qualified type names if using records/classes

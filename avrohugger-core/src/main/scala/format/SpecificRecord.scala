@@ -2,7 +2,7 @@ package avrohugger
 package format
 
 import abstractions.SourceFormat
-import format.specific.SpecificScalaTreehugger
+import format.specific.{SpecificJavaTreehugger, SpecificScalaTreehugger}
 import matchers.{ CustomNamespaceMatcher, TypeMatcher }
 import models.CompilationUnit
 import stores.{ ClassStore, SchemaStore }
@@ -22,7 +22,8 @@ object SpecificRecord extends SourceFormat{
   val toolName = "generate-specific"
 
   val toolShortDescription = "Generates Scala code extending SpecificRecordBase."
-
+  
+  val javaTreehugger = SpecificJavaTreehugger
   val scalaTreehugger = SpecificScalaTreehugger
   
   val defaultTypes: AvroScalaTypes = AvroScalaTypes.defaults.copy(enum = JavaEnum)

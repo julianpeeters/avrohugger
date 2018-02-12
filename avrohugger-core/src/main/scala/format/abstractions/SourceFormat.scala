@@ -26,6 +26,7 @@ import scala.collection.JavaConverters._
   * compile
   * defaultTypes
   * getName
+  * javaTreehugger
   * scalaTreehugger
   * toolName
   * toolShortDescription
@@ -68,6 +69,8 @@ trait SourceFormat {
   def getName(
     schemaOrProtocol: Either[Schema, Protocol],
     typeMatcher: TypeMatcher): String
+
+  val javaTreehugger: JavaTreehugger
 
   val scalaTreehugger: ScalaTreehugger
 
@@ -136,7 +139,7 @@ trait SourceFormat {
     typeMatcher: TypeMatcher): CompilationUnit = {
     val maybeFilePath =
       getFilePath(namespace, Left(schema), maybeOutDir, typeMatcher)
-    val codeString = JavaTreehugger.asJavaCodeString(
+    val codeString = javaTreehugger.asJavaCodeString(
       classStore,
       namespace,
       schema)
