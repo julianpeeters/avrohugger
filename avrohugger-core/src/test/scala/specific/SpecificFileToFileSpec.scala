@@ -8,6 +8,8 @@ import avrohugger._
 import avrohugger.format.SpecificRecord
 import org.specs2._
 
+import scala.util.Try
+
 class SpecificFileToFileSpec extends Specification {
 
   def is = s2"""
@@ -35,6 +37,8 @@ class SpecificFileToFileSpec extends Specification {
       
       
       correctly generate a protocol with no ADT when asked $e21
+      correctly generate cases classes for AVSC files that have a equivalent common element $e22
+      correctly fail if AVSC files contain non-equivalent common element $e23
   """
   
   // tests specific to fileToX
@@ -257,11 +261,7 @@ class SpecificFileToFileSpec extends Specification {
     sourceRecord === util.Util.readFile("avrohugger-core/src/test/expected/specific/example/idl/Defaults.scala")
     sourceEnum === util.Util.readFile("avrohugger-core/src/test/expected/specific/example/idl/DefaultEnum.java")
   }
-  
-  
-  
-  
-  
+
   def e21 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/AvroTypeProviderTestProtocol.avdl")
     val gen = new Generator(format = SpecificRecord)
@@ -271,6 +271,36 @@ class SpecificFileToFileSpec extends Specification {
     val source = util.Util.readFile("target/generated-sources/specific/test/Joystick.scala")
   
     source === util.Util.readFile("avrohugger-core/src/test/expected/specific/test/Joystick.scala")
+  }
+
+  def e22 = {
+    val inOrderSchema = new java.io.File("avrohugger-core/src/test/avro/order.avsc")
+    val inReportSchema = new java.io.File("avrohugger-core/src/test/avro/userMonthlyReport.avsc")
+    val gen = Generator(format = SpecificRecord)
+    val outDir = gen.defaultOutputDir + "/specific/"
+    gen.fileToFile(inOrderSchema, outDir)
+    gen.fileToFile(inReportSchema, outDir)
+
+
+    val sources = for {
+      orderSource <- Try(util.Util.readFile("target/generated-sources/specific/com/same/element/Order.scala"))
+      reportSource <- Try(util.Util.readFile("target/generated-sources/specific/com/same/element/MonthlyReport.scala"))
+      userSource <- Try(util.Util.readFile("target/generated-sources/specific/com/same/element/User.scala"))
+    } yield {
+      List(orderSource, reportSource, userSource)
+    }
+
+    sources must beSuccessfulTry
+
+  }
+
+  def e23 = {
+    val inOrderSchema = new java.io.File("avrohugger-core/src/test/avro/order.avsc")
+    val inReportSchema = new java.io.File("avrohugger-core/src/test/avro/userRedefinedMonthlyReport.avsc")
+    val gen = Generator(format = SpecificRecord)
+    val outDir = gen.defaultOutputDir + "/specific/"
+    gen.fileToFile(inOrderSchema, outDir)
+    gen.fileToFile(inReportSchema, outDir) must throwA[Exception]
   }
 
 }
