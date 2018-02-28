@@ -41,7 +41,33 @@ class FileInputParser {
           |Nothing to map to a definition.""".trim.stripMargin)
       }
     }
-    
+
+    def tryParse(inFile: File): Schema = {
+
+      val actualParser = new Parser()
+      val schema = unUnion(actualParser.parse(infile))
+
+      val commonElements = actualParser.getTypes.keySet().asScala.intersect(parser.getTypes.keySet().asScala)
+
+      val nonEqualElements = commonElements.filter { element =>
+        parser.getTypes.get(element) != actualParser.getTypes.get(element)
+      }
+
+      if (nonEqualElements.nonEmpty) {
+        sys.error(s"Can't redefine:  ${nonEqualElements.mkString(",")} in $infile")
+      } else {
+        if (commonElements.isEmpty) {
+          parser.addTypes(actualParser.getTypes)
+        } else {
+          val missingTypes = actualParser.getTypes.keySet().asScala.diff(parser.getTypes.keySet().asScala)
+          parser.addTypes(missingTypes.map { t =>
+            t -> actualParser.getTypes.get(t)
+          }.toMap.asJava)
+        }
+      }
+
+      schema
+    }
     
     val schemaOrProtocols: List[Either[Schema, Protocol]] = {
       infile.getName.split("\\.").last match {
@@ -51,7 +77,7 @@ class FileInputParser {
           val schema = unUnion(dfr.getSchema)
           List(Left(schema))
         case "avsc" =>
-          val schema = unUnion(parser.parse(infile))
+          val schema = tryParse(infile)
           List(Left(schema))
         case "avpr" =>
           val protocol = Protocol.parse(infile)
