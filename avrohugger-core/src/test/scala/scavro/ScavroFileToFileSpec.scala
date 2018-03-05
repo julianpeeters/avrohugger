@@ -8,6 +8,8 @@ import avrohugger._
 import avrohugger.format.Scavro
 import org.specs2._
 
+import scala.util.Try
+
 class ScavroFileToFileSpec extends Specification {
   
   def is = s2"""
@@ -34,6 +36,8 @@ class ScavroFileToFileSpec extends Specification {
     
     
     correctly generate a protocol with no ADT when asked $e21
+    correctly generate cases classes for AVSC files that have a equivalent common element $e22
+    correctly fail if AVSC files contain non-equivalent common element $e23
   """
 
   def eA = {
@@ -220,9 +224,6 @@ class ScavroFileToFileSpec extends Specification {
     adt === util.Util.readFile("avrohugger-core/src/test/expected/scavro/example/idl/model/Defaults.scala")
   }
 
-
-
-
   def e21 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/AvroTypeProviderTestProtocol.avdl")
     val gen = new Generator(format = Scavro)
@@ -232,5 +233,35 @@ class ScavroFileToFileSpec extends Specification {
     val source = util.Util.readFile("target/generated-sources/scavro/test/model/Joystick.scala")
   
     source === util.Util.readFile("avrohugger-core/src/test/expected/scavro/test/model/Joystick.scala")
+  }
+
+  def e22 = {
+    val inOrderSchema = new java.io.File("avrohugger-core/src/test/avro/order.avsc")
+    val inReportSchema = new java.io.File("avrohugger-core/src/test/avro/userMonthlyReport.avsc")
+    val gen = Generator(format = Scavro)
+    val outDir = gen.defaultOutputDir + "/scavro/"
+    gen.fileToFile(inOrderSchema, outDir)
+    gen.fileToFile(inReportSchema, outDir)
+
+
+    val sources = for {
+      orderSource <- Try(util.Util.readFile("target/generated-sources/scavro/com/same/element/model/Order.scala"))
+      reportSource <- Try(util.Util.readFile("target/generated-sources/scavro/com/same/element/model/MonthlyReport.scala"))
+      userSource <- Try(util.Util.readFile("target/generated-sources/scavro/com/same/element/model/User.scala"))
+    } yield {
+      List(orderSource, reportSource, userSource)
+    }
+
+    sources must beSuccessfulTry
+
+  }
+
+  def e23 = {
+    val inOrderSchema = new java.io.File("avrohugger-core/src/test/avro/order.avsc")
+    val inReportSchema = new java.io.File("avrohugger-core/src/test/avro/userRedefinedMonthlyReport.avsc")
+    val gen = Generator(format = Scavro)
+    val outDir = gen.defaultOutputDir + "/scavro/"
+    gen.fileToFile(inOrderSchema, outDir)
+    gen.fileToFile(inReportSchema, outDir) must throwA[Exception]
   }
 }

@@ -9,6 +9,8 @@ import avrohugger.format.Standard
 import avrohugger.types._
 import org.specs2._
 
+import scala.util.Try
+
 class StandardFileToFileSpec extends Specification {
   
   def is = s2"""
@@ -36,6 +38,8 @@ class StandardFileToFileSpec extends Specification {
       correctly generate all union values with shapeless Coproduct when instructed by generator $e19
       correctly generate union default parameter values $e20
       correctly generate a protocol with no ADT when asked $e21
+      correctly generate cases classes for AVSC files that have a equivalent common element $e22
+      correctly fail if AVSC files contain non-equivalent common element $e23
   """
   
   // tests specific to fileToX
@@ -309,6 +313,36 @@ class StandardFileToFileSpec extends Specification {
     val source = util.Util.readFile("target/generated-sources/standard/test/Joystick.scala")
   
     source === util.Util.readFile("avrohugger-core/src/test/expected/standard/test/Joystick.scala")
+  }
+
+  def e22 = {
+    val inOrderSchema = new java.io.File("avrohugger-core/src/test/avro/order.avsc")
+    val inReportSchema = new java.io.File("avrohugger-core/src/test/avro/userMonthlyReport.avsc")
+    val gen = Generator(format = Standard)
+    val outDir = gen.defaultOutputDir + "/standard/"
+    gen.fileToFile(inOrderSchema, outDir)
+    gen.fileToFile(inReportSchema, outDir)
+
+
+    val sources = for {
+      orderSource <- Try(util.Util.readFile("target/generated-sources/standard/com/same/element/Order.scala"))
+      reportSource <- Try(util.Util.readFile("target/generated-sources/standard/com/same/element/MonthlyReport.scala"))
+      userSource <- Try(util.Util.readFile("target/generated-sources/standard/com/same/element/User.scala"))
+    } yield {
+     List(orderSource, reportSource, userSource)
+    }
+
+    sources must beSuccessfulTry
+
+  }
+
+  def e23 = {
+    val inOrderSchema = new java.io.File("avrohugger-core/src/test/avro/order.avsc")
+    val inReportSchema = new java.io.File("avrohugger-core/src/test/avro/userRedefinedMonthlyReport.avsc")
+    val gen = Generator(format = Standard)
+    val outDir = gen.defaultOutputDir + "/standard/"
+    gen.fileToFile(inOrderSchema, outDir)
+    gen.fileToFile(inReportSchema, outDir) must throwA[Exception]
   }
 
 }
