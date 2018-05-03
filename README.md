@@ -14,6 +14,7 @@
 * **sbt**: `sbt-avrohugger` - Generate source code at compile time with an sbt plugin [found here](https://github.com/julianpeeters/sbt-avrohugger).
 * **maven**: `avrohugger-maven-plugin` - Generate source code at compile time with a maven plugin [found here](https://github.com/makubi/avrohugger-maven-plugin).
 * **on the web**: `avro2caseclass` - Generate source code from a web app, [found here](https://github.com/julianpeeters/avro2caseclass).
+* **freestyle-rpc**: `sbt-frees-rpc-idlgen` - Generate rpc models, messages, clients, and servers [found here](http://frees.io/docs/rpc/idl-generation).
 
 Table of contents
 =================
