@@ -21,8 +21,8 @@ class MainSpec extends mutable.Specification {
     val errBytes: ByteArrayOutputStream = new ByteArrayOutputStream()
     val r: Runner = new Runner(null, null, new PrintStream(errBytes))
     val exitCode = r.run(Array("generate", "schema",
-      Directory.TEST_INPUT_DIR.toString + "/handle.avsc",
-      Directory.TEST_OUTPUT_BASE_DIR.getPath
+      Directory.TEST_INPUT_DIR + "/handle.avsc",
+      Directory.TEST_OUTPUT_BASE_DIR
     ))
     exitCode === 0
   }
@@ -31,8 +31,8 @@ class MainSpec extends mutable.Specification {
     val errBytes: ByteArrayOutputStream = new ByteArrayOutputStream()
     val r: Runner = new Runner(null, null, new PrintStream(errBytes))
     r.run(Array("generate", "schema",
-      Directory.TEST_INPUT_DIR.toString + "/handle.avsc",
-      Directory.TEST_OUTPUT_BASE_DIR.getPath
+      Directory.TEST_INPUT_DIR + "/handle.avsc",
+      Directory.TEST_OUTPUT_BASE_DIR
     ))
     errBytes.toString() === ""
   }
@@ -41,8 +41,8 @@ class MainSpec extends mutable.Specification {
     val errBytes: ByteArrayOutputStream = new ByteArrayOutputStream()
     val r: Runner = new Runner(null, null, new PrintStream(errBytes))
     val exitCode = r.run(Array("no-such-tool", "schema",
-      Directory.TEST_INPUT_DIR.toString + "/handle.avsc",
-      Directory.TEST_OUTPUT_BASE_DIR.getPath
+      Directory.TEST_INPUT_DIR + "/handle.avsc",
+      Directory.TEST_OUTPUT_BASE_DIR
     ))
     exitCode !== 0
   }
@@ -51,8 +51,8 @@ class MainSpec extends mutable.Specification {
     val errBytes: ByteArrayOutputStream = new ByteArrayOutputStream()
     val r: Runner = new Runner(null, null, new PrintStream(errBytes))
     r.run(Array("no-such-tool", "schema",
-      Directory.TEST_INPUT_DIR.toString + "/handle.avsc",
-      Directory.TEST_OUTPUT_BASE_DIR.getPath
+      Directory.TEST_INPUT_DIR + "/handle.avsc",
+      Directory.TEST_OUTPUT_BASE_DIR
     ))
     errBytes.toString() must contain("Unknown tool: no-such-tool")
   }
@@ -61,8 +61,8 @@ class MainSpec extends mutable.Specification {
     val errBytes: ByteArrayOutputStream = new ByteArrayOutputStream()
     val r: Runner = new Runner(null, null, new PrintStream(errBytes))
     val exitCode = r.run(Array("generate", "schema",
-      Directory.TEST_INPUT_DIR.toString + "/invalid.avsc",
-      Directory.TEST_OUTPUT_BASE_DIR.getPath
+      Directory.TEST_INPUT_DIR + "/invalid.avsc",
+      Directory.TEST_OUTPUT_BASE_DIR
     ))
     exitCode !== 0
   }
@@ -71,8 +71,8 @@ class MainSpec extends mutable.Specification {
     val errBytes: ByteArrayOutputStream = new ByteArrayOutputStream()
     val r: Runner = new Runner(null, null, new PrintStream(errBytes))
     r.run(Array("generate", "schema",
-      Directory.TEST_INPUT_DIR.toString + "/invalid.avsc",
-      Directory.TEST_OUTPUT_BASE_DIR.getPath
+      Directory.TEST_INPUT_DIR + "/invalid.avsc",
+      Directory.TEST_OUTPUT_BASE_DIR
     ))
     errBytes.toString() must contain("invalid_type")
   }

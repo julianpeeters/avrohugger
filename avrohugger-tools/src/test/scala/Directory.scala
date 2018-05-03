@@ -7,118 +7,127 @@ object Directory {
 
 // where test input/expected output comes from
   val TEST_DIR =
-    new File(System.getProperty("test.compile.schema.dir", "avrohugger-tools/src/test/compiler"));
+    System.getProperty("test.compile.schema.dir", "avrohugger-tools/src/test/compiler/")
   // where test input comes from
   val TEST_INPUT_DIR =
-    new File(TEST_DIR, "input");
+    TEST_DIR + "input/"
 
   // where test expected output comes from
   val TEST_EXPECTED_OUTPUT_BASE_DIR =
-    new File(TEST_DIR, "output");
+    TEST_DIR + "output/"
   val TEST_EXPECTED_HANDLE =
-    new File(TEST_EXPECTED_OUTPUT_BASE_DIR, "Handle.scala");
+    TEST_EXPECTED_OUTPUT_BASE_DIR + "Handle.scala"
   val TEST_EXPECTED_PILOT =
-    new File(TEST_EXPECTED_OUTPUT_BASE_DIR, "Pilot.scala");
+    TEST_EXPECTED_OUTPUT_BASE_DIR + "Pilot.scala"
+  val TEST_EXPECTED_MASCOT =
+    TEST_EXPECTED_OUTPUT_BASE_DIR + "avro/examples/baseball/Mascot.scala"
+  val TEST_EXPECTED_WRESTLER =
+    TEST_EXPECTED_OUTPUT_BASE_DIR + "avro/examples/baseball/Wrestler.scala"
   val TEST_EXPECTED_TWITTER =
-    new File(TEST_EXPECTED_OUTPUT_BASE_DIR, "com/miguno/avro/twitter_schema.scala");
+    TEST_EXPECTED_OUTPUT_BASE_DIR + "com/miguno/avro/twitter_schema.scala"
   val TEST_EXPECTED_MESSAGE =
-    new File(TEST_EXPECTED_OUTPUT_BASE_DIR, "example/proto/Message.scala");
+    TEST_EXPECTED_OUTPUT_BASE_DIR + "example/proto/Message.scala"
 
 
   val TEST_EXPECTED_STRING_OUTPUT_BASE_DIR =
-    new File(TEST_DIR, "output-string/");
+    TEST_DIR + "output-string/"
   val TEST_EXPECTED_STRING_NICKNAME =
-    new File(TEST_EXPECTED_STRING_OUTPUT_BASE_DIR,
-             "avro/examples/baseball/Nickname.scala");
+    TEST_EXPECTED_STRING_OUTPUT_BASE_DIR + "avro/examples/baseball/Nickname.scala"
   val TEST_EXPECTED_STRING_PLAYER =
-    new File(TEST_EXPECTED_STRING_OUTPUT_BASE_DIR,
-             "avro/examples/baseball/Player.scala");
+    TEST_EXPECTED_STRING_OUTPUT_BASE_DIR + "avro/examples/baseball/Player.scala"
   val TEST_EXPECTED_STRING_TWITTER =
-    new File(TEST_EXPECTED_STRING_OUTPUT_BASE_DIR,
-             "com/miguno/avro/twitter_schema.scala");
+    TEST_EXPECTED_STRING_OUTPUT_BASE_DIR + "com/miguno/avro/twitter_schema.scala"
   val TEST_EXPECTED_STRING_MESSAGE =
-    new File(TEST_EXPECTED_STRING_OUTPUT_BASE_DIR,
-             "example/proto/Message.scala");
+    TEST_EXPECTED_STRING_OUTPUT_BASE_DIR + "example/proto/Message.scala"
 
   val TEST_EXPECTED_SPECIFIC_OUTPUT_BASE_DIR =
-    new File(TEST_DIR, "output-specific/");
+    TEST_DIR + "output-specific/"
   val TEST_EXPECTED_SPECIFIC_NICKNAME =
-    new File(TEST_EXPECTED_SPECIFIC_OUTPUT_BASE_DIR,
-             "avro/examples/baseball/Nickname.scala");
+    TEST_EXPECTED_SPECIFIC_OUTPUT_BASE_DIR + "avro/examples/baseball/Nickname.scala"
+  val TEST_EXPECTED_SPECIFIC_MASCOT =
+    TEST_EXPECTED_SPECIFIC_OUTPUT_BASE_DIR + "avro/examples/baseball/Mascot.scala"
   val TEST_EXPECTED_SPECIFIC_PLAYER =
-    new File(TEST_EXPECTED_SPECIFIC_OUTPUT_BASE_DIR,
-             "avro/examples/baseball/Player.scala");
+    TEST_EXPECTED_SPECIFIC_OUTPUT_BASE_DIR + "avro/examples/baseball/Player.scala"
+  val TEST_EXPECTED_SPECIFIC_WRESTLER =
+    TEST_EXPECTED_SPECIFIC_OUTPUT_BASE_DIR + "avro/examples/baseball/Wrestler.scala"
   val TEST_EXPECTED_SPECIFIC_TWITTER =
-    new File(TEST_EXPECTED_SPECIFIC_OUTPUT_BASE_DIR,
-             "com/miguno/avro/twitter_schema.scala");
+    TEST_EXPECTED_SPECIFIC_OUTPUT_BASE_DIR + "com/miguno/avro/twitter_schema.scala"
   val TEST_EXPECTED_SPECIFIC_MESSAGE =
-    new File(TEST_EXPECTED_SPECIFIC_OUTPUT_BASE_DIR,
-             "example/proto/Message.scala");
+    TEST_EXPECTED_SPECIFIC_OUTPUT_BASE_DIR + "example/proto/Message.scala"
   val TEST_EXPECTED_SPECIFIC_MAIL =
-    new File(TEST_EXPECTED_SPECIFIC_OUTPUT_BASE_DIR,
-             "example/proto/Mail.scala");
+    TEST_EXPECTED_SPECIFIC_OUTPUT_BASE_DIR + "example/proto/Mail.scala"
 
   val TEST_EXPECTED_SCAVRO_OUTPUT_BASE_DIR =
-    new File(TEST_DIR, "output-scavro/");
+    TEST_DIR + "output-scavro/"
   val TEST_EXPECTED_SCAVRO_NICKNAME =
-    new File(TEST_EXPECTED_SCAVRO_OUTPUT_BASE_DIR,
-            "avro/examples/baseball/Nickname.scala");
+    TEST_EXPECTED_SCAVRO_OUTPUT_BASE_DIR + "avro/examples/baseball/Nickname.scala"
+  val TEST_EXPECTED_SCAVRO_MASCOT =
+    TEST_EXPECTED_SCAVRO_OUTPUT_BASE_DIR + "avro/examples/baseball/Mascot.scala"
   val TEST_EXPECTED_SCAVRO_PLAYER =
-    new File(TEST_EXPECTED_SCAVRO_OUTPUT_BASE_DIR,
-            "avro/examples/baseball/Player.scala");
+    TEST_EXPECTED_SCAVRO_OUTPUT_BASE_DIR + "avro/examples/baseball/Player.scala"
+  val TEST_EXPECTED_SCAVRO_WRESTLER =
+    TEST_EXPECTED_SCAVRO_OUTPUT_BASE_DIR + "avro/examples/baseball/Wrestler.scala"
   val TEST_EXPECTED_SCAVRO_TWITTER =
-    new File(TEST_EXPECTED_SCAVRO_OUTPUT_BASE_DIR,
-            "com/miguno/avro/twitter_schema.scala");
+    TEST_EXPECTED_SCAVRO_OUTPUT_BASE_DIR + "com/miguno/avro/twitter_schema.scala"
   val TEST_EXPECTED_SCAVRO_MESSAGE =
-    new File(TEST_EXPECTED_SCAVRO_OUTPUT_BASE_DIR,
-            "example/proto/model/Message.scala");
+    TEST_EXPECTED_SCAVRO_OUTPUT_BASE_DIR + "example/proto/model/Message.scala"
 
 
   // where test output goes
   val TEST_OUTPUT_BASE_DIR =
-    new File("avrohugger-tools/target/compiler/output");
+    "avrohugger-tools/target/compiler/output/"
   val TEST_OUTPUT_PILOT =
-    new File(TEST_OUTPUT_BASE_DIR, "avro/examples/flight/Pilot.scala");
+    TEST_OUTPUT_BASE_DIR + "avro/examples/flight/Pilot.scala"
   val TEST_OUTPUT_HANDLE =
-    new File(TEST_OUTPUT_BASE_DIR, "avro/examples/flight/Handle.scala");
+    TEST_OUTPUT_BASE_DIR + "avro/examples/flight/Handle.scala"
+  val TEST_OUTPUT_WRESTLER =
+    TEST_OUTPUT_BASE_DIR + "avro/examples/baseball/Wrestler.scala"
+  val TEST_OUTPUT_MASCOT =
+    TEST_OUTPUT_BASE_DIR + "avro/examples/baseball/Mascot.scala"
   val TEST_OUTPUT_TWITTER =
-    new File(TEST_OUTPUT_BASE_DIR, "com/miguno/avro/twitter_schema.scala");
+    TEST_OUTPUT_BASE_DIR + "com/miguno/avro/twitter_schema.scala"
       val TEST_OUTPUT_MESSAGE =
-    new File(TEST_OUTPUT_BASE_DIR, "example/proto/Message.scala");
+    TEST_OUTPUT_BASE_DIR + "example/proto/Message.scala"
 
-  val TEST_OUTPUT_STRING_BASE_DIR =
-    new File("avrohugger-tools/target/compiler/output-string");
+  val TEST_OUTPUT_STRING_BASE_DIR = "avrohugger-tools/target/compiler/output-string/"
   val TEST_OUTPUT_STRING_PLAYER =
-    new File(TEST_OUTPUT_STRING_BASE_DIR, "avro/examples/baseball/Player.scala");
+    TEST_OUTPUT_STRING_BASE_DIR + "avro/examples/baseball/Player.scala"
   val TEST_OUTPUT_STRING_NICKNAME =
-    new File(TEST_OUTPUT_STRING_BASE_DIR, "avro/examples/baseball/Nickname.scala");
+    TEST_OUTPUT_STRING_BASE_DIR + "avro/examples/baseball/Nickname.scala"
   val TEST_OUTPUT_STRING_TWITTER =
-    new File(TEST_OUTPUT_STRING_BASE_DIR, "com/miguno/avro/twitter_schema.scala");
+    TEST_OUTPUT_STRING_BASE_DIR + "com/miguno/avro/twitter_schema.scala"
   val TEST_OUTPUT_STRING_MESSAGE =
-    new File(TEST_OUTPUT_STRING_BASE_DIR, "example/proto/Message.scala");
+    TEST_OUTPUT_STRING_BASE_DIR + "example/proto/Message.scala"
 
   val TEST_OUTPUT_SPECIFIC_BASE_DIR =
-    new File("avrohugger-tools/target/compiler/output-specific");
+    "avrohugger-tools/target/compiler/output-specific/"
   val TEST_OUTPUT_SPECIFIC_PLAYER =
-    new File(TEST_OUTPUT_SPECIFIC_BASE_DIR, "avro/examples/baseball/Player.scala");
+    TEST_OUTPUT_SPECIFIC_BASE_DIR + "avro/examples/baseball/Player.scala"
   val TEST_OUTPUT_SPECIFIC_NICKNAME =
-    new File(TEST_OUTPUT_SPECIFIC_BASE_DIR, "avro/examples/baseball/Nickname.scala");
+    TEST_OUTPUT_SPECIFIC_BASE_DIR + "avro/examples/baseball/Nickname.scala"
+  val TEST_OUTPUT_SPECIFIC_WRESTLER =
+    TEST_OUTPUT_SPECIFIC_BASE_DIR + "avro/examples/baseball/Wrestler.scala"
+  val TEST_OUTPUT_SPECIFIC_MASCOT =
+    TEST_OUTPUT_SPECIFIC_BASE_DIR + "avro/examples/baseball/Mascot.scala"
   val TEST_OUTPUT_SPECIFIC_TWITTER =
-    new File(TEST_OUTPUT_SPECIFIC_BASE_DIR, "com/miguno/avro/twitter_schema.scala");
+    TEST_OUTPUT_SPECIFIC_BASE_DIR + "com/miguno/avro/twitter_schema.scala"
   val TEST_OUTPUT_SPECIFIC_MESSAGE =
-    new File(TEST_OUTPUT_SPECIFIC_BASE_DIR, "example/proto/Message.scala");
+    TEST_OUTPUT_SPECIFIC_BASE_DIR + "example/proto/Message.scala"
   val TEST_OUTPUT_SPECIFIC_MAIL =
-    new File(TEST_OUTPUT_SPECIFIC_BASE_DIR, "example/proto/Mail.scala");
+    TEST_OUTPUT_SPECIFIC_BASE_DIR + "example/proto/Mail.scala"
 
-  val TEST_OUTPUT_SCAVRO_BASE_DIR =
-    new File("avrohugger-tools/target/compiler/output-scavro");
+  val TEST_OUTPUT_SCAVRO_BASE_DIR = "avrohugger-tools/target/compiler/output-scavro/"
   val TEST_OUTPUT_SCAVRO_PLAYER =
-    new File(TEST_OUTPUT_SCAVRO_BASE_DIR, "avro/examples/baseball/model/Player.scala");
+    TEST_OUTPUT_SCAVRO_BASE_DIR + "avro/examples/baseball/model/Player.scala"
   val TEST_OUTPUT_SCAVRO_NICKNAME =
-    new File(TEST_OUTPUT_SCAVRO_BASE_DIR, "avro/examples/baseball/model/Nickname.scala");
+    TEST_OUTPUT_SCAVRO_BASE_DIR + "avro/examples/baseball/model/Nickname.scala"
+  val TEST_OUTPUT_SCAVRO_WRESTLER =
+    TEST_OUTPUT_SCAVRO_BASE_DIR + "avro/examples/baseball/model/Wrestler.scala"
+  val TEST_OUTPUT_SCAVRO_MASCOT =
+    TEST_OUTPUT_SCAVRO_BASE_DIR + "avro/examples/baseball/model/Mascot.scala"
   val TEST_OUTPUT_SCAVRO_TWITTER =
-    new File(TEST_OUTPUT_SCAVRO_BASE_DIR, "com/miguno/avro/model/twitter_schema.scala");
+    TEST_OUTPUT_SCAVRO_BASE_DIR + "com/miguno/avro/model/twitter_schema.scala"
   val TEST_OUTPUT_SCAVRO_MESSAGE =
-    new File(TEST_OUTPUT_SCAVRO_BASE_DIR, "example/proto/model/Message.scala");
+    TEST_OUTPUT_SCAVRO_BASE_DIR + "example/proto/model/Message.scala"
 
 }

@@ -120,7 +120,6 @@ class GeneratorTool(sourceFormat: SourceFormat,
     else {
       System.err.println("No input files found.");
     }
-
     Array[File](fileSet.asScala.toList:_*);
   }
 

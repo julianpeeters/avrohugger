@@ -1,0 +1,5 @@
+{"type":"record", "name":"Mascot", "namespace": "avro.examples.baseball",
+  "fields": [
+   {"name": "name", "type": "string"}
+  ]
+}

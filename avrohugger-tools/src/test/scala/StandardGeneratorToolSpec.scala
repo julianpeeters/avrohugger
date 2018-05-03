@@ -24,54 +24,54 @@ class StandardGeneratorToolSpec extends mutable.Specification {
     
   "match the expected single protocol file" in {
     doCompile(List[String] ("protocol",
-      Directory.TEST_INPUT_DIR.toString() + "/mail.avpr",
-      Directory.TEST_OUTPUT_BASE_DIR.getPath()
+      Directory.TEST_INPUT_DIR + "/mail.avpr",
+      Directory.TEST_OUTPUT_BASE_DIR
     ))
     Util.readFile(Directory.TEST_OUTPUT_MESSAGE) === Util.readFile(Directory.TEST_EXPECTED_MESSAGE)
   }
-
+  
   "match the expected single datafile file" in {
     doCompile(List[String] ("datafile",
-      Directory.TEST_INPUT_DIR.toString() + "/twitter.avro",
-      Directory.TEST_OUTPUT_BASE_DIR.getPath()
+      Directory.TEST_INPUT_DIR + "/twitter.avro",
+      Directory.TEST_OUTPUT_BASE_DIR
     ))
     Util.readFile(Directory.TEST_OUTPUT_TWITTER) === Util.readFile(Directory.TEST_EXPECTED_TWITTER)
   }
-
+  
   "match the expected single schema file" in {
     doCompile(List[String] ("schema",
-      Directory.TEST_INPUT_DIR.toString() + "/handle.avsc",
-      Directory.TEST_OUTPUT_BASE_DIR.getPath()
+      Directory.TEST_INPUT_DIR + "/handle.avsc",
+      Directory.TEST_OUTPUT_BASE_DIR
     ))
     Util.readFile(Directory.TEST_OUTPUT_HANDLE) === Util.readFile(Directory.TEST_EXPECTED_HANDLE)
   }
-
+  
   "match the expected dependent files" in {
     doCompile(List[String]("schema",
-      Directory.TEST_INPUT_DIR.toString() + "/handle.avsc",
-      Directory.TEST_INPUT_DIR.toString() + "/pilot.avsc",
-      Directory.TEST_OUTPUT_BASE_DIR.getPath()
+      Directory.TEST_INPUT_DIR + "/handle.avsc",
+      Directory.TEST_INPUT_DIR + "/pilot.avsc",
+      Directory.TEST_OUTPUT_BASE_DIR
     ))
     Util.readFile(Directory.TEST_OUTPUT_HANDLE) === Util.readFile(Directory.TEST_EXPECTED_HANDLE)
     Util.readFile(Directory.TEST_OUTPUT_PILOT)  === Util.readFile(Directory.TEST_EXPECTED_PILOT)
   }
-
+  
   "match the expected file and directory" in {
     doCompile(List[String]("schema",
-      Directory.TEST_INPUT_DIR.toString() + "/handle.avsc",
-      Directory.TEST_INPUT_DIR.toString(),
-      Directory.TEST_OUTPUT_BASE_DIR.getPath()
+      Directory.TEST_INPUT_DIR + "/mascot.avsc",
+      Directory.TEST_INPUT_DIR,
+      Directory.TEST_OUTPUT_BASE_DIR
     ))
-    Util.readFile(Directory.TEST_OUTPUT_HANDLE) === Util.readFile(Directory.TEST_EXPECTED_HANDLE)
-    Util.readFile(Directory.TEST_OUTPUT_PILOT)  === Util.readFile(Directory.TEST_EXPECTED_PILOT)
+    Util.readFile(Directory.TEST_OUTPUT_MASCOT) === Util.readFile(Directory.TEST_EXPECTED_MASCOT)
+    Util.readFile(Directory.TEST_OUTPUT_WRESTLER)  === Util.readFile(Directory.TEST_EXPECTED_WRESTLER)
   }
 /* currently -string makes no difference, all case classes use String
   "match the expected using the -string option" in {
     doCompile(List[String]("-string", "schema",
-      Directory.TEST_INPUT_DIR.toString() + "/nickname.avsc",
-      Directory.TEST_INPUT_DIR.toString() + "/player.avsc",
-      Directory.TEST_INPUT_DIR.toString() + "/twitter_schema.avro",
-      Directory.TEST_OUTPUT_STRING_BASE_DIR.getPath()
+      Directory.TEST_INPUT_DIR + "/nickname.avsc",
+      Directory.TEST_INPUT_DIR + "/player.avsc",
+      Directory.TEST_INPUT_DIR + "/twitter_schema.avro",
+      Directory.TEST_OUTPUT_STRING_BASE_DIR
     ))
     Util.readFile(Directory.TEST_OUTPUT_STRING_PLAYER) === Util.readFile(Directory.TEST_EXPECTED_STRING_PLAYER)
   }

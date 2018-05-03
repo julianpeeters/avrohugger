@@ -1,7 +1,7 @@
 /** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
 package example.idl
 
-import shapeless.{:+:, CNil, Coproduct}
+import shapeless.{:+:, CNil}
 
 case class Event1()
 

@@ -11,10 +11,11 @@ import org.apache.avro.Schema.Type.{ RECORD, UNION, ENUM }
 import org.apache.avro.compiler.idl.Idl
 import org.apache.avro.generic.{ GenericDatumReader, GenericRecord }
 import org.apache.avro.file.DataFileReader
-
+import org.apache.avro.SchemaParseException
 import java.io.File
 
 import scala.collection.JavaConverters._
+import scala.util.Try
 
 class FileInputParser {
   
@@ -25,7 +26,6 @@ class FileInputParser {
     format: SourceFormat,
     classStore: ClassStore,
     parser: Parser = schemaParser): List[Either[Schema, Protocol]] = {
-    
     def unUnion(schema: Schema) = {
       schema.getType match {
         //if top-level record is wrapped in a union with no other types
@@ -42,34 +42,41 @@ class FileInputParser {
       }
     }
 
-    def tryParse(inFile: File): Schema = {
-
-      val actualParser = new Parser()
-      val schema = unUnion(actualParser.parse(infile))
-
-      val commonElements = actualParser.getTypes.keySet().asScala.intersect(parser.getTypes.keySet().asScala)
-
+    def copySchemas(tempParser: Parser, parser: Parser): Unit = {
+      val tempKeys = tempParser.getTypes.keySet().asScala
+      val keys = parser.getTypes.keySet().asScala
+      val commonElements = tempKeys.intersect(keys)
       val nonEqualElements = commonElements.filter { element =>
-        parser.getTypes.get(element) != actualParser.getTypes.get(element)
+        parser.getTypes.get(element) != tempParser.getTypes.get(element)
       }
-
       if (nonEqualElements.nonEmpty) {
         sys.error(s"Can't redefine:  ${nonEqualElements.mkString(",")} in $infile")
       } else {
         if (commonElements.isEmpty) {
-          parser.addTypes(actualParser.getTypes)
+          parser.addTypes(tempParser.getTypes)
         } else {
-          val missingTypes = actualParser.getTypes.keySet().asScala.diff(parser.getTypes.keySet().asScala)
+          val missingTypes = tempParser.getTypes.keySet().asScala.diff(parser.getTypes.keySet().asScala)
           parser.addTypes(missingTypes.map { t =>
-            t -> actualParser.getTypes.get(t)
+            t -> tempParser.getTypes.get(t)
           }.toMap.asJava)
         }
       }
+    }
 
-      schema
+    def tryParse(inFile: File, parser: Schema.Parser): Schema = {
+      val tempParser = new Parser()
+      val parsed = Try(tempParser.parse(inFile)).map(schema => {
+        copySchemas(tempParser, parser)
+        schema
+      }).recoverWith {
+          case f: SchemaParseException if f.getMessage.contains("Undefined name:") =>
+            Try(parser.parse(inFile))
+      }
+      unUnion(parsed.get)// throw the avro parse exception if Failure
     }
     
     val schemaOrProtocols: List[Either[Schema, Protocol]] = {
+
       infile.getName.split("\\.").last match {
         case "avro" =>
           val gdr = new GenericDatumReader[GenericRecord]
@@ -77,7 +84,7 @@ class FileInputParser {
           val schema = unUnion(dfr.getSchema)
           List(Left(schema))
         case "avsc" =>
-          val schema = tryParse(infile)
+          val schema = tryParse(infile, parser)
           List(Left(schema))
         case "avpr" =>
           val protocol = Protocol.parse(infile)

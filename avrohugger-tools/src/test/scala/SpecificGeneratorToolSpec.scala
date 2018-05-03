@@ -23,47 +23,47 @@ class SpecificGeneratorToolSpec extends mutable.Specification {
     
   "match the expected single protocol file" in {
     doCompile(Array[String] ("protocol",
-      Directory.TEST_INPUT_DIR.toString() + "/mail.avpr",
-      Directory.TEST_OUTPUT_SPECIFIC_BASE_DIR.getPath()
+      Directory.TEST_INPUT_DIR + "mail.avpr",
+      Directory.TEST_OUTPUT_SPECIFIC_BASE_DIR
     ))
     Util.readFile(Directory.TEST_OUTPUT_SPECIFIC_MAIL) === Util.readFile(Directory.TEST_EXPECTED_SPECIFIC_MAIL)
     Util.readFile(Directory.TEST_OUTPUT_SPECIFIC_MESSAGE) === Util.readFile(Directory.TEST_EXPECTED_SPECIFIC_MESSAGE)
   }
-
+  
   "match the expected single datafile file" in {
     doCompile(Array[String] ("datafile",
-      Directory.TEST_INPUT_DIR.toString() + "/twitter.avro",
-      Directory.TEST_OUTPUT_SPECIFIC_BASE_DIR.getPath()
+      Directory.TEST_INPUT_DIR + "twitter.avro",
+      Directory.TEST_OUTPUT_SPECIFIC_BASE_DIR
     ))
     Util.readFile(Directory.TEST_OUTPUT_SPECIFIC_TWITTER) === Util.readFile(Directory.TEST_EXPECTED_SPECIFIC_TWITTER)
   }
-
+  
   "match the expected single schema file" in {
     doCompile(Array[String] ("schema",
-      Directory.TEST_INPUT_DIR.toString() + "/nickname.avsc",
-      Directory.TEST_OUTPUT_SPECIFIC_BASE_DIR.getPath()
+      Directory.TEST_INPUT_DIR + "mascot.avsc",
+      Directory.TEST_OUTPUT_SPECIFIC_BASE_DIR
     ))
-    Util.readFile(Directory.TEST_OUTPUT_SPECIFIC_NICKNAME) === Util.readFile(Directory.TEST_EXPECTED_SPECIFIC_NICKNAME)
+    Util.readFile(Directory.TEST_OUTPUT_SPECIFIC_MASCOT) === Util.readFile(Directory.TEST_EXPECTED_SPECIFIC_MASCOT)
   }
- 
+  
   "match the expected dependent files" in {
     doCompile(Array[String]("schema",
-      Directory.TEST_INPUT_DIR.toString() + "/nickname.avsc",
-      Directory.TEST_INPUT_DIR.toString() + "/player.avsc",
-      Directory.TEST_OUTPUT_SPECIFIC_BASE_DIR.getPath()
+      Directory.TEST_INPUT_DIR + "nickname.avsc",
+      Directory.TEST_INPUT_DIR + "player.avsc",
+      Directory.TEST_OUTPUT_SPECIFIC_BASE_DIR
     ))
-    Util.readFile(Directory.TEST_OUTPUT_SPECIFIC_NICKNAME)  === Util.readFile(Directory.TEST_EXPECTED_SPECIFIC_NICKNAME)   
-    Util.readFile(Directory.TEST_OUTPUT_SPECIFIC_PLAYER)  === Util.readFile(Directory.TEST_EXPECTED_SPECIFIC_PLAYER)   
+   Util.readFile(Directory.TEST_OUTPUT_SPECIFIC_NICKNAME)  === Util.readFile(Directory.TEST_EXPECTED_SPECIFIC_NICKNAME)   
+   Util.readFile(Directory.TEST_OUTPUT_SPECIFIC_PLAYER)  === Util.readFile(Directory.TEST_EXPECTED_SPECIFIC_PLAYER)   
   }
-
+  
   "match the expected file and directory" in {
     doCompile(Array[String]("schema",
-      Directory.TEST_INPUT_DIR.toString() + "/nickname.avsc",
-      Directory.TEST_INPUT_DIR.toString(),
-      Directory.TEST_OUTPUT_SPECIFIC_BASE_DIR.getPath()
+      Directory.TEST_INPUT_DIR + "/mascot.avsc",
+      Directory.TEST_INPUT_DIR,
+      Directory.TEST_OUTPUT_SPECIFIC_BASE_DIR
     ))
-    Util.readFile(Directory.TEST_OUTPUT_SPECIFIC_NICKNAME)  === Util.readFile(Directory.TEST_EXPECTED_SPECIFIC_NICKNAME)   
-    Util.readFile(Directory.TEST_OUTPUT_SPECIFIC_PLAYER)  === Util.readFile(Directory.TEST_EXPECTED_SPECIFIC_PLAYER)
+    Util.readFile(Directory.TEST_OUTPUT_SPECIFIC_MASCOT)  === Util.readFile(Directory.TEST_EXPECTED_SPECIFIC_MASCOT)   
+    Util.readFile(Directory.TEST_OUTPUT_SPECIFIC_WRESTLER)  === Util.readFile(Directory.TEST_EXPECTED_SPECIFIC_WRESTLER)
   }
 
 }

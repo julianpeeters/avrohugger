@@ -23,44 +23,44 @@ class ScavroGeneratorToolSpec extends mutable.Specification {
   
   "match the expected single protocol file" in {
     doCompile(Array[String] ("protocol",
-      Directory.TEST_INPUT_DIR.toString() + "/mail.avpr",
-      Directory.TEST_OUTPUT_SCAVRO_BASE_DIR.getPath()
+      Directory.TEST_INPUT_DIR + "/mail.avpr",
+      Directory.TEST_OUTPUT_SCAVRO_BASE_DIR
     ))
     Util.readFile(Directory.TEST_OUTPUT_SCAVRO_MESSAGE) === Util.readFile(Directory.TEST_EXPECTED_SCAVRO_MESSAGE)
   }
 
   "match the expected single datafile file" in {
     doCompile(Array[String] ("datafile",
-      Directory.TEST_INPUT_DIR.toString() + "/twitter.avro",
-      Directory.TEST_OUTPUT_SCAVRO_BASE_DIR.getPath()
+      Directory.TEST_INPUT_DIR + "/twitter.avro",
+      Directory.TEST_OUTPUT_SCAVRO_BASE_DIR
     ))
     Util.readFile(Directory.TEST_OUTPUT_SCAVRO_TWITTER) === Util.readFile(Directory.TEST_EXPECTED_SCAVRO_TWITTER)
   }
 
   "match the expected single schema file" in {
     doCompile(Array[String] ("schema",
-      Directory.TEST_INPUT_DIR.toString() + "/nickname.avsc",
-      Directory.TEST_OUTPUT_SCAVRO_BASE_DIR.getPath()
+      Directory.TEST_INPUT_DIR + "/nickname.avsc",
+      Directory.TEST_OUTPUT_SCAVRO_BASE_DIR
     ))
     Util.readFile(Directory.TEST_OUTPUT_SCAVRO_NICKNAME) === Util.readFile(Directory.TEST_EXPECTED_SCAVRO_NICKNAME)
   }
 
   "match the expected dependent files" in {
     doCompile(Array[String]("schema",
-      Directory.TEST_INPUT_DIR.toString() + "/nickname.avsc",
-      Directory.TEST_INPUT_DIR.toString() + "/player.avsc",
-      Directory.TEST_OUTPUT_SCAVRO_BASE_DIR.getPath()
+      Directory.TEST_INPUT_DIR + "/nickname.avsc",
+      Directory.TEST_INPUT_DIR + "/player.avsc",
+      Directory.TEST_OUTPUT_SCAVRO_BASE_DIR
     ))
     Util.readFile(Directory.TEST_OUTPUT_SCAVRO_PLAYER)  === Util.readFile(Directory.TEST_EXPECTED_SCAVRO_PLAYER)
   }
 
   "match the expected file and directory" in {
     doCompile(Array[String]("schema",
-      Directory.TEST_INPUT_DIR.toString() + "/nickname.avsc",
-      Directory.TEST_INPUT_DIR.toString(),
-      Directory.TEST_OUTPUT_SCAVRO_BASE_DIR.getPath()
+      Directory.TEST_INPUT_DIR + "/mascot.avsc",
+      Directory.TEST_INPUT_DIR,
+      Directory.TEST_OUTPUT_SCAVRO_BASE_DIR
     ))
-    Util.readFile(Directory.TEST_OUTPUT_SCAVRO_PLAYER)  === Util.readFile(Directory.TEST_EXPECTED_SCAVRO_PLAYER)
+    Util.readFile(Directory.TEST_OUTPUT_SCAVRO_WRESTLER)  === Util.readFile(Directory.TEST_EXPECTED_SCAVRO_WRESTLER)
   }
 
 }

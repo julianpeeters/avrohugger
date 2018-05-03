@@ -3,11 +3,11 @@ package com.miguno.avro
 
 import scala.annotation.switch
 
-/** 
-* @param username Name of the user account on Twitter.com 
-* @param tweet The content of the user's Twitter message 
-* @param timestamp Unix epoch time in milliseconds 
-*/
+/**
+ * @param username Name of the user account on Twitter.com
+ * @param tweet The content of the user's Twitter message
+ * @param timestamp Unix epoch time in milliseconds
+ */
 case class twitter_schema(var username: String, var tweet: String, var timestamp: Long) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this("", "", 0L)
   def get(field$: Int): AnyRef = {

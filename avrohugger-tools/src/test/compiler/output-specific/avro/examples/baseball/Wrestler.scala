@@ -3,7 +3,7 @@ package avro.examples.baseball
 
 import scala.annotation.switch
 
-case class Player(var number: Int, var first_name: String, var last_name: String, var nicknames: List[Nickname]) extends org.apache.avro.specific.SpecificRecordBase {
+case class Wrestler(var number: Int, var first_name: String, var last_name: String, var nicknames: List[Mascot]) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this(0, "", "", List.empty)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
@@ -45,14 +45,14 @@ case class Player(var number: Int, var first_name: String, var last_name: String
             }: _*))
           }
         }
-      }.asInstanceOf[List[Nickname]]
+      }.asInstanceOf[List[Mascot]]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = Player.SCHEMA$
+  def getSchema: org.apache.avro.Schema = Wrestler.SCHEMA$
 }
 
-object Player {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Player\",\"namespace\":\"avro.examples.baseball\",\"fields\":[{\"name\":\"number\",\"type\":\"int\"},{\"name\":\"first_name\",\"type\":\"string\"},{\"name\":\"last_name\",\"type\":\"string\"},{\"name\":\"nicknames\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"Nickname\",\"fields\":[{\"name\":\"name\",\"type\":\"string\"}]}}}]}")
+object Wrestler {
+  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Wrestler\",\"namespace\":\"avro.examples.baseball\",\"fields\":[{\"name\":\"number\",\"type\":\"int\"},{\"name\":\"first_name\",\"type\":\"string\"},{\"name\":\"last_name\",\"type\":\"string\"},{\"name\":\"nicknames\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"Mascot\",\"fields\":[{\"name\":\"name\",\"type\":\"string\"}]}}}]}")
 }

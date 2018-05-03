@@ -15,31 +15,30 @@ class StandardFileToFileSpec extends Specification {
   
   def is = s2"""
     Standard Generator fileToFile method should
-      correctly generate a simple case class definition from AVRO $eA
-      not generate copy of imported classes in the importing package $e0
-      correctly generate from a protocol with messages $e1
-      correctly generate a simple case class definition in a package $e2
-      correctly generate a simple case class definition in the default package $e3
-      correctly generate a nested case class definition from a schema $e4
-      correctly generate a nested case class from IDL $e5
-      correctly generate a recursive case class from IDL $e6
-      correctly generate enums from schema $e7
-      correctly generate enums from protocol $e8
-      correctly generate enums from IDL $e9
-      correctly generate nested enums $e10
-      correctly generate bytes from schema $e11
-      correctly generate bytes from protocol $e12
-      correctly generate bytes from IDL $e13
-      correctly generate records depending on others defined in a different- and same-namespaced AVDL and AVSC $e14
-      correctly generate an empty case class definition $e15
-      correctly generate default values $e16
-      correctly generate union values without shapeless Coproduct $e17
-      correctly generate union values with shapeless Coproduct $e18
-      correctly generate all union values with shapeless Coproduct when instructed by generator $e19
-      correctly generate union default parameter values $e20
-      correctly generate a protocol with no ADT when asked $e21
-      correctly generate cases classes for AVSC files that have a equivalent common element $e22
-      correctly fail if AVSC files contain non-equivalent common element $e23
+    
+    correctly generate a simple case class definition from AVRO $eA
+    not generate copy of imported classes in the importing package $e0
+    correctly generate from a protocol with messages $e1
+    correctly generate a simple case class definition in a package $e2
+    correctly generate a simple case class definition in the default package $e3
+    correctly generate a nested case class definition from a schema $e4
+    correctly generate a nested case class from IDL $e5
+    correctly generate a recursive case class from IDL $e6
+    correctly generate enums from schema $e7
+    correctly generate enums from protocol $e8
+    correctly generate enums from IDL $e9
+    correctly generate nested enums $e10
+    correctly generate bytes from schema $e11
+    correctly generate bytes from protocol $e12
+    correctly generate bytes from IDL $e13
+    correctly generate records depending on others defined in a different- and same-namespaced AVDL and AVSC $e14
+    correctly generate an empty case class definition $e15
+    correctly generate default values $e16
+    correctly generate union values without shapeless Coproduct $e17
+    correctly generate union values with shapeless Coproduct $e18
+    correctly generate all union values with shapeless Coproduct when instructed by generator $e19
+    correctly generate union default parameter values $e20
+    correctly generate a protocol with no ADT when asked $e21
   """
   
   // tests specific to fileToX
