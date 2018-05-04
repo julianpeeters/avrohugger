@@ -1,7 +1,0 @@
-{
-    "type": "enum",
-    "namespace": "com.cavorite",
-    "name": "_E",
-    "doc": "Simple dependency",
-    "symbols" : ["X", "XX", "XXX"]
-}

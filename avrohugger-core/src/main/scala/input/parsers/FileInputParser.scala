@@ -62,15 +62,19 @@ class FileInputParser {
         }
       }
     }
+    
+    def mightBeRecoverable(e: SchemaParseException): Boolean = {
+      val msg = e.getMessage
+      msg.contains("Undefined name:") || msg.contains("is not a defined name") 
+    }
 
     def tryParse(inFile: File, parser: Schema.Parser): Schema = {
       val tempParser = new Parser()
       val parsed = Try(tempParser.parse(inFile)).map(schema => {
         copySchemas(tempParser, parser)
         schema
-      }).recoverWith {
-          case f: SchemaParseException if f.getMessage.contains("Undefined name:") =>
-            Try(parser.parse(inFile))
+      }).recoverWith { case e: SchemaParseException if mightBeRecoverable(e) => 
+        Try(parser.parse(inFile))
       }
       unUnion(parsed.get)// throw the avro parse exception if Failure
     }

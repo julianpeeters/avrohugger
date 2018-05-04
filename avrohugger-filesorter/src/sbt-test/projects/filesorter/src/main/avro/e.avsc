@@ -1,6 +1,0 @@
-{
-  "type": "enum",
-  "doc": "Fully-qualified dependency",
-  "name": "com.cavorite.E",
-  "symbols" : ["A", "AA", "AAA"]
-}

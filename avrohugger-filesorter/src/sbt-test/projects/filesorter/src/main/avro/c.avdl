@@ -1,7 +1,0 @@
-@namespace( "foo.bar.baz.bop" )
-protocol CProtocol {
-    import idl "foo/a.avdl";
-    record C {
-        union { null, foo.bar.baz.B } b = null;
-    }
-}
