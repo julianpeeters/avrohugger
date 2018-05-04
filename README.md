@@ -96,8 +96,10 @@ _Note:_ Currently [Treehugger](http://eed3si9n.com/treehugger/comments.html#Scal
 
 ## Usage
 
-* **For Scala 2.10, 2.11, and 2.12**
-* **Generates Code Compatible with Scala 2.10, 2.11, and 2.12**
+* **Library For Scala 2.10, 2.11, and 2.12**
+* **Parses Schemas and IDLs with Avro version 1.8**
+* **Generates Code Compatible with Scala 2.10, 2.11, 2.12 (and for `SpecificRecord`, Avro 1.7)**
+
 
 
 #### `avrohugger-core`

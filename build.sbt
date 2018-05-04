@@ -1,4 +1,4 @@
-lazy val avroVersion = "1.7.7"
+lazy val avroVersion = "1.8.2"
 
 lazy val commonSettings = Seq(
   organization := "com.julianpeeters",
@@ -73,7 +73,7 @@ lazy val `avrohugger-filesorter` = (project in file("avrohugger-filesorter"))
 lazy val `avrohugger-tools` = (project in file("avrohugger-tools"))
   .settings(
     commonSettings,
-    libraryDependencies += "org.apache.avro" % "avro-tools" % "1.7.7",
+    libraryDependencies += "org.apache.avro" % "avro-tools" % avroVersion,
     artifact in (Compile, assembly) := {
       val art: Artifact = (artifact in (Compile, assembly)).value
       art.withClassifier(Some("assembly"))
