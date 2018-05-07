@@ -1,5 +1,5 @@
 {
-  "namespace": "example.proto",
+  "namespace": "example.decimal.proto",
   "protocol": "DecimalProtocol",
   "types": [
     {
@@ -8,7 +8,12 @@
       "fields": [
         {
           "name": "dec",
-          "type": "bytes",
+          "type": {
+            "type": "bytes",
+            "logicalType": "decimal",
+            "precision": 9,
+            "scale": 2
+          },
           "logicalType": "decimal",
           "precision": 9,
           "scale": 2

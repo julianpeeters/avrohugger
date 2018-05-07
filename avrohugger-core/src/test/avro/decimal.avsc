@@ -1,14 +1,16 @@
 {
-  "namespace": "example",
+  "namespace": "example.decimal",
   "type": "record",
   "name": "DecimalSc",
   "fields": [
     {
       "name": "data",
-      "type": "bytes",
-      "logicalType": "decimal",
-      "precision": 9,
-      "scale": 2
+      "type": {
+        "type": "bytes",
+        "logicalType": "decimal",
+        "precision": 9,
+        "scale": 2
+      }
     }
   ]
 }
