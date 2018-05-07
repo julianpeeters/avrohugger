@@ -126,7 +126,9 @@ object Scavro extends SourceFormat {
           // units.
           case JavaEnum => {
             val localSubtypes = getLocalSubtypes(protocol)
+            val localRecords = localSubtypes.filterNot(isEnum)
             val localEnums = localSubtypes.filter(isEnum)
+            println("LOCAL ENUMS "+ localEnums)
             val javaCompilationUnits = localEnums.map(schema => {
               getJavaEnumCompilationUnit(
                 classStore,
@@ -135,7 +137,8 @@ object Scavro extends SourceFormat {
                 maybeOutDir,
                 typeMatcher)
             })
-            scalaCompilationUnit +: javaCompilationUnits
+            if (localRecords.length >= 1) scalaCompilationUnit +: javaCompilationUnits
+            else javaCompilationUnits
           }
           case ScalaCaseObjectEnum => List(scalaCompilationUnit)
           case ScalaEnumeration    => List(scalaCompilationUnit)

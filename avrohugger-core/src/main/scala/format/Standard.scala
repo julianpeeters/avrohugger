@@ -115,6 +115,7 @@ object Standard extends SourceFormat {
           // separately, and they will be excluded from scala compilation units.
           case JavaEnum => {
             val localSubtypes = getLocalSubtypes(protocol)
+            val localRecords = localSubtypes.filterNot(isEnum)
             val localEnums = localSubtypes.filter(isEnum)
             val javaCompilationUnits = localEnums.map(schema => {
               getJavaEnumCompilationUnit(
@@ -124,7 +125,8 @@ object Standard extends SourceFormat {
                 maybeOutDir,
                 typeMatcher)
             })
-            scalaCompilationUnit +: javaCompilationUnits
+            if (localRecords.length >= 1) scalaCompilationUnit +: javaCompilationUnits
+            else javaCompilationUnits
           }
           case ScalaCaseObjectEnum => List(scalaCompilationUnit)
           case ScalaEnumeration => List(scalaCompilationUnit)

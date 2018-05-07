@@ -131,13 +131,12 @@ object SpecificRecord extends SourceFormat{
             case ScalaEnumeration => List.empty
             case EnumAsScalaString => getLocalSubtypes(protocol).filterNot(isEnum)
           }
+          val localRecords = localSubtypes.filterNot(isEnum)
           val localEnums = enumType match {
-            case JavaEnum =>
-               getLocalSubtypes(protocol).filter(isEnum)
+            case JavaEnum => getLocalSubtypes(protocol).filter(isEnum)
             case ScalaCaseObjectEnum => List.empty
             case ScalaEnumeration => List.empty
-            case EnumAsScalaString =>
-              List.empty
+            case EnumAsScalaString => List.empty
           }
           val javaCompilationUnits = localEnums.map(schema => {
             getJavaEnumCompilationUnit(
@@ -155,7 +154,8 @@ object SpecificRecord extends SourceFormat{
             schemaStore,
             maybeOutDir,
             restrictedFields)
-          scalaCompilationUnit +: javaCompilationUnits
+          if (localRecords.length >= 1) scalaCompilationUnit +: javaCompilationUnits
+          else javaCompilationUnits
         }
         else protocolToRPC(protocol)
       }
