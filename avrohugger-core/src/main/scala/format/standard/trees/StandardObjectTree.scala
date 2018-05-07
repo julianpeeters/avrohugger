@@ -15,6 +15,20 @@ import org.apache.avro.Schema
 import scala.collection.JavaConverters._
 
 object StandardObjectTree {
+  
+  def toCaseCompanionDef(schema: Schema, maybeFlags: Option[List[Long]]) = {
+    val ParserClass = RootClass.newClass("org.apache.avro.Schema.Parser")
+    val objectDef = maybeFlags match {
+      case Some(flags) => OBJECTDEF(schema.getName).withFlags(flags:_*)
+      case None => OBJECTDEF(schema.getName)
+    }
+    // companion object definition
+    objectDef := BLOCK(
+      VAL(REF("SCHEMA$")) := {
+        (NEW(ParserClass)) APPLY() DOT "parse" APPLY(LIT(schema.toString))
+      }
+    )
+  }
 
   def toScalaEnumDef(
     classStore: ClassStore, 

@@ -128,7 +128,6 @@ object Scavro extends SourceFormat {
             val localSubtypes = getLocalSubtypes(protocol)
             val localRecords = localSubtypes.filterNot(isEnum)
             val localEnums = localSubtypes.filter(isEnum)
-            println("LOCAL ENUMS "+ localEnums)
             val javaCompilationUnits = localEnums.map(schema => {
               getJavaEnumCompilationUnit(
                 classStore,

@@ -17,6 +17,7 @@ class StandardFileToFileSpec extends Specification {
     Standard Generator fileToFile method should
     
     correctly generate a simple case class definition from AVRO $eA
+    correctly generate a simple case class with a schema in its companion $eB
     not generate copy of imported classes in the importing package $e0
     correctly generate from a protocol with messages $e1
     correctly generate a simple case class definition in a package $e2
@@ -41,7 +42,7 @@ class StandardFileToFileSpec extends Specification {
     correctly generate a protocol with no ADT when asked $e21
   """
   
-  // tests specific to fileToX
+  // tests standard to fileToX
   def eA = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/twitter.avro")
     val gen = new Generator(Standard)
@@ -53,7 +54,18 @@ class StandardFileToFileSpec extends Specification {
     source === util.Util.readFile("avrohugger-core/src/test/expected/standard/com/miguno/avro/twitter_schema.scala")
   }
   
-  // tests specific to fileToFile
+  def eB = {
+    val infile = new java.io.File("avrohugger-core/src/test/avro/relative.avsc")
+    val gen = new Generator(Standard, Some(Standard.defaultTypes.copy(record = ScalaCaseClassWithSchema)))
+    val outDir = gen.defaultOutputDir + "/standard/"
+    gen.fileToFile(infile, outDir)
+    
+    val source = util.Util.readFile("target/generated-sources/standard/example/Relative.scala")
+    
+    source === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/Relative.scala")
+  }
+  
+  // tests standard to fileToFile
   def e0 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/import.avdl")
     val gen = new Generator(Standard)

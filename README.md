@@ -155,7 +155,8 @@ To reassign Scala types to Avro types, use the following:
     
     val myScalaTypes = Some(SpecificRecord.defaultTypes.copy(array = ScalaVector))
     val generator = new Generator(SpecificRecord, avroScalaCustomTypes = myScalaTypes)
-    
+
+* `record` can be assigned to `ScalaCaseClass` and `ScalaCaseClassWithSchema`
 * `array` can be assigned to `ScalaArray`, `ScalaList`, and `ScalaVector`
 * `enum` can be assigned to `JavaEnum`, `ScalaCaseObjectEnum`, `EnumAsScalaString`, and `ScalaEnumeration`
 * `union` can be assigned to `OptionEitherShapelessCoproduct` and `OptionShapelessCoproduct`

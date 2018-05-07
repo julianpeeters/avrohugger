@@ -7,6 +7,7 @@ import java.io.File
 import avrohugger.Generator
 import avrohugger.format.Standard
 import avrohugger.generators.StringGenerator
+import avrohugger.types._
 import org.specs2._
 
 class StandardFileToStringsSpec extends Specification {
@@ -14,6 +15,7 @@ class StandardFileToStringsSpec extends Specification {
   def is = s2"""
     Standard Generator fileToStrings method should
       correctly generate a simple case class definition from AVRO $eA
+      correctly generate a simple case class with a schema in its companion $eB
       correctly generate from a protocol with messages $e1
       correctly generate a simple case class definition in a package $e2
       correctly generate a simple case class definition in the default package $e3
@@ -44,6 +46,14 @@ class StandardFileToStringsSpec extends Specification {
     val List(source) = gen.fileToStrings(infile)
     val expected = util.Util.readFile("avrohugger-core/src/test/expected/standard/com/miguno/avro/twitter_schema.scala")
     source === expected      
+  }
+
+  def eB = {
+    val infile = new java.io.File("avrohugger-core/src/test/avro/relative.avsc")
+    val gen = new Generator(Standard, Some(Standard.defaultTypes.copy(record = ScalaCaseClassWithSchema)))
+    val List(source) = gen.fileToStrings(infile)
+    val expected = util.Util.readFile("avrohugger-core/src/test/expected/standard/example/Relative.scala")
+    source === expected
   }
 
   // tests common to fileToX and stringToX

@@ -7,6 +7,7 @@ case object ScalaBinary extends AvroScalaFixedType
 // record
 sealed trait AvroScalaRecordType
 case object ScalaCaseClass extends AvroScalaRecordType
+case object ScalaCaseClassWithSchema extends AvroScalaRecordType
 // enum
 sealed trait AvroScalaEnumType extends Product with Serializable
 case object ScalaEnumeration extends AvroScalaEnumType

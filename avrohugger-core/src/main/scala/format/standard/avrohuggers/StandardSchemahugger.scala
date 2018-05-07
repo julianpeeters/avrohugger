@@ -37,7 +37,13 @@ object StandardSchemahugger extends Schemahugger {
           maybeBaseTrait,
           maybeFlags,
           restrictedFields)
-        List(classDef)
+        val companionDef = StandardObjectTree.toCaseCompanionDef(
+          schema,
+          maybeFlags)
+        typeMatcher.avroScalaTypes.record match {
+          case ScalaCaseClass => List(classDef)
+          case ScalaCaseClassWithSchema => List(classDef, companionDef)
+        }
       case ENUM => typeMatcher.avroScalaTypes.enum match {
         case JavaEnum =>
           List.empty
