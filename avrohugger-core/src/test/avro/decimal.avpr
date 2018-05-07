@@ -1,0 +1,20 @@
+{
+  "namespace": "example.proto",
+  "protocol": "DecimalProtocol",
+  "types": [
+    {
+      "name": "DecimalPr",
+      "type": "record",
+      "fields": [
+        {
+          "name": "dec",
+          "type": "bytes",
+          "logicalType": "decimal",
+          "precision": 9,
+          "scale": 2
+        }
+      ]
+    }
+  ],
+  "messages": []
+}

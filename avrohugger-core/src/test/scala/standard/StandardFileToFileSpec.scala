@@ -40,6 +40,9 @@ class StandardFileToFileSpec extends Specification {
     correctly generate all union values with shapeless Coproduct when instructed by generator $e19
     correctly generate union default parameter values $e20
     correctly generate a protocol with no ADT when asked $e21
+    correctly generate decimal from schema $e24
+    correctly generate decimal from protocol $e25
+    correctly generate decimal from IDL $e26
   """
   
   // tests standard to fileToX
@@ -354,6 +357,39 @@ class StandardFileToFileSpec extends Specification {
     val outDir = gen.defaultOutputDir + "/standard/"
     gen.fileToFile(inOrderSchema, outDir)
     gen.fileToFile(inReportSchema, outDir) must throwA[Exception]
+  }
+
+  def e24 = {
+    val infile = new java.io.File("avrohugger-core/src/test/avro/decimal.avsc")
+    val gen = new Generator(Standard)
+    val outDir = gen.defaultOutputDir + "/standard/"
+    gen.fileToFile(infile, outDir)
+
+    val source = util.Util.readFile("target/generated-sources/standard/example/DecimalSc.scala")
+
+    source === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/DecimalSc.scala")
+  }
+
+  def e25 = {
+    val infile = new java.io.File("avrohugger-core/src/test/avro/decimal.avpr")
+    val gen = new Generator(Standard)
+    val outDir = gen.defaultOutputDir + "/standard/"
+    gen.fileToFile(infile, outDir)
+
+    val source = util.Util.readFile("target/generated-sources/standard/example/proto/DecimalPr.scala")
+
+    source === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/proto/DecimalPr.scala")
+  }
+
+  def e26 = {
+    val infile = new java.io.File("avrohugger-core/src/test/avro/decimal.avdl")
+    val gen = new Generator(Standard)
+    val outDir = gen.defaultOutputDir + "/standard/"
+    gen.fileToFile(infile, outDir)
+
+    val source = util.Util.readFile("target/generated-sources/standard/example/idl/DecimalIdl.scala")
+
+    source === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/DecimalIdl.scala")
   }
 
 }

@@ -6,7 +6,7 @@ import avrohugger.types._
 import treehugger.forest._
 import definitions._
 import treehuggerDSL._
-import org.apache.avro.Schema
+import org.apache.avro.{LogicalType, Schema}
 import org.codehaus.jackson.JsonNode
 import org.codehaus.jackson.map.ObjectMapper
 import org.codehaus.jackson.node.{NullNode, ObjectNode, TextNode}
@@ -35,10 +35,14 @@ object DefaultValueMatcher {
         case Schema.Type.DOUBLE => LIT(node.getDoubleValue)
         case Schema.Type.BOOLEAN => LIT(node.getBooleanValue)
         case Schema.Type.STRING => LIT(node.getTextValue)
-        case Schema.Type.BYTES => {
-          val x = node.getTextValue.getBytes.map((e: Byte) => LIT(e))
-          REF("Array[Byte]") APPLY x
-        }
+        case Schema.Type.BYTES =>
+          Option(schema.getLogicalType) match {
+            case Some(tpe) if tpe.getName == "decimal"  =>
+              REF("scala.math.BigDecimal") APPLY LIT(node.getDecimalValue.toString)
+            case _ =>
+              val x = node.getTextValue.getBytes.map((e: Byte) => LIT(e))
+              REF("Array[Byte]") APPLY x
+          }
         case Schema.Type.ENUM => typeMatcher.avroScalaTypes.enum match {
           case JavaEnum => (REF(schema.getName) DOT node.getTextValue)
           case ScalaEnumeration => (REF(schema.getName) DOT node.getTextValue)
