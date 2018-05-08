@@ -7,3 +7,7 @@ scala:
    
 script:
    - sbt ++$TRAVIS_SCALA_VERSION test
+   
+os:
+  - linux
+  - osx
