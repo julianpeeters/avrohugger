@@ -1,18 +1,33 @@
 language: java
-env:
-  - SCALA_VERSION=2.11.12
-os:
-  - osx
-script:
-  - ./sbt "++$SCALA_VERSION" test
+scala:
+   - 2.12.6
+   - 2.11.12
+   - 2.10.7
+   
+os: linux
+
+before_install:
+  - if [[ "$TRAVIS_OS_NAME" = "osx" ]]; then
+      brew update;
+      brew install sbt;
+    fi
+script: sbt "$SBT_TEST_CMD";
+
+# We explicitly set the matrix to include oraclejdk8 because MacOS X has issues. See comment below
 matrix:
   include:
-    - env: SCALA_VERSION=2.12.6
-      os: linux
-      jdk: oraclejdk8
-    - env: SCALA_VERSION=2.11.12
-      os: linux
-      jdk: oraclejdk8
-    - env: SCALA_VERSION=2.10.7
-      os: linux
-      jdk: oraclejdk8
+    - jdk: oraclejdk8
+      language: scala
+      env: SBT_TEST_CMD="^validate"
+      # oraclejdk8 is not yet available.
+      # see https://github.com/travis-ci/travis-ci/issues/2316
+    - os: osx
+      env: SBT_VERSION_CMD="^validate ^validateUniversal"
+      osx_image: xcode8
+
+sudo: false
+cache:
+ apt: true
+ directories:
+ - $HOME/.sbt
+ - $HOME/.ivy2
