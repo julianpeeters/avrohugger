@@ -1,5 +1,7 @@
 # avrohugger
 
+
+[![Travis CI](https://travis-ci.org/julianpeeters/avrohugger.svg?branch=master)](https://travis-ci.org/julianpeeters/avrohugger)
 [![Join the chat at https://gitter.im/julianpeeters/avrohugger](https://badges.gitter.im/julianpeeters/avrohugger.svg)](https://gitter.im/julianpeeters/avrohugger?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 
