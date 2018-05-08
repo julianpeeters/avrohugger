@@ -11,18 +11,17 @@ before_install:
       brew update;
       brew install sbt;
     fi
-script: sbt "$SBT_TEST_CMD";
+    
+script: sbt ++$TRAVIS_SCALA_VERSION test
 
 # We explicitly set the matrix to include oraclejdk8 because MacOS X has issues. See comment below
 matrix:
   include:
-    - jdk: oraclejdk8
-      language: scala
-      env: SBT_TEST_CMD="^validate"
+    - os: linux
+      jdk: oraclejdk8
       # oraclejdk8 is not yet available.
       # see https://github.com/travis-ci/travis-ci/issues/2316
     - os: osx
-      env: SBT_VERSION_CMD="^validate ^validateUniversal"
       osx_image: xcode8
 
 sudo: false
