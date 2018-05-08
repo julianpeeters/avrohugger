@@ -1,32 +1,10 @@
-language: java
+language: scala
 scala:
    - 2.12.6
    - 2.11.12
    - 2.10.7
    
-os: linux
+jdk: oraclejdk8
 
-before_install:
-  - if [[ "$TRAVIS_OS_NAME" = "osx" ]]; then
-      brew update;
-      brew install sbt;
-    fi
-    
-script: sbt ++$TRAVIS_SCALA_VERSION test
-
-# We explicitly set the matrix to include oraclejdk8 because MacOS X has issues. See comment below
-matrix:
-  include:
-    - os: linux
-      jdk: oraclejdk8
-      # oraclejdk8 is not yet available.
-      # see https://github.com/travis-ci/travis-ci/issues/2316
-    - os: osx
-      osx_image: xcode8
-
-sudo: false
-cache:
- apt: true
- directories:
- - $HOME/.sbt
- - $HOME/.ivy2
+script:
+   - sbt ++$TRAVIS_SCALA_VERSION test
