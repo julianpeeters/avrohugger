@@ -2,7 +2,7 @@ lazy val avroVersion = "1.8.2"
 
 lazy val commonSettings = Seq(
   organization := "com.julianpeeters",
-  version := "1.0.0-RC7",
+  version := "1.0.0-RC8-SNAPSHOT",
   scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-Ywarn-value-discard"),
   scalacOptions in Test ++= Seq("-Yrangepos"),
   scalaVersion := "2.12.6",
@@ -54,7 +54,6 @@ lazy val commonSettings = Seq(
 lazy val avrohugger = (project in file("."))
   .settings(
     commonSettings,
-    libraryDependencies += "com.eed3si9n" %% "treehugger" % "0.4.3"
   ).aggregate(`avrohugger-core`, `avrohugger-filesorter`, `avrohugger-tools`)
   
 
@@ -79,4 +78,4 @@ lazy val `avrohugger-tools` = (project in file("avrohugger-tools"))
       art.withClassifier(Some("assembly"))
     },
     addArtifact(artifact in (Compile, assembly), assembly).settings
-  ).dependsOn(`avrohugger-core`)
+  ).dependsOn(`avrohugger-core`, `avrohugger-filesorter`)

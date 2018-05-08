@@ -2,6 +2,7 @@ package avrohugger
 package tool
 
 import format.abstractions.SourceFormat
+import avrohugger.filesorter.AvscFileSorter
 import types.AvroScalaTypes
 
 import org.apache.avro.tool.Tool
@@ -67,7 +68,7 @@ class GeneratorTool(sourceFormat: SourceFormat,
         generator.fileToFile(src, args.asScala.last)
       }
     } else if ("schema".equals(method)) {
-      for (src: File <- determineInputs(inputs, SCHEMA_FILTER)) {
+      for (src: File <- AvscFileSorter.sortSchemaFiles(determineInputs(inputs, SCHEMA_FILTER))) {
         generator.fileToFile(src, args.asScala.last)
       }
     } 
