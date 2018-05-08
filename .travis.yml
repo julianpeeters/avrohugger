@@ -1,38 +1,18 @@
-language: scala
-
-
-before_install:
-  - if [[ "$TRAVIS_OS_NAME" = "osx" ]]; then
-      brew update;
-      brew install sbt;
-    fi
-    
+language: java
+env:
+  - SCALA_VERSION=2.11.12
+os:
+  - osx
 script:
-   - sbt ++$TRAVIS_SCALA_VERSION test
-
+  - ./sbt "++$SCALA_VERSION" test
 matrix:
   include:
-    - scala: 2.10.7
+    - env: SCALA_VERSION=2.12.6
       os: linux
       jdk: oraclejdk8
-      
-    - scala: 2.11.12
+    - env: SCALA_VERSION=2.11.12
       os: linux
       jdk: oraclejdk8
-      
-    - scala: 2.12.6
+    - env: SCALA_VERSION=2.10.7
       os: linux
       jdk: oraclejdk8
-      
-      
-    - scala: 2.10.7
-      os: osx
-      osx_image: xcode8
-      
-    - scala: 2.11.12
-      os: osx
-      osx_image: xcode8
-      
-    - scala: 2.12.6
-      os: osx
-      osx_image: xcode8
