@@ -50,7 +50,6 @@ class TypeMatcher(
         case Schema.Type.STRING   => StringClass
         case Schema.Type.FIXED    => sys.error("FIXED datatype not yet supported")
         case Schema.Type.BYTES    =>
-          println(s"decimal: ${schema.toString(true)}")
           Option(schema.getLogicalType) match {
             case Some(tpe) if tpe.getName == "decimal"  =>
               BigDecimalClass
