@@ -36,6 +36,7 @@ class StandardStringToStringsSpec extends Specification {
       
       
       correctly generate a protocol with no ADT when asked $e21
+      correctly generate decimal values $e22
   """
   
   def eB = {
@@ -189,9 +190,6 @@ class StandardStringToStringsSpec extends Specification {
     source === expected
   }
 
-
-
-
   def e21 = {
     val inputString = util.Util.readFile("avrohugger-core/src/test/avro/AvroTypeProviderTestProtocol.avdl")
     val gen = new Generator(format = Standard)
@@ -199,5 +197,13 @@ class StandardStringToStringsSpec extends Specification {
     val List(source) = gen.stringToStrings(inputString)
   
     source === util.Util.readFile("avrohugger-core/src/test/expected/standard/test/Joystick.scala")
+  }
+
+  def e22 = {
+    val inputString = util.Util.readFile("avrohugger-core/src/test/avro/decimal.avdl")
+    val gen = new Generator(Standard)
+    val List(source) = gen.stringToStrings(inputString)
+    val expected = util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/DecimalIdl.scala")
+    source === expected
   }
 }
