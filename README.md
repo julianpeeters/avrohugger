@@ -23,8 +23,9 @@ Table of contents
 
   * [Supported Formats: `Standard`, `SpecificRecord`, `Scavro`](#generates-scala-case-classes-in-various-formats)
   * [Supported Datatypes](#supports-generating-case-classes-with-arbitrary-fields-of-the-following-datatypes)
-  * [Protocol support](#protocol-support)
-  * [Doc support](#doc-support)
+  * [Logical Types Support](#logical-types-support)
+  * [Protocol Support](#protocol-support)
+  * [Doc Support](#doc-support)
   * [Usage](#usage)
     * [`avrohugger-core`](#avrohugger-core)
       * [Get the dependency](#get-the-dependency-with)
@@ -67,13 +68,17 @@ runtime, Java classes provided separately (see [Scavro Plugin](https://github.co
 |NULL|Null|Null|Null||
 |MAP|Map|Map|Map||
 |ENUM|scala.Enumeration<br>Scala case object<br>Java Enum<br>EnumAsScalaString|Java Enum<br>EnumAsScalaString|scala.Enumeration<br>Scala case object<br>Java Enum<br>EnumAsScalaString| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
-|BYTES|Array[Byte]|Array[Byte]|Array[Byte]||
+|BYTES|Array[Byte]<br>BigDecimal|Array[Byte]|Array[Byte]|See[Logical Types: `decimal`](https://github.com/julianpeeters/avrohugger#logical-types-support)|
 |FIXED|//TODO|//TODO|//TODO||
 |ARRAY|List<br>Array<br>Vector|List<br>Array<br>Vector|Array<br>List<br>Vector| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 |UNION|Option<br>Either<br>Shapeless Coproduct|Option|Option| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 |RECORD|case class<br>ScalaCaseClassWithSchema|case class extending `SpecificRecordBase`|case class extending `AvroSerializeable`|
 |PROTOCOL|_No Type_<br>Scala ADT|RPC trait<br>Scala ADT|_No Type_<br>Scala ADT| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 
+##### Logical Types Support:
+
+* `decimal`: Annotates Avro `bytes` schemas to generate `BigDecimal`
+* `timestamp`: //TODO
 
 ##### Protocol Support:
 
