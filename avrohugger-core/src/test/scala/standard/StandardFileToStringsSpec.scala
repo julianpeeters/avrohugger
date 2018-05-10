@@ -32,11 +32,10 @@ class StandardFileToStringsSpec extends Specification {
       correctly generate records depending on others defined in a different- and same-namespaced AVDL and AVSC $e14
       correctly generate an empty case class definition $e15
       correctly generate default values $e16
-      
-      
-      
-      
+
+
       correctly generate a protocol with no ADT when asked $e21
+      correctly generate decimal from IDL $e22
   """
   
   // tests specific to fileToX
@@ -209,11 +208,6 @@ class StandardFileToStringsSpec extends Specification {
     source === expected
   }
   
-  
-  
-  
-  
-  
   def e21 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/AvroTypeProviderTestProtocol.avdl")
     val gen = new Generator(format = Standard)
@@ -221,6 +215,14 @@ class StandardFileToStringsSpec extends Specification {
     val List(source) = gen.fileToStrings(infile)
   
     source === util.Util.readFile("avrohugger-core/src/test/expected/standard/test/Joystick.scala")
+  }
+
+  def e22 = {
+    val infile = new java.io.File("avrohugger-core/src/test/avro/decimal.avdl")
+    val gen = new Generator(Standard)
+    val List(source) = gen.fileToStrings(infile)
+    val expected = util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/DecimalIdl.scala")
+    source === expected
   }
 
 }
