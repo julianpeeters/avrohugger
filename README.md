@@ -72,7 +72,7 @@ runtime, Java classes provided separately (see [Scavro Plugin](https://github.co
 |FIXED|//TODO|//TODO|//TODO||
 |ARRAY|List<br>Array<br>Vector|List<br>Array<br>Vector|Array<br>List<br>Vector| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 |UNION|Option<br>Either<br>Shapeless Coproduct|Option|Option| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
-|RECORD|case class<br>ScalaCaseClassWithSchema|case class extending `SpecificRecordBase`|case class extending `AvroSerializeable`|
+|RECORD|case class<br>case class + schema|case class extending `SpecificRecordBase`|case class extending `AvroSerializeable`|See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 |PROTOCOL|_No Type_<br>Scala ADT|RPC trait<br>Scala ADT|_No Type_<br>Scala ADT| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 
 ##### Logical Types Support:
@@ -113,7 +113,7 @@ _Note:_ Currently [Treehugger](http://eed3si9n.com/treehugger/comments.html#Scal
 
 ##### Get the dependency with:
 
-    "com.julianpeeters" %% "avrohugger-core" % "1.0.0-RC8"
+    "com.julianpeeters" %% "avrohugger-core" % "1.0.0-RC9"
 
 
 ##### Description:
@@ -163,7 +163,7 @@ To reassign Scala types to Avro types, use the following:
     val myScalaTypes = Some(SpecificRecord.defaultTypes.copy(array = ScalaVector))
     val generator = new Generator(SpecificRecord, avroScalaCustomTypes = myScalaTypes)
 
-* `record` can be assigned to `ScalaCaseClass` and `ScalaCaseClassWithSchema`
+* `record` can be assigned to `ScalaCaseClass` and `ScalaCaseClassWithSchema`(with schema in a companion object)
 * `array` can be assigned to `ScalaArray`, `ScalaList`, and `ScalaVector`
 * `enum` can be assigned to `JavaEnum`, `ScalaCaseObjectEnum`, `EnumAsScalaString`, and `ScalaEnumeration`
 * `union` can be assigned to `OptionEitherShapelessCoproduct` and `OptionShapelessCoproduct`
@@ -199,7 +199,7 @@ Generate simple classes instead of case classes when fields.size > 22, useful fo
 
 ##### Get the dependency with:
 
-    "com.julianpeeters" %% "avrohugger-filesorter" % "1.0.0-RC8"
+    "com.julianpeeters" %% "avrohugger-filesorter" % "1.0.0-RC9"
     
 
 ##### Description:
@@ -219,22 +219,22 @@ To ensure dependent schemas are compiled in the proper order (thus avoiding `org
 #### `avrohugger-tools`
 
 
-  Download the avrohugger-tools jar for Scala [2.10](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.10/1.0.0-RC8/avrohugger-tools_2.10-1.0.0-RC8-assembly.jar), Scala [2.11](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.11/1.0.0-RC8/avrohugger-tools_2.11-1.0.0-RC8-assembly.jar), or Scala [2.12](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.12/1.0.0-RC8/avrohugger-tools_2.12-1.0.0-RC8-assembly.jar) (>30MB!) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
+  Download the avrohugger-tools jar for Scala [2.10](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.10/1.0.0-RC9/avrohugger-tools_2.10-1.0.0-RC9-assembly.jar), Scala [2.11](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.11/1.0.0-RC9/avrohugger-tools_2.11-1.0.0-RC9-assembly.jar), or Scala [2.12](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.12/1.0.0-RC9/avrohugger-tools_2.12-1.0.0-RC9-assembly.jar) (>30MB!) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
 
 
 * `generate` generates Scala case class definitions:
 
-`java -jar /path/to/avrohugger-tools_2.12-1.0.0-RC8-assembly.jar generate schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.12-1.0.0-RC9-assembly.jar generate schema user.avsc . `
 
 
 * `generate-specific` generates definitions that extend Avro's `SpecificRecordBase`:
 
-`java -jar /path/to/avrohugger-tools_2.12-1.0.0-RC8-assembly.jar generate-specific schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.12-1.0.0-RC9-assembly.jar generate-specific schema user.avsc . `
 
 
 * `generate-scavro` generates definitions that extend Scavro's `AvroSerializable`:
 
-`java -jar /path/to/avrohugger-tools_2.12-1.0.0-RC8-assembly.jar generate-scavro schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.12-1.0.0-RC9-assembly.jar generate-scavro schema user.avsc . `
 
 
 ## Warnings
