@@ -3,10 +3,8 @@ package example.idl
 
 import other.ns.{ExternalDependency, Suit}
 
-sealed trait ImportProtocol extends Product with Serializable
+case class DependentRecord(dependency: ExternalDependency, number: Int)
 
-final case class DependentRecord(dependency: ExternalDependency, number: Int) extends ImportProtocol
+case class DependentRecord2(dependency: Suit.Value, name: String)
 
-final case class DependentRecord2(dependency: Suit.Value, name: String) extends ImportProtocol
-
-final case class DependentRecord3(dependency: Embedded, value: Boolean) extends ImportProtocol
+case class DependentRecord3(dependency: Embedded, value: Boolean)

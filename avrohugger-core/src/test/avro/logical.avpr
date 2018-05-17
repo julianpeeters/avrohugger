@@ -1,9 +1,9 @@
 {
-  "namespace": "example.decimal.proto",
-  "protocol": "DecimalProtocol",
+  "namespace": "example.logical.proto",
+  "protocol": "Logical",
   "types": [
     {
-      "name": "DecimalPr",
+      "name": "Logical",
       "type": "record",
       "fields": [
         {
@@ -17,6 +17,20 @@
           "logicalType": "decimal",
           "precision": 9,
           "scale": 2
+        },
+        {
+          "name": "ts",
+          "type": {
+            "type": "long",
+            "logicalType": "timestamp-millis"
+          }
+        },
+        {
+          "name": "dt",
+          "type": {
+            "type": "int",
+            "logicalType": "date"
+          }
         }
       ]
     }

@@ -40,9 +40,9 @@ class StandardFileToFileSpec extends Specification {
     correctly generate all union values with shapeless Coproduct when instructed by generator $e19
     correctly generate union default parameter values $e20
     correctly generate a protocol with no ADT when asked $e21
-    correctly generate decimal from schema $e24
-    correctly generate decimal from protocol $e25
-    correctly generate decimal from IDL $e26
+    correctly generate logical types from schema $e24
+    correctly generate logical types from protocol $e25
+    correctly generate logical types from IDL $e26
   """
   
   // tests standard to fileToX
@@ -360,36 +360,36 @@ class StandardFileToFileSpec extends Specification {
   }
 
   def e24 = {
-    val infile = new java.io.File("avrohugger-core/src/test/avro/decimal.avsc")
+    val infile = new java.io.File("avrohugger-core/src/test/avro/logical.avsc")
     val gen = new Generator(Standard)
     val outDir = gen.defaultOutputDir + "/standard/"
     gen.fileToFile(infile, outDir)
 
-    val source = util.Util.readFile("target/generated-sources/standard/example/decimal/DecimalSc.scala")
+    val source = util.Util.readFile("target/generated-sources/standard/example/logical/LogicalSc.scala")
 
-    source === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/decimal/DecimalSc.scala")
+    source === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/logical/LogicalSc.scala")
   }
 
   def e25 = {
-    val infile = new java.io.File("avrohugger-core/src/test/avro/decimal.avpr")
+    val infile = new java.io.File("avrohugger-core/src/test/avro/logical.avpr")
     val gen = new Generator(Standard)
     val outDir = gen.defaultOutputDir + "/standard/"
     gen.fileToFile(infile, outDir)
 
-    val source = util.Util.readFile("target/generated-sources/standard/example/decimal/proto/DecimalPr.scala")
+    val source = util.Util.readFile("target/generated-sources/standard/example/logical/proto/Logical.scala")
 
-    source === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/proto/DecimalPr.scala")
+    source === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/logical/proto/Logical.scala")
   }
 
   def e26 = {
-    val infile = new java.io.File("avrohugger-core/src/test/avro/decimal.avdl")
+    val infile = new java.io.File("avrohugger-core/src/test/avro/logical.avdl")
     val gen = new Generator(Standard)
     val outDir = gen.defaultOutputDir + "/standard/"
     gen.fileToFile(infile, outDir)
 
-    val source = util.Util.readFile("target/generated-sources/standard/example/idl/DecimalIdl.scala")
+    val source = util.Util.readFile("target/generated-sources/standard/example/idl/LogicalIdl.scala")
 
-    source === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/DecimalIdl.scala")
+    source === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/LogicalIdl.scala")
   }
 
 }

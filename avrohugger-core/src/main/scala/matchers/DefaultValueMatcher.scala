@@ -5,12 +5,12 @@ import avrohugger.stores.ClassStore
 import avrohugger.types._
 import treehugger.forest._
 import definitions._
-import treehuggerDSL._
-import org.apache.avro.{LogicalType, Schema}
+import org.apache.avro.Schema
 import org.codehaus.jackson.JsonNode
 import org.codehaus.jackson.map.ObjectMapper
 import org.codehaus.jackson.node.{NullNode, ObjectNode, TextNode}
 import treehugger.forest
+import treehuggerDSL._
 
 import scala.collection.JavaConverters._
 
@@ -29,19 +29,30 @@ object DefaultValueMatcher {
     def fromJsonNode(node: JsonNode, schema: Schema): Tree = {
       schema.getType match {
         case _ if node == null => EmptyTree //not `default=null`, but no default
-        case Schema.Type.INT => LIT(node.getIntValue)
+        case Schema.Type.INT =>
+          typeMatcher.foldLogicalTypes[Tree](
+            schema = schema,
+            default = LIT(node.getIntValue)) {
+            case Date =>
+              REF("java.time.LocalDate.ofEpochDay") APPLY LIT(node.getLongValue)
+          }
         case Schema.Type.FLOAT => LIT(node.getDoubleValue.asInstanceOf[Float])
-        case Schema.Type.LONG => LIT(node.getLongValue)
+        case Schema.Type.LONG =>
+          typeMatcher.foldLogicalTypes[Tree](
+            schema = schema,
+            default = LIT(node.getLongValue)) {
+            case TimestampMillis =>
+              val instant = REF("java.time.Instant.ofEpochMilli") APPLY LIT(node.getLongValue)
+              REF("java.time.LocalDateTime.ofInstant") APPLY(instant, REF("java.util.TimeZone.getDefault().toZoneId()"))
+          }
         case Schema.Type.DOUBLE => LIT(node.getDoubleValue)
         case Schema.Type.BOOLEAN => LIT(node.getBooleanValue)
         case Schema.Type.STRING => LIT(node.getTextValue)
         case Schema.Type.BYTES =>
-          Option(schema.getLogicalType) match {
-            case Some(tpe) if tpe.getName == "decimal"  =>
-              REF("scala.math.BigDecimal") APPLY LIT(node.getDecimalValue.toString)
-            case _ =>
-              val x = node.getTextValue.getBytes.map((e: Byte) => LIT(e))
-              REF("Array[Byte]") APPLY x
+          typeMatcher.foldLogicalTypes(
+            schema = schema,
+            default = REF("Array[Byte]") APPLY node.getTextValue.getBytes.map((e: Byte) => LIT(e))) {
+            case Decimal => REF("scala.math.BigDecimal") APPLY LIT(node.getDecimalValue.toString)
           }
         case Schema.Type.ENUM => typeMatcher.avroScalaTypes.enum match {
           case JavaEnum => (REF(schema.getName) DOT node.getTextValue)
