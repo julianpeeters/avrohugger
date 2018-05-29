@@ -3,7 +3,7 @@
 
 [![Travis CI](https://travis-ci.org/julianpeeters/avrohugger.svg?branch=master)](https://travis-ci.org/julianpeeters/avrohugger)
 [![Join the chat at https://gitter.im/julianpeeters/avrohugger](https://badges.gitter.im/julianpeeters/avrohugger.svg)](https://gitter.im/julianpeeters/avrohugger?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.julianpeeters/avrohugger/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.julianpeeters/avrohugger)
 
 **Schema-to-case-class code generation for working with Avro in Scala.**
 
@@ -59,8 +59,8 @@ runtime, Java classes provided separately (see [Scavro Plugin](https://github.co
 
 |Avro|`Standard`|`SpecificRecord`|`Scavro`|Notes|
 |----------|---------|----------|---------|---------|
-|INT|Int|Int|Int||
-|LONG|Long|Long|Long||
+|INT|Int|Int|Int|See[Logical Types: `date`](https://github.com/julianpeeters/avrohugger#logical-types-support)|
+|LONG|Long|Long|Long|See[Logical Types: `timestamp-millis`](https://github.com/julianpeeters/avrohugger#logical-types-support)|
 |FLOAT|Float|Float|Float||
 |DOUBLE|Double|Double|Double||
 |STRING|String|String|String||
@@ -77,8 +77,11 @@ runtime, Java classes provided separately (see [Scavro Plugin](https://github.co
 
 ##### Logical Types Support:
 
+_NOTE: Currently logical types are only supported for `Standard` format_
+
+* `date`: Annotates Avro `int` schemas to generate `java.time.LocalDate`
 * `decimal`: Annotates Avro `bytes` schemas to generate `BigDecimal`
-* `timestamp`: //TODO
+* `timestamp-millis`: Annotates Avro `long` schemas to genarate `java.time.LocalDateTime`
 
 ##### Protocol Support:
 
