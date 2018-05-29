@@ -33,7 +33,7 @@ class StandardStringToFileSpec extends Specification {
       
       
       correctly generate a protocol with no ADT when asked $e21
-      correctly generate decimal from IDL $e22
+      correctly generate logical types from IDL $e22
   """
   
   def eB = {
@@ -243,14 +243,14 @@ class StandardStringToFileSpec extends Specification {
   }
 
   def e22 = {
-    val inputString = util.Util.readFile("avrohugger-core/src/test/avro/decimal.avdl")
+    val inputString = util.Util.readFile("avrohugger-core/src/test/avro/logical.avdl")
     val gen = new Generator(Standard)
     val outDir = gen.defaultOutputDir + "/standard/"
     gen.stringToFile(inputString, outDir)
 
-    val source = util.Util.readFile("target/generated-sources/standard/example/idl/DecimalIdl.scala")
+    val source = util.Util.readFile("target/generated-sources/standard/example/idl/LogicalIdl.scala")
 
-    source === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/DecimalIdl.scala")
+    source === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/LogicalIdl.scala")
   }
 
 }
