@@ -46,12 +46,12 @@ object ConverterGenerator {
   }
 
   private def converterList(schema: Schema): List[Tree] = {
-    schema.getFields.iterator().asScala.foldLeft(List.empty[Tree])((result, field) => result :+ (fieldLogicalType(field) match {
+    schema.getFields.iterator().asScala.map(field => fieldLogicalType(field) match {
       case x: Date => REF("avrohugger.format.specific.conversions.DateConversion")
       case x: TimestampMillis => REF("avrohugger.format.specific.conversions.DateTimeConversion")
       case x: Decimal => NEW("org.apache.avro.Conversions.DecimalConversion")
       case _ => NULL
-    }))
-  }
+    })
+  }.toList
 }
 
