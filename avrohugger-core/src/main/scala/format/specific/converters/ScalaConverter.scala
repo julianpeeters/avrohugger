@@ -86,12 +86,14 @@ object ScalaConverter {
       }
       case Schema.Type.FIXED    => sys.error("the FIXED datatype is not yet supported")
       case Schema.Type.BYTES => {
-        val JavaBuffer = RootClass.newClass("java.nio.ByteBuffer")
-        val resultExpr = Block(
-          REF("buffer") DOT "array" APPLY()
-        )
-        val bufferConversion = CASE(ID("buffer") withType(JavaBuffer)) ==> resultExpr
-        tree MATCH bufferConversion
+        if (schema.getLogicalType == null) {
+          val JavaBuffer = RootClass.newClass("java.nio.ByteBuffer")
+          val resultExpr = Block(
+            REF("buffer") DOT "array" APPLY()
+          )
+          val bufferConversion = CASE(ID("buffer") withType (JavaBuffer)) ==> resultExpr
+          tree MATCH bufferConversion
+        } else tree
       }
       case Schema.Type.UNION  => {
         val types = schema.getTypes.asScala

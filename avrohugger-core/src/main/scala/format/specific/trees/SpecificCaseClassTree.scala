@@ -3,7 +3,7 @@ package format
 package specific
 package trees
 
-import avrohugger.format.specific.methods.{ConverterGenerator, GetGenerator, GetSchemaGenerator, PutGenerator}
+import format.specific.methods.{_}
 import avrohugger.generators.ScalaDocGenerator
 import avrohugger.matchers.{DefaultParamMatcher, DefaultValueMatcher, TypeMatcher}
 import avrohugger.stores.ClassStore
@@ -71,8 +71,7 @@ object SpecificCaseClassTree {
       namespace,
       indexedFields,
       typeMatcher)
-    val defConverterList = ConverterGenerator.toListDef(schema)
-    val defConverters = ConverterGenerator.toDef(schema)
+    val defLogicalTypes = LogicalTypesGenerator.toCaseClassDef(schema)
 
     // define the class def with the members previously defined
     // There could be base traits, flags, or both, and could have no fields
@@ -153,8 +152,9 @@ object SpecificCaseClassTree {
 
     val caseClassTree = {
       // for "empty" records: empty params and no no-arg ctor
-      val thisDef: Option[Tree] = if(avroFields.isEmpty) None else Some(defThis)
-      val parts = List(thisDef, defConverterList, defConverters, Some(defGet), Some(defPut), Some(defGetSchema)).flatten
+      val thisDefList: List[Tree] = if(avroFields.isEmpty) Nil else List(defThis)
+      val accessorList: List[Tree] = List[Tree](defGet, defPut, defGetSchema)
+      val parts = thisDefList ++ defLogicalTypes ++ accessorList
       caseClassDef := BLOCK(parts:_*)
     }
 
