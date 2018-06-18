@@ -3,16 +3,14 @@ package format
 package specific
 package trees
 
-import generators.ScalaDocGenerator
-import matchers.{ DefaultParamMatcher, DefaultValueMatcher, TypeMatcher }
-import methods.{ GetGenerator, GetSchemaGenerator, PutGenerator }
-import stores.ClassStore
-
+import format.specific.methods.{_}
+import avrohugger.generators.ScalaDocGenerator
+import avrohugger.matchers.{DefaultParamMatcher, DefaultValueMatcher, TypeMatcher}
+import avrohugger.stores.ClassStore
 import treehugger.forest._
 import definitions._
-import treehuggerDSL._
-
 import org.apache.avro.Schema
+import treehuggerDSL._
 
 import scala.collection.JavaConverters._
 
@@ -73,6 +71,7 @@ object SpecificCaseClassTree {
       namespace,
       indexedFields,
       typeMatcher)
+    val defLogicalTypes = LogicalTypesGenerator.toCaseClassDef(schema)
 
     // define the class def with the members previously defined
     // There could be base traits, flags, or both, and could have no fields
@@ -152,16 +151,11 @@ object SpecificCaseClassTree {
     }
 
     val caseClassTree = {
-      if (!avroFields.isEmpty) caseClassDef := BLOCK(
-        defThis,
-        defGet,
-        defPut,
-        defGetSchema)
       // for "empty" records: empty params and no no-arg ctor
-      else caseClassDef := BLOCK(
-        defGet,
-        defPut,
-        defGetSchema)
+      val thisDefList: List[Tree] = if(avroFields.isEmpty) Nil else List(defThis)
+      val accessorList: List[Tree] = List[Tree](defGet, defPut, defGetSchema)
+      val parts = thisDefList ++ defLogicalTypes ++ accessorList
+      caseClassDef := BLOCK(parts:_*)
     }
 
     val treeWithScalaDoc = ScalaDocGenerator.docToScalaDoc(
