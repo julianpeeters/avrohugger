@@ -31,8 +31,8 @@ final object Embedded {
   val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Embedded\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"inner\",\"type\":\"int\"}]}")
 }
 
-final case class DefaultTest(var suit: DefaultEnum = DefaultEnum.SPADES, var number: Int = 0, var str: String = "str", var optionString: Option[String] = None, var optionStringValue: Option[String] = Some("default"), var embedded: Embedded = new Embedded(1), var defaultArray: List[Int] = List(1, 3, 4, 5), var optionalEnum: Option[DefaultEnum] = None, var defaultMap: Map[String, String] = Map("Hello" -> "world", "Merry" -> "Christmas"), var byt: Array[Byte] = Array[Byte](-61, -65)) extends org.apache.avro.specific.SpecificRecordBase with Defaults {
-  def this() = this(DefaultEnum.SPADES, 0, "str", None, Some("default"), new Embedded(1), List(1, 3, 4, 5), None, Map("Hello" -> "world", "Merry" -> "Christmas"), Array[Byte](-61, -65))
+final case class DefaultTest(var suit: DefaultEnum = DefaultEnum.SPADES, var number: Int = 0, var str: String = "str", var optionString: Option[String] = None, var optionStringValue: Option[String] = Some("default"), var embedded: Embedded = new Embedded(1), var defaultArray: Seq[Int] = Seq(1, 3, 4, 5), var optionalEnum: Option[DefaultEnum] = None, var defaultMap: Map[String, String] = Map("Hello" -> "world", "Merry" -> "Christmas"), var byt: Array[Byte] = Array[Byte](-61, -65)) extends org.apache.avro.specific.SpecificRecordBase with Defaults {
+  def this() = this(DefaultEnum.SPADES, 0, "str", None, Some("default"), new Embedded(1), Seq(1, 3, 4, 5), None, Map("Hello" -> "world", "Merry" -> "Christmas"), Array[Byte](-61, -65))
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {
@@ -116,12 +116,12 @@ final case class DefaultTest(var suit: DefaultEnum = DefaultEnum.SPADES, var num
       case 6 => this.defaultArray = {
         value match {
           case (array: java.util.List[_]) => {
-            List((scala.collection.JavaConverters.asScalaIteratorConverter(array.iterator).asScala.toSeq map { x =>
+            Seq((scala.collection.JavaConverters.asScalaIteratorConverter(array.iterator).asScala.toSeq map { x =>
               x
             }: _*))
           }
         }
-      }.asInstanceOf[List[Int]]
+      }.asInstanceOf[Seq[Int]]
       case 7 => this.optionalEnum = {
         value match {
           case null => None

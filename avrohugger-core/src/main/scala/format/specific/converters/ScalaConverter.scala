@@ -29,6 +29,7 @@ object ScalaConverter {
     arrayType match {
       case ScalaArray  => arrayConversion
       case ScalaList   => LIST(seqArgs)
+      case ScalaSeq    => SEQ(seqArgs)
       case ScalaVector => VECTOR(seqArgs)
     }
   }

@@ -19,6 +19,7 @@ object DefaultParamMatcher {
     arrayType match {
       case ScalaArray  => ArrayClass
       case ScalaList   => ListClass
+      case ScalaSeq    => SeqClass
       case ScalaVector => VectorClass
     }
   }
