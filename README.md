@@ -81,7 +81,7 @@ _NOTE: Currently logical types are only supported for `Standard` format_
 
 * `date`: Annotates Avro `int` schemas to generate `java.time.LocalDate`
 * `decimal`: Annotates Avro `bytes` schemas to generate `BigDecimal`
-* `timestamp-millis`: Annotates Avro `long` schemas to genarate `java.time.LocalDateTime`
+* `timestamp-millis`: Annotates Avro `long` schemas to genarate `java.time.Instant`
 
 ##### Protocol Support:
 

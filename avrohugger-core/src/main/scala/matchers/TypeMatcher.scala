@@ -65,7 +65,7 @@ class TypeMatcher(
           foldLogicalTypes(
             schema = schema,
             default = CustomTypeMatcher.checkCustomNumberType(avroScalaTypes.long)) {
-            case TimestampMillis => RootClass.newClass(nme.createNameType("java.time.LocalDateTime"))
+            case TimestampMillis => RootClass.newClass(nme.createNameType("java.time.Instant"))
           }
         case Schema.Type.INT      =>
           foldLogicalTypes(
