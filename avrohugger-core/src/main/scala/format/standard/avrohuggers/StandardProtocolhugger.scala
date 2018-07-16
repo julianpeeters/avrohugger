@@ -6,7 +6,7 @@ package avrohuggers
 import generators.ScalaDocGenerator
 import trees.StandardTraitTree
 import matchers.TypeMatcher
-import stores.ClassStore
+import stores.{ClassStore, SchemaStore}
 import types._
 import org.apache.avro.{ Protocol, Schema }
 
@@ -20,6 +20,7 @@ import format.abstractions.avrohuggers.Protocolhugger
 object StandardProtocolhugger extends Protocolhugger {
 
   def toTrees(
+    schemaStore: SchemaStore,
     classStore: ClassStore,
     namespace: Option[String],
     protocol: Protocol,
@@ -45,6 +46,7 @@ object StandardProtocolhugger extends Protocolhugger {
       val traitDef = StandardTraitTree.toADTRootDef(protocol, typeMatcher)
       traitDef +: adtSubTypes.flatMap(schema => {
         StandardSchemahugger.toTrees(
+          schemaStore,
           classStore,
           namespace,
           schema,
@@ -66,6 +68,7 @@ object StandardProtocolhugger extends Protocolhugger {
       }
       docTrees ::: localSubTypes.flatMap(schema => {
         StandardSchemahugger.toTrees(
+          schemaStore,
           classStore,
           namespace,
           schema,

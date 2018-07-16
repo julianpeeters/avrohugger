@@ -3,16 +3,14 @@ package format
 package specific
 package trees
 
-import generators.ScalaDocGenerator
-import matchers.{ DefaultParamMatcher, DefaultValueMatcher, TypeMatcher }
-import methods.{ GetGenerator, GetSchemaGenerator, PutGenerator }
-import stores.ClassStore
-
+import format.specific.methods.{_}
+import avrohugger.generators.ScalaDocGenerator
+import avrohugger.matchers.{DefaultParamMatcher, DefaultValueMatcher, TypeMatcher}
+import avrohugger.stores.ClassStore
 import treehugger.forest._
 import definitions._
-import treehuggerDSL._
-
 import org.apache.avro.Schema
+import treehuggerDSL._
 
 import scala.collection.JavaConverters._
 
@@ -67,12 +65,13 @@ object SpecificCaseClassTree {
       IndexedField(avroField, index)
     })
     val defGetSchema = GetSchemaGenerator(classSymbol).toDef
-    val defGet = GetGenerator.toDef(indexedFields)
+    val defGet = GetGenerator.toDef(indexedFields, classSymbol)
     val defPut = PutGenerator.toDef(
       classStore,
       namespace,
       indexedFields,
-      typeMatcher)
+      typeMatcher,
+      classSymbol)
 
     // define the class def with the members previously defined
     // There could be base traits, flags, or both, and could have no fields
@@ -152,13 +151,13 @@ object SpecificCaseClassTree {
     }
 
     val caseClassTree = {
+      // for "empty" records: empty params and no no-arg ctor
       if (!avroFields.isEmpty) caseClassDef := BLOCK(
         defThis,
         defGet,
         defPut,
         defGetSchema)
-      // for "empty" records: empty params and no no-arg ctor
-      else caseClassDef := BLOCK(
+     else caseClassDef := BLOCK(
         defGet,
         defPut,
         defGetSchema)

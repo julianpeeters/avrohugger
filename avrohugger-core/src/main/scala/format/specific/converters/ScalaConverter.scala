@@ -11,7 +11,7 @@ import treehugger.forest._
 import definitions._
 import treehuggerDSL._
 
-import org.apache.avro.Schema
+import org.apache.avro.{LogicalTypes, Schema}
 
 import scala.language.postfixOps
 import scala.collection.JavaConverters._
@@ -39,7 +39,8 @@ object ScalaConverter {
     namespace: Option[String],
     schema: Schema,
     tree: Tree, 
-    typeMatcher: TypeMatcher): Tree = {
+    typeMatcher: TypeMatcher,
+    classSymbol: ClassSymbol): Tree = {
 
     schema.getType match {
       case Schema.Type.ARRAY => {
@@ -47,7 +48,7 @@ object ScalaConverter {
         val elementType = typeMatcher.toScalaType(classStore, namespace, elementSchema)
         val JavaList = RootClass.newClass("java.util.List[_]")
         val applyParam = REF("array") DOT("iterator")
-        val elementConversion = convertFromJava(classStore, namespace, elementSchema, REF("x"), typeMatcher)
+        val elementConversion = convertFromJava(classStore, namespace, elementSchema, REF("x"), typeMatcher, classSymbol)
         val seqArgs = {
           SEQARG(
             REF("scala.collection.JavaConverters.asScalaIteratorConverter").APPLY(applyParam).DOT("asScala").DOT("toSeq")
@@ -77,20 +78,28 @@ object ScalaConverter {
             .MAP(LAMBDA(PARAM("kvp")) ==> BLOCK(
               VAL("key") := REF("kvp._1").DOT("toString"),
               VAL("value") := REF("kvp._2"),
-              PAREN(REF("key"), convertFromJava(classStore, namespace, schema.getValueType, REF("value"), typeMatcher)))
+              PAREN(REF("key"), convertFromJava(classStore, namespace, schema.getValueType, REF("value"), typeMatcher, classSymbol)))
             )
           )
         }
         val mapConversion = CASE(ID("map") withType(JavaMap)) ==> resultExpr
         tree MATCH(mapConversion)
       }
-      case Schema.Type.FIXED    => sys.error("the FIXED datatype is not yet supported")
+      case Schema.Type.FIXED => sys.error("the FIXED datatype is not yet supported")
       case Schema.Type.BYTES => {
         val JavaBuffer = RootClass.newClass("java.nio.ByteBuffer")
-        val resultExpr = Block(
-          REF("buffer") DOT "array" APPLY()
-        )
-        val bufferConversion = CASE(ID("buffer") withType(JavaBuffer)) ==> resultExpr
+        val resultExpr = schema.getLogicalType match {
+          case decimal: LogicalTypes.Decimal => {
+            val Decimal = RootClass.newClass("org.apache.avro.LogicalTypes.Decimal")
+            Block(
+              VAL("schema") := (REF("getSchema").DOT("getFields").APPLY().DOT("get").APPLY(REF("field$")).DOT("schema").APPLY()),
+              VAL("decimalType") := REF("schema").DOT("getLogicalType").APPLY().AS(Decimal),
+              REF("BigDecimal").APPLY(classSymbol.DOT("decimalConversion").DOT("fromBytes").APPLY(REF("buffer"),REF("schema"),REF("decimalType")))
+            )
+          }
+          case _ => Block(REF("buffer") DOT "array" APPLY())
+        }  
+        val bufferConversion = CASE(ID("buffer") withType (JavaBuffer)) ==> resultExpr
         tree MATCH bufferConversion
       }
       case Schema.Type.UNION  => {
@@ -105,7 +114,7 @@ object ScalaConverter {
         else {
           val typeParamSchema = types.find(x => x.getType != Schema.Type.NULL).get
           val nullConversion = CASE(NULL) ==> NONE
-          val someExpr = SOME(convertFromJava(classStore, namespace, typeParamSchema, tree, typeMatcher))
+          val someExpr = SOME(convertFromJava(classStore, namespace, typeParamSchema, tree, typeMatcher, classSymbol))
           val someConversion = CASE(WILDCARD) ==> someExpr
           val conversionCases = List(nullConversion, someConversion)
           tree MATCH(conversionCases:_*)
@@ -115,6 +124,40 @@ object ScalaConverter {
         typeMatcher.avroScalaTypes.enum match {
           case EnumAsScalaString => tree TOSTRING
           case JavaEnum | ScalaEnumeration | ScalaCaseObjectEnum => tree
+        }
+      }
+      case Schema.Type.LONG => {
+        Option(schema.getLogicalType()) match {
+          case Some(logicalType) => {
+            if (logicalType.getName == "timestamp-millis") {
+              val IntegerClass = RootClass.newClass("Long")
+              val LocalDateTimeClass = RootClass.newClass("java.time.LocalDateTime")
+              val InstantClass = RootClass.newClass("java.time.Instant")
+              val TimeZoneClass = RootClass.newClass("java.util.TimeZone")
+              val instant = InstantClass.DOT("ofEpochMilli").APPLY(REF("l"))
+              val zone = TimeZoneClass.DOT("getDefault").DOT("toZoneId")
+              val resultExpr = BLOCK(LocalDateTimeClass.DOT("ofInstant").APPLY(instant, zone))
+              val longConversion = CASE(ID("l") withType (LongClass)) ==> resultExpr
+              tree MATCH longConversion
+            }
+            else tree
+          }
+          case None => tree
+        }
+      }
+      case Schema.Type.INT => {
+        Option(schema.getLogicalType()) match {
+          case Some(logicalType) => {
+            if (logicalType.getName == "date") {
+              val IntegerClass = RootClass.newClass("Integer")
+              val LocalDateClass = RootClass.newClass("java.time.LocalDate")
+              val resultExpr = BLOCK(LocalDateClass.DOT("ofEpochDay").APPLY(REF("i").DOT("toInt")))
+              val integerConversion = CASE(ID("i") withType (IntegerClass)) ==> resultExpr
+              tree MATCH integerConversion
+            }
+            else tree
+          }
+          case None => tree
         }
       }
       case _ => tree

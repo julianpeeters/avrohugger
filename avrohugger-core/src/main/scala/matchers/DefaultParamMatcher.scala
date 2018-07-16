@@ -42,8 +42,19 @@ object DefaultParamMatcher {
     avroSchema.getType match {
 
       case Type.BOOLEAN => FALSE
-      case Type.INT     => LIT(0)
-      case Type.LONG    => LIT(0L)
+      case Type.INT     =>
+        typeMatcher.foldLogicalTypes[Tree](
+          schema = avroSchema,
+          default = LIT(0)) {
+          case Date => REF("java.time.LocalDate.now")
+        }
+      case Type.LONG    =>
+        typeMatcher.foldLogicalTypes[Tree](
+          schema = avroSchema,
+          default = LIT(0L)) {
+          case TimestampMillis =>
+            REF("java.time.LocalDateTime.now")
+        }
       case Type.FLOAT   => LIT(0F)
       case Type.DOUBLE  => LIT(0D)
       case Type.STRING  => LIT("")
@@ -51,7 +62,12 @@ object DefaultParamMatcher {
       case Type.FIXED   => sys.error("the FIXED datatype is not yet supported")
       case Type.ENUM    =>
         checkCustomEnumType(typeMatcher.avroScalaTypes.enum)
-      case Type.BYTES   => NULL
+      case Type.BYTES   =>
+        typeMatcher.foldLogicalTypes[Tree](
+          schema = avroSchema,
+          default = NULL) {
+          case Decimal => REF("scala.math.BigDecimal") APPLY LIT(0)
+        }
       case Type.RECORD  => NEW(classStore.generatedClasses(avroSchema))
       case Type.UNION   => NONE
       case Type.ARRAY   =>
