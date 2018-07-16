@@ -6,7 +6,7 @@ package avrohuggers
 import format.abstractions.avrohuggers.Schemahugger
 import trees.{ SpecificCaseClassTree, SpecificObjectTree }
 import matchers.TypeMatcher
-import stores.ClassStore
+import stores.{ClassStore, SchemaStore}
 
 import org.apache.avro.Schema
 
@@ -15,6 +15,7 @@ import treehugger.forest.Tree
 object SpecificSchemahugger extends Schemahugger {
 
   def toTrees(
+    schemaStore: SchemaStore,
     classStore: ClassStore,
     namespace: Option[String],
     schema: Schema,
@@ -32,7 +33,11 @@ object SpecificSchemahugger extends Schemahugger {
       maybeFlags,
       restrictedFields)
 
-    val companionDef = SpecificObjectTree.toCaseCompanionDef(schema, maybeFlags)
+    val companionDef = SpecificObjectTree.toCaseCompanionDef(
+      schema,
+      maybeFlags,
+      schemaStore,
+      typeMatcher)
 
     List(caseClassDef, companionDef)
   }

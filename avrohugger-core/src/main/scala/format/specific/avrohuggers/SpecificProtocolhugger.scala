@@ -7,7 +7,7 @@ import format.abstractions.avrohuggers.Protocolhugger
 import generators.ScalaDocGenerator
 import trees.{ SpecificObjectTree, SpecificTraitTree }
 import matchers.TypeMatcher
-import stores.ClassStore
+import stores.{ClassStore, SchemaStore}
 import types.ScalaADT
 
 import org.apache.avro.{ Protocol, Schema }
@@ -21,6 +21,7 @@ import scala.collection.JavaConverters._
 object SpecificProtocolhugger extends Protocolhugger {
 
   def toTrees(
+    schemaStore: SchemaStore,
     classStore: ClassStore,
     namespace: Option[String],
     protocol: Protocol,
@@ -45,6 +46,7 @@ object SpecificProtocolhugger extends Protocolhugger {
         val sealedTraitDef = SpecificTraitTree.toADTRootDef(protocol)
         val subTypeDefs = localNonEnums.flatMap(schema => {
           SpecificSchemahugger.toTrees(
+            schemaStore,
             classStore,
             namespace,
             schema,
@@ -67,6 +69,7 @@ object SpecificProtocolhugger extends Protocolhugger {
         }
         docTrees ::: localNonEnums.flatMap(schema => {
           SpecificSchemahugger.toTrees(
+            schemaStore,
             classStore,
             namespace,
             schema,

@@ -6,7 +6,7 @@ package avrohuggers
 import format.abstractions.avrohuggers.Schemahugger
 import trees.{ ScavroCaseClassTree, ScavroObjectTree, ScavroTraitTree }
 import matchers.TypeMatcher
-import stores.ClassStore
+import stores.{ClassStore, SchemaStore}
 import types._
 
 import org.apache.avro.Schema
@@ -19,6 +19,7 @@ import treehuggerDSL._
 object ScavroSchemahugger extends Schemahugger{
 
   def toTrees(
+    schemaStore: SchemaStore,
     classStore: ClassStore,
     namespace: Option[String],
     schema: Schema,

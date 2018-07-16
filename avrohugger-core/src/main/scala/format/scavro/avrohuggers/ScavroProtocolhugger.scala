@@ -6,7 +6,7 @@ package avrohuggers
 import format.abstractions.avrohuggers.Protocolhugger
 import generators.ScalaDocGenerator
 import matchers.TypeMatcher
-import stores.ClassStore
+import stores.{ClassStore, SchemaStore}
 import trees.ScavroTraitTree
 import types._
 
@@ -17,6 +17,7 @@ import treehugger.forest._
 object ScavroProtocolhugger extends Protocolhugger {
 
   def toTrees(
+    schemaStore: SchemaStore,
     classStore: ClassStore,
     namespace: Option[String],
     protocol: Protocol,
@@ -39,6 +40,7 @@ object ScavroProtocolhugger extends Protocolhugger {
     if (adtSubTypes.length > 1 && typeMatcher.avroScalaTypes.protocol == types.ScalaADT) {
       traitDef +: localSubTypes.flatMap(schema => {
         ScavroSchemahugger.toTrees(
+          schemaStore,
           classStore,
           namespace,
           schema,
@@ -60,6 +62,7 @@ object ScavroProtocolhugger extends Protocolhugger {
       }
       docTrees ::: adtSubTypes.flatMap(schema => {
         ScavroSchemahugger.toTrees(
+          schemaStore,
           classStore,
           namespace,
           schema,

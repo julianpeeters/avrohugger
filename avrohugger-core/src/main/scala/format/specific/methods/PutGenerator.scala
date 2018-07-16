@@ -17,12 +17,19 @@ object PutGenerator {
       classStore: ClassStore, 
       namespace: Option[String], 
       indexedFields: List[IndexedField],
-      typeMatcher: TypeMatcher) = {
+      typeMatcher: TypeMatcher,
+      classSymbol: ClassSymbol) = {
 
       def asPutCase(field: IndexedField) = {
         CASE (LIT(field.idx)) ==> {
           THIS DOT field.avroField.name := 
-            BLOCK(convertFromJava(classStore, namespace, field.avroField.schema, REF("value"), typeMatcher))
+            BLOCK(convertFromJava(
+              classStore,
+              namespace,
+              field.avroField.schema,
+              REF("value"),
+              typeMatcher,
+              classSymbol))
             .AS(typeMatcher.toScalaType(classStore, namespace, field.avroField.schema))
         }
       }

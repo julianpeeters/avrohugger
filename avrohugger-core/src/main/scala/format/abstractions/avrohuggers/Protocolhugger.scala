@@ -3,7 +3,7 @@ package format
 package abstractions
 package avrohuggers
 
-import stores.ClassStore
+import stores.{ClassStore, SchemaStore}
 import matchers.TypeMatcher
 
 import org.apache.avro.{ Protocol, Schema }
@@ -15,6 +15,7 @@ import scala.collection.JavaConverters._
 trait Protocolhugger {
 
   def toTrees(
+    schemaStore: SchemaStore,
     classStore: ClassStore,
     namespace: Option[String],
     protocol: Protocol,

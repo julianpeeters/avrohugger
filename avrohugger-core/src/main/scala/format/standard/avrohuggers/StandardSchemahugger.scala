@@ -6,7 +6,7 @@ package avrohuggers
 import format.abstractions.avrohuggers.Schemahugger
 import trees.{ StandardCaseClassTree, StandardObjectTree, StandardTraitTree }
 import matchers.TypeMatcher
-import stores.ClassStore
+import stores.{ClassStore, SchemaStore}
 import types._
 
 import org.apache.avro.{ Protocol, Schema }
@@ -19,6 +19,7 @@ import treehuggerDSL._
 object StandardSchemahugger extends Schemahugger {
 
   def toTrees(
+    schemaStore: SchemaStore,
     classStore: ClassStore,
     namespace: Option[String],
     schema: Schema,

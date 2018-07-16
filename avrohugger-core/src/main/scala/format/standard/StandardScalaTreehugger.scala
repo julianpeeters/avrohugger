@@ -35,6 +35,7 @@ object StandardScalaTreehugger extends ScalaTreehugger {
 
     val topLevelDefs: List[Tree] = schemaOrProtocol match {
       case Left(schema) => schemahugger.toTrees(
+        schemaStore,
         classStore,
         namespace,
         schema,
@@ -44,6 +45,7 @@ object StandardScalaTreehugger extends ScalaTreehugger {
         restrictedFields
       )
       case Right(protocol) => protocolhugger.toTrees(
+        schemaStore,
         classStore,
         namespace,
         protocol,

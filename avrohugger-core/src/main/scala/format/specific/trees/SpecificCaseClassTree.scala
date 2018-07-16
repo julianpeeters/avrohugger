@@ -65,13 +65,13 @@ object SpecificCaseClassTree {
       IndexedField(avroField, index)
     })
     val defGetSchema = GetSchemaGenerator(classSymbol).toDef
-    val defGet = GetGenerator.toDef(indexedFields)
+    val defGet = GetGenerator.toDef(indexedFields, classSymbol)
     val defPut = PutGenerator.toDef(
       classStore,
       namespace,
       indexedFields,
-      typeMatcher)
-    val defLogicalTypes = LogicalTypesGenerator.toCaseClassDef(schema)
+      typeMatcher,
+      classSymbol)
 
     // define the class def with the members previously defined
     // There could be base traits, flags, or both, and could have no fields
@@ -152,10 +152,15 @@ object SpecificCaseClassTree {
 
     val caseClassTree = {
       // for "empty" records: empty params and no no-arg ctor
-      val thisDefList: List[Tree] = if(avroFields.isEmpty) Nil else List(defThis)
-      val accessorList: List[Tree] = List[Tree](defGet, defPut, defGetSchema)
-      val parts = thisDefList ++ defLogicalTypes ++ accessorList
-      caseClassDef := BLOCK(parts:_*)
+      if (!avroFields.isEmpty) caseClassDef := BLOCK(
+        defThis,
+        defGet,
+        defPut,
+        defGetSchema)
+     else caseClassDef := BLOCK(
+        defGet,
+        defPut,
+        defGetSchema)
     }
 
     val treeWithScalaDoc = ScalaDocGenerator.docToScalaDoc(

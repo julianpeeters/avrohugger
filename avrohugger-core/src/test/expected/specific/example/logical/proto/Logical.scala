@@ -5,32 +5,21 @@ import scala.annotation.switch
 
 case class Logical(var dec: BigDecimal, var ts: java.time.LocalDateTime, var dt: java.time.LocalDate) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this(scala.math.BigDecimal(0), java.time.LocalDateTime.now, java.time.LocalDate.now)
-  private val conversions: List[org.apache.avro.Conversion[_]] = List(avrohugger.format.specific.conversions.DecimalConversion, avrohugger.format.specific.conversions.DateTimeConversion, avrohugger.format.specific.conversions.DateConversion)
-  override def getConversion(field$: Int): org.apache.avro.Conversion[_] = {
-    conversions(field$)
-  }
-  private val encoder = new org.apache.avro.message.BinaryMessageEncoder[Logical](Logical.MODEL$, getSchema)
-  def toByteBuffer: java.nio.ByteBuffer = {
-    encoder.encode(this)
-  }
-  private val WRITER$ = Logical.MODEL$.createDatumWriter(getSchema).asInstanceOf[org.apache.avro.io.DatumWriter[Logical]]
-  override def writeExternal(out: java.io.ObjectOutput) {
-    WRITER$.write(this, org.apache.avro.specific.SpecificData.getEncoder(out))
-  }
-  private val READER$ = Logical.MODEL$.createDatumReader(getSchema).asInstanceOf[org.apache.avro.io.DatumReader[Logical]]
-  override def readExternal(in: java.io.ObjectInput) {
-    READER$.read(this, org.apache.avro.specific.SpecificData.getDecoder(in))
-  }
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {
-        dec
+        val schema = getSchema.getFields().get(field$).schema()
+        val decimalType = schema.getLogicalType().asInstanceOf[org.apache.avro.LogicalTypes.Decimal]
+        val scale = decimalType.getScale()
+        val scaledValue = dec.setScale(scale)
+        val bigDecimal = scaledValue.bigDecimal
+        Logical.decimalConversion.toBytes(bigDecimal, schema, decimalType)
       }.asInstanceOf[AnyRef]
       case 1 => {
-        ts
+        ts.atZone(java.util.TimeZone.getDefault.toZoneId).toInstant.toEpochMilli
       }.asInstanceOf[AnyRef]
       case 2 => {
-        dt
+        dt.toEpochDay.toInt
       }.asInstanceOf[AnyRef]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
     }
@@ -38,13 +27,27 @@ case class Logical(var dec: BigDecimal, var ts: java.time.LocalDateTime, var dt:
   def put(field$: Int, value: Any): Unit = {
     (field$: @switch) match {
       case 0 => this.dec = {
-        value
+        value match {
+          case (buffer: java.nio.ByteBuffer) => {
+            val schema = getSchema.getFields().get(field$).schema()
+            val decimalType = schema.getLogicalType().asInstanceOf[org.apache.avro.LogicalTypes.Decimal]
+            BigDecimal(Logical.decimalConversion.fromBytes(buffer, schema, decimalType))
+          }
+        }
       }.asInstanceOf[BigDecimal]
       case 1 => this.ts = {
-        value
+        value match {
+          case (l: Long) => {
+            java.time.LocalDateTime.ofInstant(java.time.Instant.ofEpochMilli(l), java.util.TimeZone.getDefault.toZoneId)
+          }
+        }
       }.asInstanceOf[java.time.LocalDateTime]
       case 2 => this.dt = {
-        value
+        value match {
+          case (i: Integer) => {
+            java.time.LocalDate.ofEpochDay(i.toInt)
+          }
+        }
       }.asInstanceOf[java.time.LocalDate]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
     }
@@ -55,12 +58,5 @@ case class Logical(var dec: BigDecimal, var ts: java.time.LocalDateTime, var dt:
 
 object Logical {
   val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Logical\",\"namespace\":\"example.logical.proto\",\"fields\":[{\"name\":\"dec\",\"type\":{\"type\":\"bytes\",\"logicalType\":\"decimal\",\"precision\":9,\"scale\":2},\"logicalType\":\"decimal\",\"precision\":9,\"scale\":2},{\"name\":\"ts\",\"type\":{\"type\":\"long\",\"logicalType\":\"timestamp-millis\"}},{\"name\":\"dt\",\"type\":{\"type\":\"int\",\"logicalType\":\"date\"}}]}")
-  private val MODEL$ = new org.apache.avro.specific.SpecificData
-  private val decoder = new org.apache.avro.message.BinaryMessageDecoder[Logical](MODEL$, SCHEMA$)
-  def getDecoder: org.apache.avro.message.BinaryMessageDecoder[Logical] = {
-    decoder
-  }
-  def fromByteBuffer(b: java.nio.ByteBuffer): Logical = {
-    decoder.decode(b)
-  }
+  val decimalConversion = new org.apache.avro.Conversions.DecimalConversion
 }
