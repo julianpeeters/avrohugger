@@ -3,8 +3,8 @@ package example.idl
 
 import scala.annotation.switch
 
-case class LogicalIdl(var dec: BigDecimal = scala.math.BigDecimal("8888.88"), var maybeDec: Option[BigDecimal] = Some(scala.math.BigDecimal("9999.99")), var ts: java.time.LocalDateTime = java.time.LocalDateTime.ofInstant(java.time.Instant.ofEpochMilli(1526573732000L), java.util.TimeZone.getDefault().toZoneId()), var dt: java.time.LocalDate = java.time.LocalDate.ofEpochDay(600L)) extends org.apache.avro.specific.SpecificRecordBase {
-  def this() = this(scala.math.BigDecimal("8888.88"), Some(scala.math.BigDecimal("9999.99")), java.time.LocalDateTime.ofInstant(java.time.Instant.ofEpochMilli(1526573732000L), java.util.TimeZone.getDefault().toZoneId()), java.time.LocalDate.ofEpochDay(600L))
+case class LogicalIdl(var dec: BigDecimal = scala.math.BigDecimal("8888.88"), var maybeDec: Option[BigDecimal] = Some(scala.math.BigDecimal("9999.99")), var ts: java.time.Instant = java.time.Instant.ofEpochMilli(1526573732000L), var dt: java.time.LocalDate = java.time.LocalDate.ofEpochDay(600L)) extends org.apache.avro.specific.SpecificRecordBase {
+  def this() = this(scala.math.BigDecimal("8888.88"), Some(scala.math.BigDecimal("9999.99")), java.time.Instant.ofEpochMilli(1526573732000L), java.time.LocalDate.ofEpochDay(600L))
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {
@@ -29,7 +29,7 @@ case class LogicalIdl(var dec: BigDecimal = scala.math.BigDecimal("8888.88"), va
         }
       }.asInstanceOf[AnyRef]
       case 2 => {
-        ts.atZone(java.util.TimeZone.getDefault.toZoneId).toInstant.toEpochMilli
+        ts.toEpochMilli
       }.asInstanceOf[AnyRef]
       case 3 => {
         dt.toEpochDay.toInt
@@ -63,10 +63,10 @@ case class LogicalIdl(var dec: BigDecimal = scala.math.BigDecimal("8888.88"), va
       case 2 => this.ts = {
         value match {
           case (l: Long) => {
-            java.time.LocalDateTime.ofInstant(java.time.Instant.ofEpochMilli(l), java.util.TimeZone.getDefault.toZoneId)
+            java.time.Instant.ofEpochMilli(l)
           }
         }
-      }.asInstanceOf[java.time.LocalDateTime]
+      }.asInstanceOf[java.time.Instant]
       case 3 => this.dt = {
         value match {
           case (i: Integer) => {

@@ -3,8 +3,8 @@ package example.logical
 
 import scala.annotation.switch
 
-case class LogicalSc(var data: BigDecimal, var ts: java.time.LocalDateTime, var dt: java.time.LocalDate) extends org.apache.avro.specific.SpecificRecordBase {
-  def this() = this(scala.math.BigDecimal(0), java.time.LocalDateTime.now, java.time.LocalDate.now)
+case class LogicalSc(var data: BigDecimal, var ts: java.time.Instant, var dt: java.time.LocalDate) extends org.apache.avro.specific.SpecificRecordBase {
+  def this() = this(scala.math.BigDecimal(0), java.time.Instant.now, java.time.LocalDate.now)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {
@@ -16,7 +16,7 @@ case class LogicalSc(var data: BigDecimal, var ts: java.time.LocalDateTime, var 
         LogicalSc.decimalConversion.toBytes(bigDecimal, schema, decimalType)
       }.asInstanceOf[AnyRef]
       case 1 => {
-        ts.atZone(java.util.TimeZone.getDefault.toZoneId).toInstant.toEpochMilli
+        ts.toEpochMilli
       }.asInstanceOf[AnyRef]
       case 2 => {
         dt.toEpochDay.toInt
@@ -38,10 +38,10 @@ case class LogicalSc(var data: BigDecimal, var ts: java.time.LocalDateTime, var 
       case 1 => this.ts = {
         value match {
           case (l: Long) => {
-            java.time.LocalDateTime.ofInstant(java.time.Instant.ofEpochMilli(l), java.util.TimeZone.getDefault.toZoneId)
+            java.time.Instant.ofEpochMilli(l)
           }
         }
-      }.asInstanceOf[java.time.LocalDateTime]
+      }.asInstanceOf[java.time.Instant]
       case 2 => this.dt = {
         value match {
           case (i: Integer) => {

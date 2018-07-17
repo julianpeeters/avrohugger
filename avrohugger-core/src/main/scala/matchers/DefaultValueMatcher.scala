@@ -42,8 +42,7 @@ object DefaultValueMatcher {
             schema = schema,
             default = LIT(node.getLongValue)) {
             case TimestampMillis =>
-              val instant = REF("java.time.Instant.ofEpochMilli") APPLY LIT(node.getLongValue)
-              REF("java.time.LocalDateTime.ofInstant") APPLY(instant, REF("java.util.TimeZone.getDefault().toZoneId()"))
+              REF("java.time.Instant.ofEpochMilli") APPLY LIT(node.getLongValue)
           }
         case Schema.Type.DOUBLE => LIT(node.getDoubleValue)
         case Schema.Type.BOOLEAN => LIT(node.getBooleanValue)

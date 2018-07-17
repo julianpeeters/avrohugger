@@ -77,11 +77,11 @@ runtime, Java classes provided separately (see [Scavro Plugin](https://github.co
 
 ##### Logical Types Support:
 
-_NOTE: Currently logical types are only supported for `Standard` format_
+_NOTE: Currently logical types are only supported for `Standard` and `SpecificRecord` formats_
 
 * `date`: Annotates Avro `int` schemas to generate `java.time.LocalDate`
 * `decimal`: Annotates Avro `bytes` schemas to generate `BigDecimal`
-* `timestamp-millis`: Annotates Avro `long` schemas to genarate `java.time.LocalDateTime`
+* `timestamp-millis`: Annotates Avro `long` schemas to genarate `java.time.Instant`
 
 ##### Protocol Support:
 
@@ -312,6 +312,8 @@ Contributors:
 - [Paul Snively](https://github.com/PaulAtBanno)
 - [Zach Cox](https://github.com/zcox)
 - [Kaur Matas](https://github.com/kmatasflp)
+- [Marco Stefani](https://github.com/inafets)
+- [Diego E. Alonso Blas](https://github.com/diesalbla)
 
 ##### Criticism is appreciated.
 
