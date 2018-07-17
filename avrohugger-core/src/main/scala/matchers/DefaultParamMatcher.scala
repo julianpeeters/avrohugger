@@ -53,7 +53,7 @@ object DefaultParamMatcher {
           schema = avroSchema,
           default = LIT(0L)) {
           case TimestampMillis =>
-            REF("java.time.LocalDateTime.now")
+            REF("java.time.Instant.now")
         }
       case Type.FLOAT   => LIT(0F)
       case Type.DOUBLE  => LIT(0D)

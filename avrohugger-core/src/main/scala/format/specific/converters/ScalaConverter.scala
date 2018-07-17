@@ -130,13 +130,8 @@ object ScalaConverter {
         Option(schema.getLogicalType()) match {
           case Some(logicalType) => {
             if (logicalType.getName == "timestamp-millis") {
-              val IntegerClass = RootClass.newClass("Long")
-              val LocalDateTimeClass = RootClass.newClass("java.time.LocalDateTime")
               val InstantClass = RootClass.newClass("java.time.Instant")
-              val TimeZoneClass = RootClass.newClass("java.util.TimeZone")
-              val instant = InstantClass.DOT("ofEpochMilli").APPLY(REF("l"))
-              val zone = TimeZoneClass.DOT("getDefault").DOT("toZoneId")
-              val resultExpr = BLOCK(LocalDateTimeClass.DOT("ofInstant").APPLY(instant, zone))
+              val resultExpr = BLOCK(InstantClass.DOT("ofEpochMilli").APPLY(REF("l")))
               val longConversion = CASE(ID("l") withType (LongClass)) ==> resultExpr
               tree MATCH longConversion
             }

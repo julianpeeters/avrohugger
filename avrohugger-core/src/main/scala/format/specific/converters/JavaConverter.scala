@@ -80,10 +80,7 @@ object JavaConverter {
       case _ => REF("java.nio.ByteBuffer") DOT "wrap" APPLY tree
     }
     case Schema.Type.LONG => schema.getLogicalType match {
-      case timestamp: LogicalTypes.TimestampMillis => {
-        val TimeZone = RootClass.newClass("java.util.TimeZone")
-        BLOCK(tree.DOT("atZone").APPLY(TimeZone.DOT("getDefault").DOT("toZoneId")).DOT("toInstant").DOT("toEpochMilli"))
-      }
+      case timestamp: LogicalTypes.TimestampMillis => BLOCK(tree.DOT("toEpochMilli"))
       case _ => tree
     }
     case Schema.Type.INT => schema.getLogicalType match {
