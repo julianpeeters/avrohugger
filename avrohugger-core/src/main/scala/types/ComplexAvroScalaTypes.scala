@@ -22,6 +22,7 @@ case object OptionEitherShapelessCoproduct extends AvroScalaUnionType
 sealed trait AvroScalaArrayType extends Product with Serializable
 case object ScalaArray extends AvroScalaArrayType
 case object ScalaList extends AvroScalaArrayType
+case object ScalaSeq extends AvroScalaArrayType
 case object ScalaVector extends AvroScalaArrayType
 // map
 sealed trait AvroScalaMapType extends Product with Serializable

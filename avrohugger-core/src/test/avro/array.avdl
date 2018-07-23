@@ -1,0 +1,8 @@
+@namespace("example.idl.array")
+
+protocol ArrayIDL {
+
+  record ArrayIdl {
+    array<int> data;
+  }
+}
