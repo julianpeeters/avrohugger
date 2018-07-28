@@ -16,7 +16,7 @@ case class AvroScalaTypes(
   record:   AvroScalaRecordType   = ScalaCaseClass,
   enum:     AvroScalaEnumType     = ScalaEnumeration,
   union:    AvroScalaUnionType    = OptionEitherShapelessCoproduct,
-  array:    AvroScalaArrayType    = ScalaList,
+  array:    AvroScalaArrayType    = ScalaSeq,
   map:      AvroScalaMapType      = ScalaMap,
   protocol: AvroScalaProtocolType = NoTypeGenerated
 )

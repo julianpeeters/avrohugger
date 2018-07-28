@@ -59,8 +59,8 @@ runtime, Java classes provided separately (see [Scavro Plugin](https://github.co
 
 |Avro|`Standard`|`SpecificRecord`|`Scavro`|Notes|
 |----------|---------|----------|---------|---------|
-|INT|Int|Int|Int|See[Logical Types: `date`](https://github.com/julianpeeters/avrohugger#logical-types-support)|
-|LONG|Long|Long|Long|See[Logical Types: `timestamp-millis`](https://github.com/julianpeeters/avrohugger#logical-types-support)|
+|INT|Int|Int|Int| See [Logical Types: `date`](https://github.com/julianpeeters/avrohugger#logical-types-support)|
+|LONG|Long|Long|Long| See [Logical Types: `timestamp-millis`](https://github.com/julianpeeters/avrohugger#logical-types-support)|
 |FLOAT|Float|Float|Float||
 |DOUBLE|Double|Double|Double||
 |STRING|String|String|String||
@@ -70,9 +70,9 @@ runtime, Java classes provided separately (see [Scavro Plugin](https://github.co
 |ENUM|scala.Enumeration<br>Scala case object<br>Java Enum<br>EnumAsScalaString|Java Enum<br>EnumAsScalaString|scala.Enumeration<br>Scala case object<br>Java Enum<br>EnumAsScalaString| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 |BYTES|Array[Byte]<br>BigDecimal|Array[Byte]|Array[Byte]|See[Logical Types: `decimal`](https://github.com/julianpeeters/avrohugger#logical-types-support)|
 |FIXED|//TODO|//TODO|//TODO||
-|ARRAY|List<br>Array<br>Vector|List<br>Array<br>Vector|Array<br>List<br>Vector| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
+|ARRAY|Seq<br>List<br>Array<br>Vector|Seq<br>List<br>Array<br>Vector|Array<br>Seq<br>List<br>Vector| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 |UNION|Option<br>Either<br>Shapeless Coproduct|Option|Option| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
-|RECORD|case class<br>case class + schema|case class extending `SpecificRecordBase`|case class extending `AvroSerializeable`|See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
+|RECORD|case class<br>case class + schema|case class extending `SpecificRecordBase`|case class extending `AvroSerializeable`| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 |PROTOCOL|_No Type_<br>Scala ADT|RPC trait<br>Scala ADT|_No Type_<br>Scala ADT| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 
 ##### Logical Types Support:
@@ -167,7 +167,7 @@ To reassign Scala types to Avro types, use the following:
     val generator = new Generator(SpecificRecord, avroScalaCustomTypes = myScalaTypes)
 
 * `record` can be assigned to `ScalaCaseClass` and `ScalaCaseClassWithSchema`(with schema in a companion object)
-* `array` can be assigned to `ScalaArray`, `ScalaList`, and `ScalaVector`
+* `array` can be assigned to `ScalaSeq`, `ScalaArray`, `ScalaList`, and `ScalaVector`
 * `enum` can be assigned to `JavaEnum`, `ScalaCaseObjectEnum`, `EnumAsScalaString`, and `ScalaEnumeration`
 * `union` can be assigned to `OptionEitherShapelessCoproduct` and `OptionShapelessCoproduct`
 * `int`, `long`, `float`, `double` can be assigned to `ScalaInt`, `ScalaLong`, `ScalaFloat`, `ScalaDouble`
@@ -314,6 +314,7 @@ Contributors:
 - [Kaur Matas](https://github.com/kmatasflp)
 - [Marco Stefani](https://github.com/inafets)
 - [Diego E. Alonso Blas](https://github.com/diesalbla)
+- [Chris Albright](https://github.com/chrisalbright)
 
 ##### Criticism is appreciated.
 

@@ -64,6 +64,7 @@ class ScalaConverter(typeMatcher: TypeMatcher) {
         val collection = typeMatcher.avroScalaTypes.array match {
           case ScalaArray  => ARRAY(seqArgs)
           case ScalaList   => LIST(seqArgs)
+          case ScalaSeq   => SEQ(seqArgs)
           case ScalaVector => VECTOR(seqArgs)
         }
         collection MAP(LAMBDA(PARAM("x")) ==> BLOCK(convertFromJava(schema.getElementType, REF("x"), fieldPath)))

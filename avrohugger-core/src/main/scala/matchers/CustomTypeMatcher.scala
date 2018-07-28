@@ -13,6 +13,7 @@ object CustomTypeMatcher {
   def checkCustomArrayType(arrayType: AvroScalaArrayType) = arrayType match {
     case ScalaArray  => TYPE_ARRAY(_)
     case ScalaList   => TYPE_LIST(_)
+    case ScalaSeq    => TYPE_SEQ(_)
     case ScalaVector => TYPE_VECTOR(_)
   }
   
