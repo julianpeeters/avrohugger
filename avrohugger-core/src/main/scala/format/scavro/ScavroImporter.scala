@@ -4,7 +4,8 @@ package scavro
 
 import format.abstractions.Importer
 import avrohugger.input.{DependencyInspector, NestedSchemaExtractor}
-import avrohugger.matchers.{CustomNamespaceMatcher, TypeMatcher}
+import avrohugger.matchers.TypeMatcher
+import avrohugger.matchers.custom.CustomNamespaceMatcher
 import avrohugger.stores.SchemaStore
 import avrohugger.types._
 

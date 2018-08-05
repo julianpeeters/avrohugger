@@ -18,7 +18,11 @@ case class AvroScalaTypes(
   union:    AvroScalaUnionType    = OptionEitherShapelessCoproduct,
   array:    AvroScalaArrayType    = ScalaSeq,
   map:      AvroScalaMapType      = ScalaMap,
-  protocol: AvroScalaProtocolType = NoTypeGenerated
+  protocol: AvroScalaProtocolType = NoTypeGenerated,
+  // logical
+  decimal:  AvroScalaDecimalType  = ScalaBigDecimal,
+  date:     AvroScalaDateType     = JavaTimeLocalDate,
+  timestampMillis: AvroScalaTimestampMillisType = JavaTimeInstant
 )
 
 object AvroScalaTypes {

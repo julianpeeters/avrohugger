@@ -1,5 +1,6 @@
 package avrohugger
 package matchers
+package custom
 
 object CustomNamespaceMatcher {
   

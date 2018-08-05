@@ -1,6 +1,8 @@
 package avrohugger
 package matchers
 
+import avrohugger.matchers.custom.CustomDefaultParamMatcher
+import avrohugger.matchers.custom.CustomDefaultValueMatcher
 import avrohugger.stores.ClassStore
 import avrohugger.types._
 import treehugger.forest._
@@ -30,25 +32,29 @@ object DefaultValueMatcher {
       schema.getType match {
         case _ if node == null => EmptyTree //not `default=null`, but no default
         case Schema.Type.INT =>
-          typeMatcher.foldLogicalTypes[Tree](
+          LogicalType.foldLogicalTypes[Tree](
             schema = schema,
             default = LIT(node.getIntValue)) {
             case Date =>
-              REF("java.time.LocalDate.ofEpochDay") APPLY LIT(node.getLongValue)
+              CustomDefaultValueMatcher.checkCustomDateType(
+                node.getLongValue,
+                typeMatcher.avroScalaTypes.date)
           }
         case Schema.Type.FLOAT => LIT(node.getDoubleValue.asInstanceOf[Float])
         case Schema.Type.LONG =>
-          typeMatcher.foldLogicalTypes[Tree](
+          LogicalType.foldLogicalTypes[Tree](
             schema = schema,
             default = LIT(node.getLongValue)) {
             case TimestampMillis =>
-              REF("java.time.Instant.ofEpochMilli") APPLY LIT(node.getLongValue)
+            CustomDefaultValueMatcher.checkCustomTimestampMillisType(
+              node.getLongValue,
+              typeMatcher.avroScalaTypes.timestampMillis)
           }
         case Schema.Type.DOUBLE => LIT(node.getDoubleValue)
         case Schema.Type.BOOLEAN => LIT(node.getBooleanValue)
         case Schema.Type.STRING => LIT(node.getTextValue)
         case Schema.Type.BYTES =>
-          typeMatcher.foldLogicalTypes(
+          LogicalType.foldLogicalTypes(
             schema = schema,
             default = REF("Array[Byte]") APPLY node.getTextValue.getBytes.map((e: Byte) => LIT(e))) {
             case Decimal => REF("scala.math.BigDecimal") APPLY LIT(node.getDecimalValue.toString)
@@ -66,7 +72,7 @@ object DefaultValueMatcher {
           result
         }
         case Schema.Type.ARRAY => {
-          val collectionType = DefaultParamMatcher.checkCustomArrayType(typeMatcher.avroScalaTypes.array)
+          val collectionType = CustomDefaultParamMatcher.checkCustomArrayType(typeMatcher.avroScalaTypes.array)
           collectionType APPLY(node.getElements.asScala.toSeq.map(e => fromJsonNode(e, schema.getElementType)))
         }
         case Schema.Type.MAP => {

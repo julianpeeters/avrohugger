@@ -5,7 +5,7 @@ package types
 sealed trait AvroScalaFixedType extends Product with Serializable
 case object ScalaBinary extends AvroScalaFixedType
 // record
-sealed trait AvroScalaRecordType
+sealed trait AvroScalaRecordType extends Product with Serializable
 case object ScalaCaseClass extends AvroScalaRecordType
 case object ScalaCaseClassWithSchema extends AvroScalaRecordType
 // enum

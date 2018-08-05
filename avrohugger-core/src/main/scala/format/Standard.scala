@@ -3,7 +3,8 @@ package format
 
 import format.abstractions.SourceFormat
 import format.standard._
-import matchers.{ CustomNamespaceMatcher, CustomTypeMatcher, TypeMatcher }
+import matchers.TypeMatcher
+import matchers.custom.{CustomNamespaceMatcher, CustomTypeMatcher}
 import models.CompilationUnit
 import stores.{ ClassStore, SchemaStore }
 import types._

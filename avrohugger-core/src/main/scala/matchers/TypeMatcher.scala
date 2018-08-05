@@ -1,6 +1,7 @@
 package avrohugger
 package matchers
 
+import avrohugger.matchers.custom.CustomTypeMatcher
 import avrohugger.stores.ClassStore
 import avrohugger.types._
 import treehugger.forest._
@@ -12,30 +13,10 @@ import treehugger.forest
 
 import scala.collection.JavaConverters._
 
-sealed abstract class LogicalType(name: String)
-case object Decimal extends LogicalType("decimal")
-case object Date extends LogicalType("date")
-case object TimestampMillis extends LogicalType("timestamp-millis")
-
-object LogicalType {
-  def apply(name: String): Option[LogicalType] = name match {
-    case "decimal" => Some(Decimal)
-    case "date" => Some(Date)
-    case "timestamp-millis" => Some(TimestampMillis)
-    case _ => None
-  }
-}
-
 class TypeMatcher(
   val avroScalaTypes: AvroScalaTypes,
   //e.g. ("com.example.idl"->"com.example.model")
   val customNamespaces: Map[String, String]) {
-
-  def foldLogicalTypes[A](schema: Schema, default: => A)(cases : PartialFunction[LogicalType, A]): A =
-    Option(schema.getLogicalType) match {
-      case Some(tpe) => LogicalType(tpe.getName).map(cases(_)).getOrElse(default)
-      case _ => default
-    }
 
   def toScalaType(
     classStore: ClassStore,
@@ -62,22 +43,22 @@ class TypeMatcher(
         case Schema.Type.DOUBLE   => CustomTypeMatcher.checkCustomNumberType(avroScalaTypes.double)
         case Schema.Type.FLOAT    => CustomTypeMatcher.checkCustomNumberType(avroScalaTypes.float)
         case Schema.Type.LONG     =>
-          foldLogicalTypes(
+          LogicalType.foldLogicalTypes(
             schema = schema,
             default = CustomTypeMatcher.checkCustomNumberType(avroScalaTypes.long)) {
-            case TimestampMillis => RootClass.newClass(nme.createNameType("java.time.Instant"))
+            case TimestampMillis => CustomTypeMatcher.checkCustomTimestampMillisType(avroScalaTypes.timestampMillis)
           }
         case Schema.Type.INT      =>
-          foldLogicalTypes(
+          LogicalType.foldLogicalTypes(
             schema = schema,
             default = CustomTypeMatcher.checkCustomNumberType(avroScalaTypes.int)) {
-            case Date => RootClass.newClass(nme.createNameType("java.time.LocalDate"))
+            case Date => CustomTypeMatcher.checkCustomDateType(avroScalaTypes.date)
           }
         case Schema.Type.NULL     => NullClass
         case Schema.Type.STRING   => StringClass
         case Schema.Type.FIXED    => sys.error("FIXED datatype not yet supported")
         case Schema.Type.BYTES    =>
-          foldLogicalTypes(
+          LogicalType.foldLogicalTypes(
             schema = schema,
             default = TYPE_ARRAY(ByteClass)) {
             case Decimal => BigDecimalClass

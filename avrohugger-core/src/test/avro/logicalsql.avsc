@@ -1,0 +1,30 @@
+{
+  "namespace": "example.logical",
+  "type": "record",
+  "name": "LogicalSql",
+  "fields": [
+    {
+      "name": "data",
+      "type": {
+        "type": "bytes",
+        "logicalType": "decimal",
+        "precision": 9,
+        "scale": 2
+      }
+    },
+    {
+      "name": "ts",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      }
+    },
+    {
+      "name": "dt",
+      "type": {
+        "type": "int",
+        "logicalType": "date"
+      }
+    }
+  ]
+}

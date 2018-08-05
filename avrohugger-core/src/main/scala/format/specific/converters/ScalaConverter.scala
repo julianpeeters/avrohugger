@@ -131,10 +131,20 @@ object ScalaConverter {
         Option(schema.getLogicalType()) match {
           case Some(logicalType) => {
             if (logicalType.getName == "timestamp-millis") {
-              val InstantClass = RootClass.newClass("java.time.Instant")
-              val resultExpr = BLOCK(InstantClass.DOT("ofEpochMilli").APPLY(REF("l")))
-              val longConversion = CASE(ID("l") withType (LongClass)) ==> resultExpr
-              tree MATCH longConversion
+              typeMatcher.avroScalaTypes.timestampMillis match {
+                case JavaSqlTimestamp => {
+                  val TimestampClass = RootClass.newClass("java.sql.Timestamp")
+                  val resultExpr = BLOCK(NEW(TimestampClass, REF("l")))
+                  val longConversion = CASE(ID("l") withType (LongClass)) ==> resultExpr
+                  tree MATCH longConversion
+                }
+                case JavaTimeInstant  => {
+                  val InstantClass = RootClass.newClass("java.time.Instant")
+                  val resultExpr = BLOCK(InstantClass.DOT("ofEpochMilli").APPLY(REF("l")))
+                  val longConversion = CASE(ID("l") withType (LongClass)) ==> resultExpr
+                  tree MATCH longConversion
+                } 
+              }
             }
             else tree
           }
@@ -145,11 +155,23 @@ object ScalaConverter {
         Option(schema.getLogicalType()) match {
           case Some(logicalType) => {
             if (logicalType.getName == "date") {
-              val IntegerClass = RootClass.newClass("Integer")
-              val LocalDateClass = RootClass.newClass("java.time.LocalDate")
-              val resultExpr = BLOCK(LocalDateClass.DOT("ofEpochDay").APPLY(REF("i").DOT("toInt")))
-              val integerConversion = CASE(ID("i") withType (IntegerClass)) ==> resultExpr
-              tree MATCH integerConversion
+              typeMatcher.avroScalaTypes.date match {
+                case JavaSqlDate => {
+                  val IntegerClass = RootClass.newClass("Integer")
+                  val SqlDateClass = RootClass.newClass("java.sql.Date")
+                  val resultExpr = BLOCK(NEW(SqlDateClass, REF("i").DOT("toLong").DOT("*").APPLY(LIT(86400000L))))
+                  val integerConversion = CASE(ID("i") withType (IntegerClass)) ==> resultExpr
+                  tree MATCH integerConversion
+                }
+                case JavaTimeLocalDate => {
+                  val IntegerClass = RootClass.newClass("Integer")
+                  val LocalDateClass = RootClass.newClass("java.time.LocalDate")
+                  val resultExpr = BLOCK(LocalDateClass.DOT("ofEpochDay").APPLY(REF("i").DOT("toInt")))
+                  val integerConversion = CASE(ID("i") withType (IntegerClass)) ==> resultExpr
+                  tree MATCH integerConversion
+                } 
+              }
+              
             }
             else tree
           }

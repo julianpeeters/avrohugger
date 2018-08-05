@@ -3,23 +3,33 @@ package format
 package specific
 package methods
 
-import converters.JavaConverter.convertToJava
-
+import converters.JavaConverter
+import avrohugger.matchers.TypeMatcher
 import treehugger.forest._
 import definitions._
 import treehuggerDSL._
 
 object GetGenerator {
-  def toDef(indexedFields: List[IndexedField], classSymbol: ClassSymbol) = {
-    def asGetCase(field: IndexedField, classSymbol: ClassSymbol) = {
+  def toDef(
+    indexedFields: List[IndexedField],
+    classSymbol: ClassSymbol,
+    typeMatcher: TypeMatcher) = {
+    def asGetCase(
+      field: IndexedField,
+      classSymbol: ClassSymbol,
+      typeMatcher: TypeMatcher) = {
             
       CASE (LIT(field.idx)) ==> {
-        BLOCK(convertToJava(field.avroField.schema, REF(field.avroField.name), classSymbol)).AS(AnyRefClass)
+        BLOCK(JavaConverter.convertToJava(
+          field.avroField.schema,
+          REF(field.avroField.name),
+          classSymbol,
+          typeMatcher)).AS(AnyRefClass)
       }
     }
 
     val errorCase = CASE(WILDCARD) ==> NEW("org.apache.avro.AvroRuntimeException", LIT("Bad index"))
-    val casesGet = indexedFields.map(field => asGetCase(field, classSymbol)):+errorCase
+    val casesGet = indexedFields.map(field => asGetCase(field, classSymbol, typeMatcher)):+errorCase
 
     DEF("get", AnyRefClass) withParams(PARAM("field$", IntClass)) := BLOCK(
       REF("field$") withAnnots(ANNOT("switch")) MATCH(casesGet:_*)

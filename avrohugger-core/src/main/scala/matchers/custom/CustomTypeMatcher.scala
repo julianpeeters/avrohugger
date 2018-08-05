@@ -1,5 +1,6 @@
 package avrohugger
 package matchers
+package custom
 
 import avrohugger.stores.ClassStore
 import avrohugger.types._
@@ -32,6 +33,16 @@ object CustomTypeMatcher {
     case ScalaFloat  => FloatClass
     case ScalaLong   => LongClass
     case ScalaInt    => IntClass
+  }
+  
+  def checkCustomDateType(dateType: AvroScalaDateType) = dateType match {
+    case JavaTimeLocalDate => RootClass.newClass(nme.createNameType("java.time.LocalDate"))
+    case JavaSqlDate       => RootClass.newClass(nme.createNameType("java.sql.Date"))
+  } 
+    
+  def checkCustomTimestampMillisType(timestampType: AvroScalaTimestampMillisType) = timestampType match {
+    case JavaSqlTimestamp => RootClass.newClass(nme.createNameType("java.sql.Timestamp"))
+    case JavaTimeInstant  => RootClass.newClass(nme.createNameType("java.time.Instant"))
   }
 
 }

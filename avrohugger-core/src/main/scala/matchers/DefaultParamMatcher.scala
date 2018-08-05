@@ -1,8 +1,9 @@
 package avrohugger
 package matchers
 
-import stores.ClassStore
-import types._
+import avrohugger.matchers.custom.CustomDefaultParamMatcher
+import avrohugger.stores.ClassStore
+import avrohugger.types._
 
 import org.apache.avro.Schema
 import org.apache.avro.Schema.Type
@@ -13,26 +14,6 @@ import treehuggerDSL._
 
 
 object DefaultParamMatcher {
-  
-  
-  def checkCustomArrayType(arrayType: AvroScalaArrayType) = {
-    arrayType match {
-      case ScalaArray  => ArrayClass
-      case ScalaList   => ListClass
-      case ScalaSeq    => SeqClass
-      case ScalaVector => VectorClass
-    }
-  }
-  
-  def checkCustomEnumType(enumType: AvroScalaEnumType) = {
-    enumType match {
-      case JavaEnum            => NULL // TODO Take first enum value?
-      case ScalaEnumeration    => NULL // TODO Take first enum value?
-      case ScalaCaseObjectEnum => NULL // TODO Take first enum value?
-      case EnumAsScalaString   => LIT("")
-    }
-  }
-  
 
   // for SpecificRecord
   def asDefaultParam(
@@ -44,17 +25,20 @@ object DefaultParamMatcher {
 
       case Type.BOOLEAN => FALSE
       case Type.INT     =>
-        typeMatcher.foldLogicalTypes[Tree](
+        LogicalType.foldLogicalTypes[Tree](
           schema = avroSchema,
           default = LIT(0)) {
-          case Date => REF("java.time.LocalDate.now")
+          case Date =>
+            CustomDefaultParamMatcher.checkCustomDateType(
+              typeMatcher.avroScalaTypes.date)
         }
       case Type.LONG    =>
-        typeMatcher.foldLogicalTypes[Tree](
+        LogicalType.foldLogicalTypes[Tree](
           schema = avroSchema,
           default = LIT(0L)) {
           case TimestampMillis =>
-            REF("java.time.Instant.now")
+            CustomDefaultParamMatcher.checkCustomTimestampMillisType(
+              typeMatcher.avroScalaTypes.timestampMillis)
         }
       case Type.FLOAT   => LIT(0F)
       case Type.DOUBLE  => LIT(0D)
@@ -62,9 +46,9 @@ object DefaultParamMatcher {
       case Type.NULL    => NULL
       case Type.FIXED   => sys.error("the FIXED datatype is not yet supported")
       case Type.ENUM    =>
-        checkCustomEnumType(typeMatcher.avroScalaTypes.enum)
+        CustomDefaultParamMatcher.checkCustomEnumType(typeMatcher.avroScalaTypes.enum)
       case Type.BYTES   =>
-        typeMatcher.foldLogicalTypes[Tree](
+        LogicalType.foldLogicalTypes[Tree](
           schema = avroSchema,
           default = NULL) {
           case Decimal => REF("scala.math.BigDecimal") APPLY LIT(0)
@@ -72,7 +56,7 @@ object DefaultParamMatcher {
       case Type.RECORD  => NEW(classStore.generatedClasses(avroSchema))
       case Type.UNION   => NONE
       case Type.ARRAY   =>
-        checkCustomArrayType(typeMatcher.avroScalaTypes.array) DOT "empty"
+        CustomDefaultParamMatcher.checkCustomArrayType(typeMatcher.avroScalaTypes.array) DOT "empty"
       case Type.MAP     =>
         MAKE_MAP(LIT("") ANY_-> asDefaultParam(classStore, avroSchema.getValueType, typeMatcher))
       

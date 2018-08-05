@@ -53,10 +53,10 @@ class FileInputParser {
         sys.error(s"Can't redefine:  ${nonEqualElements.mkString(",")} in $infile")
       } else {
         if (commonElements.isEmpty) {
-          parser.addTypes(tempParser.getTypes)
+          val _ = parser.addTypes(tempParser.getTypes)
         } else {
           val missingTypes = tempParser.getTypes.keySet().asScala.diff(parser.getTypes.keySet().asScala)
-          parser.addTypes(missingTypes.map { t =>
+          val _ = parser.addTypes(missingTypes.map { t =>
             t -> tempParser.getTypes.get(t)
           }.toMap.asJava)
         }

@@ -3,7 +3,7 @@ package format
 package specific
 package methods
 
-import converters.ScalaConverter.convertFromJava
+import converters.ScalaConverter
 import matchers.TypeMatcher
 import stores.ClassStore
 
@@ -23,7 +23,7 @@ object PutGenerator {
       def asPutCase(field: IndexedField) = {
         CASE (LIT(field.idx)) ==> {
           THIS DOT field.avroField.name := 
-            BLOCK(convertFromJava(
+            BLOCK(ScalaConverter.convertFromJava(
               classStore,
               namespace,
               field.avroField.schema,

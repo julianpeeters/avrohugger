@@ -65,7 +65,7 @@ object SpecificCaseClassTree {
       IndexedField(avroField, index)
     })
     val defGetSchema = GetSchemaGenerator(classSymbol).toDef
-    val defGet = GetGenerator.toDef(indexedFields, classSymbol)
+    val defGet = GetGenerator.toDef(indexedFields, classSymbol, typeMatcher)
     val defPut = PutGenerator.toDef(
       classStore,
       namespace,

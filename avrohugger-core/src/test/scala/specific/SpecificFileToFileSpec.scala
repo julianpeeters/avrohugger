@@ -6,6 +6,7 @@ import java.io.File
 
 import avrohugger._
 import avrohugger.format.SpecificRecord
+import avrohugger.types._
 import org.specs2._
 
 import scala.util.Try
@@ -43,6 +44,7 @@ class SpecificFileToFileSpec extends Specification {
       correctly generate logical types from schema $e24
       correctly generate logical types from protocol $e25
       correctly generate logical types from IDL $e26
+      correctly generate logical types with custom date and timestamp types $e27
   """
   
   // tests specific to fileToX
@@ -340,4 +342,15 @@ class SpecificFileToFileSpec extends Specification {
     source === util.Util.readFile("avrohugger-core/src/test/expected/specific/example/idl/LogicalIdl.scala")
   }
 
+  def e27 = {
+    val infile = new java.io.File("avrohugger-core/src/test/avro/logicalsql.avsc")
+    val avroScalaCustomTypes = SpecificRecord.defaultTypes.copy(date = JavaSqlDate, timestampMillis = JavaSqlTimestamp)
+    val gen = new Generator(SpecificRecord, avroScalaCustomTypes = Some(avroScalaCustomTypes))
+    val outDir = gen.defaultOutputDir + "/specific/"
+    gen.fileToFile(infile, outDir)
+
+    val source = util.Util.readFile("target/generated-sources/specific/example/logical/LogicalSql.scala")
+
+    source === util.Util.readFile("avrohugger-core/src/test/expected/specific/example/logical/LogicalSql.scala")
+  }
 }

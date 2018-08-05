@@ -2,8 +2,8 @@ package avrohugger
 package format
 package scavro
 
-import matchers.{ CustomNamespaceMatcher, TypeMatcher }
-
+import avrohugger.matchers.TypeMatcher
+import avrohugger.matchers.custom.CustomNamespaceMatcher
 import org.apache.avro.{ Schema, Protocol }
 
 object ScavroNamespaceRenamer {

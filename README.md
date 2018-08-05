@@ -74,14 +74,17 @@ runtime, Java classes provided separately (see [Scavro Plugin](https://github.co
 |UNION|Option<br>Either<br>Shapeless Coproduct|Option|Option| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 |RECORD|case class<br>case class + schema|case class extending `SpecificRecordBase`|case class extending `AvroSerializeable`| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 |PROTOCOL|_No Type_<br>Scala ADT|RPC trait<br>Scala ADT|_No Type_<br>Scala ADT| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
+|Date|java.time.LocalDate<br>java.sql.Date|java.time.LocalDate<br>java.sql.Date|Not yet supported| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
+|TimestampMillis|java.time.Instant<br>java.sql.Timestamp|java.time.Instant<br>java.sql.Timestamp|Not yet supported|  See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
+|Decimal|BigDecimal|BigDecimal|Not yet supported||
 
 ##### Logical Types Support:
 
 _NOTE: Currently logical types are only supported for `Standard` and `SpecificRecord` formats_
 
-* `date`: Annotates Avro `int` schemas to generate `java.time.LocalDate`
+* `date`: Annotates Avro `int` schemas to generate `java.time.LocalDate` or `java.sql.Date` (See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping))
 * `decimal`: Annotates Avro `bytes` schemas to generate `BigDecimal`
-* `timestamp-millis`: Annotates Avro `long` schemas to genarate `java.time.Instant`
+* `timestamp-millis`: Annotates Avro `long` schemas to genarate `java.time.Instant` or `java.sql.Timestamp` (See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping))
 
 ##### Protocol Support:
 

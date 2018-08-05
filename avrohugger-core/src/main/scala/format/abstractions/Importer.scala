@@ -4,8 +4,9 @@ package abstractions
 
 import avrohugger.input.DependencyInspector
 import avrohugger.input.NestedSchemaExtractor
-import matchers.{ CustomNamespaceMatcher, TypeMatcher }
-import stores.SchemaStore
+import avrohugger.matchers.TypeMatcher
+import avrohugger.matchers.custom.CustomNamespaceMatcher
+import avrohugger.stores.SchemaStore
 
 import org.apache.avro.{ Schema, Protocol }
 import org.apache.avro.Schema.Type.{ ENUM, RECORD, UNION, MAP, ARRAY }

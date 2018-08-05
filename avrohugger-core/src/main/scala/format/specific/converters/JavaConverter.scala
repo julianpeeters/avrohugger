@@ -3,7 +3,9 @@ package format
 package specific
 package converters
 
+import matchers.TypeMatcher
 import stores.ClassStore
+import types._
 
 import treehugger.forest._
 import definitions._
@@ -21,7 +23,8 @@ object JavaConverter {
   def convertToJava(
     schema: Schema,
     tree: Tree,
-    classSymbol: ClassSymbol): Tree = schema.getType match {
+    classSymbol: ClassSymbol,
+    typeMatcher: TypeMatcher): Tree = schema.getType match {
     case Schema.Type.UNION => {
       val types = schema.getTypes.asScala
       // check if it's the kind of union that we support (i.e. nullable fields)
@@ -34,7 +37,7 @@ object JavaConverter {
         val maybeType = types.find(x => x.getType != Schema.Type.NULL)
         if (maybeType.isDefined) {
         val conversionCases = List(
-          CASE(SOME(ID("x"))) ==> convertToJava(maybeType.get, REF("x"), classSymbol),
+          CASE(SOME(ID("x"))) ==> convertToJava(maybeType.get, REF("x"), classSymbol, typeMatcher),
           CASE(NONE)          ==> NULL
         )
         tree MATCH(conversionCases:_*)
@@ -45,7 +48,7 @@ object JavaConverter {
     case Schema.Type.ARRAY => {
       val applyParam = {
         BLOCK(tree MAP(LAMBDA(PARAM("x")) ==> BLOCK(
-          convertToJava(schema.getElementType, REF("x"), classSymbol)
+          convertToJava(schema.getElementType, REF("x"), classSymbol, typeMatcher)
         )))
       }
       REF("scala.collection.JavaConverters.bufferAsJavaListConverter").APPLY(applyParam DOT "toBuffer").DOT("asJava")
@@ -58,7 +61,7 @@ object JavaConverter {
           BLOCK(
             VAL("key") := REF("kvp._1"),
             VAL("value") := REF("kvp._2"),
-            REF("map").DOT("put").APPLY(REF("key"), convertToJava(schema.getValueType, REF("value"), classSymbol))
+            REF("map").DOT("put").APPLY(REF("key"), convertToJava(schema.getValueType, REF("value"), classSymbol, typeMatcher))
           )
         ),
         REF("map")
@@ -80,11 +83,17 @@ object JavaConverter {
       case _ => REF("java.nio.ByteBuffer") DOT "wrap" APPLY tree
     }
     case Schema.Type.LONG => schema.getLogicalType match {
-      case timestamp: LogicalTypes.TimestampMillis => BLOCK(tree.DOT("toEpochMilli"))
+      case timestamp: LogicalTypes.TimestampMillis => typeMatcher.avroScalaTypes.timestampMillis match {
+        case JavaSqlTimestamp => BLOCK(tree.DOT("getTime").APPLY())
+        case JavaTimeInstant  => BLOCK(tree.DOT("toEpochMilli"))
+      }
       case _ => tree
     }
     case Schema.Type.INT => schema.getLogicalType match {
-      case date: LogicalTypes.Date => tree.DOT("toEpochDay").DOT("toInt")
+      case date: LogicalTypes.Date => typeMatcher.avroScalaTypes.date match {
+        case JavaSqlDate       => tree.DOT("getTime").APPLY().DOT("/").APPLY(LIT(86400000))
+        case JavaTimeLocalDate => tree.DOT("toEpochDay").DOT("toInt")
+      }
       case _ => tree
     }
     case _ => tree

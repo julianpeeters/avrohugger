@@ -3,7 +3,8 @@ package format
 
 import abstractions.SourceFormat
 import format.specific.{SpecificJavaTreehugger, SpecificScalaTreehugger}
-import matchers.{ CustomNamespaceMatcher, TypeMatcher }
+import matchers.TypeMatcher
+import matchers.custom.CustomNamespaceMatcher
 import models.CompilationUnit
 import stores.{ ClassStore, SchemaStore }
 import types._
