@@ -143,7 +143,7 @@ object ScavroImporter extends Importer {
     }
 
     // gets imported Scavro model classes, returning them as Import trees
-    def getScalaRecordImports(
+    def getTopLevelImports(
       recordSchemas: List[Schema],
       namespace: Option[String]): List[Import] = {
       recordSchemas
@@ -173,7 +173,7 @@ object ScavroImporter extends Importer {
     val topLevelSchemas = getTopLevelSchemas(schemaOrProtocol, schemaStore, typeMatcher)
 
     val allRecordSchemas = getAllRecordSchemas(topLevelSchemas)
-    val scalaRecordImports = getRecordImports(
+    val scalaRecordImports = getUserDefinedImports(
       allRecordSchemas,
       currentNamespace,
       typeMatcher)
@@ -185,7 +185,8 @@ object ScavroImporter extends Importer {
 
     val renamedJavaImports = javaRecordImports.map(asRenamedImportTree)
     val scalaRecords = getRecordSchemas(topLevelSchemas)
-    val scalaImports = getScalaRecordImports(scalaRecords, currentNamespace)
+    val enumSchemas = getEnumSchemas(topLevelSchemas)
+    val scalaImports = getTopLevelImports(scalaRecords ++ enumSchemas, currentNamespace)
 
     val recordImports = (scalaImports ++ renamedJavaImports).distinct
 

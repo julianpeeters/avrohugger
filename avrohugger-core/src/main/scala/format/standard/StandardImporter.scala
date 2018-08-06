@@ -23,77 +23,74 @@ object StandardImporter extends Importer {
     * Otherwise the default values require no special imports
     * since they are codegen in terms of [[Option]] and [[Either]]
     */
-  private[this] def containsShapelessFields(schema: Schema, typeMatcher: TypeMatcher): Boolean =
-    typeMatcher.avroScalaTypes.union match {
-      case OptionShapelessCoproduct => true
-      case OptionEitherShapelessCoproduct => {
-        val fields = schema.getFields.asScala
-        val isUnion: Schema.Field => Boolean = _.schema().getType == Schema.Type.UNION
-        val unionContainsNull: Schema => Boolean = _.getType == Schema.Type.NULL
-        val requiresImports =
-          fields
-            .filter(isUnion)
-            .exists(uf => {
-              val unionTypes = uf.schema().getTypes.asScala
-              (unionTypes.length > 2 && !unionTypes.exists(unionContainsNull)) ||
-              (unionTypes.length > 3 && unionTypes.exists(unionContainsNull))
-            })
-        requiresImports
-      }
+  private[this] def getShapelessImports(
+    topLevelRecordSchemas: List[Schema],
+    typeMatcher: TypeMatcher): List[Import] = {
+    
+    def determineShapelessImports(
+      field: Schema.Field,
+      schema: Schema,
+      typeMatcher: TypeMatcher): List[String] = schema.getType match {
+      case Schema.Type.UNION  => importsForUnionType(field, schema, typeMatcher)
+      case Schema.Type.ARRAY  => determineShapelessImports(field, schema.getElementType(), typeMatcher)
+      case Schema.Type.MAP    => determineShapelessImports(field, schema.getValueType(), typeMatcher)
+      case Schema.Type.RECORD => schema.getFields.asScala.toList.flatMap(f =>
+                                   determineShapelessImports(field, f.schema(), typeMatcher))
+      case _ => List.empty[String]
     }
     
-  private[this] def containsShapelessDefaultValues(schema: Schema, typeMatcher: TypeMatcher): Boolean =
-    typeMatcher.avroScalaTypes.union match {
-      case OptionShapelessCoproduct => true
-      case OptionEitherShapelessCoproduct => {
-        val fields = schema.getFields.asScala
-        val isUnion: Schema.Field => Boolean = _.schema().getType == Schema.Type.UNION
-        val unionContainsNull: Schema => Boolean = _.getType == Schema.Type.NULL
-        val requiresImports =
-          fields
-            .filter(isUnion)
-            .exists(uf => {
-              val unionTypes = uf.schema().getTypes.asScala
-              (unionTypes.length > 2 && !unionTypes.exists(unionContainsNull) && uf.defaultValue != null) ||
-              (unionTypes.length > 3 &&  unionTypes.exists(unionContainsNull) && uf.defaultValue != null)
-            })
-        requiresImports
+    def importsForUnionType(
+      field: Schema.Field,
+      unionSchema: Schema,
+      typeMatcher: TypeMatcher): List[String] = {
+      val thresholdNonNullTypes = typeMatcher.avroScalaTypes.union match {
+        case OptionShapelessCoproduct => 0 // if a union contains at least one type, then it will need :+:
+        case OptionEitherShapelessCoproduct => 2 // unions of one nullable type become Option, two become Either
       }
+      val unionContainsNull: Schema => Boolean = _.getType == Schema.Type.NULL
+      def shapelessCoproductTest(unionTypes: List[Schema], maxNonNullTypes: Int): Boolean =
+        (unionTypes.length > maxNonNullTypes     && !unionTypes.exists(unionContainsNull)) ||
+        (unionTypes.length > maxNonNullTypes + 1 &&  unionTypes.exists(unionContainsNull))
+      def defaultValueTest(field: Schema.Field, unionTypes: List[Schema], maxNonNullTypes: Int) =
+        (unionTypes.length > maxNonNullTypes     && !unionTypes.exists(unionContainsNull) && field.defaultValue != null) ||
+        (unionTypes.length > maxNonNullTypes + 1 &&  unionTypes.exists(unionContainsNull) && field.defaultValue != null)
+      val unionTypes = unionSchema.getTypes.asScala.toList
+      val isShapelessCoproduct: Boolean = shapelessCoproductTest(unionTypes, thresholdNonNullTypes)
+      val hasDefaultValue: Boolean = defaultValueTest(field, unionTypes, thresholdNonNullTypes)
+      if (isShapelessCoproduct && hasDefaultValue)
+        List(":+:", "CNil", "Coproduct")
+      else if (isShapelessCoproduct)
+        List(":+:", "CNil")
+      else
+        List.empty[String]
     }
+    def shapelessImport(shapelessCopSymbols: Set[String]): Import = {
+      val shapelessCopSymbolsImport = RootClass.newClass(s"shapeless.{${shapelessCopSymbols.mkString(", ")}}")
+      IMPORT(shapelessCopSymbolsImport)
+    }
+    val shapelessCopSymbols: List[String] =
+      for {
+        topLevelRecordSchema <- topLevelRecordSchemas
+        field <- topLevelRecordSchema.getFields.asScala
+        symbol <- determineShapelessImports(field, field.schema(), typeMatcher)
+      } yield symbol
+    if (shapelessCopSymbols.isEmpty) List.empty[Import]
+    else List(shapelessImport(shapelessCopSymbols.toSet))
+  }
 
   def getImports(
     schemaOrProtocol: Either[Schema, Protocol],
     currentNamespace: Option[String],
     schemaStore: SchemaStore,
     typeMatcher: TypeMatcher): List[Import] = {
-    def shapelessImport(shapelessCopSymbols: List[String]): Import = {
-      val shapelessCopSymbolsImport = RootClass.newClass(s"shapeless.{${shapelessCopSymbols.mkString(", ")}}")
-      IMPORT(shapelessCopSymbolsImport)
-    }
     val topLevelSchemas = getTopLevelSchemas(schemaOrProtocol, schemaStore, typeMatcher)
     val recordSchemas = getRecordSchemas(topLevelSchemas)
-    val deps = getRecordImports(recordSchemas, currentNamespace, typeMatcher)
-
-
-    schemaOrProtocol match {
-      case Left(schema) => {
-        if (schema.getType == RECORD && containsShapelessDefaultValues(schema, typeMatcher))
-          shapelessImport(List(":+:", "CNil", "Coproduct")) :: deps
-        else if (schema.getType == RECORD && containsShapelessFields(schema, typeMatcher))
-          shapelessImport(List(":+:", "CNil")) :: deps
-        else
-          deps
-      }
-      case Right(protocol) => {
-        val types = protocol.getTypes.asScala.toList
-        if (types.exists(s => s.getType == RECORD && containsShapelessDefaultValues(s, typeMatcher)))
-          shapelessImport(List(":+:", "CNil", "Coproduct")) :: deps
-        else if (types.exists(s => s.getType == RECORD && containsShapelessFields(s, typeMatcher)))
-          shapelessImport(List(":+:", "CNil")) :: deps
-        else
-          deps
-      }
-    }
+    val recordDeps = getUserDefinedImports(recordSchemas, currentNamespace, typeMatcher)
+    val enumSchemas = getEnumSchemas(topLevelSchemas)
+    val userDefinedDeps = getUserDefinedImports(recordSchemas ++ enumSchemas, currentNamespace, typeMatcher)
+    val shapelessDeps = getShapelessImports(recordSchemas, typeMatcher)
+    val libraryDeps = shapelessDeps
+    libraryDeps ++ userDefinedDeps
   }
 
 }

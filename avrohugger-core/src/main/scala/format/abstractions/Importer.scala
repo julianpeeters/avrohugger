@@ -23,8 +23,9 @@ import scala.collection.JavaConverters._
   * getImports
   *
   * _CONCRETE MEMBERS_: implementations to be inherited by a subclass
+  * getEnumSchemas
   * getFieldSchemas
-  * getRecordImports
+  * getUserDefinedImports
   * getRecordSchemas
   * getTopLevelSchemas
   * isEnum
@@ -40,6 +41,43 @@ trait Importer {
     typeMatcher: TypeMatcher): List[Import]
 
   ////////////////////////////// concrete members //////////////////////////////
+  // gets enum schemas which may be dependencies
+  def getEnumSchemas(
+    topLevelSchemas: List[Schema],
+    alreadyImported: List[Schema] = List.empty[Schema]): List[Schema] = {
+    def nextSchemas(s: Schema, us: List[Schema]) = getRecordSchemas(List(s), us)
+    topLevelSchemas
+      .flatMap(schema => {
+        schema.getType match {
+          case RECORD =>
+            val fieldSchemasWithChildSchemas = getFieldSchemas(schema).toSeq
+              .filter(s => alreadyImported.contains(s))
+              .flatMap(s => nextSchemas(s, alreadyImported :+ s))
+            Seq(schema) ++ fieldSchemasWithChildSchemas
+          case ENUM =>
+            Seq(schema)
+          case UNION =>
+            schema.getTypes.asScala
+              .find(s => s.getType != NULL).toSeq
+              .filter(s => alreadyImported.contains(s))
+              .flatMap(s => nextSchemas(schema, alreadyImported :+ s))
+          case MAP =>
+            Seq(schema.getValueType)
+              .filter(s => alreadyImported.contains(s))
+              .flatMap(s => nextSchemas(schema, alreadyImported :+ s))
+          case ARRAY =>
+            Seq(schema.getElementType)
+              .filter(s => alreadyImported.contains(s))
+              .flatMap(s => nextSchemas(schema, alreadyImported :+ s))
+          case _ =>
+            Seq.empty[Schema]
+        }
+      })
+      .filter(schema => schema.getType == ENUM)
+      .distinct
+      .toList
+  }
+  
   def getFieldSchemas(schema: Schema): List[Schema] = {
     schema.getFields.asScala.toList.map(field => field.schema)
   }
@@ -48,7 +86,7 @@ trait Importer {
     schema.getTypes.asScala.toList
   }
 
-  def getRecordImports(
+  def getUserDefinedImports(
     recordSchemas: List[Schema],
     namespace: Option[String],
     typeMatcher: TypeMatcher): List[Import] = {
@@ -121,7 +159,7 @@ trait Importer {
             Seq.empty[Schema]
         }
       })
-      .filter(schema => isEnum(schema) || isRecord(schema))
+      .filter(schema => isRecord(schema))
       .distinct
       .toList
   }
