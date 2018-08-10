@@ -161,7 +161,7 @@ protocol, IDL, or a set of case classes that you'd like to have implement
 
 ##### Customizable Type Mapping:
 
-To reassign Scala types to Avro types, use the following:
+To reassign Scala types to Avro types, use the following (e.g. for customizing `SpecificRecord`):
     
     import avrohugger.format.SpecificRecord
     import avrohugger.types.ScalaVector
