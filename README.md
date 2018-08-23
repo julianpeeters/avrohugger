@@ -82,9 +82,9 @@ runtime, Java classes provided separately (see [Scavro Plugin](https://github.co
 
 _NOTE: Currently logical types are only supported for `Standard` and `SpecificRecord` formats_
 
-* `date`: Annotates Avro `int` schemas to generate `java.time.LocalDate` or `java.sql.Date` (See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping))
-* `decimal`: Annotates Avro `bytes` schemas to generate `BigDecimal`
-* `timestamp-millis`: Annotates Avro `long` schemas to genarate `java.time.Instant` or `java.sql.Timestamp` (See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping))
+* `date`: Annotates Avro `int` schemas to generate `java.time.LocalDate` or `java.sql.Date` (See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)). Examples: [avdl](https://github.com/julianpeeters/sbt-avrohugger/blob/master/src/sbt-test/avrohugger/GenericSerializationTests/src/main/avro/logical.avdl#L9), [avsc](https://github.com/julianpeeters/sbt-avrohugger/blob/master/src/sbt-test/avrohugger/GenericSerializationTests/src/main/avro/logical.avsc#L22-L27).
+* `decimal`: Annotates Avro `bytes` schemas to generate `BigDecimal`. Examples: [avdl](https://github.com/julianpeeters/sbt-avrohugger/blob/master/src/sbt-test/avrohugger/GenericSerializationTests/src/main/avro/logical.avdl#L6), [avsc](https://github.com/julianpeeters/sbt-avrohugger/blob/master/src/sbt-test/avrohugger/GenericSerializationTests/src/main/avro/logical.avsc#L6-L14).
+* `timestamp-millis`: Annotates Avro `long` schemas to genarate `java.time.Instant` or `java.sql.Timestamp` (See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)). Examples: [avdl](https://github.com/julianpeeters/sbt-avrohugger/blob/master/src/sbt-test/avrohugger/GenericSerializationTests/src/main/avro/logical.avdl#L8), [avsc](https://github.com/julianpeeters/sbt-avrohugger/blob/master/src/sbt-test/avrohugger/GenericSerializationTests/src/main/avro/logical.avsc#L15-L21).
 
 ##### Protocol Support:
 
@@ -161,7 +161,7 @@ protocol, IDL, or a set of case classes that you'd like to have implement
 
 ##### Customizable Type Mapping:
 
-To reassign Scala types to Avro types, use the following (e.g. for customizing `SpecificRecord`):
+To reassign Scala types to Avro types, use the following (e.g. for customizing `Specific`):
     
     import avrohugger.format.SpecificRecord
     import avrohugger.types.ScalaVector
