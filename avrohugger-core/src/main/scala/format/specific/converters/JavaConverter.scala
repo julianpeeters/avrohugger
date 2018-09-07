@@ -12,6 +12,7 @@ import definitions._
 import treehuggerDSL._
 
 import org.apache.avro.{LogicalTypes, Schema}
+import scala.language.postfixOps
 import scala.collection.JavaConverters._
 
 
@@ -98,8 +99,10 @@ object JavaConverter {
     }
     case Schema.Type.STRING =>
       if (schema.getLogicalType == LogicalTypes.uuid()) {
-        tree.DOT("toString")
-      } else tree
+        tree TOSTRING
+      } else {
+        tree
+      }
     case _ => tree
   }
 
