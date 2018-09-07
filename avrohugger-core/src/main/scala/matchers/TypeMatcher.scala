@@ -55,7 +55,12 @@ class TypeMatcher(
             case Date => CustomTypeMatcher.checkCustomDateType(avroScalaTypes.date)
           }
         case Schema.Type.NULL     => NullClass
-        case Schema.Type.STRING   => StringClass
+        case Schema.Type.STRING   =>
+          LogicalType.foldLogicalTypes(
+            schema = schema,
+            default = StringClass) {
+            case UUID => RootClass.newClass(nme.createNameType("java.util.UUID"))
+          }
         case Schema.Type.FIXED    => sys.error("FIXED datatype not yet supported")
         case Schema.Type.BYTES    =>
           LogicalType.foldLogicalTypes(

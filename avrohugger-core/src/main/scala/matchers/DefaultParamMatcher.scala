@@ -42,7 +42,12 @@ object DefaultParamMatcher {
         }
       case Type.FLOAT   => LIT(0F)
       case Type.DOUBLE  => LIT(0D)
-      case Type.STRING  => LIT("")
+      case Type.STRING  =>
+        LogicalType.foldLogicalTypes[Tree](
+          schema = avroSchema,
+          default = LIT("")) {
+          case UUID => REF("java.util.UUID.randomUUID")
+        }
       case Type.NULL    => NULL
       case Type.FIXED   => sys.error("the FIXED datatype is not yet supported")
       case Type.ENUM    =>

@@ -52,7 +52,12 @@ object DefaultValueMatcher {
           }
         case Schema.Type.DOUBLE => LIT(node.getDoubleValue)
         case Schema.Type.BOOLEAN => LIT(node.getBooleanValue)
-        case Schema.Type.STRING => LIT(node.getTextValue)
+        case Schema.Type.STRING =>
+          LogicalType.foldLogicalTypes[Tree](
+            schema = schema,
+            default = LIT(node.getTextValue)) {
+            case UUID => REF("java.util.UUID.fromString") APPLY LIT(node.getTextValue)
+          }
         case Schema.Type.BYTES =>
           LogicalType.foldLogicalTypes(
             schema = schema,

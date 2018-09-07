@@ -76,6 +76,7 @@ runtime, Java classes provided separately (see [Scavro Plugin](https://github.co
 |PROTOCOL|_No Type_<br>Scala ADT|RPC trait<br>Scala ADT|_No Type_<br>Scala ADT| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 |Date|java.time.LocalDate<br>java.sql.Date|java.time.LocalDate<br>java.sql.Date|Not yet supported| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 |TimestampMillis|java.time.Instant<br>java.sql.Timestamp|java.time.Instant<br>java.sql.Timestamp|Not yet supported|  See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
+|UUID|java.util.UUID|java.util.UUID|Not yet supported|  See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 |Decimal|BigDecimal|BigDecimal|Not yet supported||
 
 ##### Logical Types Support:
@@ -85,6 +86,7 @@ _NOTE: Currently logical types are only supported for `Standard` and `SpecificRe
 * `date`: Annotates Avro `int` schemas to generate `java.time.LocalDate` or `java.sql.Date` (See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)). Examples: [avdl](https://github.com/julianpeeters/sbt-avrohugger/blob/master/src/sbt-test/avrohugger/GenericSerializationTests/src/main/avro/logical.avdl#L9), [avsc](https://github.com/julianpeeters/sbt-avrohugger/blob/master/src/sbt-test/avrohugger/GenericSerializationTests/src/main/avro/logical.avsc#L22-L27).
 * `decimal`: Annotates Avro `bytes` schemas to generate `BigDecimal`. Examples: [avdl](https://github.com/julianpeeters/sbt-avrohugger/blob/master/src/sbt-test/avrohugger/GenericSerializationTests/src/main/avro/logical.avdl#L6), [avsc](https://github.com/julianpeeters/sbt-avrohugger/blob/master/src/sbt-test/avrohugger/GenericSerializationTests/src/main/avro/logical.avsc#L6-L14).
 * `timestamp-millis`: Annotates Avro `long` schemas to genarate `java.time.Instant` or `java.sql.Timestamp` (See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)). Examples: [avdl](https://github.com/julianpeeters/sbt-avrohugger/blob/master/src/sbt-test/avrohugger/GenericSerializationTests/src/main/avro/logical.avdl#L8), [avsc](https://github.com/julianpeeters/sbt-avrohugger/blob/master/src/sbt-test/avrohugger/GenericSerializationTests/src/main/avro/logical.avsc#L15-L21).
+* `uuid`: Annotates Avro `string` schemas to genarate `java.util.UUID` (See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)). Example: [avsc](https://github.com/julianpeeters/sbt-avrohugger/blob/master/src/sbt-test/avrohugger/GenericSerializationTests/src/main/avro/logical.avsc#L29-L35).
 
 ##### Protocol Support:
 

@@ -96,6 +96,10 @@ object JavaConverter {
       }
       case _ => tree
     }
+    case Schema.Type.STRING =>
+      if (schema.getLogicalType == LogicalTypes.uuid()) {
+        tree.DOT("toString")
+      } else tree
     case _ => tree
   }
 
