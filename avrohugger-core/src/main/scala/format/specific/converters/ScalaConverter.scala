@@ -68,16 +68,17 @@ object ScalaConverter {
         tree MATCH(conversionCases:_*)
       }
       case Schema.Type.STRING =>
-        Option(schema.getLogicalType()).filter(_.getName == "uuid").map { _ =>
-          typeMatcher.avroScalaTypes.uuid match {
-            case JavaUuid => {
-              val UuidClass = RootClass.newClass("java.util.UUID")
-              val resultExpr = BLOCK(UuidClass.DOT("fromString").APPLY(REF("str")))
-              val stringConversion = CASE(ID("str") withType (StringClass)) ==> resultExpr
-              tree MATCH stringConversion
+        LogicalType.foldLogicalTypes(schema, tree TOSTRING) {
+          case UUID =>
+            typeMatcher.avroScalaTypes.uuid match {
+              case JavaUuid => {
+                val UuidClass = RootClass.newClass("java.util.UUID")
+                val resultExpr = BLOCK(UuidClass.DOT("fromString").APPLY(REF("str")))
+                val stringConversion = CASE(ID("str") withType (StringClass)) ==> resultExpr
+                tree MATCH stringConversion
+              }
             }
-          }
-        }.getOrElse(tree TOSTRING)
+        }
       case Schema.Type.MAP => {
         val JavaMap = RootClass.newClass("java.util.Map[_,_]")
         val resultExpr = {
