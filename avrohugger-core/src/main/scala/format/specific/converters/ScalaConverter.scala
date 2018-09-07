@@ -68,7 +68,9 @@ object ScalaConverter {
         tree MATCH(conversionCases:_*)
       }
       case Schema.Type.STRING =>
-        LogicalType.foldLogicalTypes(schema, tree TOSTRING) {
+        LogicalType.foldLogicalTypes(
+          schema = schema,
+          default = tree TOSTRING) {
           case UUID =>
             typeMatcher.avroScalaTypes.uuid match {
               case JavaUuid => {
