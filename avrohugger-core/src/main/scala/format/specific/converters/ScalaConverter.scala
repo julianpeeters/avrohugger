@@ -33,8 +33,10 @@ object ScalaConverter {
       case ScalaVector => VECTOR(seqArgs)
     }
   }
-  
-  // takes as args a REF wrapped according to field Type
+
+  val CharSequenceClass = definitions.getClass("java.lang.CharSequence")
+
+// takes as args a REF wrapped according to field Type
   def convertFromJava(
     classStore: ClassStore,
     namespace: Option[String],
@@ -75,9 +77,9 @@ object ScalaConverter {
             typeMatcher.avroScalaTypes.uuid match {
               case JavaUuid => {
                 val UuidClass = RootClass.newClass("java.util.UUID")
-                val resultExpr = BLOCK(UuidClass.DOT("fromString").APPLY(REF("str")))
-                val stringConversion = CASE(ID("str") withType (StringClass)) ==> resultExpr
-                tree MATCH stringConversion
+                val resultExpr = BLOCK(UuidClass.DOT("fromString").APPLY(REF("chars").TOSTRING))
+                val charSequenceConversion = CASE(ID("chars") withType CharSequenceClass) ==> resultExpr
+                tree MATCH charSequenceConversion
               }
             }
         }

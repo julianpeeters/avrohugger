@@ -54,8 +54,8 @@ case class LogicalSc(var data: BigDecimal, var ts: java.time.Instant, var dt: ja
       }.asInstanceOf[java.time.LocalDate]
       case 3 => this.uuid = {
         value match {
-          case (str: String) => {
-            java.util.UUID.fromString(str)
+          case (chars: java.lang.CharSequence) => {
+            java.util.UUID.fromString(chars.toString)
           }
         }
       }.asInstanceOf[java.util.UUID]
