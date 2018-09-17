@@ -25,6 +25,13 @@
         "type": "int",
         "logicalType": "date"
       }
+    },
+    {
+      "name": "uuid",
+      "type": {
+        "type": "string",
+        "logicalType": "uuid"
+      }
     }
   ]
 }
