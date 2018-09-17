@@ -320,6 +320,7 @@ Contributors:
 - [Marco Stefani](https://github.com/inafets)
 - [Diego E. Alonso Blas](https://github.com/diesalbla)
 - [Chris Albright](https://github.com/chrisalbright)
+- [Andrew Gustafson](https://github.com/agustafson)
 
 ##### Criticism is appreciated.
 
