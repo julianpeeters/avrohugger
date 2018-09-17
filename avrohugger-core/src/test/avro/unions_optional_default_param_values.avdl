@@ -1,0 +1,90 @@
+@namespace("example.idl")
+protocol UnionsOptionalDefaultParamsValues {
+
+  record Event1 {
+    int index;
+  }
+
+  record Event2 {
+  }
+
+  record Event3 {
+  }
+
+  record Event4 {
+    int index;
+  }
+
+  record Event5 {
+  }
+
+  record Event6 {
+  }
+
+  record Event7 {
+    int index;
+  }
+
+  record Event8 {
+  }
+
+  record Event9 {
+  }
+
+  record ShouldRenderAsOption {
+    union { null, Event1 } value = null;
+  }
+
+  record ShouldRenderAsOption2 {
+    union { Event1, null } value = { "index" : 0 };
+  }
+
+  record ShouldRenderAsOption3 {
+    union { null, Event1, Event2 } value = null;
+  }
+
+  record ShouldRenderAsOption4 {
+    union { Event1, null, Event2 } value = { "index" : 1 };
+  }
+
+  record ShouldRenderAsOption5 {
+    union { Event1, Event2, null } value = { "index" : 2 };
+  }
+
+  record ShouldRenderAsOptionCoproduct {
+    union { null, Event1, Event2, Event3 } value = null;
+  }
+
+  record ShouldRenderAsOptionCoproduct2 {
+    union { Event1, Event2, Event3, null } value = { "index" : 3 };
+  }
+
+  record ShouldRenderAsOptionCoproduct3 {
+    union { Event1, Event2, null, Event3 } value= { "index" : 4 };
+  }
+
+  record ShouldRenderAsCoproduct1 {
+    union { Event1, Event2 } value = { "index" : 5 };
+  }
+
+  record ShouldRenderAsCoproduct2 {
+    union { Event1, Event2, Event3, Event4 } value = { "index" : 6 };
+  }
+
+  record CopX {
+    union { Event1, Event2, Event3 } value = { "index" : 7 };
+  }
+
+  record CopY {
+    union { Event4, Event5, Event6 } value = { "index" : 8 };
+  }
+
+  record CopZ {
+    union { Event7, Event8, Event9 } value = { "index" : 9 };
+  }
+
+  record ShouldRenderAsCoproductOfCoproduct {
+    union { CopX, CopY, CopZ } value = { "value" : { "index" : 10 }};
+  }
+
+}

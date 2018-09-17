@@ -44,7 +44,8 @@ object StandardImporter extends Importer {
       unionSchema: Schema,
       typeMatcher: TypeMatcher): List[String] = {
       val thresholdNonNullTypes = typeMatcher.avroScalaTypes.union match {
-        case OptionShapelessCoproduct => 0 // if a union contains at least one type, then it will need :+:
+        case OptionalShapelessCoproduct => 0 // if a union contains at least one type, then it will need :+:
+        case OptionShapelessCoproduct => 1
         case OptionEitherShapelessCoproduct => 2 // unions of one nullable type become Option, two become Either
       }
       val unionContainsNull: Schema => Boolean = _.getType == Schema.Type.NULL

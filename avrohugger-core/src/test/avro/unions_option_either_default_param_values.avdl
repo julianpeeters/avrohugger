@@ -1,5 +1,5 @@
 @namespace("example.idl")
-protocol UnionsDefaultParamsValues {
+protocol UnionsOptionEitherDefaultParamsValues {
 
   record Event1 {
     int index;

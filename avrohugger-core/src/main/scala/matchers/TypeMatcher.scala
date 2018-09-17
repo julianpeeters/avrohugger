@@ -110,6 +110,13 @@ class TypeMatcher(
 
     def unionsAsShapelessCoproductStrategy =
       shapelessCoproductType(nonNullableSchemas.map(typeMatcher): _*)
+    
+    def unionsAsOptionShapelessCoproductStrategy = nonNullableSchemas match {
+      case List(schemaA) =>
+        typeMatcher(schemaA)
+      case _ =>
+        unionsAsShapelessCoproductStrategy
+    }
 
     def unionsArityStrategy = nonNullableSchemas match {
       case List(schemaA) =>
@@ -121,8 +128,9 @@ class TypeMatcher(
     }
 
     val matchedType = avroScalaTypes.union match {
+      case OptionShapelessCoproduct => unionsAsOptionShapelessCoproductStrategy
       case OptionEitherShapelessCoproduct => unionsArityStrategy
-      case OptionShapelessCoproduct => unionsAsShapelessCoproductStrategy
+      case OptionalShapelessCoproduct => unionsAsShapelessCoproductStrategy
     }
 
     if (includesNull) optionType(matchedType) else matchedType

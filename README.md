@@ -172,7 +172,7 @@ To reassign Scala types to Avro types, use the following (e.g. for customizing `
 * `record` can be assigned to `ScalaCaseClass` and `ScalaCaseClassWithSchema`(with schema in a companion object)
 * `array` can be assigned to `ScalaSeq`, `ScalaArray`, `ScalaList`, and `ScalaVector`
 * `enum` can be assigned to `JavaEnum`, `ScalaCaseObjectEnum`, `EnumAsScalaString`, and `ScalaEnumeration`
-* `union` can be assigned to `OptionEitherShapelessCoproduct` and `OptionShapelessCoproduct`
+* `union` can be assigned to `OptionEitherShapelessCoproduct` and `OptionalShapelessCoproduct`
 * `int`, `long`, `float`, `double` can be assigned to `ScalaInt`, `ScalaLong`, `ScalaFloat`, `ScalaDouble`
 * `protocol` can be assigned to `ScalaADT` and `NoTypeGenerated`
 

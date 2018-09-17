@@ -127,7 +127,7 @@ object DefaultValueMatcher {
 
     val nonNullableSchemas: List[Schema] = unionSchemas.filter(_.getType != Schema.Type.NULL)
 
-    def unionsAsShapelessCoproductStrategy = nonNullableSchemas match {
+    def unionsAsOptionalShapelessCoproductStrategy = nonNullableSchemas match {
       case firstSchema :: _ => //Coproduct
         COPRODUCT(firstSchema,
           nonNullableSchemas
@@ -135,11 +135,14 @@ object DefaultValueMatcher {
       case _ => throw new Exception("unrecognized shape for shapeless coproduct")
     }
 
-    def unionsArityStrategy(classStore: ClassStore, namespace: Option[String]) =
+    def unionsArityStrategy(
+      classStore: ClassStore,
+      namespace: Option[String],
+      typeMatcher: TypeMatcher) =
       nonNullableSchemas match {
         case List(schemaA) => //Option
           treeMatcher(node, schemaA)
-        case List(schemaA, schemaB) => //Either
+        case List(schemaA, schemaB) if typeMatcher.avroScalaTypes.union == OptionEitherShapelessCoproduct => //Either
           LEFT(treeMatcher(node, schemaA))
         case firstSchema :: _ => //Coproduct
           COPRODUCT(firstSchema,
@@ -148,8 +151,9 @@ object DefaultValueMatcher {
       }
 
     def matchedTree(classStore: ClassStore, namespace: Option[String]) = typeMatcher.avroScalaTypes.union match {
-      case OptionEitherShapelessCoproduct => unionsArityStrategy(classStore, namespace)
-      case OptionShapelessCoproduct => unionsAsShapelessCoproductStrategy
+      case OptionShapelessCoproduct => unionsArityStrategy(classStore, namespace, typeMatcher)
+      case OptionEitherShapelessCoproduct => unionsArityStrategy(classStore, namespace, typeMatcher)
+      case OptionalShapelessCoproduct => unionsAsOptionalShapelessCoproductStrategy
     }
 
     node match {

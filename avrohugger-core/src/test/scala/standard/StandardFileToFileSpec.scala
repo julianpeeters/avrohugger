@@ -37,13 +37,20 @@ class StandardFileToFileSpec extends Specification {
     correctly generate default values $e16
     correctly generate union values without shapeless Coproduct $e17
     correctly generate union values with shapeless Coproduct $e18
-    correctly generate all union values with shapeless Coproduct when instructed by generator $e19
-    correctly generate union default parameter values $e20
-    correctly generate a protocol with no ADT when asked $e21
-    correctly generate logical types from schema $e24
-    correctly generate logical types from protocol $e25
-    correctly generate logical types from IDL $e26
-    correctly generate logical types with custom date and timestamp types $e27
+    correctly generate all union values with optional shapeless Coproduct when instructed by generator $e19
+    correctly generate all union values with option shapeless Coproduct when instructed by generator $e20
+
+    correctly generate union default option either parameter values $e22
+    correctly generate union default option values $e23
+    correctly generate union default optional parameter values $e24
+
+    correctly generate a protocol with no ADT when asked $e25
+    correctly generate a protocol with no ADT when asked $e26
+    correctly generate a protocol with no ADT when asked $e27
+    correctly generate logical types from schema $e28
+    correctly generate logical types from protocol $e29
+    correctly generate logical types from IDL $e30
+    correctly generate logical types with custom date and timestamp types $e31
   """
   
   // tests standard to fileToX
@@ -296,30 +303,79 @@ class StandardFileToFileSpec extends Specification {
   }
 
   def e19 = {
-    val infile = new java.io.File("avrohugger-core/src/test/avro/all_unions_as_coproduct.avdl")
+    val infile = new java.io.File("avrohugger-core/src/test/avro/all_unions_as_optional_coproduct.avdl")
+    val avroScalaCustomTypes = Standard.defaultTypes.copy(union = OptionalShapelessCoproduct)
+    val gen = new Generator(Standard, avroScalaCustomTypes = Some(avroScalaCustomTypes))
+    val outDir = gen.defaultOutputDir + "/standard/"
+    gen.fileToFile(infile, outDir)
+
+    val adt = util.Util.readFile("target/generated-sources/standard/example/idl/AllUnionsWithOptionalShapelessCoproduct.scala")
+
+    adt === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/AllUnionsWithOptionalShapelessCoproduct.scala")
+  }
+  
+  def e20 = {
+    val infile = new java.io.File("avrohugger-core/src/test/avro/all_unions_as_option_coproduct.avdl")
     val avroScalaCustomTypes = Standard.defaultTypes.copy(union = OptionShapelessCoproduct)
     val gen = new Generator(Standard, avroScalaCustomTypes = Some(avroScalaCustomTypes))
     val outDir = gen.defaultOutputDir + "/standard/"
     gen.fileToFile(infile, outDir)
 
-    val adt = util.Util.readFile("target/generated-sources/standard/example/idl/AllUnionsWithShapelessCoproduct.scala")
+    val adt = util.Util.readFile("target/generated-sources/standard/example/idl/AllUnionsWithOptionShapelessCoproduct.scala")
 
-    adt === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/AllUnionsWithShapelessCoproduct.scala")
+    adt === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/AllUnionsWithOptionShapelessCoproduct.scala")
   }
+  
+  // def e21 = {
+  //   val infile = new java.io.File("avrohugger-core/src/test/avro/all_unions_as_coproduct.avdl")
+  //   val avroScalaCustomTypes = Standard.defaultTypes.copy(union = OptionShapelessCoproduct)
+  //   val gen = new Generator(Standard, avroScalaCustomTypes = Some(avroScalaCustomTypes))
+  //   val outDir = gen.defaultOutputDir + "/standard/"
+  //   gen.fileToFile(infile, outDir)
+  // 
+  //   val adt = util.Util.readFile("target/generated-sources/standard/example/idl/AllUnionsWithShapelessCoproduct.scala")
+  // 
+  //   adt === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/AllUnionsWithShapelessCoproduct.scala")
+  // }
 
-  def e20 = {
-    val infile = new java.io.File("avrohugger-core/src/test/avro/unions_default_param_values.avdl")
+  def e22 = {
+    val infile = new java.io.File("avrohugger-core/src/test/avro/unions_option_either_default_param_values.avdl")
     val gen = new Generator(Standard)
     val outDir = gen.defaultOutputDir + "/standard/"
     gen.fileToFile(infile, outDir)
 
-    val adt = util.Util.readFile("target/generated-sources/standard/example/idl/UnionsDefaultParamsValues.scala")
+    val adt = util.Util.readFile("target/generated-sources/standard/example/idl/UnionsOptionEitherDefaultParamsValues.scala")
 
-    adt === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/UnionsDefaultParamsValues.scala")
+    adt === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/UnionsOptionEitherDefaultParamsValues.scala")
+  }
+  
+  def e23 = {
+    val infile = new java.io.File("avrohugger-core/src/test/avro/unions_option_default_param_values.avdl")
+    val avroScalaCustomTypes = Standard.defaultTypes.copy(union = OptionShapelessCoproduct)
+    val gen = new Generator(Standard, avroScalaCustomTypes = Some(avroScalaCustomTypes))
+    val outDir = gen.defaultOutputDir + "/standard/"
+
+    gen.fileToFile(infile, outDir)
+
+    val adt = util.Util.readFile("target/generated-sources/standard/example/idl/UnionsOptionDefaultParamsValues.scala")
+
+    adt === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/UnionsOptionDefaultParamsValues.scala")
+  }
+  
+  def e24 = {
+    val infile = new java.io.File("avrohugger-core/src/test/avro/unions_optional_default_param_values.avdl")
+    val avroScalaCustomTypes = Standard.defaultTypes.copy(union = OptionalShapelessCoproduct)
+    val gen = new Generator(Standard, avroScalaCustomTypes = Some(avroScalaCustomTypes))
+    val outDir = gen.defaultOutputDir + "/standard/"
+    gen.fileToFile(infile, outDir)
+
+    val adt = util.Util.readFile("target/generated-sources/standard/example/idl/UnionsOptionalDefaultParamsValues.scala")
+
+    adt === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/UnionsOptionalDefaultParamsValues.scala")
   }
   
   
-  def e21 = {
+  def e25 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/AvroTypeProviderTestProtocol.avdl")
     val gen = new Generator(format = Standard)
     val outDir = gen.defaultOutputDir + "/standard/"
@@ -330,7 +386,7 @@ class StandardFileToFileSpec extends Specification {
     source === util.Util.readFile("avrohugger-core/src/test/expected/standard/test/Joystick.scala")
   }
 
-  def e22 = {
+  def e26 = {
     val inOrderSchema = new java.io.File("avrohugger-core/src/test/avro/order.avsc")
     val inReportSchema = new java.io.File("avrohugger-core/src/test/avro/userMonthlyReport.avsc")
     val gen = Generator(format = Standard)
@@ -351,7 +407,7 @@ class StandardFileToFileSpec extends Specification {
 
   }
 
-  def e23 = {
+  def e27 = {
     val inOrderSchema = new java.io.File("avrohugger-core/src/test/avro/order.avsc")
     val inReportSchema = new java.io.File("avrohugger-core/src/test/avro/userRedefinedMonthlyReport.avsc")
     val gen = Generator(format = Standard)
@@ -360,7 +416,7 @@ class StandardFileToFileSpec extends Specification {
     gen.fileToFile(inReportSchema, outDir) must throwA[Exception]
   }
 
-  def e24 = {
+  def e28 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/logical.avsc")
     val gen = new Generator(Standard)
     val outDir = gen.defaultOutputDir + "/standard/"
@@ -371,7 +427,7 @@ class StandardFileToFileSpec extends Specification {
     source === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/logical/LogicalSc.scala")
   }
 
-  def e25 = {
+  def e29 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/logical.avpr")
     val gen = new Generator(Standard)
     val outDir = gen.defaultOutputDir + "/standard/"
@@ -382,7 +438,7 @@ class StandardFileToFileSpec extends Specification {
     source === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/logical/proto/Logical.scala")
   }
 
-  def e26 = {
+  def e30 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/logical.avdl")
     val gen = new Generator(Standard)
     val outDir = gen.defaultOutputDir + "/standard/"
@@ -393,7 +449,7 @@ class StandardFileToFileSpec extends Specification {
     source === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/LogicalIdl.scala")
   }
   
-  def e27 = {
+  def e31 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/logicalsql.avsc")
     val avroScalaCustomTypes = Standard.defaultTypes.copy(date = JavaSqlDate, timestampMillis = JavaSqlTimestamp)
     val gen = new Generator(Standard, avroScalaCustomTypes = Some(avroScalaCustomTypes))
