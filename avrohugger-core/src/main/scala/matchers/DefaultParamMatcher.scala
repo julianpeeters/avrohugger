@@ -56,7 +56,7 @@ object DefaultParamMatcher {
         LogicalType.foldLogicalTypes[Tree](
           schema = avroSchema,
           default = NULL) {
-          case Decimal => REF("scala.math.BigDecimal") APPLY LIT(0)
+          case Decimal(_, _) => REF("scala.math.BigDecimal") APPLY LIT(0)
         }
       case Type.RECORD  => NEW(classStore.generatedClasses(avroSchema))
       case Type.UNION   => NONE

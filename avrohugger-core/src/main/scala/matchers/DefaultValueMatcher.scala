@@ -62,7 +62,7 @@ object DefaultValueMatcher {
           LogicalType.foldLogicalTypes(
             schema = schema,
             default = REF("Array[Byte]") APPLY node.getTextValue.getBytes.map((e: Byte) => LIT(e))) {
-            case Decimal => REF("scala.math.BigDecimal") APPLY LIT(node.getDecimalValue.toString)
+            case Decimal(_, _) => REF("scala.math.BigDecimal") APPLY LIT(node.getDecimalValue.toString)
           }
         case Schema.Type.ENUM => typeMatcher.avroScalaTypes.enum match {
           case JavaEnum => (REF(schema.getName) DOT node.getTextValue)

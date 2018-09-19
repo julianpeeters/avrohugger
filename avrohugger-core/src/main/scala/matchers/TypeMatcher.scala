@@ -66,7 +66,7 @@ class TypeMatcher(
           LogicalType.foldLogicalTypes(
             schema = schema,
             default = TYPE_ARRAY(ByteClass)) {
-            case Decimal => BigDecimalClass
+            case Decimal(_, _) => BigDecimalClass
           }
         case Schema.Type.RECORD   => classStore.generatedClasses(schema)
         case Schema.Type.ENUM     => CustomTypeMatcher.checkCustomEnumType(avroScalaTypes.enum, classStore, schema)

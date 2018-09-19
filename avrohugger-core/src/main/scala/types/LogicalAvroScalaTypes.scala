@@ -18,24 +18,24 @@ sealed trait AvroUuidType extends Product with Serializable
 case object JavaUuid extends AvroUuidType
 
 sealed abstract class LogicalType(name: String)
-case object Decimal extends LogicalType("decimal")
+case class Decimal(precision: Int, scale: Int) extends LogicalType("decimal")
 case object Date extends LogicalType("date")
 case object TimestampMillis extends LogicalType("timestamp-millis")
 case object UUID extends LogicalType("uuid")
 
 object LogicalType {
   
-  def apply(name: String): Option[LogicalType] = name match {
-    case "decimal" => Some(Decimal)
-    case "date" => Some(Date)
-    case "timestamp-millis" => Some(TimestampMillis)
-    case "uuid" => Some(UUID)
+  def apply(logicalType: org.apache.avro.LogicalType): Option[LogicalType] = logicalType match {
+    case d: org.apache.avro.LogicalTypes.Decimal => Some(Decimal(d.getPrecision, d.getScale))
+    case _: org.apache.avro.LogicalTypes.Date => Some(Date)
+    case _: org.apache.avro.LogicalTypes.TimestampMillis => Some(TimestampMillis)
+    case _ if logicalType.getName == "uuid" => Some(UUID)
     case _ => None
   }
   
   def foldLogicalTypes[A](schema: Schema, default: => A)(cases : PartialFunction[LogicalType, A]): A =
     Option(schema.getLogicalType) match {
-      case Some(tpe) => LogicalType(tpe.getName).map(cases(_)).getOrElse(default)
+      case Some(tpe) => LogicalType(tpe).map(cases(_)).getOrElse(default)
       case _ => default
     }
 
