@@ -2,6 +2,7 @@ package avrohugger
 package matchers
 package custom
 
+import avrohugger.matchers.custom.CustomUtils._
 import avrohugger.stores.ClassStore
 import avrohugger.types._
 import org.apache.avro.Schema
@@ -44,5 +45,13 @@ object CustomTypeMatcher {
     case JavaSqlTimestamp => RootClass.newClass(nme.createNameType("java.sql.Timestamp"))
     case JavaTimeInstant  => RootClass.newClass(nme.createNameType("java.time.Instant"))
   }
+
+  def checkCustomDecimalType(schema: Schema) =
+    LogicalType.foldLogicalTypes(
+      schema = schema,
+      default = TYPE_ARRAY(ByteClass)) {
+      case Decimal(precision, scale) =>
+        decimalTagged(numberToNat.lift(precision), numberToNat.lift(scale)).tpe
+    }
 
 }

@@ -11,7 +11,7 @@ import avrohugger.types._
 import org.specs2._
 
 class StandardStringToStringsSpec extends Specification {
-  
+
   def is = s2"""
     Standard Generator stringToStrings method should
       correctly generate a simple case class with a schema in its companion $eB

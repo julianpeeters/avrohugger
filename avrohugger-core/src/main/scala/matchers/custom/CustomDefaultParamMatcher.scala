@@ -2,12 +2,13 @@ package avrohugger
 package matchers
 package custom
 
+import avrohugger.matchers.custom.CustomUtils._
 import avrohugger.types._
-
 import treehugger.forest._
 import definitions._
 import treehuggerDSL._
-import java.sql.Timestamp
+
+import org.apache.avro.Schema
 
 object CustomDefaultParamMatcher {
 
@@ -38,5 +39,13 @@ object CustomDefaultParamMatcher {
     timestampMillisType match {
       case JavaSqlTimestamp => NEW(REF("java.sql.Timestamp"), LIT(0L))
       case JavaTimeInstant  => REF("java.time.Instant.now")
+    }
+
+  def checkCustomDecimalType(schema: Schema, value: => Tree, defaultValue: => Option[Tree] = None) =
+    LogicalType.foldLogicalTypes[Tree](
+      schema = schema,
+      default = defaultValue getOrElse NULL) {
+      case Decimal(precision, scale) =>
+        decimalTagged(numberToNat.lift(precision), numberToNat.lift(scale)) APPLY value
     }
 }
