@@ -3,7 +3,7 @@ package format
 package specific
 package converters
 
-import avrohugger.matchers.custom.CustomUtils.{decimalTagged, numberToNat}
+import avrohugger.matchers.custom.CustomUtils.decimalTagged
 import matchers.TypeMatcher
 import stores.ClassStore
 import types._
@@ -106,7 +106,7 @@ object ScalaConverter {
         val resultExpr = schema.getLogicalType match {
           case decimal: LogicalTypes.Decimal => {
             val Decimal = RootClass.newClass("org.apache.avro.LogicalTypes.Decimal")
-            val ref = decimalTagged(numberToNat.lift(decimal.getPrecision), numberToNat.lift(decimal.getScale))
+            val ref = decimalTagged(decimal.getPrecision, decimal.getScale)
             Block(
               VAL("schema") := (REF("getSchema").DOT("getFields").APPLY().DOT("get").APPLY(REF("field$")).DOT("schema").APPLY()),
               VAL("decimalType") := REF("schema").DOT("getLogicalType").APPLY().AS(Decimal),

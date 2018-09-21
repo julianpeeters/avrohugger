@@ -50,7 +50,6 @@ object CustomTypeMatcher {
       LogicalType.foldLogicalTypes(
         schema = schema,
         default = TYPE_ARRAY(ByteClass)) {
-        case Decimal(precision, scale) =>
-          decimalTaggedType(numberToNat.lift(precision), numberToNat.lift(scale))
+        case Decimal(precision, scale) => decimalTaggedType(precision, scale)
       }
 }

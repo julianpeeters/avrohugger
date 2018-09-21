@@ -45,7 +45,6 @@ object CustomDefaultParamMatcher {
     LogicalType.foldLogicalTypes[Tree](
       schema = schema,
       default = defaultValue getOrElse NULL) {
-      case Decimal(precision, scale) =>
-        decimalTagged(numberToNat.lift(precision), numberToNat.lift(scale)) APPLY value
+      case Decimal(precision, scale) => decimalTagged(precision, scale) APPLY value
     }
 }

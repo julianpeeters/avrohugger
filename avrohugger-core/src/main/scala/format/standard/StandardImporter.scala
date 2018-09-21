@@ -39,8 +39,8 @@ object StandardImporter extends Importer {
       case Schema.Type.BYTES  => LogicalType.foldLogicalTypes(
         schema = schema,
         default = List.empty[String]) {
-        case Decimal(precision, scale) if precision <= 22 && scale <= 22 => List("@@")
-        case _ => List.empty[String]
+        case Decimal(_, _)  => List("@@")
+        case _              => List.empty[String]
       }
       case _ => List.empty[String]
     }

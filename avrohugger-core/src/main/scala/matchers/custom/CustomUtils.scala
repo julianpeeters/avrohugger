@@ -4,26 +4,22 @@ package custom
 
 import treehugger.forest._
 import treehuggerDSL._
-import definitions._
 
 object CustomUtils {
 
-  val numberToNat: PartialFunction[Int, Type] = {
-    case n if n <= 22 => TYPE_REF("shapeless.Nat._" + n)
-  }
+  def decimalTagged(precision: Int, scale: Int): Tree =
+    REF("shapeless.tag") APPLYTYPE precisionScaleType(precision, scale) APPLYTYPE TYPE_REF("scala.math.BigDecimal")
 
-  def decimalTagged(precisionNat: Option[Type], scaleNat: Option[Type]): Tree = (precisionNat, scaleNat) match {
-    case (Some(p), Some(s)) =>
-      REF("shapeless.tag") APPLYTYPE TYPE_TUPLE(p, s).tpe APPLYTYPE TYPE_REF("scala.math.BigDecimal")
-    case _ =>
-      REF("scala.math.BigDecimal")
-  }
+  def decimalTaggedType(precision: Int, scale: Int): Type =
+    TYPE_REF(REF("scala.math.BigDecimal") INFIX ("@@", precisionScaleType(precision, scale)))
 
-  def decimalTaggedType(precisionNat: Option[Type], scaleNat: Option[Type]): Type = (precisionNat, scaleNat) match {
-    case (Some(p), Some(s)) =>
-      TYPE_REF(REF("scala.math.BigDecimal") INFIX("@@", TYPE_TUPLE(p, s)))
-    case _ =>
-      BigDecimalClass
-  }
+  private[this] def numberToNat(int: Int): Type =
+    int.toString.map(n => TYPE_REF("shapeless.Nat._" + n)).toList match {
+      case head :: Nil => head
+      case list        => TYPE_TUPLE(list)
+    }
+
+  private[this] def precisionScaleType(precision: Int, scale: Int): Type =
+    TYPE_TUPLE(numberToNat(precision), numberToNat(scale))
 
 }
