@@ -5,8 +5,8 @@ import scala.annotation.switch
 
 import shapeless.tag.@@
 
-case class LogicalSc(var data: scala.math.BigDecimal @@ (shapeless.Nat._9, shapeless.Nat._2), var ts: java.time.Instant, var dt: java.time.LocalDate, var uuid: java.util.UUID) extends org.apache.avro.specific.SpecificRecordBase {
-  def this() = this(shapeless.tag[(shapeless.Nat._9, shapeless.Nat._2)][scala.math.BigDecimal](0), java.time.Instant.now, java.time.LocalDate.now, java.util.UUID.randomUUID)
+case class LogicalSc(var data: scala.math.BigDecimal @@ (shapeless.Nat._9, shapeless.Nat._2), var ts: java.time.Instant, var dt: java.time.LocalDate, var uuid: java.util.UUID, var dataBig: scala.math.BigDecimal @@ ((shapeless.Nat._2, shapeless.Nat._0), (shapeless.Nat._1, shapeless.Nat._2))) extends org.apache.avro.specific.SpecificRecordBase {
+  def this() = this(shapeless.tag[(shapeless.Nat._9, shapeless.Nat._2)][scala.math.BigDecimal](0), java.time.Instant.now, java.time.LocalDate.now, java.util.UUID.randomUUID, shapeless.tag[((shapeless.Nat._2, shapeless.Nat._0), (shapeless.Nat._1, shapeless.Nat._2))][scala.math.BigDecimal](0))
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {
@@ -25,6 +25,14 @@ case class LogicalSc(var data: scala.math.BigDecimal @@ (shapeless.Nat._9, shape
       }.asInstanceOf[AnyRef]
       case 3 => {
         uuid.toString
+      }.asInstanceOf[AnyRef]
+      case 4 => {
+        val schema = getSchema.getFields().get(field$).schema()
+        val decimalType = schema.getLogicalType().asInstanceOf[org.apache.avro.LogicalTypes.Decimal]
+        val scale = decimalType.getScale()
+        val scaledValue = dataBig.setScale(scale)
+        val bigDecimal = scaledValue.bigDecimal
+        LogicalSc.decimalConversion.toBytes(bigDecimal, schema, decimalType)
       }.asInstanceOf[AnyRef]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
     }
@@ -61,6 +69,15 @@ case class LogicalSc(var data: scala.math.BigDecimal @@ (shapeless.Nat._9, shape
           }
         }
       }.asInstanceOf[java.util.UUID]
+      case 4 => this.dataBig = {
+        value match {
+          case (buffer: java.nio.ByteBuffer) => {
+            val schema = getSchema.getFields().get(field$).schema()
+            val decimalType = schema.getLogicalType().asInstanceOf[org.apache.avro.LogicalTypes.Decimal]
+            shapeless.tag[((shapeless.Nat._2, shapeless.Nat._0), (shapeless.Nat._1, shapeless.Nat._2))][scala.math.BigDecimal](scala.math.BigDecimal(LogicalSc.decimalConversion.fromBytes(buffer, schema, decimalType)))
+          }
+        }
+      }.asInstanceOf[scala.math.BigDecimal @@ ((shapeless.Nat._2, shapeless.Nat._0), (shapeless.Nat._1, shapeless.Nat._2))]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
@@ -69,6 +86,6 @@ case class LogicalSc(var data: scala.math.BigDecimal @@ (shapeless.Nat._9, shape
 }
 
 object LogicalSc {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"LogicalSc\",\"namespace\":\"example.logical\",\"fields\":[{\"name\":\"data\",\"type\":{\"type\":\"bytes\",\"logicalType\":\"decimal\",\"precision\":9,\"scale\":2}},{\"name\":\"ts\",\"type\":{\"type\":\"long\",\"logicalType\":\"timestamp-millis\"}},{\"name\":\"dt\",\"type\":{\"type\":\"int\",\"logicalType\":\"date\"}},{\"name\":\"uuid\",\"type\":{\"type\":\"string\",\"logicalType\":\"uuid\"}}]}")
+  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"LogicalSc\",\"namespace\":\"example.logical\",\"fields\":[{\"name\":\"data\",\"type\":{\"type\":\"bytes\",\"logicalType\":\"decimal\",\"precision\":9,\"scale\":2}},{\"name\":\"ts\",\"type\":{\"type\":\"long\",\"logicalType\":\"timestamp-millis\"}},{\"name\":\"dt\",\"type\":{\"type\":\"int\",\"logicalType\":\"date\"}},{\"name\":\"uuid\",\"type\":{\"type\":\"string\",\"logicalType\":\"uuid\"}},{\"name\":\"dataBig\",\"type\":{\"type\":\"bytes\",\"logicalType\":\"decimal\",\"precision\":20,\"scale\":12}}]}")
   val decimalConversion = new org.apache.avro.Conversions.DecimalConversion
 }

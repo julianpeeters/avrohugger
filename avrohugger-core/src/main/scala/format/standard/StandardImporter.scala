@@ -74,7 +74,7 @@ object StandardImporter extends Importer {
     val shapelessImport: List[String] => List[Import] = {
       case Nil          => Nil
       case head :: Nil  => List(IMPORT(RootClass.newClass(s"shapeless.$head")))
-      case list         => List(IMPORT(RootClass.newClass(s"shapeless.{${list.distinct.mkString(", ")}}")))
+      case list         => List(IMPORT(RootClass.newClass(s"shapeless.{${list.mkString(", ")}}")))
     }
     val shapelessCopSymbols: List[String] =
       for {
@@ -82,7 +82,7 @@ object StandardImporter extends Importer {
         field <- topLevelRecordSchema.getFields.asScala
         symbol <- determineShapelessImports(field, field.schema(), typeMatcher)
       } yield symbol
-    shapelessImport(shapelessCopSymbols)
+    shapelessImport(shapelessCopSymbols.distinct)
   }
 
   def getImports(

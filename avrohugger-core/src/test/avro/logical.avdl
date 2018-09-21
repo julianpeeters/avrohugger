@@ -7,6 +7,7 @@ protocol LogicalIDL {
     union {decimal(9, 2), null} maybeDec = 9999.99;
     timestamp_ms ts = 1526573732000; //ms from the unix epoch
     date dt = 600; //days from the unix epock, no time precission
+    decimal(20, 12) decBig = 7777.77;
   }
 
 }

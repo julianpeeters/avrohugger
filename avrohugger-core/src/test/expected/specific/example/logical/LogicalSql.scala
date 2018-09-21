@@ -5,8 +5,8 @@ import scala.annotation.switch
 
 import shapeless.tag.@@
 
-case class LogicalSql(var data: scala.math.BigDecimal @@ (shapeless.Nat._9, shapeless.Nat._2), var ts: java.sql.Timestamp, var dt: java.sql.Date) extends org.apache.avro.specific.SpecificRecordBase {
-  def this() = this(shapeless.tag[(shapeless.Nat._9, shapeless.Nat._2)][scala.math.BigDecimal](0), new java.sql.Timestamp(0L), new java.sql.Date(0L))
+case class LogicalSql(var data: scala.math.BigDecimal @@ (shapeless.Nat._9, shapeless.Nat._2), var ts: java.sql.Timestamp, var dt: java.sql.Date, var dataBig: scala.math.BigDecimal @@ ((shapeless.Nat._2, shapeless.Nat._0), (shapeless.Nat._1, shapeless.Nat._2))) extends org.apache.avro.specific.SpecificRecordBase {
+  def this() = this(shapeless.tag[(shapeless.Nat._9, shapeless.Nat._2)][scala.math.BigDecimal](0), new java.sql.Timestamp(0L), new java.sql.Date(0L), shapeless.tag[((shapeless.Nat._2, shapeless.Nat._0), (shapeless.Nat._1, shapeless.Nat._2))][scala.math.BigDecimal](0))
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {
@@ -22,6 +22,14 @@ case class LogicalSql(var data: scala.math.BigDecimal @@ (shapeless.Nat._9, shap
       }.asInstanceOf[AnyRef]
       case 2 => {
         dt.getTime()./(86400000)
+      }.asInstanceOf[AnyRef]
+      case 3 => {
+        val schema = getSchema.getFields().get(field$).schema()
+        val decimalType = schema.getLogicalType().asInstanceOf[org.apache.avro.LogicalTypes.Decimal]
+        val scale = decimalType.getScale()
+        val scaledValue = dataBig.setScale(scale)
+        val bigDecimal = scaledValue.bigDecimal
+        LogicalSql.decimalConversion.toBytes(bigDecimal, schema, decimalType)
       }.asInstanceOf[AnyRef]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
     }
@@ -51,6 +59,15 @@ case class LogicalSql(var data: scala.math.BigDecimal @@ (shapeless.Nat._9, shap
           }
         }
       }.asInstanceOf[java.sql.Date]
+      case 3 => this.dataBig = {
+        value match {
+          case (buffer: java.nio.ByteBuffer) => {
+            val schema = getSchema.getFields().get(field$).schema()
+            val decimalType = schema.getLogicalType().asInstanceOf[org.apache.avro.LogicalTypes.Decimal]
+            shapeless.tag[((shapeless.Nat._2, shapeless.Nat._0), (shapeless.Nat._1, shapeless.Nat._2))][scala.math.BigDecimal](scala.math.BigDecimal(LogicalSql.decimalConversion.fromBytes(buffer, schema, decimalType)))
+          }
+        }
+      }.asInstanceOf[scala.math.BigDecimal @@ ((shapeless.Nat._2, shapeless.Nat._0), (shapeless.Nat._1, shapeless.Nat._2))]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
@@ -59,6 +76,6 @@ case class LogicalSql(var data: scala.math.BigDecimal @@ (shapeless.Nat._9, shap
 }
 
 object LogicalSql {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"LogicalSql\",\"namespace\":\"example.logical\",\"fields\":[{\"name\":\"data\",\"type\":{\"type\":\"bytes\",\"logicalType\":\"decimal\",\"precision\":9,\"scale\":2}},{\"name\":\"ts\",\"type\":{\"type\":\"long\",\"logicalType\":\"timestamp-millis\"}},{\"name\":\"dt\",\"type\":{\"type\":\"int\",\"logicalType\":\"date\"}}]}")
+  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"LogicalSql\",\"namespace\":\"example.logical\",\"fields\":[{\"name\":\"data\",\"type\":{\"type\":\"bytes\",\"logicalType\":\"decimal\",\"precision\":9,\"scale\":2}},{\"name\":\"ts\",\"type\":{\"type\":\"long\",\"logicalType\":\"timestamp-millis\"}},{\"name\":\"dt\",\"type\":{\"type\":\"int\",\"logicalType\":\"date\"}},{\"name\":\"dataBig\",\"type\":{\"type\":\"bytes\",\"logicalType\":\"decimal\",\"precision\":20,\"scale\":12}}]}")
   val decimalConversion = new org.apache.avro.Conversions.DecimalConversion
 }

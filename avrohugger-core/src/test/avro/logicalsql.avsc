@@ -25,6 +25,15 @@
         "type": "int",
         "logicalType": "date"
       }
+    },
+    {
+      "name": "dataBig",
+      "type": {
+        "type": "bytes",
+        "logicalType": "decimal",
+        "precision": 20,
+        "scale": 12
+      }
     }
   ]
 }
