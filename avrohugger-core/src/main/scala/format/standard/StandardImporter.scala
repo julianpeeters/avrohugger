@@ -36,6 +36,12 @@ object StandardImporter extends Importer {
       case Schema.Type.MAP    => determineShapelessImports(field, schema.getValueType(), typeMatcher)
       case Schema.Type.RECORD => schema.getFields.asScala.toList.flatMap(f =>
                                    determineShapelessImports(field, f.schema(), typeMatcher))
+      case Schema.Type.BYTES  => LogicalType.foldLogicalTypes(
+        schema = schema,
+        default = List.empty[String]) {
+        case Decimal(precision, scale) if precision <= 22 && scale <= 22 => List("@@")
+        case _ => List.empty[String]
+      }
       case _ => List.empty[String]
     }
     
@@ -65,9 +71,10 @@ object StandardImporter extends Importer {
       else
         List.empty[String]
     }
-    def shapelessImport(shapelessCopSymbols: Set[String]): Import = {
-      val shapelessCopSymbolsImport = RootClass.newClass(s"shapeless.{${shapelessCopSymbols.mkString(", ")}}")
-      IMPORT(shapelessCopSymbolsImport)
+    val shapelessImport: List[String] => List[Import] = {
+      case Nil          => Nil
+      case head :: Nil  => List(IMPORT(RootClass.newClass(s"shapeless.$head")))
+      case list         => List(IMPORT(RootClass.newClass(s"shapeless.{${list.distinct.mkString(", ")}}")))
     }
     val shapelessCopSymbols: List[String] =
       for {
@@ -75,8 +82,7 @@ object StandardImporter extends Importer {
         field <- topLevelRecordSchema.getFields.asScala
         symbol <- determineShapelessImports(field, field.schema(), typeMatcher)
       } yield symbol
-    if (shapelessCopSymbols.isEmpty) List.empty[Import]
-    else List(shapelessImport(shapelessCopSymbols.toSet))
+    shapelessImport(shapelessCopSymbols)
   }
 
   def getImports(

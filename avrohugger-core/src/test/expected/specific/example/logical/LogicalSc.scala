@@ -3,8 +3,10 @@ package example.logical
 
 import scala.annotation.switch
 
-case class LogicalSc(var data: BigDecimal, var ts: java.time.Instant, var dt: java.time.LocalDate, var uuid: java.util.UUID) extends org.apache.avro.specific.SpecificRecordBase {
-  def this() = this(scala.math.BigDecimal(0), java.time.Instant.now, java.time.LocalDate.now, java.util.UUID.randomUUID)
+import shapeless.tag.@@
+
+case class LogicalSc(var data: scala.math.BigDecimal @@ (shapeless.Nat._9, shapeless.Nat._2), var ts: java.time.Instant, var dt: java.time.LocalDate, var uuid: java.util.UUID) extends org.apache.avro.specific.SpecificRecordBase {
+  def this() = this(shapeless.tag[(shapeless.Nat._9, shapeless.Nat._2)][scala.math.BigDecimal](0), java.time.Instant.now, java.time.LocalDate.now, java.util.UUID.randomUUID)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {
@@ -34,10 +36,10 @@ case class LogicalSc(var data: BigDecimal, var ts: java.time.Instant, var dt: ja
           case (buffer: java.nio.ByteBuffer) => {
             val schema = getSchema.getFields().get(field$).schema()
             val decimalType = schema.getLogicalType().asInstanceOf[org.apache.avro.LogicalTypes.Decimal]
-            BigDecimal(LogicalSc.decimalConversion.fromBytes(buffer, schema, decimalType))
+            shapeless.tag[(shapeless.Nat._9, shapeless.Nat._2)][scala.math.BigDecimal](scala.math.BigDecimal(LogicalSc.decimalConversion.fromBytes(buffer, schema, decimalType)))
           }
         }
-      }.asInstanceOf[BigDecimal]
+      }.asInstanceOf[scala.math.BigDecimal @@ (shapeless.Nat._9, shapeless.Nat._2)]
       case 1 => this.ts = {
         value match {
           case (l: Long) => {

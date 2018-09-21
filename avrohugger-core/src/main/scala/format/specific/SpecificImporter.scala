@@ -27,23 +27,34 @@ object SpecificImporter extends Importer {
       
     val switchAnnotSymbol = RootClass.newClass("scala.annotation.switch")
     val switchImport = IMPORT(switchAnnotSymbol)
+    val shapelessTagImport = IMPORT(RootClass.newClass(s"shapeless.tag.@@"))
     val topLevelSchemas =
       getTopLevelSchemas(schemaOrProtocol, schemaStore, typeMatcher)
     val recordSchemas = getRecordSchemas(topLevelSchemas)
     val enumSchemas = getEnumSchemas(topLevelSchemas)
     val deps = getUserDefinedImports(recordSchemas ++ enumSchemas, currentNamespace, typeMatcher)
+
+    def hasDecimalTypes(schema: Schema): Boolean =
+      Option(schema.getType).exists {
+        case Schema.Type.RECORD =>
+          schema.getFields.asScala.toList.map(isDecimalType).exists(identity)
+        case _ => false
+      }
+
+    def isDecimalType(field: Schema.Field): Boolean =
+      Option(field.schema().getLogicalType).exists(_.getName == "decimal")
     
     schemaOrProtocol match {
-      case Left(schema) => {
-        if (schema.getType == RECORD) switchImport :: deps
-        else deps
-      }
-      case Right(protocol) => {
+      case Left(schema) =>
+        val baseImports = if (hasDecimalTypes(schema)) shapelessTagImport :: deps else deps
+        if (schema.getType == RECORD) switchImport :: baseImports
+        else baseImports
+      case Right(protocol) =>
         val types = protocol.getTypes.asScala.toList
+        val baseImports = if (types.map(hasDecimalTypes).exists(identity)) shapelessTagImport :: deps else deps
         val messages = protocol.getMessages.asScala.toMap
-        if (messages.isEmpty) switchImport :: deps // for ADT
+        if (messages.isEmpty) switchImport :: baseImports // for ADT
         else List.empty // for RPC
-      }
     }
   }
 

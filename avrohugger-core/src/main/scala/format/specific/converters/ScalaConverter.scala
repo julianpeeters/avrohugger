@@ -3,14 +3,13 @@ package format
 package specific
 package converters
 
+import avrohugger.matchers.custom.CustomUtils.{decimalTagged, numberToNat}
 import matchers.TypeMatcher
 import stores.ClassStore
 import types._
-
 import treehugger.forest._
 import definitions._
 import treehuggerDSL._
-
 import org.apache.avro.{LogicalTypes, Schema}
 
 import scala.language.postfixOps
@@ -107,10 +106,11 @@ object ScalaConverter {
         val resultExpr = schema.getLogicalType match {
           case decimal: LogicalTypes.Decimal => {
             val Decimal = RootClass.newClass("org.apache.avro.LogicalTypes.Decimal")
+            val ref = decimalTagged(numberToNat.lift(decimal.getPrecision), numberToNat.lift(decimal.getScale))
             Block(
               VAL("schema") := (REF("getSchema").DOT("getFields").APPLY().DOT("get").APPLY(REF("field$")).DOT("schema").APPLY()),
               VAL("decimalType") := REF("schema").DOT("getLogicalType").APPLY().AS(Decimal),
-              REF("BigDecimal").APPLY(classSymbol.DOT("decimalConversion").DOT("fromBytes").APPLY(REF("buffer"),REF("schema"),REF("decimalType")))
+              ref.APPLY(REF("scala.math.BigDecimal").APPLY(classSymbol.DOT("decimalConversion").DOT("fromBytes").APPLY(REF("buffer"),REF("schema"),REF("decimalType"))))
             )
           }
           case _ => Block(REF("buffer") DOT "array" APPLY())

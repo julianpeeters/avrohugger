@@ -61,7 +61,7 @@ object DefaultValueMatcher {
         case Schema.Type.BYTES =>
           CustomDefaultParamMatcher.checkCustomDecimalType(
             schema = schema,
-            value = LIT(node.getDecimalValue.toString),
+            value = REF("scala.math.BigDecimal") APPLY LIT(node.getDecimalValue.toString),
             defaultValue = Some(REF("Array[Byte]") APPLY node.getTextValue.getBytes.map((e: Byte) => LIT(e))))
         case Schema.Type.ENUM => typeMatcher.avroScalaTypes.enum match {
           case JavaEnum => (REF(schema.getName) DOT node.getTextValue)

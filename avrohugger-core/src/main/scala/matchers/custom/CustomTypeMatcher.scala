@@ -47,11 +47,10 @@ object CustomTypeMatcher {
   }
 
   def checkCustomDecimalType(schema: Schema) =
-    LogicalType.foldLogicalTypes(
-      schema = schema,
-      default = TYPE_ARRAY(ByteClass)) {
-      case Decimal(precision, scale) =>
-        decimalTagged(numberToNat.lift(precision), numberToNat.lift(scale)).tpe
-    }
-
+      LogicalType.foldLogicalTypes(
+        schema = schema,
+        default = TYPE_ARRAY(ByteClass)) {
+        case Decimal(precision, scale) =>
+          decimalTaggedType(numberToNat.lift(precision), numberToNat.lift(scale))
+      }
 }

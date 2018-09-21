@@ -12,7 +12,7 @@ import org.specs2._
 import scala.util.Try
 
 class StandardFileToFileSpec extends Specification {
-  
+
   def is = s2"""
     Standard Generator fileToFile method should
     
