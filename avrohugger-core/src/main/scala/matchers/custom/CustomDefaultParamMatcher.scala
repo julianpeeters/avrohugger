@@ -42,7 +42,7 @@ object CustomDefaultParamMatcher {
     }
 
   def checkCustomDecimalType(decimalType: AvroScalaDecimalType, schema: Schema, default: => Tree, decimalValue: => Option[String] = None) = {
-    val decimalValueRef = decimalValue.map(dv => REF("scala.math.BigDecimal") APPLY LIT(dv)).getOrElse(LIT(0))
+    val decimalValueRef = REF("scala.math.BigDecimal") APPLY decimalValue.map(LIT(_)).getOrElse(LIT(0))
     LogicalType.foldLogicalTypes[Tree](
       schema = schema,
       default = default) {

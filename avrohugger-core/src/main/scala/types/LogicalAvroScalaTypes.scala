@@ -36,7 +36,7 @@ object LogicalType {
   
   def foldLogicalTypes[A](schema: Schema, default: => A)(cases : PartialFunction[LogicalType, A]): A =
     Option(schema.getLogicalType) match {
-      case Some(tpe) => LogicalType(tpe).map(cases(_)).getOrElse(default)
+      case Some(tpe) => LogicalType(tpe).flatMap(cases.lift(_)).getOrElse(default)
       case _ => default
     }
 

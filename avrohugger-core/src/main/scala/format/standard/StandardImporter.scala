@@ -36,11 +36,11 @@ object StandardImporter extends Importer {
       case Schema.Type.MAP    => determineShapelessImports(field, schema.getValueType(), typeMatcher)
       case Schema.Type.RECORD => schema.getFields.asScala.toList.flatMap(f =>
                                    determineShapelessImports(field, f.schema(), typeMatcher))
-      case Schema.Type.BYTES  => LogicalType.foldLogicalTypes(
+      case Schema.Type.BYTES  =>
+        LogicalType.foldLogicalTypes(
         schema = schema,
         default = List.empty[String]) {
         case Decimal(_, _) if typeMatcher.avroScalaTypes.decimal == ScalaBigDecimalWithPrecision => List("@@")
-        case _              => List.empty[String]
       }
       case _ => List.empty[String]
     }
