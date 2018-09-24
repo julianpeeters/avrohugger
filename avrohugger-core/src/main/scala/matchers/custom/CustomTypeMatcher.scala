@@ -46,10 +46,13 @@ object CustomTypeMatcher {
     case JavaTimeInstant  => RootClass.newClass(nme.createNameType("java.time.Instant"))
   }
 
-  def checkCustomDecimalType(schema: Schema) =
+  def checkCustomDecimalType(decimalType: AvroScalaDecimalType, schema: Schema) =
       LogicalType.foldLogicalTypes(
         schema = schema,
         default = TYPE_ARRAY(ByteClass)) {
-        case Decimal(precision, scale) => decimalTaggedType(precision, scale)
+        case Decimal(precision, scale) =>
+          if (decimalType == ScalaBigDecimalWithPrecision)
+            decimalTaggedType(precision, scale)
+          else BigDecimalClass
       }
 }

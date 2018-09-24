@@ -3,10 +3,8 @@ package example.logical
 
 import scala.annotation.switch
 
-import shapeless.tag.@@
-
-case class LogicalSc(var data: scala.math.BigDecimal @@ (shapeless.Nat._9, shapeless.Nat._2), var ts: java.time.Instant, var dt: java.time.LocalDate, var uuid: java.util.UUID, var dataBig: scala.math.BigDecimal @@ ((shapeless.Nat._2, shapeless.Nat._0), (shapeless.Nat._1, shapeless.Nat._2))) extends org.apache.avro.specific.SpecificRecordBase {
-  def this() = this(shapeless.tag[(shapeless.Nat._9, shapeless.Nat._2)][scala.math.BigDecimal](0), java.time.Instant.now, java.time.LocalDate.now, java.util.UUID.randomUUID, shapeless.tag[((shapeless.Nat._2, shapeless.Nat._0), (shapeless.Nat._1, shapeless.Nat._2))][scala.math.BigDecimal](0))
+case class LogicalSc(var data: BigDecimal, var ts: java.time.Instant, var dt: java.time.LocalDate, var uuid: java.util.UUID, var dataBig: BigDecimal) extends org.apache.avro.specific.SpecificRecordBase {
+  def this() = this(0, java.time.Instant.now, java.time.LocalDate.now, java.util.UUID.randomUUID, 0)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {
@@ -44,10 +42,10 @@ case class LogicalSc(var data: scala.math.BigDecimal @@ (shapeless.Nat._9, shape
           case (buffer: java.nio.ByteBuffer) => {
             val schema = getSchema.getFields().get(field$).schema()
             val decimalType = schema.getLogicalType().asInstanceOf[org.apache.avro.LogicalTypes.Decimal]
-            shapeless.tag[(shapeless.Nat._9, shapeless.Nat._2)][scala.math.BigDecimal](scala.math.BigDecimal(LogicalSc.decimalConversion.fromBytes(buffer, schema, decimalType)))
+            BigDecimal(LogicalSc.decimalConversion.fromBytes(buffer, schema, decimalType))
           }
         }
-      }.asInstanceOf[scala.math.BigDecimal @@ (shapeless.Nat._9, shapeless.Nat._2)]
+      }.asInstanceOf[BigDecimal]
       case 1 => this.ts = {
         value match {
           case (l: Long) => {
@@ -74,10 +72,10 @@ case class LogicalSc(var data: scala.math.BigDecimal @@ (shapeless.Nat._9, shape
           case (buffer: java.nio.ByteBuffer) => {
             val schema = getSchema.getFields().get(field$).schema()
             val decimalType = schema.getLogicalType().asInstanceOf[org.apache.avro.LogicalTypes.Decimal]
-            shapeless.tag[((shapeless.Nat._2, shapeless.Nat._0), (shapeless.Nat._1, shapeless.Nat._2))][scala.math.BigDecimal](scala.math.BigDecimal(LogicalSc.decimalConversion.fromBytes(buffer, schema, decimalType)))
+            BigDecimal(LogicalSc.decimalConversion.fromBytes(buffer, schema, decimalType))
           }
         }
-      }.asInstanceOf[scala.math.BigDecimal @@ ((shapeless.Nat._2, shapeless.Nat._0), (shapeless.Nat._1, shapeless.Nat._2))]
+      }.asInstanceOf[BigDecimal]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()

@@ -52,7 +52,10 @@ object DefaultParamMatcher {
       case Type.ENUM    =>
         CustomDefaultParamMatcher.checkCustomEnumType(typeMatcher.avroScalaTypes.enum)
       case Type.BYTES   =>
-        CustomDefaultParamMatcher.checkCustomDecimalType(schema = avroSchema, value = LIT(0))
+        CustomDefaultParamMatcher.checkCustomDecimalType(
+          decimalType = typeMatcher.avroScalaTypes.decimal,
+          schema = avroSchema,
+          default = NULL)
       case Type.RECORD  => NEW(classStore.generatedClasses(avroSchema))
       case Type.UNION   => NONE
       case Type.ARRAY   =>

@@ -41,10 +41,15 @@ object CustomDefaultParamMatcher {
       case JavaTimeInstant  => REF("java.time.Instant.now")
     }
 
-  def checkCustomDecimalType(schema: Schema, value: => Tree, defaultValue: => Option[Tree] = None) =
+  def checkCustomDecimalType(decimalType: AvroScalaDecimalType, schema: Schema, default: => Tree, decimalValue: => Option[String] = None) = {
+    val decimalValueRef = decimalValue.map(dv => REF("scala.math.BigDecimal") APPLY LIT(dv)).getOrElse(LIT(0))
     LogicalType.foldLogicalTypes[Tree](
       schema = schema,
-      default = defaultValue getOrElse NULL) {
-      case Decimal(precision, scale) => decimalTagged(precision, scale) APPLY value
+      default = default) {
+      case Decimal(precision, scale) if decimalType == ScalaBigDecimalWithPrecision =>
+        decimalTagged(precision, scale) APPLY decimalValueRef
+      case Decimal(_, _) =>
+        decimalValueRef
     }
+  }
 }

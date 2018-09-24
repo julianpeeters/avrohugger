@@ -3,10 +3,8 @@ package example.idl
 
 import scala.annotation.switch
 
-import shapeless.tag.@@
-
-case class LogicalIdl(var dec: scala.math.BigDecimal @@ (shapeless.Nat._9, shapeless.Nat._2) = shapeless.tag[(shapeless.Nat._9, shapeless.Nat._2)][scala.math.BigDecimal](scala.math.BigDecimal("8888.88")), var maybeDec: Option[scala.math.BigDecimal @@ (shapeless.Nat._9, shapeless.Nat._2)] = Some(shapeless.tag[(shapeless.Nat._9, shapeless.Nat._2)][scala.math.BigDecimal](scala.math.BigDecimal("9999.99"))), var ts: java.time.Instant = java.time.Instant.ofEpochMilli(1526573732000L), var dt: java.time.LocalDate = java.time.LocalDate.ofEpochDay(600L), var decBig: scala.math.BigDecimal @@ ((shapeless.Nat._2, shapeless.Nat._0), (shapeless.Nat._1, shapeless.Nat._2)) = shapeless.tag[((shapeless.Nat._2, shapeless.Nat._0), (shapeless.Nat._1, shapeless.Nat._2))][scala.math.BigDecimal](scala.math.BigDecimal("7777.77"))) extends org.apache.avro.specific.SpecificRecordBase {
-  def this() = this(shapeless.tag[(shapeless.Nat._9, shapeless.Nat._2)][scala.math.BigDecimal](scala.math.BigDecimal("8888.88")), Some(shapeless.tag[(shapeless.Nat._9, shapeless.Nat._2)][scala.math.BigDecimal](scala.math.BigDecimal("9999.99"))), java.time.Instant.ofEpochMilli(1526573732000L), java.time.LocalDate.ofEpochDay(600L), shapeless.tag[((shapeless.Nat._2, shapeless.Nat._0), (shapeless.Nat._1, shapeless.Nat._2))][scala.math.BigDecimal](scala.math.BigDecimal("7777.77")))
+case class LogicalIdl(var dec: BigDecimal = scala.math.BigDecimal("8888.88"), var maybeDec: Option[BigDecimal] = Some(scala.math.BigDecimal("9999.99")), var ts: java.time.Instant = java.time.Instant.ofEpochMilli(1526573732000L), var dt: java.time.LocalDate = java.time.LocalDate.ofEpochDay(600L), var decBig: BigDecimal = scala.math.BigDecimal("7777.77")) extends org.apache.avro.specific.SpecificRecordBase {
+  def this() = this(scala.math.BigDecimal("8888.88"), Some(scala.math.BigDecimal("9999.99")), java.time.Instant.ofEpochMilli(1526573732000L), java.time.LocalDate.ofEpochDay(600L), scala.math.BigDecimal("7777.77"))
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {
@@ -54,10 +52,10 @@ case class LogicalIdl(var dec: scala.math.BigDecimal @@ (shapeless.Nat._9, shape
           case (buffer: java.nio.ByteBuffer) => {
             val schema = getSchema.getFields().get(field$).schema()
             val decimalType = schema.getLogicalType().asInstanceOf[org.apache.avro.LogicalTypes.Decimal]
-            shapeless.tag[(shapeless.Nat._9, shapeless.Nat._2)][scala.math.BigDecimal](scala.math.BigDecimal(LogicalIdl.decimalConversion.fromBytes(buffer, schema, decimalType)))
+            BigDecimal(LogicalIdl.decimalConversion.fromBytes(buffer, schema, decimalType))
           }
         }
-      }.asInstanceOf[scala.math.BigDecimal @@ (shapeless.Nat._9, shapeless.Nat._2)]
+      }.asInstanceOf[BigDecimal]
       case 1 => this.maybeDec = {
         value match {
           case null => None
@@ -65,11 +63,11 @@ case class LogicalIdl(var dec: scala.math.BigDecimal @@ (shapeless.Nat._9, shape
             case (buffer: java.nio.ByteBuffer) => {
               val schema = getSchema.getFields().get(field$).schema()
               val decimalType = schema.getLogicalType().asInstanceOf[org.apache.avro.LogicalTypes.Decimal]
-              shapeless.tag[(shapeless.Nat._9, shapeless.Nat._2)][scala.math.BigDecimal](scala.math.BigDecimal(LogicalIdl.decimalConversion.fromBytes(buffer, schema, decimalType)))
+              BigDecimal(LogicalIdl.decimalConversion.fromBytes(buffer, schema, decimalType))
             }
           })
         }
-      }.asInstanceOf[Option[scala.math.BigDecimal @@ (shapeless.Nat._9, shapeless.Nat._2)]]
+      }.asInstanceOf[Option[BigDecimal]]
       case 2 => this.ts = {
         value match {
           case (l: Long) => {
@@ -89,10 +87,10 @@ case class LogicalIdl(var dec: scala.math.BigDecimal @@ (shapeless.Nat._9, shape
           case (buffer: java.nio.ByteBuffer) => {
             val schema = getSchema.getFields().get(field$).schema()
             val decimalType = schema.getLogicalType().asInstanceOf[org.apache.avro.LogicalTypes.Decimal]
-            shapeless.tag[((shapeless.Nat._2, shapeless.Nat._0), (shapeless.Nat._1, shapeless.Nat._2))][scala.math.BigDecimal](scala.math.BigDecimal(LogicalIdl.decimalConversion.fromBytes(buffer, schema, decimalType)))
+            BigDecimal(LogicalIdl.decimalConversion.fromBytes(buffer, schema, decimalType))
           }
         }
-      }.asInstanceOf[scala.math.BigDecimal @@ ((shapeless.Nat._2, shapeless.Nat._0), (shapeless.Nat._1, shapeless.Nat._2))]
+      }.asInstanceOf[BigDecimal]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()

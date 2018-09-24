@@ -37,6 +37,7 @@ class StandardStringToStringsSpec extends Specification {
       
       correctly generate a protocol with no ADT when asked $e21
       correctly generate logical types values $e22
+      correctly generate logical types values with tagged decimals $e23
   """
   
   def eB = {
@@ -204,6 +205,15 @@ class StandardStringToStringsSpec extends Specification {
     val gen = new Generator(Standard)
     val List(source) = gen.stringToStrings(inputString)
     val expected = util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/LogicalIdl.scala")
+    source === expected
+  }
+
+  def e23 = {
+    val inputString = util.Util.readFile("avrohugger-core/src/test/avro/logical.avdl")
+    val myAvroScalaCustomTypes = Standard.defaultTypes.copy(decimal = ScalaBigDecimalWithPrecision)
+    val gen = new Generator(Standard, avroScalaCustomTypes = Some(myAvroScalaCustomTypes))
+    val List(source) = gen.stringToStrings(inputString)
+    val expected = util.Util.readFile("avrohugger-core/src/test/expected/standard-tagged/example/idl/LogicalIdl.scala")
     source === expected
   }
 }

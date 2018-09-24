@@ -39,7 +39,7 @@ object StandardImporter extends Importer {
       case Schema.Type.BYTES  => LogicalType.foldLogicalTypes(
         schema = schema,
         default = List.empty[String]) {
-        case Decimal(_, _)  => List("@@")
+        case Decimal(_, _) if typeMatcher.avroScalaTypes.decimal == ScalaBigDecimalWithPrecision => List("@@")
         case _              => List.empty[String]
       }
       case _ => List.empty[String]
