@@ -40,7 +40,7 @@ object StandardImporter extends Importer {
         LogicalType.foldLogicalTypes(
         schema = schema,
         default = List.empty[String]) {
-        case Decimal(_, _) if typeMatcher.avroScalaTypes.decimal == ScalaBigDecimalWithPrecision => List("@@")
+        case Decimal(_, _) if typeMatcher.avroScalaTypes.decimal == ScalaBigDecimalWithPrecision => List("tag.@@")
       }
       case _ => List.empty[String]
     }
