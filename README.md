@@ -77,7 +77,7 @@ runtime, Java classes provided separately (see [Scavro Plugin](https://github.co
 |Date|java.time.LocalDate<br>java.sql.Date|java.time.LocalDate<br>java.sql.Date|Not yet supported| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 |TimestampMillis|java.time.Instant<br>java.sql.Timestamp|java.time.Instant<br>java.sql.Timestamp|Not yet supported|  See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 |UUID|java.util.UUID|java.util.UUID|Not yet supported|  See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
-|Decimal|BigDecimal|BigDecimal|Not yet supported||
+|Decimal|BigDecimal|BigDecimal|Not yet supported|  See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 
 ##### Logical Types Support:
 
@@ -177,6 +177,7 @@ To reassign Scala types to Avro types, use the following (e.g. for customizing `
 * `union` can be assigned to  `OptionShapelessCoproduct`, `OptionEitherShapelessCoproduct`, or `OptionalShapelessCoproduct`
 * `int`, `long`, `float`, `double` can be assigned to `ScalaInt`, `ScalaLong`, `ScalaFloat`, `ScalaDouble`
 * `protocol` can be assigned to `ScalaADT` and `NoTypeGenerated`
+* `decimal` can be assigned to `ScalaBigDecimal` and `ScalaBigDecimalWithPrecision` (via Shapeless Tagged Types)
 
 ##### Customizable Namespace Mapping:
 
