@@ -36,6 +36,7 @@ class StandardFileToStringsSpec extends Specification {
 
       correctly generate a protocol with no ADT when asked $e21
       correctly generate logical types from IDL $e22
+      correctly generate logical types from IDL with tagged decimals $e23
   """
   
   // tests specific to fileToX
@@ -222,6 +223,15 @@ class StandardFileToStringsSpec extends Specification {
     val gen = new Generator(Standard)
     val List(source) = gen.fileToStrings(infile)
     val expected = util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/LogicalIdl.scala")
+    source === expected
+  }
+
+  def e23 = {
+    val infile = new java.io.File("avrohugger-core/src/test/avro/logical.avdl")
+    val myAvroScalaCustomTypes = Standard.defaultTypes.copy(decimal = ScalaBigDecimalWithPrecision)
+    val gen = new Generator(Standard, avroScalaCustomTypes = Some(myAvroScalaCustomTypes))
+    val List(source) = gen.fileToStrings(infile)
+    val expected = util.Util.readFile("avrohugger-core/src/test/expected/standard-tagged/example/idl/LogicalIdl.scala")
     source === expected
   }
 

@@ -46,7 +46,7 @@ class SpecificFileToFileSpec extends Specification {
       correctly generate logical types from IDL $e26
       correctly generate logical types with custom date and timestamp types $e27
   """
-  
+
   // tests specific to fileToX
   def eA = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/twitter.avro")

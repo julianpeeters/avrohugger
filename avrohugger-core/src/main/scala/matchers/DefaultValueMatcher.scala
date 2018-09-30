@@ -59,11 +59,11 @@ object DefaultValueMatcher {
             case UUID => REF("java.util.UUID.fromString") APPLY LIT(node.getTextValue)
           }
         case Schema.Type.BYTES =>
-          LogicalType.foldLogicalTypes(
+          CustomDefaultParamMatcher.checkCustomDecimalType(
+            decimalType = typeMatcher.avroScalaTypes.decimal,
             schema = schema,
-            default = REF("Array[Byte]") APPLY node.getTextValue.getBytes.map((e: Byte) => LIT(e))) {
-            case Decimal => REF("scala.math.BigDecimal") APPLY LIT(node.getDecimalValue.toString)
-          }
+            default = REF("Array[Byte]") APPLY node.getTextValue.getBytes.map((e: Byte) => LIT(e)),
+            decimalValue = Some(node.getDecimalValue.toString))
         case Schema.Type.ENUM => typeMatcher.avroScalaTypes.enum match {
           case JavaEnum => (REF(schema.getName) DOT node.getTextValue)
           case ScalaEnumeration => (REF(schema.getName) DOT node.getTextValue)

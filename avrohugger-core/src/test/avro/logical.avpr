@@ -38,6 +38,18 @@
             "type": "string",
             "logicalType": "uuid"
           }
+        },
+        {
+          "name": "decBig",
+          "type": {
+            "type": "bytes",
+            "logicalType": "decimal",
+            "precision": 20,
+            "scale": 12
+          },
+          "logicalType": "decimal",
+          "precision": 20,
+          "scale": 12
         }
       ]
     }

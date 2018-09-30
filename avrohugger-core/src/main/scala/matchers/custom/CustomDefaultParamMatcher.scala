@@ -2,12 +2,13 @@ package avrohugger
 package matchers
 package custom
 
+import avrohugger.matchers.custom.CustomUtils._
 import avrohugger.types._
-
 import treehugger.forest._
 import definitions._
 import treehuggerDSL._
-import java.sql.Timestamp
+
+import org.apache.avro.Schema
 
 object CustomDefaultParamMatcher {
 
@@ -39,4 +40,16 @@ object CustomDefaultParamMatcher {
       case JavaSqlTimestamp => NEW(REF("java.sql.Timestamp"), LIT(0L))
       case JavaTimeInstant  => REF("java.time.Instant.now")
     }
+
+  def checkCustomDecimalType(decimalType: AvroScalaDecimalType, schema: Schema, default: => Tree, decimalValue: => Option[String] = None) = {
+    val decimalValueRef = REF("scala.math.BigDecimal") APPLY decimalValue.map(LIT(_)).getOrElse(LIT(0))
+    LogicalType.foldLogicalTypes[Tree](
+      schema = schema,
+      default = default) {
+      case Decimal(precision, scale) if decimalType == ScalaBigDecimalWithPrecision =>
+        decimalTagged(precision, scale) APPLY decimalValueRef
+      case Decimal(_, _) =>
+        decimalValueRef
+    }
+  }
 }

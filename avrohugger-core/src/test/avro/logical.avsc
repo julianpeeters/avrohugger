@@ -32,6 +32,15 @@
         "type": "string",
         "logicalType": "uuid"
       }
+    },
+    {
+      "name": "dataBig",
+      "type": {
+        "type": "bytes",
+        "logicalType": "decimal",
+        "precision": 20,
+        "scale": 12
+      }
     }
   ]
 }

@@ -62,12 +62,7 @@ class TypeMatcher(
             case UUID => RootClass.newClass(nme.createNameType("java.util.UUID"))
           }
         case Schema.Type.FIXED    => sys.error("FIXED datatype not yet supported")
-        case Schema.Type.BYTES    =>
-          LogicalType.foldLogicalTypes(
-            schema = schema,
-            default = TYPE_ARRAY(ByteClass)) {
-            case Decimal => BigDecimalClass
-          }
+        case Schema.Type.BYTES    => CustomTypeMatcher.checkCustomDecimalType(avroScalaTypes.decimal, schema)
         case Schema.Type.RECORD   => classStore.generatedClasses(schema)
         case Schema.Type.ENUM     => CustomTypeMatcher.checkCustomEnumType(avroScalaTypes.enum, classStore, schema)
         case Schema.Type.UNION    => {

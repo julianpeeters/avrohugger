@@ -4,12 +4,11 @@ package matchers
 import avrohugger.matchers.custom.CustomDefaultParamMatcher
 import avrohugger.stores.ClassStore
 import avrohugger.types._
-
 import org.apache.avro.Schema
 import org.apache.avro.Schema.Type
-
 import treehugger.forest._
 import definitions._
+import treehugger.forest
 import treehuggerDSL._
 
 
@@ -53,11 +52,10 @@ object DefaultParamMatcher {
       case Type.ENUM    =>
         CustomDefaultParamMatcher.checkCustomEnumType(typeMatcher.avroScalaTypes.enum)
       case Type.BYTES   =>
-        LogicalType.foldLogicalTypes[Tree](
+        CustomDefaultParamMatcher.checkCustomDecimalType(
+          decimalType = typeMatcher.avroScalaTypes.decimal,
           schema = avroSchema,
-          default = NULL) {
-          case Decimal => REF("scala.math.BigDecimal") APPLY LIT(0)
-        }
+          default = NULL)
       case Type.RECORD  => NEW(classStore.generatedClasses(avroSchema))
       case Type.UNION   => NONE
       case Type.ARRAY   =>
@@ -66,8 +64,7 @@ object DefaultParamMatcher {
         MAKE_MAP(LIT("") ANY_-> asDefaultParam(classStore, avroSchema.getValueType, typeMatcher))
       
     }
-    
-    
+
   }
 
 }
