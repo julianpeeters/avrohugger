@@ -26,7 +26,7 @@ object StandardImporter extends Importer {
   private[this] def getShapelessImports(
     topLevelRecordSchemas: List[Schema],
     typeMatcher: TypeMatcher): List[Import] = {
-    
+
     def determineShapelessImports(
       field: Schema.Field,
       schema: Schema,
@@ -36,15 +36,19 @@ object StandardImporter extends Importer {
       case Schema.Type.MAP    => determineShapelessImports(field, schema.getValueType(), typeMatcher)
       case Schema.Type.RECORD => schema.getFields.asScala.toList.flatMap(f =>
                                    determineShapelessImports(field, f.schema(), typeMatcher))
-      case Schema.Type.BYTES  =>
-        LogicalType.foldLogicalTypes(
-        schema = schema,
-        default = List.empty[String]) {
-        case Decimal(_, _) if typeMatcher.avroScalaTypes.decimal == ScalaBigDecimalWithPrecision => List("tag.@@")
-      }
+      case Schema.Type.BYTES  => importsForBigDecimalTaggedB(schema)
       case _ => List.empty[String]
     }
-    
+
+    def importsForBigDecimalTaggedB(schemas: Schema*): List[String] =
+      schemas.find { schema =>
+        schema.getType == Schema.Type.BYTES && LogicalType.foldLogicalTypes(
+          schema = schema,
+          default = false) {
+          case Decimal(_, _) if typeMatcher.avroScalaTypes.decimal == ScalaBigDecimalWithPrecision => true
+        }
+      }.map(_ => List("tag.@@")).getOrElse(Nil)
+
     def importsForUnionType(
       field: Schema.Field,
       unionSchema: Schema,
@@ -64,12 +68,14 @@ object StandardImporter extends Importer {
       val unionTypes = unionSchema.getTypes.asScala.toList
       val isShapelessCoproduct: Boolean = shapelessCoproductTest(unionTypes, thresholdNonNullTypes)
       val hasDefaultValue: Boolean = defaultValueTest(field, unionTypes, thresholdNonNullTypes)
-      if (isShapelessCoproduct && hasDefaultValue)
+      val unionImports = if (isShapelessCoproduct && hasDefaultValue)
         List(":+:", "CNil", "Coproduct")
       else if (isShapelessCoproduct)
         List(":+:", "CNil")
       else
         List.empty[String]
+
+      unionImports ++ importsForBigDecimalTaggedB(unionTypes:_*)
     }
     val shapelessImport: List[String] => List[Import] = {
       case Nil          => Nil
