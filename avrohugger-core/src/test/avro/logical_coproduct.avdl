@@ -1,0 +1,9 @@
+@namespace("example.idl")
+
+protocol LogicalCoproductIDL {
+
+  record LogicalCoproductIdl {
+    union {decimal(9, 2), string, boolean} maybeDec = 9999.99;
+  }
+
+}

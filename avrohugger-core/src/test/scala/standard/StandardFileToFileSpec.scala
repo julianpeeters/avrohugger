@@ -55,6 +55,9 @@ class StandardFileToFileSpec extends Specification {
     correctly generate logical types from protocol tagged decimals $e33
     correctly generate logical types from IDL tagged decimals $e34
     correctly generate logical types with custom date and timestamp types tagged decimals $e35
+    correctly generate optional logical types from IDL tagged decimals $e36
+    correctly generate an either containing logical types from IDL tagged decimals $e37
+    correctly generate a coproduct containing logical types from IDL tagged decimals $e38
   """
   
   // tests standard to fileToX
@@ -513,4 +516,39 @@ class StandardFileToFileSpec extends Specification {
     source === util.Util.readFile("avrohugger-core/src/test/expected/standard-tagged/example/logical/LogicalSql.scala")
   }
 
+  def e36 = {
+    val infile = new java.io.File("avrohugger-core/src/test/avro/logical_optional.avdl")
+    val myAvroScalaCustomTypes = Standard.defaultTypes.copy(decimal = ScalaBigDecimalWithPrecision)
+    val gen = new Generator(Standard, avroScalaCustomTypes = Some(myAvroScalaCustomTypes))
+    val outDir = gen.defaultOutputDir + "/standard-tagged/"
+    gen.fileToFile(infile, outDir)
+
+    val source = util.Util.readFile("target/generated-sources/standard-tagged/example/idl/LogicalOptionalIdl.scala")
+
+    source === util.Util.readFile("avrohugger-core/src/test/expected/standard-tagged/example/idl/LogicalOptionalIdl.scala")
+  }
+
+  def e37 = {
+    val infile = new java.io.File("avrohugger-core/src/test/avro/logical_either.avdl")
+    val myAvroScalaCustomTypes = Standard.defaultTypes.copy(decimal = ScalaBigDecimalWithPrecision)
+    val gen = new Generator(Standard, avroScalaCustomTypes = Some(myAvroScalaCustomTypes))
+    val outDir = gen.defaultOutputDir + "/standard-tagged/"
+    gen.fileToFile(infile, outDir)
+
+    val source = util.Util.readFile("target/generated-sources/standard-tagged/example/idl/LogicalEitherIdl.scala")
+
+    source === util.Util.readFile("avrohugger-core/src/test/expected/standard-tagged/example/idl/LogicalEitherIdl.scala")
+  }
+
+  def e38 = {
+    val infile = new java.io.File("avrohugger-core/src/test/avro/logical_coproduct.avdl")
+    val myAvroScalaCustomTypes = Standard.defaultTypes.copy(decimal = ScalaBigDecimalWithPrecision)
+    val gen = new Generator(Standard, avroScalaCustomTypes = Some(myAvroScalaCustomTypes))
+    val outDir = gen.defaultOutputDir + "/standard-tagged/"
+    gen.fileToFile(infile, outDir)
+
+    val source = util.Util.readFile("target/generated-sources/standard-tagged/example/idl/LogicalCoproductIdl.scala")
+
+    source === util.Util.readFile("avrohugger-core/src/test/expected/standard-tagged/example/idl/LogicalCoproductIdl.scala")
+  }
 }

@@ -1,0 +1,9 @@
+@namespace("example.idl")
+
+protocol LogicalOptionalIDL {
+
+  record LogicalOptionalIdl {
+    union {decimal(9, 2), null} maybeDec = 9999.99;
+  }
+
+}
