@@ -36,11 +36,11 @@ object StandardImporter extends Importer {
       case Schema.Type.MAP    => determineShapelessImports(field, schema.getValueType(), typeMatcher)
       case Schema.Type.RECORD => schema.getFields.asScala.toList.flatMap(f =>
                                    determineShapelessImports(field, f.schema(), typeMatcher))
-      case Schema.Type.BYTES  => importsForBigDecimalTaggedB(schema)
+      case Schema.Type.BYTES  => importsForBigDecimalTagged(schema)
       case _ => List.empty[String]
     }
 
-    def importsForBigDecimalTaggedB(schemas: Schema*): List[String] =
+    def importsForBigDecimalTagged(schemas: Schema*): List[String] =
       schemas.find { schema =>
         schema.getType == Schema.Type.BYTES && LogicalType.foldLogicalTypes(
           schema = schema,
@@ -75,7 +75,7 @@ object StandardImporter extends Importer {
       else
         List.empty[String]
 
-      unionImports ++ importsForBigDecimalTaggedB(unionTypes:_*)
+      unionImports ++ importsForBigDecimalTagged(unionTypes:_*)
     }
     val shapelessImport: List[String] => List[Import] = {
       case Nil          => Nil
