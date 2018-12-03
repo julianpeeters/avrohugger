@@ -41,7 +41,7 @@ class StandardFileToStringsSpec extends Specification {
       correctly generate an either containing logical types from IDL tagged decimals $e25
       correctly generate a coproduct containing logical types from IDL tagged decimals $e26
     """
-  
+
   // tests specific to fileToX
   def eA = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/twitter.avro")

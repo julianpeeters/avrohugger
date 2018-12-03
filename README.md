@@ -323,6 +323,7 @@ Contributors:
 - [Chris Albright](https://github.com/chrisalbright)
 - [Andrew Gustafson](https://github.com/agustafson)
 - [Fede Fernández](https://github.com/fedefernandez)
+- [Francisco Díaz](https://github.com/franciscodr)
 
 ##### Criticism is appreciated.
 
