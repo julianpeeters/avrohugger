@@ -18,7 +18,7 @@ case class LogicalIdl(var dec: BigDecimal = scala.math.BigDecimal("8888.88"), va
       case 1 => {
         maybeDec match {
           case Some(x) => {
-            val schema = getSchema.getFields().get(field$).schema()
+            val schema = getSchema.getFields().get(field$).schema().getTypes.asScala.toList.find(_.getFullName == "bytes").get
             val decimalType = schema.getLogicalType().asInstanceOf[org.apache.avro.LogicalTypes.Decimal]
             val scale = decimalType.getScale()
             val scaledValue = x.setScale(scale)
@@ -61,7 +61,7 @@ case class LogicalIdl(var dec: BigDecimal = scala.math.BigDecimal("8888.88"), va
           case null => None
           case _ => Some(value match {
             case (buffer: java.nio.ByteBuffer) => {
-              val schema = getSchema.getFields().get(field$).schema()
+              val schema = getSchema.getFields().get(field$).schema().getTypes.asScala.toList.find(_.getFullName == "bytes").get
               val decimalType = schema.getLogicalType().asInstanceOf[org.apache.avro.LogicalTypes.Decimal]
               BigDecimal(LogicalIdl.decimalConversion.fromBytes(buffer, schema, decimalType))
             }
