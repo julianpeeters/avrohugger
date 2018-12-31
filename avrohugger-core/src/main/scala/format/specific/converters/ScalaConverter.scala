@@ -3,6 +3,8 @@ package format
 package specific
 package converters
 
+import SchemaAccessors._
+
 import matchers.TypeMatcher
 import stores.ClassStore
 import types._
@@ -41,6 +43,8 @@ object ScalaConverter {
     classStore: ClassStore,
     namespace: Option[String],
     schema: Schema,
+    schemaAccessor: Tree,
+    isUnionMember: Boolean,
     tree: Tree, 
     typeMatcher: TypeMatcher,
     classSymbol: ClassSymbol): Tree = {
@@ -51,7 +55,15 @@ object ScalaConverter {
         val elementType = typeMatcher.toScalaType(classStore, namespace, elementSchema)
         val JavaList = RootClass.newClass("java.util.List[_]")
         val applyParam = REF("array") DOT("iterator")
-        val elementConversion = convertFromJava(classStore, namespace, elementSchema, REF("x"), typeMatcher, classSymbol)
+        val elementConversion = convertFromJava(
+          classStore,
+          namespace,
+          elementSchema,
+          if (isUnionMember) arrayAccessor(unionAccessor(schemaAccessor, schema.getFullName)) else arrayAccessor(schemaAccessor),
+          false,
+          REF("x"),
+          typeMatcher,
+          classSymbol)
         val seqArgs = {
           SEQARG(
             REF("scala.collection.JavaConverters.asScalaIteratorConverter").APPLY(applyParam).DOT("asScala").DOT("toSeq")
@@ -94,7 +106,15 @@ object ScalaConverter {
             .MAP(LAMBDA(PARAM("kvp")) ==> BLOCK(
               VAL("key") := REF("kvp._1").DOT("toString"),
               VAL("value") := REF("kvp._2"),
-              PAREN(REF("key"), convertFromJava(classStore, namespace, schema.getValueType, REF("value"), typeMatcher, classSymbol)))
+              PAREN(REF("key"), convertFromJava(
+                classStore,
+                namespace,
+                schema.getValueType,
+                if (isUnionMember) mapAccessor(unionAccessor(schemaAccessor, schema.getFullName)) else mapAccessor(schemaAccessor),
+                false,
+                REF("value"),
+                typeMatcher,
+                classSymbol)))
             )
           )
         }
@@ -108,7 +128,7 @@ object ScalaConverter {
           case decimal: LogicalTypes.Decimal => {
             val Decimal = RootClass.newClass("org.apache.avro.LogicalTypes.Decimal")
             Block(
-              VAL("schema") := (REF("getSchema").DOT("getFields").APPLY().DOT("get").APPLY(REF("field$")).DOT("schema").APPLY()),
+              VAL("schema") := {if (isUnionMember) unionAccessor(schemaAccessor, schema.getFullName) else schemaAccessor},
               VAL("decimalType") := REF("schema").DOT("getLogicalType").APPLY().AS(Decimal),
               REF("BigDecimal").APPLY(classSymbol.DOT("decimalConversion").DOT("fromBytes").APPLY(REF("buffer"),REF("schema"),REF("decimalType")))
             )
@@ -130,7 +150,15 @@ object ScalaConverter {
         else {
           val typeParamSchema = types.find(x => x.getType != Schema.Type.NULL).get
           val nullConversion = CASE(NULL) ==> NONE
-          val someExpr = SOME(convertFromJava(classStore, namespace, typeParamSchema, tree, typeMatcher, classSymbol))
+          val someExpr = SOME(convertFromJava(
+            classStore,
+            namespace,
+            typeParamSchema,
+            schemaAccessor,
+            true,
+            tree,
+            typeMatcher,
+            classSymbol))
           val someConversion = CASE(WILDCARD) ==> someExpr
           val conversionCases = List(nullConversion, someConversion)
           tree MATCH(conversionCases:_*)

@@ -27,6 +27,8 @@ object PutGenerator {
               classStore,
               namespace,
               field.avroField.schema,
+              REF("getSchema").DOT("getFields").APPLY().DOT("get").APPLY(REF("field$")).DOT("schema").APPLY(),
+              false,
               REF("value"),
               typeMatcher,
               classSymbol))
