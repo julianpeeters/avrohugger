@@ -34,10 +34,16 @@ object SpecificObjectTree {
     val DecimalConversion = RootClass.newClass("org.apache.avro.Conversions.DecimalConversion")
     val decimalConversionDef = VAL(REF("decimalConversion")) := NEW(DecimalConversion)
     def schemaContainsDecimal(schema: Schema): Boolean = {
+      def getNestedSchemas(s: Schema): List[Schema] = s.getType match {
+        case Schema.Type.ARRAY => getNestedSchemas(s.getElementType)
+        case Schema.Type.MAP => getNestedSchemas(s.getValueType)
+        case Schema.Type.UNION => s.getTypes.asScala.toList.flatMap(getNestedSchemas)
+        case _ => List(s)
+      }
       val topLevelSchemas = SpecificImporter.getTopLevelSchemas(Left(schema), schemaStore, typeMatcher)
       val recordSchemas = SpecificImporter.getRecordSchemas(topLevelSchemas).filter(s => s.getType == Schema.Type.RECORD)
-      val fieldSchemas = recordSchemas.flatMap(collectFieldSchemas)
-      fieldSchemas.exists(s => Option(s.getLogicalType()) match {
+      val fieldSchemas = recordSchemas.flatMap(_.getFields.asScala.map(_.schema()))
+      fieldSchemas.flatMap(getNestedSchemas).exists(s => Option(s.getLogicalType()) match {
         case Some(logicalType) => logicalType.getName == "decimal"
         case None => false
       })
@@ -45,18 +51,6 @@ object SpecificObjectTree {
     // companion object definition
     if (schemaContainsDecimal(schema)) objectDef := BLOCK(schemaDef, decimalConversionDef)
     else objectDef := BLOCK(schemaDef)
-  }
-
-  def collectFieldSchemas(sc: Schema): Seq[Schema] = {
-    val fields = sc.getFields.asScala
-    fields.flatMap { field =>
-      val schema = field.schema()
-      if (schema.getType.equals(Type.UNION)) {
-        collectUnionFields(schema)
-      } else {
-        Seq(field.schema())
-      }
-    }.toList
   }
 
   // union acts as a blackbox, fields are not seen on root level, unpack is required

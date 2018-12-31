@@ -10,7 +10,7 @@ case class NullableDecimal(var ciao: Option[BigDecimal] = None) extends org.apac
       case 0 => {
         ciao match {
           case Some(x) => {
-            val schema = getSchema.getFields().get(field$).schema()
+            val schema = scala.collection.JavaConverters.asScalaBufferConverter(getSchema.getFields().get(field$).schema().getTypes).asScala.toList.find(_.getFullName == "bytes").get
             val decimalType = schema.getLogicalType().asInstanceOf[org.apache.avro.LogicalTypes.Decimal]
             val scale = decimalType.getScale()
             val scaledValue = x.setScale(scale)
@@ -30,7 +30,7 @@ case class NullableDecimal(var ciao: Option[BigDecimal] = None) extends org.apac
           case null => None
           case _ => Some(value match {
             case (buffer: java.nio.ByteBuffer) => {
-              val schema = getSchema.getFields().get(field$).schema()
+              val schema = scala.collection.JavaConverters.asScalaBufferConverter(getSchema.getFields().get(field$).schema().getTypes).asScala.toList.find(_.getFullName == "bytes").get
               val decimalType = schema.getLogicalType().asInstanceOf[org.apache.avro.LogicalTypes.Decimal]
               BigDecimal(NullableDecimal.decimalConversion.fromBytes(buffer, schema, decimalType))
             }
