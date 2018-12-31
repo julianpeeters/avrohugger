@@ -6,11 +6,12 @@ package trees
 import generators.ScalaDocGenerator
 import matchers.TypeMatcher
 import stores.SchemaStore
-
 import org.apache.avro.{Protocol, Schema}
 import treehugger.forest._
 import definitions._
+import org.apache.avro.Schema.Type
 import treehuggerDSL._
+
 import scala.collection.JavaConverters._
 
 // only companions, so no doc generation is required here
@@ -35,7 +36,7 @@ object SpecificObjectTree {
     def schemaContainsDecimal(schema: Schema): Boolean = {
       val topLevelSchemas = SpecificImporter.getTopLevelSchemas(Left(schema), schemaStore, typeMatcher)
       val recordSchemas = SpecificImporter.getRecordSchemas(topLevelSchemas).filter(s => s.getType == Schema.Type.RECORD)
-      val fieldSchemas = recordSchemas.flatMap(_.getFields().asScala).map(_.schema())
+      val fieldSchemas = recordSchemas.flatMap(collectFieldSchemas)
       fieldSchemas.exists(s => Option(s.getLogicalType()) match {
         case Some(logicalType) => logicalType.getName == "decimal"
         case None => false
@@ -44,6 +45,23 @@ object SpecificObjectTree {
     // companion object definition
     if (schemaContainsDecimal(schema)) objectDef := BLOCK(schemaDef, decimalConversionDef)
     else objectDef := BLOCK(schemaDef)
+  }
+
+  def collectFieldSchemas(sc: Schema): Seq[Schema] = {
+    val fields = sc.getFields.asScala
+    fields.flatMap { field =>
+      val schema = field.schema()
+      if (schema.getType.equals(Type.UNION)) {
+        collectUnionFields(schema)
+      } else {
+        Seq(field.schema())
+      }
+    }.toList
+  }
+
+  // union acts as a blackbox, fields are not seen on root level, unpack is required
+  private def collectUnionFields(sc: Schema): Iterable[Schema] = {
+    sc.getTypes.asScala.toList
   }
   
   // Companion to traits that have messages
