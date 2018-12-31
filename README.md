@@ -250,7 +250,7 @@ To ensure dependent schemas are compiled in the proper order (thus avoiding `org
 
 1) If your framework is one that relies on reflection to get the Schema, it
 will fail since Scala fields are private. Therefore preempt it by passing in
-a Schema to DatumReaders and DatumWriters (as in the Avro example above).
+a Schema to DatumReaders and DatumWriters (e.g. `val sdw = SpecificDatumWriter[MyRecord](schema)`).
 
 2) For the `SpecificRecord` format, generated case class fields must be
 mutable (`var`) in order to be compatible with the SpecificRecord API. _Note:_
@@ -324,6 +324,7 @@ Contributors:
 - [Andrew Gustafson](https://github.com/agustafson)
 - [Fede Fernández](https://github.com/fedefernandez)
 - [Francisco Díaz](https://github.com/franciscodr)
+- [Kostya Golikov](https://github.com/lazyval)
 
 ##### Criticism is appreciated.
 
