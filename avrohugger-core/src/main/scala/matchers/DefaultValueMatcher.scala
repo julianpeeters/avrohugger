@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.{NullNode, ObjectNode, TextNode}
 import treehugger.forest
 import treehuggerDSL._
+import scala.util.Try
 
 import scala.util.Try
 import scala.collection.JavaConverters._
