@@ -6,8 +6,8 @@ import stores.SchemaStore
 import scala.reflect.runtime.universe._
 import scala.reflect.runtime._
 
-import org.codehaus.jackson.JsonNode
-import org.codehaus.jackson.node._
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.node._
 
 object JsonMatcher {
 
