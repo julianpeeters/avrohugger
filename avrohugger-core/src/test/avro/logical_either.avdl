@@ -3,7 +3,7 @@
 protocol LogicalEitherIDL {
 
   record LogicalEitherIdl {
-    union {decimal(9, 2), string} maybeDec = 9999.99;
+    union {decimal(9, 2), string} maybeDec = "9999.99";
   }
 
 }

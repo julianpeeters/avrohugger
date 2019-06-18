@@ -8,11 +8,12 @@ import avrohugger.types._
 import treehugger.forest._
 import definitions._
 import org.apache.avro.Schema
-import org.codehaus.jackson.JsonNode
-import org.codehaus.jackson.map.ObjectMapper
-import org.codehaus.jackson.node.{NullNode, ObjectNode, TextNode}
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.node.{NullNode, ObjectNode, TextNode}
 import treehugger.forest
 import treehuggerDSL._
+import scala.util.Try
 
 import scala.collection.JavaConverters._
 
@@ -34,41 +35,41 @@ object DefaultValueMatcher {
         case Schema.Type.INT =>
           LogicalType.foldLogicalTypes[Tree](
             schema = schema,
-            default = LIT(node.getIntValue)) {
+            default = LIT(node.intValue())) {
             case Date =>
               CustomDefaultValueMatcher.checkCustomDateType(
-                node.getLongValue,
+                node.longValue(),
                 typeMatcher.avroScalaTypes.date)
           }
-        case Schema.Type.FLOAT => LIT(node.getDoubleValue.asInstanceOf[Float])
+        case Schema.Type.FLOAT => LIT(node.doubleValue().asInstanceOf[Float])
         case Schema.Type.LONG =>
           LogicalType.foldLogicalTypes[Tree](
             schema = schema,
-            default = LIT(node.getLongValue)) {
+            default = LIT(node.longValue())) {
             case TimestampMillis =>
             CustomDefaultValueMatcher.checkCustomTimestampMillisType(
-              node.getLongValue,
+              node.longValue(),
               typeMatcher.avroScalaTypes.timestampMillis)
           }
-        case Schema.Type.DOUBLE => LIT(node.getDoubleValue)
-        case Schema.Type.BOOLEAN => LIT(node.getBooleanValue)
+        case Schema.Type.DOUBLE => LIT(node.doubleValue())
+        case Schema.Type.BOOLEAN => LIT(node.booleanValue())
         case Schema.Type.STRING =>
           LogicalType.foldLogicalTypes[Tree](
             schema = schema,
-            default = LIT(node.getTextValue)) {
-            case UUID => REF("java.util.UUID.fromString") APPLY LIT(node.getTextValue)
+            default = LIT(node.textValue())) {
+            case UUID => REF("java.util.UUID.fromString") APPLY LIT(node.textValue())
           }
         case Schema.Type.BYTES =>
           CustomDefaultParamMatcher.checkCustomDecimalType(
             decimalType = typeMatcher.avroScalaTypes.decimal,
             schema = schema,
-            default = REF("Array[Byte]") APPLY node.getTextValue.getBytes.map((e: Byte) => LIT(e)),
-            decimalValue = Some(node.getDecimalValue.toString))
+            default = REF("Array[Byte]") APPLY node.textValue().getBytes.map((e: Byte) => LIT(e)),
+            decimalValue = Try(node.textValue().toDouble).toOption.map(_.toString))
         case Schema.Type.ENUM => typeMatcher.avroScalaTypes.enum match {
-          case JavaEnum => (REF(schema.getName) DOT node.getTextValue)
-          case ScalaEnumeration => (REF(schema.getName) DOT node.getTextValue)
-          case ScalaCaseObjectEnum => (REF(schema.getName) DOT node.getTextValue)
-          case EnumAsScalaString => LIT(node.getTextValue)
+          case JavaEnum => (REF(schema.getName) DOT node.textValue())
+          case ScalaEnumeration => (REF(schema.getName) DOT node.textValue())
+          case ScalaCaseObjectEnum => (REF(schema.getName) DOT node.textValue())
+          case EnumAsScalaString => LIT(node.textValue())
         }
         case Schema.Type.NULL => LIT(null)
         case Schema.Type.UNION => {
@@ -78,10 +79,10 @@ object DefaultValueMatcher {
         }
         case Schema.Type.ARRAY => {
           val collectionType = CustomDefaultParamMatcher.checkCustomArrayType(typeMatcher.avroScalaTypes.array)
-          collectionType APPLY(node.getElements.asScala.toSeq.map(e => fromJsonNode(e, schema.getElementType)))
+          collectionType APPLY(node.elements().asScala.toSeq.map(e => fromJsonNode(e, schema.getElementType)))
         }
         case Schema.Type.MAP => {
-          val kvps = node.getFields.asScala.toList.map(e => LIT(e.getKey) ANY_-> fromJsonNode(e.getValue, schema.getValueType))
+          val kvps = node.fields().asScala.toList.map(e => LIT(e.getKey) ANY_-> fromJsonNode(e.getValue, schema.getValueType))
           MAKE_MAP(kvps)
         }
         case Schema.Type.RECORD  => {
@@ -89,7 +90,7 @@ object DefaultValueMatcher {
           val jsObject = node match {
             case t: TextNode =>
               val mapper = new ObjectMapper();
-              mapper.readValue(t.getTextValue, classOf[ObjectNode])
+              mapper.readValue(t.textValue(), classOf[ObjectNode])
             case o: ObjectNode => o
             case _ => throw new Exception(s"Invalid default value for field: $field, value: $node")
           }
@@ -102,8 +103,8 @@ object DefaultValueMatcher {
         case x => throw new Exception("Can't extract a default field, type not yet supported: " + x)
       }
     }
-
-    fromJsonNode(field.defaultValue, field.schema)
+    val defaultValue = org.apache.avro.util.internal.Accessor.defaultValue(field)
+    fromJsonNode(defaultValue, field.schema)
   }
 
   /**
