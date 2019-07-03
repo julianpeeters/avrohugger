@@ -1,0 +1,10 @@
+{
+  "namespace": "example.importing.nested.foo",
+  "type": "enum",
+  "name": "Status",
+  "symbols": [
+    "Created",
+    "InProgress",
+    "Finished"
+  ]
+}

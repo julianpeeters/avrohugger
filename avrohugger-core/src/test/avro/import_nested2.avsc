@@ -1,0 +1,24 @@
+{
+  "namespace": "example.importing.nested.bar",
+  "type": "record",
+  "name": "BarOuter",
+  "fields": [
+    {
+      "name": "inner",
+      "type": {
+        "name": "BarInner",
+        "type": "record",
+        "fields": [
+          {
+            "name": "id",
+            "type": "string"
+          },
+          {
+            "name": "status",
+            "type": "example.importing.nested.foo.Status"
+          }
+        ]
+      }
+    }
+  ]
+}

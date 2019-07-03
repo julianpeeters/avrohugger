@@ -5,7 +5,7 @@ import org.apache.avro.Schema
 
 import org.oedura.scavro.{AvroMetadata, AvroReader, AvroSerializeable}
 
-import example.avro.{ClashInner => JClashInner, ClashOuter => JClashOuter, ClashRecord => JClashRecord}
+import example.avro.{ClashOuter => JClashOuter, ClashRecord => JClashRecord}
 
 import scala.collection.JavaConverters._
 

@@ -170,9 +170,9 @@ trait Importer {
     typeMatcher: TypeMatcher): List[Schema] = {
     schemaOrProtocol match {
       case Left(schema) =>
-        schema::(NestedSchemaExtractor.getNestedSchemas(schema, schemaStore, typeMatcher))
+        schema::(NestedSchemaExtractor.getNestedSchemas(schema, schemaStore, typeMatcher, Some(1)))
       case Right(protocol) => protocol.getTypes.asScala.toList.flatMap(schema => {
-        schema::(NestedSchemaExtractor.getNestedSchemas(schema, schemaStore, typeMatcher))
+        schema::(NestedSchemaExtractor.getNestedSchemas(schema, schemaStore, typeMatcher, Some(1)))
       })
     }
 
