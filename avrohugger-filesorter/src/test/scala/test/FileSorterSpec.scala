@@ -63,8 +63,8 @@ class FileSorterSpec extends Specification {
   }
   
   "AVDL files should be sorted correctly for imports" >> {
-    AvdlFileSorter.sortSchemaFiles(avdlSourceFiles) must beEqualTo(expectdOrderFileNames)
-    AvdlFileSorter.sortSchemaFiles(avdlSourceFiles.reverse) must beEqualTo(expectdOrderFileNames)
+    AvdlFileSorter.sortSchemaFiles(avdlSourceFiles, getClass.getClassLoader) must beEqualTo(expectdOrderFileNames)
+    AvdlFileSorter.sortSchemaFiles(avdlSourceFiles.reverse, getClass.getClassLoader) must beEqualTo(expectdOrderFileNames)
   }
 
   "It should be possible to compile types depending on others if source files are provided in right order" >> {

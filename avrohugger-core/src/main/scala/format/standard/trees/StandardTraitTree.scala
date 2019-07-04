@@ -60,5 +60,4 @@ object StandardTraitTree {
       adtRootTree)
     List(adtRootTreeWithScalaDoc, objectTree)
   }
-  
 }
