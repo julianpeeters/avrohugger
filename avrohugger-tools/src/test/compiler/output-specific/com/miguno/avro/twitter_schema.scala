@@ -8,7 +8,7 @@ import scala.annotation.switch
  * @param tweet The content of the user's Twitter message
  * @param timestamp Unix epoch time in milliseconds
  */
-case class twitter_schema(var username: String, var tweet: String, var timestamp: Long) extends org.apache.avro.specific.SpecificRecordBase {
+case class twitter_schema(var username: org.apache.avro.util.Utf8, var tweet: org.apache.avro.util.Utf8, var timestamp: Long) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this("", "", 0L)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
@@ -27,11 +27,11 @@ case class twitter_schema(var username: String, var tweet: String, var timestamp
   def put(field$: Int, value: Any): Unit = {
     (field$: @switch) match {
       case 0 => this.username = {
-        value.toString
-      }.asInstanceOf[String]
+        value
+      }.asInstanceOf[org.apache.avro.util.Utf8]
       case 1 => this.tweet = {
-        value.toString
-      }.asInstanceOf[String]
+        value
+      }.asInstanceOf[org.apache.avro.util.Utf8]
       case 2 => this.timestamp = {
         value
       }.asInstanceOf[Long]

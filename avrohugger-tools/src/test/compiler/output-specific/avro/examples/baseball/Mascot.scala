@@ -3,7 +3,7 @@ package avro.examples.baseball
 
 import scala.annotation.switch
 
-case class Mascot(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
+case class Mascot(var name: org.apache.avro.util.Utf8) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this("")
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
@@ -16,8 +16,8 @@ case class Mascot(var name: String) extends org.apache.avro.specific.SpecificRec
   def put(field$: Int, value: Any): Unit = {
     (field$: @switch) match {
       case 0 => this.name = {
-        value.toString
-      }.asInstanceOf[String]
+        value
+      }.asInstanceOf[org.apache.avro.util.Utf8]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()

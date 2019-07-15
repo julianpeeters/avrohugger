@@ -7,7 +7,7 @@ import org.oedura.scavro.{AvroMetadata, AvroReader, AvroSerializeable}
 
 import avro.examples.baseball.{Nickname => JNickname}
 
-case class Nickname(name: String) extends AvroSerializeable {
+case class Nickname(name: org.apache.avro.util.Utf8) extends AvroSerializeable {
   type J = JNickname
   override def toAvro: JNickname = {
     new JNickname(name)
@@ -22,7 +22,7 @@ object Nickname {
     override val avroClass: Class[JNickname] = classOf[JNickname]
     override val schema: Schema = JNickname.getClassSchema()
     override val fromAvro: (JNickname) => Nickname = {
-      (j: JNickname) => Nickname(j.getName.toString)
+      (j: JNickname) => Nickname(j.getName)
     }
   }
 }
