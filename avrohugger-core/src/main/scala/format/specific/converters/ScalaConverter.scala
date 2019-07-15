@@ -200,18 +200,10 @@ object ScalaConverter {
             if (logicalType.getName == "date") {
               typeMatcher.avroScalaTypes.date match {
                 case JavaSqlDate => {
-                  val IntegerClass = RootClass.newClass("Integer")
-                  val SqlDateClass = RootClass.newClass("java.sql.Date")
-                  val resultExpr = BLOCK(NEW(SqlDateClass, REF("i").DOT("toLong").DOT("*").APPLY(LIT(86400000L))))
-                  val integerConversion = CASE(ID("i") withType (IntegerClass)) ==> resultExpr
-                  tree MATCH integerConversion
+                  tree
                 }
                 case JavaTimeLocalDate => {
-                  val IntegerClass = RootClass.newClass("Integer")
-                  val LocalDateClass = RootClass.newClass("java.time.LocalDate")
-                  val resultExpr = BLOCK(LocalDateClass.DOT("ofEpochDay").APPLY(REF("i").DOT("toInt")))
-                  val integerConversion = CASE(ID("i") withType (IntegerClass)) ==> resultExpr
-                  tree MATCH integerConversion
+                  tree
                 } 
               }
               

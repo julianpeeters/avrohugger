@@ -3,7 +3,7 @@ package avro.examples.baseball
 
 import scala.annotation.switch
 
-case class Player(var number: Int, var first_name: String, var last_name: String, var nicknames: Seq[Nickname]) extends org.apache.avro.specific.SpecificRecordBase {
+case class Player(var number: Int, var first_name: org.apache.avro.util.Utf8, var last_name: org.apache.avro.util.Utf8, var nicknames: Seq[Nickname]) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this(0, "", "", Seq.empty)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
@@ -32,11 +32,11 @@ case class Player(var number: Int, var first_name: String, var last_name: String
         value
       }.asInstanceOf[Int]
       case 1 => this.first_name = {
-        value.toString
-      }.asInstanceOf[String]
+        value
+      }.asInstanceOf[org.apache.avro.util.Utf8]
       case 2 => this.last_name = {
-        value.toString
-      }.asInstanceOf[String]
+        value
+      }.asInstanceOf[org.apache.avro.util.Utf8]
       case 3 => this.nicknames = {
         value match {
           case (array: java.util.List[_]) => {
