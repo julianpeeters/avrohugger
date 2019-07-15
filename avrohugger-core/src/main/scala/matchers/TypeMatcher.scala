@@ -18,6 +18,9 @@ class TypeMatcher(
   //e.g. ("com.example.idl"->"com.example.model")
   val customNamespaces: Map[String, String]) {
 
+  // in the future, scavro may allow this to be set
+  val avroUtf8Type = RootClass.newClass(nme.createNameType("org.apache.avro.util.Utf8"))
+
   def toScalaType(
     classStore: ClassStore,
     namespace: Option[String],
@@ -58,7 +61,7 @@ class TypeMatcher(
         case Schema.Type.STRING   =>
           LogicalType.foldLogicalTypes(
             schema = schema,
-            default = StringClass) {
+            default = avroUtf8Type) {
             case UUID => RootClass.newClass(nme.createNameType("java.util.UUID"))
           }
         case Schema.Type.FIXED    => sys.error("FIXED datatype not yet supported")
@@ -139,9 +142,6 @@ class TypeMatcher(
 
   //Scavro requires Java types be generated for mapping Java classes to Scala
 
-  // in the future, scavro may allow this to be set
-  val avroStringType = TYPE_REF("CharSequence") 
-
   def toJavaType(
     classStore: ClassStore,
     namespace: Option[String],
@@ -160,14 +160,14 @@ class TypeMatcher(
         case Schema.Type.FLOAT => TYPE_REF("java.lang.Float")
         case Schema.Type.LONG => TYPE_REF("java.lang.Long")
         case Schema.Type.BOOLEAN => TYPE_REF("java.lang.Boolean")
-        case Schema.Type.STRING => avroStringType
+        case Schema.Type.STRING => avroUtf8Type
         case Schema.Type.ARRAY => {
           val avroElement = schema.getElementType
           val elementType = toJavaType(classStore, namespace, avroElement)
           TYPE_REF(REF("java.util.List") APPLYTYPE(elementType))
         }
         case Schema.Type.MAP      => {
-          val keyType = avroStringType
+          val keyType = avroUtf8Type
           val valueType = toJavaType(classStore, namespace, schema.getValueType)
           TYPE_REF(REF("java.util.Map") APPLYTYPE(keyType, valueType))
         }

@@ -93,7 +93,7 @@ object JavaConverter {
     case Schema.Type.INT => schema.getLogicalType match {
       case date: LogicalTypes.Date => typeMatcher.avroScalaTypes.date match {
         case JavaSqlDate       => tree.DOT("getTime").APPLY().DOT("/").APPLY(LIT(86400000))
-        case JavaTimeLocalDate => tree.DOT("toEpochDay").DOT("toInt")
+        case JavaTimeLocalDate => tree
       }
       case _ => tree
     }

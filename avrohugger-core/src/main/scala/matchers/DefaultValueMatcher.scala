@@ -11,10 +11,11 @@ import org.apache.avro.Schema
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.{NullNode, ObjectNode, TextNode}
+import org.apache.avro.util.Utf8
 import treehugger.forest
 import treehuggerDSL._
-import scala.util.Try
 
+import scala.util.Try
 import scala.collection.JavaConverters._
 
 object DefaultValueMatcher {
@@ -89,7 +90,7 @@ object DefaultValueMatcher {
           val fields  = schema.getFields
           val jsObject = node match {
             case t: TextNode =>
-              val mapper = new ObjectMapper();
+              val mapper = new ObjectMapper()
               mapper.readValue(t.textValue(), classOf[ObjectNode])
             case o: ObjectNode => o
             case _ => throw new Exception(s"Invalid default value for field: $field, value: $node")

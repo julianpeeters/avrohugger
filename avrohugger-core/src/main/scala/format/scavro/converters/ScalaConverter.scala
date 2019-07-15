@@ -53,11 +53,11 @@ class ScalaConverter(typeMatcher: TypeMatcher) {
         }
       }
       case Schema.Type.NULL => NULL
-      case Schema.Type.STRING => tree TOSTRING
-      case Schema.Type.INT => tree DOT "toInt"
+      case Schema.Type.STRING => tree
+      case Schema.Type.INT => tree
       case Schema.Type.FLOAT => tree DOT "toFloat"
       case Schema.Type.DOUBLE => tree DOT "toDouble"
-      case Schema.Type.LONG => tree DOT "toLong"
+      case Schema.Type.LONG => tree
 
       case Schema.Type.ARRAY => {
         val seqArgs = SEQARG(tree DOT "asScala")
