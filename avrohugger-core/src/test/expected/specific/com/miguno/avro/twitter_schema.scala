@@ -27,10 +27,10 @@ case class twitter_schema(var username: String, var tweet: String, var timestamp
   def put(field$: Int, value: Any): Unit = {
     (field$: @switch) match {
       case 0 => this.username = {
-        value.toString
+        value
       }.asInstanceOf[String]
       case 1 => this.tweet = {
-        value.toString
+        value
       }.asInstanceOf[String]
       case 2 => this.timestamp = {
         value

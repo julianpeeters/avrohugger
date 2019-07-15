@@ -7,7 +7,7 @@ import org.oedura.scavro.{AvroMetadata, AvroReader, AvroSerializeable}
 
 import example.proto.{Message => JMessage}
 
-case class Message(to: String, from: String, body: String) extends AvroSerializeable {
+case class Message(to: org.apache.avro.util.Utf8, from: org.apache.avro.util.Utf8, body: org.apache.avro.util.Utf8) extends AvroSerializeable {
   type J = JMessage
   override def toAvro: JMessage = {
     new JMessage(to, from, body)
@@ -22,7 +22,7 @@ object Message {
     override val avroClass: Class[JMessage] = classOf[JMessage]
     override val schema: Schema = JMessage.getClassSchema()
     override val fromAvro: (JMessage) => Message = {
-      (j: JMessage) => Message(j.getTo.toString, j.getFrom.toString, j.getBody.toString)
+      (j: JMessage) => Message(j.getTo, j.getFrom, j.getBody)
     }
   }
 }

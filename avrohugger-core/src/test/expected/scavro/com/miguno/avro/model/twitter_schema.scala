@@ -27,7 +27,7 @@ object twitter_schema {
     override val avroClass: Class[Jtwitter_schema] = classOf[Jtwitter_schema]
     override val schema: Schema = Jtwitter_schema.getClassSchema()
     override val fromAvro: (Jtwitter_schema) => twitter_schema = {
-      (j: Jtwitter_schema) => twitter_schema(j.getUsername.toString, j.getTweet.toString, j.getTimestamp.toLong)
+      (j: Jtwitter_schema) => twitter_schema(j.getUsername, j.getTweet, j.getTimestamp)
     }
   }
 }

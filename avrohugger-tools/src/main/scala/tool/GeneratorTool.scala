@@ -46,7 +46,7 @@ class GeneratorTool(sourceFormat: SourceFormat,
       1;
     }
 
-    var stringType: StringType = StringType.CharSequence;
+    var stringType: StringType = StringType.Utf8;
 
     var arg = 0;
     if ("-string".equals(args.get(arg))) {

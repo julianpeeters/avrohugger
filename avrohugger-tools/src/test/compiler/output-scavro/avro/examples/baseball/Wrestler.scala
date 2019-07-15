@@ -9,7 +9,7 @@ import avro.examples.baseball.{Mascot => JMascot, Wrestler => JWrestler}
 
 import scala.collection.JavaConverters._
 
-case class Wrestler(number: Int, first_name: String, last_name: String, nicknames: Array[Mascot]) extends AvroSerializeable {
+case class Wrestler(number: Int, first_name: org.apache.avro.util.Utf8, last_name: org.apache.avro.util.Utf8, nicknames: Array[Mascot]) extends AvroSerializeable {
   type J = JWrestler
   override def toAvro: JWrestler = {
     new JWrestler(number, first_name, last_name, {
@@ -30,7 +30,7 @@ object Wrestler {
     override val avroClass: Class[JWrestler] = classOf[JWrestler]
     override val schema: Schema = JWrestler.getClassSchema()
     override val fromAvro: (JWrestler) => Wrestler = {
-      (j: JWrestler) => Wrestler(j.getNumber.toInt, j.getFirstName.toString, j.getLastName.toString, Array((j.getNicknames.asScala: _*)) map { x =>
+      (j: JWrestler) => Wrestler(j.getNumber, j.getFirstName, j.getLastName, Array((j.getNicknames.asScala: _*)) map { x =>
         Mascot.metadata.fromAvro(x)
       })
     }

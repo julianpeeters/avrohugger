@@ -102,7 +102,7 @@ class JavaConverter(
         )
       }
       case Schema.Type.MAP => {
-        val keyType = typeMatcher.avroStringType
+        val keyType = typeMatcher.avroUtf8Type
         val valueType = {
           typeMatcher.toJavaType(classStore, namespace, schema.getValueType)
         }
@@ -121,10 +121,10 @@ class JavaConverter(
           REF("map")
         )
       }
-      case Schema.Type.INT    => checkCustomNumberType(typeMatcher.avroScalaTypes.int, ScalaInt, tree, "toInt")
+      case Schema.Type.INT    => tree
       case Schema.Type.FLOAT  => checkCustomNumberType(typeMatcher.avroScalaTypes.float, ScalaFloat, tree, "toFloat")
       case Schema.Type.DOUBLE => checkCustomNumberType(typeMatcher.avroScalaTypes.double, ScalaDouble, tree, "toDouble")
-      case Schema.Type.LONG   => checkCustomNumberType(typeMatcher.avroScalaTypes.long, ScalaLong, tree, "toLong")
+      case Schema.Type.LONG   => tree
       case Schema.Type.FIXED  => sys.error("the FIXED datatype is not yet supported")
       case Schema.Type.BYTES  => REF("java.nio.ByteBuffer") DOT "wrap" APPLY tree
       case _ => tree

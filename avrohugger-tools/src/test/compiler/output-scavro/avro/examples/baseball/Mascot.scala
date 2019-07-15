@@ -7,7 +7,7 @@ import org.oedura.scavro.{AvroMetadata, AvroReader, AvroSerializeable}
 
 import avro.examples.baseball.{Mascot => JMascot}
 
-case class Mascot(name: String) extends AvroSerializeable {
+case class Mascot(name: org.apache.avro.util.Utf8) extends AvroSerializeable {
   type J = JMascot
   override def toAvro: JMascot = {
     new JMascot(name)
