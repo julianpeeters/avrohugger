@@ -25,7 +25,7 @@ object Recursive {
     override val avroClass: Class[JRecursive] = classOf[JRecursive]
     override val schema: Schema = JRecursive.getClassSchema()
     override val fromAvro: (JRecursive) => Recursive = {
-      (j: JRecursive) => Recursive(j.getName.toString, j.getRecursive match {
+      (j: JRecursive) => Recursive(j.getName, j.getRecursive match {
         case null => None
         case _ => Some(Recursive.metadata.fromAvro(j.getRecursive))
       })
