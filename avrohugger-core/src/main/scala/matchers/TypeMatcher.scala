@@ -7,8 +7,8 @@ import avrohugger.types._
 import treehugger.forest._
 import treehuggerDSL._
 import definitions._
+import format.AvroString
 import org.apache.avro.Schema
-
 import treehugger.forest
 
 import scala.collection.JavaConverters._
@@ -18,8 +18,7 @@ class TypeMatcher(
   //e.g. ("com.example.idl"->"com.example.model")
   val customNamespaces: Map[String, String]) {
 
-  // in the future, scavro may allow this to be set
-  val avroUtf8Type = RootClass.newClass(nme.createNameType("org.apache.avro.util.Utf8"))
+  val stringType = AvroString.getType
 
   def toScalaType(
     classStore: ClassStore,
@@ -61,7 +60,7 @@ class TypeMatcher(
         case Schema.Type.STRING   =>
           LogicalType.foldLogicalTypes(
             schema = schema,
-            default = avroUtf8Type) {
+            default = stringType) {
             case UUID => RootClass.newClass(nme.createNameType("java.util.UUID"))
           }
         case Schema.Type.FIXED    => sys.error("FIXED datatype not yet supported")
@@ -160,14 +159,14 @@ class TypeMatcher(
         case Schema.Type.FLOAT => TYPE_REF("java.lang.Float")
         case Schema.Type.LONG => TYPE_REF("java.lang.Long")
         case Schema.Type.BOOLEAN => TYPE_REF("java.lang.Boolean")
-        case Schema.Type.STRING => avroUtf8Type
+        case Schema.Type.STRING => stringType
         case Schema.Type.ARRAY => {
           val avroElement = schema.getElementType
           val elementType = toJavaType(classStore, namespace, avroElement)
           TYPE_REF(REF("java.util.List") APPLYTYPE(elementType))
         }
         case Schema.Type.MAP      => {
-          val keyType = avroUtf8Type
+          val keyType = stringType
           val valueType = toJavaType(classStore, namespace, schema.getValueType)
           TYPE_REF(REF("java.util.Map") APPLYTYPE(keyType, valueType))
         }

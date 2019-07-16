@@ -22,7 +22,7 @@ object Message {
     override val avroClass: Class[JMessage] = classOf[JMessage]
     override val schema: Schema = JMessage.getClassSchema()
     override val fromAvro: (JMessage) => Message = {
-      (j: JMessage) => Message(j.getTo.toString, j.getFrom.toString, j.getBody.toString)
+      (j: JMessage) => Message(j.getTo, j.getFrom, j.getBody)
     }
   }
 }

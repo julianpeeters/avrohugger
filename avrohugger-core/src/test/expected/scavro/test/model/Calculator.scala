@@ -24,7 +24,7 @@ final object Added {
     override val avroClass: Class[JAdded] = classOf[JAdded]
     override val schema: Schema = JAdded.getClassSchema()
     override val fromAvro: (JAdded) => Added = {
-      (j: JAdded) => Added(j.getValue.toInt)
+      (j: JAdded) => Added(j.getValue)
     }
   }
 }
@@ -44,7 +44,7 @@ final object Subtracted {
     override val avroClass: Class[JSubtracted] = classOf[JSubtracted]
     override val schema: Schema = JSubtracted.getClassSchema()
     override val fromAvro: (JSubtracted) => Subtracted = {
-      (j: JSubtracted) => Subtracted(j.getValue.toInt)
+      (j: JSubtracted) => Subtracted(j.getValue)
     }
   }
 }
@@ -64,7 +64,7 @@ final object Divided {
     override val avroClass: Class[JDivided] = classOf[JDivided]
     override val schema: Schema = JDivided.getClassSchema()
     override val fromAvro: (JDivided) => Divided = {
-      (j: JDivided) => Divided(j.getValue.toInt)
+      (j: JDivided) => Divided(j.getValue)
     }
   }
 }
@@ -84,7 +84,7 @@ final object Multiplied {
     override val avroClass: Class[JMultiplied] = classOf[JMultiplied]
     override val schema: Schema = JMultiplied.getClassSchema()
     override val fromAvro: (JMultiplied) => Multiplied = {
-      (j: JMultiplied) => Multiplied(j.getValue.toInt)
+      (j: JMultiplied) => Multiplied(j.getValue)
     }
   }
 }

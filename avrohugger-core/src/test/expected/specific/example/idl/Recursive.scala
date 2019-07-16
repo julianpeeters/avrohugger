@@ -22,7 +22,7 @@ case class Recursive(var name: String, var recursive: Option[Recursive]) extends
   def put(field$: Int, value: Any): Unit = {
     (field$: @switch) match {
       case 0 => this.name = {
-        value.toString
+        value
       }.asInstanceOf[String]
       case 1 => this.recursive = {
         value match {

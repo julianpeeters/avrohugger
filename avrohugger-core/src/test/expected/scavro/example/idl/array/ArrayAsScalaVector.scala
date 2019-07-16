@@ -31,7 +31,7 @@ object ArrayIdl {
     override val schema: Schema = JArrayIdl.getClassSchema()
     override val fromAvro: (JArrayIdl) => ArrayIdl = {
       (j: JArrayIdl) => ArrayIdl(Vector((j.getData.asScala: _*)) map { x =>
-        x.toInt
+        x
       })
     }
   }

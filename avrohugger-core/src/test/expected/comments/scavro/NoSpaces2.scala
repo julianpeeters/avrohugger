@@ -26,7 +26,7 @@ object NoSpaces2 {
     override val avroClass: Class[JNoSpaces2] = classOf[JNoSpaces2]
     override val schema: Schema = JNoSpaces2.getClassSchema()
     override val fromAvro: (JNoSpaces2) => NoSpaces2 = {
-      (j: JNoSpaces2) => NoSpaces2(j.getCommentProperty.toString)
+      (j: JNoSpaces2) => NoSpaces2(j.getCommentProperty)
     }
   }
 }

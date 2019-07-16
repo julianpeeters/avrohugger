@@ -24,7 +24,7 @@ object ClashRecord {
     override val avroClass: Class[JClashRecord] = classOf[JClashRecord]
     override val schema: Schema = JClashRecord.getClassSchema()
     override val fromAvro: (JClashRecord) => ClashRecord = {
-      (j: JClashRecord) => ClashRecord(j.getSome.toInt, ClashOuter.metadata.fromAvro(j.getOuter), j.getId.toInt)
+      (j: JClashRecord) => ClashRecord(j.getSome, ClashOuter.metadata.fromAvro(j.getOuter), j.getId)
     }
   }
 }

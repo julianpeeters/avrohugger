@@ -31,7 +31,7 @@ final object Embedded {
     override val avroClass: Class[JEmbedded] = classOf[JEmbedded]
     override val schema: Schema = JEmbedded.getClassSchema()
     override val fromAvro: (JEmbedded) => Embedded = {
-      (j: JEmbedded) => Embedded(j.getInner.toInt)
+      (j: JEmbedded) => Embedded(j.getInner)
     }
   }
 }
@@ -65,7 +65,7 @@ final case class DefaultTest(suit: DefaultEnum.Value = DefaultEnum.SPADES, numbe
       }
       case None => null
     }, {
-      val map: java.util.Map[CharSequence, CharSequence] = new java.util.HashMap[CharSequence, CharSequence]
+      val map: java.util.Map[String, String] = new java.util.HashMap[String, String]
       defaultMap foreach { kvp =>
         val key = kvp._1
         val value = kvp._2
@@ -89,14 +89,14 @@ final object DefaultTest {
         case JDefaultEnum.DIAMONDS => DefaultEnum.DIAMONDS
         case JDefaultEnum.CLUBS => DefaultEnum.CLUBS
         case JDefaultEnum.HEARTS => DefaultEnum.HEARTS
-      }, j.getNumber.toInt, j.getStr.toString, j.getOptionString match {
+      }, j.getNumber, j.getStr, j.getOptionString match {
         case null => None
-        case _ => Some(j.getOptionString.toString)
+        case _ => Some(j.getOptionString)
       }, j.getOptionStringValue match {
         case null => None
-        case _ => Some(j.getOptionStringValue.toString)
+        case _ => Some(j.getOptionStringValue)
       }, Embedded.metadata.fromAvro(j.getEmbedded), Array((j.getDefaultArray.asScala: _*)) map { x =>
-        x.toInt
+        x
       }, j.getOptionalEnum match {
         case null => None
         case _ => Some(j.getOptionalEnum match {
@@ -110,7 +110,7 @@ final object DefaultTest {
           scala.collection.JavaConverters.mapAsScalaMapConverter(map).asScala.toMap map { kvp =>
             val key = kvp._1.toString
             val value = kvp._2
-            (key, value.toString)
+            (key, value)
           }
         }
       }, j.getByt match {
