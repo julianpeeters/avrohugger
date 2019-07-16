@@ -24,7 +24,7 @@ final object Level2 {
     override val avroClass: Class[JLevel2] = classOf[JLevel2]
     override val schema: Schema = JLevel2.getClassSchema()
     override val fromAvro: (JLevel2) => Level2 = {
-      (j: JLevel2) => Level2(j.getName.toString)
+      (j: JLevel2) => Level2(j.getName)
     }
   }
 }

@@ -28,7 +28,7 @@ case class User(var name: String, var favorite_number: Option[Int], var favorite
   def put(field$: Int, value: Any): Unit = {
     (field$: @switch) match {
       case 0 => this.name = {
-        value.toString
+        value
       }.asInstanceOf[String]
       case 1 => this.favorite_number = {
         value match {
@@ -39,7 +39,7 @@ case class User(var name: String, var favorite_number: Option[Int], var favorite
       case 2 => this.favorite_color = {
         value match {
           case null => None
-          case _ => Some(value.toString)
+          case _ => Some(value)
         }
       }.asInstanceOf[Option[String]]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")

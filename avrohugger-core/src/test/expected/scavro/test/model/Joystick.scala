@@ -22,7 +22,7 @@ object Up {
     override val avroClass: Class[JUp] = classOf[JUp]
     override val schema: Schema = JUp.getClassSchema()
     override val fromAvro: (JUp) => Up = {
-      (j: JUp) => Up(j.getValue.toInt)
+      (j: JUp) => Up(j.getValue)
     }
   }
 }
@@ -42,7 +42,7 @@ object Down {
     override val avroClass: Class[JDown] = classOf[JDown]
     override val schema: Schema = JDown.getClassSchema()
     override val fromAvro: (JDown) => Down = {
-      (j: JDown) => Down(j.getValue.toInt)
+      (j: JDown) => Down(j.getValue)
     }
   }
 }

@@ -24,7 +24,7 @@ case class NoSpaces3(var comment_property: String) extends org.apache.avro.speci
   def put(field$: Int, value: Any): Unit = {
     (field$: @switch) match {
       case 0 => this.comment_property = {
-        value.toString
+        value
       }.asInstanceOf[String]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
     }

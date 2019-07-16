@@ -6,7 +6,7 @@ import avrohugger.format.Scavro
 import org.specs2._
 
 class ScavroStringToStringsSpec extends Specification {
-  
+
   def is = s2"""
     Scavro Generator stringToStrings method should
       correctly generate with messy schema $eA

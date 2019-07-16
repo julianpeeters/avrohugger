@@ -22,7 +22,7 @@ object ExternalDependency {
     override val avroClass: Class[JExternalDependency] = classOf[JExternalDependency]
     override val schema: Schema = JExternalDependency.getClassSchema()
     override val fromAvro: (JExternalDependency) => ExternalDependency = {
-      (j: JExternalDependency) => ExternalDependency(j.getNumber.toInt)
+      (j: JExternalDependency) => ExternalDependency(j.getNumber)
     }
   }
 }
