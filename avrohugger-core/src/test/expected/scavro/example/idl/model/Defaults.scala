@@ -65,7 +65,7 @@ final case class DefaultTest(suit: DefaultEnum.Value = DefaultEnum.SPADES, numbe
       }
       case None => null
     }, {
-      val map: java.util.Map[CharSequence, CharSequence] = new java.util.HashMap[CharSequence, CharSequence]
+      val map: java.util.Map[String, String] = new java.util.HashMap[String, String]
       defaultMap foreach { kvp =>
         val key = kvp._1
         val value = kvp._2
@@ -91,10 +91,10 @@ final object DefaultTest {
         case JDefaultEnum.HEARTS => DefaultEnum.HEARTS
       }, j.getNumber, j.getStr.toString, j.getOptionString match {
         case null => None
-        case _ => Some(j.getOptionString.toString)
+        case _ => Some(j.getOptionString)
       }, j.getOptionStringValue match {
         case null => None
-        case _ => Some(j.getOptionStringValue.toString)
+        case _ => Some(j.getOptionStringValue)
       }, Embedded.metadata.fromAvro(j.getEmbedded), Array((j.getDefaultArray.asScala: _*)) map { x =>
         x
       }, j.getOptionalEnum match {
@@ -110,7 +110,7 @@ final object DefaultTest {
           scala.collection.JavaConverters.mapAsScalaMapConverter(map).asScala.toMap map { kvp =>
             val key = kvp._1.toString
             val value = kvp._2
-            (key, value.toString)
+            (key, value)
           }
         }
       }, j.getByt match {

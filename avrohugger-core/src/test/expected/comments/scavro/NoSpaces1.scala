@@ -47,7 +47,7 @@ object NoSpaces1 {
     override val avroClass: Class[JNoSpaces1] = classOf[JNoSpaces1]
     override val schema: Schema = JNoSpaces1.getClassSchema()
     override val fromAvro: (JNoSpaces1) => NoSpaces1 = {
-      (j: JNoSpaces1) => NoSpaces1(j.getSingleLineCommentProperty.toString, j.getMultiLineProperty.toString)
+      (j: JNoSpaces1) => NoSpaces1(j.getSingleLineCommentProperty, j.getMultiLineProperty)
     }
   }
 }

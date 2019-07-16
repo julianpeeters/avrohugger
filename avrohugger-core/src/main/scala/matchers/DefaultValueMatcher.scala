@@ -12,7 +12,6 @@ import org.apache.avro.Schema
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.{NullNode, ObjectNode, TextNode}
-import org.apache.avro.util.Utf8
 import treehugger.forest
 import treehuggerDSL._
 

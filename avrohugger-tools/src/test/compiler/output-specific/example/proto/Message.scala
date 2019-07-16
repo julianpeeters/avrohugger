@@ -3,7 +3,7 @@ package example.proto
 
 import scala.annotation.switch
 
-case class Message(var to: org.apache.avro.util.Utf8, var from: org.apache.avro.util.Utf8, var body: org.apache.avro.util.Utf8) extends org.apache.avro.specific.SpecificRecordBase {
+case class Message(var to: String, var from: String, var body: String) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this("", "", "")
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
@@ -23,13 +23,13 @@ case class Message(var to: org.apache.avro.util.Utf8, var from: org.apache.avro.
     (field$: @switch) match {
       case 0 => this.to = {
         value
-      }.asInstanceOf[org.apache.avro.util.Utf8]
+      }.asInstanceOf[String]
       case 1 => this.from = {
         value
-      }.asInstanceOf[org.apache.avro.util.Utf8]
+      }.asInstanceOf[String]
       case 2 => this.body = {
         value
-      }.asInstanceOf[org.apache.avro.util.Utf8]
+      }.asInstanceOf[String]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
