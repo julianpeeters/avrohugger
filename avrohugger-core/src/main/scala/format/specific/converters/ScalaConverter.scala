@@ -72,7 +72,7 @@ object ScalaConverter {
       case Schema.Type.STRING =>
         LogicalType.foldLogicalTypes(
           schema = schema,
-          default = tree) {
+          default = if (AvroString.useUtf8()) tree else tree TOSTRING) {
           case UUID =>
             typeMatcher.avroScalaTypes.uuid match {
               case JavaUuid => {

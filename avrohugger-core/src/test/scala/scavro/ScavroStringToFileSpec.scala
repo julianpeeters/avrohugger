@@ -2,7 +2,6 @@ package avrohugger
 package test
 package scavro
 
-import avrohugger._
 import avrohugger.format.Scavro
 import org.specs2._
 

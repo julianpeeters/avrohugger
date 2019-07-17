@@ -30,7 +30,7 @@ object Wrestler {
     override val avroClass: Class[JWrestler] = classOf[JWrestler]
     override val schema: Schema = JWrestler.getClassSchema()
     override val fromAvro: (JWrestler) => Wrestler = {
-      (j: JWrestler) => Wrestler(j.getNumber, j.getFirstName, j.getLastName, Array((j.getNicknames.asScala: _*)) map { x =>
+      (j: JWrestler) => Wrestler(j.getNumber, j.getFirstName.toString, j.getLastName.toString, Array((j.getNicknames.asScala: _*)) map { x =>
         Mascot.metadata.fromAvro(x)
       })
     }

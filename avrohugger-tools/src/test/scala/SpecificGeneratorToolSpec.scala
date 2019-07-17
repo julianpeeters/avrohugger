@@ -1,7 +1,6 @@
 
-import avrohugger.format.{AvroString, SpecificRecord}
+import avrohugger.format.SpecificRecord
 import avrohugger.tool.{Directory, GeneratorTool}
-import org.apache.avro.generic.GenericData.StringType
 import org.specs2._
 
 import scala.collection.JavaConverters._

@@ -22,7 +22,7 @@ object Nickname {
     override val avroClass: Class[JNickname] = classOf[JNickname]
     override val schema: Schema = JNickname.getClassSchema()
     override val fromAvro: (JNickname) => Nickname = {
-      (j: JNickname) => Nickname(j.getName)
+      (j: JNickname) => Nickname(j.getName.toString)
     }
   }
 }

@@ -22,13 +22,13 @@ case class Message(var to: String, var from: String, var body: String) extends o
   def put(field$: Int, value: Any): Unit = {
     (field$: @switch) match {
       case 0 => this.to = {
-        value
+        value.toString
       }.asInstanceOf[String]
       case 1 => this.from = {
-        value
+        value.toString
       }.asInstanceOf[String]
       case 2 => this.body = {
-        value
+        value.toString
       }.asInstanceOf[String]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
     }

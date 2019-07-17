@@ -1,24 +1,14 @@
 package avrohugger
 package tool
 
-import format.abstractions.SourceFormat
+import java.io.{File, FilenameFilter, InputStream, PrintStream}
+import java.util.{ArrayList, LinkedHashSet, List, Set}
+
 import avrohugger.filesorter.AvscFileSorter
-import types.AvroScalaTypes
-
+import avrohugger.format.abstractions.SourceFormat
+import avrohugger.types.AvroScalaTypes
+import org.apache.avro.generic.GenericData.StringType
 import org.apache.avro.tool.Tool
-import org.apache.avro.generic.GenericData.StringType;
-import org.apache.avro.Schema;
-import org.apache.avro.compiler.specific.SpecificCompiler;
-import org.apache.avro.Protocol;
-
-import java.io.File
-import java.io.FilenameFilter;
-import java.io.InputStream;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Set;
-import java.util.LinkedHashSet;
-import java.util.List;
 
 import scala.collection.JavaConverters._
 import scala.util.Try
