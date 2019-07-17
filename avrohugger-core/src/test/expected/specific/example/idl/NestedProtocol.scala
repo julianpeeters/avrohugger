@@ -18,7 +18,7 @@ final case class Level2(var name: String) extends org.apache.avro.specific.Speci
   def put(field$: Int, value: Any): Unit = {
     (field$: @switch) match {
       case 0 => this.name = {
-        value
+        value.toString
       }.asInstanceOf[String]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
     }

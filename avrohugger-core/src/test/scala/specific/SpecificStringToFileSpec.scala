@@ -2,7 +2,6 @@ package avrohugger
 package test
 package specific
 
-import avrohugger._
 import avrohugger.format.SpecificRecord
 import org.specs2._
 
