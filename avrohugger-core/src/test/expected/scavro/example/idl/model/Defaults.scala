@@ -91,10 +91,10 @@ final object DefaultTest {
         case JDefaultEnum.HEARTS => DefaultEnum.HEARTS
       }, j.getNumber, j.getStr.toString, j.getOptionString match {
         case null => None
-        case _ => Some(j.getOptionString)
+        case _ => Some(j.getOptionString.toString)
       }, j.getOptionStringValue match {
         case null => None
-        case _ => Some(j.getOptionStringValue)
+        case _ => Some(j.getOptionStringValue.toString)
       }, Embedded.metadata.fromAvro(j.getEmbedded), Array((j.getDefaultArray.asScala: _*)) map { x =>
         x
       }, j.getOptionalEnum match {
@@ -110,7 +110,7 @@ final object DefaultTest {
           scala.collection.JavaConverters.mapAsScalaMapConverter(map).asScala.toMap map { kvp =>
             val key = kvp._1.toString
             val value = kvp._2
-            (key, value)
+            (key, value.toString)
           }
         }
       }, j.getByt match {

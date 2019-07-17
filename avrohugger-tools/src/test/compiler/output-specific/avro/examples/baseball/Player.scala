@@ -32,10 +32,10 @@ case class Player(var number: Int, var first_name: String, var last_name: String
         value
       }.asInstanceOf[Int]
       case 1 => this.first_name = {
-        value
+        value.toString
       }.asInstanceOf[String]
       case 2 => this.last_name = {
-        value
+        value.toString
       }.asInstanceOf[String]
       case 3 => this.nicknames = {
         value match {
