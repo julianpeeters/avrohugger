@@ -30,7 +30,7 @@ object User {
     override val fromAvro: (JUser) => User = {
       (j: JUser) => User(j.getName.toString, j.getFavoriteNumber match {
         case null => None
-        case _ => Some(j.getFavoriteNumber.toInt)
+        case _ => Some(j.getFavoriteNumber)
       }, j.getFavoriteColor match {
         case null => None
         case _ => Some(j.getFavoriteColor.toString)

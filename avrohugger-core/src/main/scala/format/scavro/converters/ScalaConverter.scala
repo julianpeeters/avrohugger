@@ -53,12 +53,8 @@ class ScalaConverter(typeMatcher: TypeMatcher) {
         }
       }
       case Schema.Type.NULL => NULL
-      case Schema.Type.STRING => tree TOSTRING
-      case Schema.Type.INT => tree DOT "toInt"
-      case Schema.Type.FLOAT => tree DOT "toFloat"
-      case Schema.Type.DOUBLE => tree DOT "toDouble"
-      case Schema.Type.LONG => tree DOT "toLong"
-
+      case Schema.Type.STRING => if (AvroString.useUtf8()) tree else tree TOSTRING
+      case Schema.Type.INT | Schema.Type.FLOAT | Schema.Type.DOUBLE | Schema.Type.LONG => tree
       case Schema.Type.ARRAY => {
         val seqArgs = SEQARG(tree DOT "asScala")
         val collection = typeMatcher.avroScalaTypes.array match {

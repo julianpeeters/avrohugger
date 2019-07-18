@@ -31,7 +31,7 @@ final object Embedded {
     override val avroClass: Class[JEmbedded] = classOf[JEmbedded]
     override val schema: Schema = JEmbedded.getClassSchema()
     override val fromAvro: (JEmbedded) => Embedded = {
-      (j: JEmbedded) => Embedded(j.getInner.toInt)
+      (j: JEmbedded) => Embedded(j.getInner)
     }
   }
 }
@@ -89,14 +89,14 @@ final object DefaultTest {
         case JDefaultEnum.DIAMONDS => DefaultEnum.DIAMONDS
         case JDefaultEnum.CLUBS => DefaultEnum.CLUBS
         case JDefaultEnum.HEARTS => DefaultEnum.HEARTS
-      }, j.getNumber.toInt, j.getStr.toString, j.getOptionString match {
+      }, j.getNumber, j.getStr.toString, j.getOptionString match {
         case null => None
         case _ => Some(j.getOptionString.toString)
       }, j.getOptionStringValue match {
         case null => None
         case _ => Some(j.getOptionStringValue.toString)
       }, Embedded.metadata.fromAvro(j.getEmbedded), Array((j.getDefaultArray.asScala: _*)) map { x =>
-        x.toInt
+        x
       }, j.getOptionalEnum match {
         case null => None
         case _ => Some(j.getOptionalEnum match {

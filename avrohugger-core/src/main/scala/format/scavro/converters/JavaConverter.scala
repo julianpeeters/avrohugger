@@ -7,9 +7,7 @@ import matchers.TypeMatcher
 import stores.ClassStore
 import types._
 import treehugger.forest._
-import definitions._
 import treehuggerDSL._
-
 import org.apache.avro.Schema
 
 import scala.collection.JavaConverters._
@@ -102,7 +100,7 @@ class JavaConverter(
         )
       }
       case Schema.Type.MAP => {
-        val keyType = typeMatcher.avroStringType
+        val keyType = AvroString.charSequenceClass()
         val valueType = {
           typeMatcher.toJavaType(classStore, namespace, schema.getValueType)
         }
@@ -121,10 +119,6 @@ class JavaConverter(
           REF("map")
         )
       }
-      case Schema.Type.INT    => checkCustomNumberType(typeMatcher.avroScalaTypes.int, ScalaInt, tree, "toInt")
-      case Schema.Type.FLOAT  => checkCustomNumberType(typeMatcher.avroScalaTypes.float, ScalaFloat, tree, "toFloat")
-      case Schema.Type.DOUBLE => checkCustomNumberType(typeMatcher.avroScalaTypes.double, ScalaDouble, tree, "toDouble")
-      case Schema.Type.LONG   => checkCustomNumberType(typeMatcher.avroScalaTypes.long, ScalaLong, tree, "toLong")
       case Schema.Type.FIXED  => sys.error("the FIXED datatype is not yet supported")
       case Schema.Type.BYTES  => REF("java.nio.ByteBuffer") DOT "wrap" APPLY tree
       case _ => tree

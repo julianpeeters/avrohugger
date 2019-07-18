@@ -1,9 +1,10 @@
 
-import avrohugger.format.Scavro
-import avrohugger.tool.{Main, Directory, GeneratorTool}
+import avrohugger.format.{AvroString, Scavro}
+import avrohugger.tool.{Directory, GeneratorTool, Main}
+import org.apache.avro.generic.GenericData.StringType
 import org.apache.avro.tool.Tool
-
 import org.specs2._
+
 import scala.collection.JavaConverters._
 import scala.util.Try
 
@@ -11,7 +12,6 @@ import scala.util.Try
  * Verifies that the GeneratorTool generates Scala source properly
  */
 class ScavroGeneratorToolSpec extends mutable.Specification {
-
 
   // Runs the actual generator tool with the given input args
   private def doCompile(args: Array[String])  = {

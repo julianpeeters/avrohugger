@@ -39,7 +39,7 @@ final object Card {
         case JSuit.DIAMONDS => Suit.DIAMONDS
         case JSuit.CLUBS => Suit.CLUBS
         case JSuit.HEARTS => Suit.HEARTS
-      }, j.getNumber.toInt)
+      }, j.getNumber)
     }
   }
 }

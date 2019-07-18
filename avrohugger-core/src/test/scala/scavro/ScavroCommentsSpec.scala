@@ -1,8 +1,5 @@
 package avrohugger
 
-import java.io.File
-
-import avrohugger._
 import avrohugger.format.Scavro
 import org.specs2._
 

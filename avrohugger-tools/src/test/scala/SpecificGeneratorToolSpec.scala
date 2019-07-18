@@ -1,9 +1,8 @@
 
 import avrohugger.format.SpecificRecord
-import avrohugger.tool.{Main, Directory, GeneratorTool}
-import org.apache.avro.tool.Tool
-
+import avrohugger.tool.{Directory, GeneratorTool}
 import org.specs2._
+
 import scala.collection.JavaConverters._
 import scala.util.Try
 
@@ -11,7 +10,6 @@ import scala.util.Try
  * Verifies that the GeneratorTool generates Scala source properly
  */
 class SpecificGeneratorToolSpec extends mutable.Specification {
-  
 
   // Runs the actual generator tool with the given input args
   private def doCompile(args: Array[String])  = {
@@ -20,7 +18,7 @@ class SpecificGeneratorToolSpec extends mutable.Specification {
       tool.run(null, null, null, Seq(args:_*).asJava)
     }
   }
-    
+
   "match the expected single protocol file" in {
     doCompile(Array[String] ("protocol",
       Directory.TEST_INPUT_DIR + "mail.avpr",
