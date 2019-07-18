@@ -100,7 +100,7 @@ class JavaConverter(
         )
       }
       case Schema.Type.MAP => {
-        val keyType = AvroString.getType()
+        val keyType = AvroString.charSequenceClass()
         val valueType = {
           typeMatcher.toJavaType(classStore, namespace, schema.getValueType)
         }
