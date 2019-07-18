@@ -18,7 +18,7 @@ class TypeMatcher(
   //e.g. ("com.example.idl"->"com.example.model")
   val customNamespaces: Map[String, String]) {
 
-  val stringType = AvroString.getType
+  val stringType: Type = if (AvroString.useUtf8()) AvroString.utf8Class() else AvroString.stringClass()
 
   def toScalaType(
     classStore: ClassStore,
@@ -159,14 +159,14 @@ class TypeMatcher(
         case Schema.Type.FLOAT => TYPE_REF("java.lang.Float")
         case Schema.Type.LONG => TYPE_REF("java.lang.Long")
         case Schema.Type.BOOLEAN => TYPE_REF("java.lang.Boolean")
-        case Schema.Type.STRING => stringType
+        case Schema.Type.STRING => if (AvroString.useUtf8()) AvroString.utf8Class() else AvroString.charSequenceClass()
         case Schema.Type.ARRAY => {
           val avroElement = schema.getElementType
           val elementType = toJavaType(classStore, namespace, avroElement)
           TYPE_REF(REF("java.util.List") APPLYTYPE(elementType))
         }
         case Schema.Type.MAP      => {
-          val keyType = stringType
+          val keyType = AvroString.charSequenceClass()
           val valueType = toJavaType(classStore, namespace, schema.getValueType)
           TYPE_REF(REF("java.util.Map") APPLYTYPE(keyType, valueType))
         }

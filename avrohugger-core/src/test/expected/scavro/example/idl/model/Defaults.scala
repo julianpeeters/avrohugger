@@ -65,7 +65,7 @@ final case class DefaultTest(suit: DefaultEnum.Value = DefaultEnum.SPADES, numbe
       }
       case None => null
     }, {
-      val map: java.util.Map[String, String] = new java.util.HashMap[String, String]
+      val map: java.util.Map[CharSequence, CharSequence] = new java.util.HashMap[CharSequence, CharSequence]
       defaultMap foreach { kvp =>
         val key = kvp._1
         val value = kvp._2

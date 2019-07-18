@@ -15,10 +15,16 @@ object AvroString {
   }
 
   def getType(): Type = stringType match {
-    case StringType.Utf8 => RootClass.newClass(nme.createNameType("org.apache.avro.util.Utf8"))
-    case StringType.CharSequence => TYPE_REF("CharSequence")
-    case _ => TYPE_REF("String")
+    case StringType.Utf8 => utf8Class()
+    case StringType.CharSequence => charSequenceClass()
+    case _ => stringClass()
   }
+
+  def stringClass(): Type = TYPE_REF("String")
+
+  def charSequenceClass(): Type = TYPE_REF("CharSequence")
+
+  def utf8Class(): Type = RootClass.newClass(nme.createNameType("org.apache.avro.util.Utf8"))
 
   def useUtf8() = StringType.Utf8 == stringType
 
