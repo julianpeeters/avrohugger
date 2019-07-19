@@ -38,7 +38,7 @@ object TreeInputParser {
         namespace
       }
       val pkgString = pkgTrees.map(tree => extractNamespace(tree)).mkString(".")
-      TermName(pkgString)
+      newTermName(pkgString)
     }
 
     def enforceSingleScalaDoc(
