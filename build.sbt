@@ -1,4 +1,4 @@
-lazy val avroVersion = "1.8.2"
+lazy val avroVersion = "1.9.0"
 
 lazy val commonSettings = Seq(
   organization := "com.julianpeeters",
@@ -24,6 +24,7 @@ lazy val commonSettings = Seq(
   libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value,
   libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value,
   libraryDependencies += "org.codehaus.jackson" % "jackson-core-asl" % "1.9.13",
+  libraryDependencies += "org.codehaus.jackson" % "jackson-mapper-asl" % "1.9.13",
   // for testing
   libraryDependencies += "org.specs2" %% "specs2-core" % "3.8.6" % "test",
   publishMavenStyle := true,

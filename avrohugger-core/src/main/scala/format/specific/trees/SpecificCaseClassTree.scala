@@ -5,10 +5,11 @@ package trees
 
 import format.specific.methods.{_}
 import avrohugger.generators.ScalaDocGenerator
-import avrohugger.matchers.{DefaultParamMatcher, DefaultValueMatcher, TypeMatcher}
+import avrohugger.matchers.{DefaultParamMatcher, TypeMatcher}
 import avrohugger.stores.ClassStore
 import treehugger.forest._
 import definitions._
+import org.apache.avro.DefaultValueMatcher
 import org.apache.avro.Schema
 import treehuggerDSL._
 

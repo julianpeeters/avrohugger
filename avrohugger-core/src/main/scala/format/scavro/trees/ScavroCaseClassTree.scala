@@ -5,13 +5,14 @@ package trees
 
 import generators.ScalaDocGenerator
 import converters.JavaConverter
-import matchers.{ DefaultValueMatcher, TypeMatcher }
+import matchers.TypeMatcher
 import stores.ClassStore
 
 import treehugger.forest._
 import definitions._
 import treehuggerDSL._
 
+import org.apache.avro.DefaultValueMatcher
 import org.apache.avro.Schema
 
 import scala.collection.JavaConverters._

@@ -1,16 +1,15 @@
-package avrohugger
-package matchers
+package org.apache.avro
 
+import avrohugger.matchers.TypeMatcher
 import avrohugger.matchers.custom.CustomDefaultParamMatcher
 import avrohugger.matchers.custom.CustomDefaultValueMatcher
 import avrohugger.stores.ClassStore
 import avrohugger.types._
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.node.{NullNode, ObjectNode, TextNode}
 import treehugger.forest._
 import definitions._
-import org.apache.avro.Schema
-import org.codehaus.jackson.JsonNode
 import org.codehaus.jackson.map.ObjectMapper
-import org.codehaus.jackson.node.{NullNode, ObjectNode, TextNode}
 import treehugger.forest
 import treehuggerDSL._
 
@@ -19,7 +18,7 @@ import scala.collection.JavaConverters._
 object DefaultValueMatcher {
 
   val nullNode = new TextNode("null")
-  
+
   // This code was stolen from here:
   // https://github.com/julianpeeters/avro-scala-macro-annotations/blob/104fa325a00044ff6d31184fa7ff7b6852e9acd5/macros/src/main/scala/avro/scala/macro/annotations/provider/matchers/FromJsonMatcher.scala
   def getDefaultValue(
@@ -32,64 +31,61 @@ object DefaultValueMatcher {
       schema.getType match {
         case _ if node == null => EmptyTree //not `default=null`, but no default
         case Schema.Type.INT =>
-          LogicalType.foldLogicalTypes[Tree](
+          avrohugger.types.LogicalType.foldLogicalTypes[Tree](
             schema = schema,
-            default = LIT(node.getIntValue)) {
+            default = LIT(node.intValue())) {
             case Date =>
               CustomDefaultValueMatcher.checkCustomDateType(
-                node.getLongValue,
+                node.longValue(),
                 typeMatcher.avroScalaTypes.date)
           }
-        case Schema.Type.FLOAT => LIT(node.getDoubleValue.asInstanceOf[Float])
+        case Schema.Type.FLOAT => LIT(node.doubleValue().asInstanceOf[Float])
         case Schema.Type.LONG =>
-          LogicalType.foldLogicalTypes[Tree](
+          avrohugger.types.LogicalType.foldLogicalTypes[Tree](
             schema = schema,
-            default = LIT(node.getLongValue)) {
+            default = LIT(node.longValue())) {
             case TimestampMillis =>
-            CustomDefaultValueMatcher.checkCustomTimestampMillisType(
-              node.getLongValue,
-              typeMatcher.avroScalaTypes.timestampMillis)
+              CustomDefaultValueMatcher.checkCustomTimestampMillisType(
+                node.longValue(),
+                typeMatcher.avroScalaTypes.timestampMillis)
           }
-        case Schema.Type.DOUBLE => LIT(node.getDoubleValue)
-        case Schema.Type.BOOLEAN => LIT(node.getBooleanValue)
+        case Schema.Type.DOUBLE => LIT(node.doubleValue())
+        case Schema.Type.BOOLEAN => LIT(node.booleanValue())
         case Schema.Type.STRING =>
-          LogicalType.foldLogicalTypes[Tree](
+          avrohugger.types.LogicalType.foldLogicalTypes[Tree](
             schema = schema,
-            default = LIT(node.getTextValue)) {
-            case UUID => REF("java.util.UUID.fromString") APPLY LIT(node.getTextValue)
+            default = LIT(node.textValue())) {
+            case UUID => REF("java.util.UUID.fromString") APPLY LIT(node.textValue())
           }
         case Schema.Type.BYTES =>
           CustomDefaultParamMatcher.checkCustomDecimalType(
             decimalType = typeMatcher.avroScalaTypes.decimal,
             schema = schema,
-            default = REF("Array[Byte]") APPLY node.getTextValue.getBytes.map((e: Byte) => LIT(e)),
-            decimalValue = Some(node.getDecimalValue.toString))
+            default = REF("Array[Byte]") APPLY node.textValue().getBytes.map((e: Byte) => LIT(e)),
+            decimalValue = scala.util.Try(BigDecimal(node.textValue()).toString()).toOption)
         case Schema.Type.ENUM => typeMatcher.avroScalaTypes.enum match {
-          case JavaEnum => (REF(schema.getName) DOT node.getTextValue)
-          case ScalaEnumeration => (REF(schema.getName) DOT node.getTextValue)
-          case ScalaCaseObjectEnum => (REF(schema.getName) DOT node.getTextValue)
-          case EnumAsScalaString => LIT(node.getTextValue)
+          case JavaEnum => REF(schema.getName) DOT node.textValue()
+          case ScalaEnumeration => REF(schema.getName) DOT node.textValue()
+          case ScalaCaseObjectEnum => REF(schema.getName) DOT node.textValue()
+          case EnumAsScalaString => LIT(node.textValue())
         }
         case Schema.Type.NULL => LIT(null)
-        case Schema.Type.UNION => {
+        case Schema.Type.UNION =>
           val unionSchemas = schema.getTypes.asScala.toList
           val result = unionDefaultArgsImpl(node, unionSchemas, fromJsonNode, typeMatcher, classStore, namespace)
           result
-        }
-        case Schema.Type.ARRAY => {
+        case Schema.Type.ARRAY =>
           val collectionType = CustomDefaultParamMatcher.checkCustomArrayType(typeMatcher.avroScalaTypes.array)
-          collectionType APPLY(node.getElements.asScala.toSeq.map(e => fromJsonNode(e, schema.getElementType)))
-        }
-        case Schema.Type.MAP => {
-          val kvps = node.getFields.asScala.toList.map(e => LIT(e.getKey) ANY_-> fromJsonNode(e.getValue, schema.getValueType))
+          collectionType APPLY node.elements().asScala.toSeq.map(e => fromJsonNode(e, schema.getElementType))
+        case Schema.Type.MAP =>
+          val kvps = node.fields().asScala.toList.map(e => LIT(e.getKey) ANY_-> fromJsonNode(e.getValue, schema.getValueType))
           MAKE_MAP(kvps)
-        }
-        case Schema.Type.RECORD  => {
+        case Schema.Type.RECORD  =>
           val fields  = schema.getFields
           val jsObject = node match {
             case t: TextNode =>
-              val mapper = new ObjectMapper();
-              mapper.readValue(t.getTextValue, classOf[ObjectNode])
+              val mapper = new ObjectMapper()
+              mapper.readValue(t.textValue(), classOf[ObjectNode])
             case o: ObjectNode => o
             case _ => throw new Exception(s"Invalid default value for field: $field, value: $node")
           }
@@ -98,7 +94,6 @@ object DefaultValueMatcher {
             fromJsonNode(jsObject.get(f.name), f.schema)
           }
           NEW(schema.getName, fieldValues: _*)
-        }
         case x => throw new Exception("Can't extract a default field, type not yet supported: " + x)
       }
     }
@@ -114,11 +109,11 @@ object DefaultValueMatcher {
     * the type of the default value must match the first element of the union)
     */
   private[this] def unionDefaultArgsImpl(node: JsonNode,
-                                         unionSchemas: List[Schema],
-                                         treeMatcher: (JsonNode, Schema) => Tree,
-                                         typeMatcher: TypeMatcher,
-                                         classStore: ClassStore,
-                                         namespace: Option[String]) : Tree = {
+                  unionSchemas: List[Schema],
+                  treeMatcher: (JsonNode, Schema) => Tree,
+                  typeMatcher: TypeMatcher,
+                  classStore: ClassStore,
+                  namespace: Option[String]) : Tree = {
 
     def COPRODUCT(defaultParam: Schema, tp: List[Type]): Tree =  {
       val copTypes = tp :+ typeRef(RootClass.newClass(newTypeName("CNil")))
@@ -141,9 +136,9 @@ object DefaultValueMatcher {
     }
 
     def unionsArityStrategy(
-      classStore: ClassStore,
-      namespace: Option[String],
-      typeMatcher: TypeMatcher) =
+                             classStore: ClassStore,
+                             namespace: Option[String],
+                             typeMatcher: TypeMatcher) =
       nonNullableSchemas match {
         case List(schemaA) => //Option
           treeMatcher(node, schemaA)
