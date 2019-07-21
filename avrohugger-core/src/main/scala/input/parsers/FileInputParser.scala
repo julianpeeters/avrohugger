@@ -106,10 +106,8 @@ class FileInputParser {
            * of all imported types and generate them separately.
            */
           val importedFiles = IdlImportParser.getImportedFiles(infile, classLoader)
-    println("^^ " + importedFiles)
           val importedSchemaOrProtocols = importedFiles.flatMap(file => {
             val importParser = new Parser() // else attempts to redefine schemas
-            println("FILE " + file)
             getSchemaOrProtocols(file, format, classStore, classLoader, importParser)
           }).toList
           def stripImports(
