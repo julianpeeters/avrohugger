@@ -11,7 +11,6 @@ case class Names(public$: String, `ends_with_`: String) extends AvroSerializeabl
   type J = JNames
   override def toAvro: JNames = {
     new JNames(public$, `ends_with_`)
-  }
 }
 
 object Names {
