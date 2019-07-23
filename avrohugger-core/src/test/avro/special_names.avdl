@@ -1,0 +1,8 @@
+@namespace("example.idl")
+protocol SpecialNames {
+
+  record Names {
+    string `public`;
+    string `ends_with_`;
+  }
+}
