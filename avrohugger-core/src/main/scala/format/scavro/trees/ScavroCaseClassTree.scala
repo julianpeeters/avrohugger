@@ -36,7 +36,7 @@ object ScavroCaseClassTree {
     val shouldGenerateSimpleClass = restrictedFields && avroFields.size > 22
 
     val scalaClassParams: List[ValDef] = avroFields.map { f =>
-      val fieldName = f.name
+      val fieldName = FieldRenamer.rename(f.name)
       val fieldType = typeMatcher.toScalaType(classStore, namespace, f.schema)
       val defaultValue = DefaultValueMatcher.getDefaultValue(
         classStore,
