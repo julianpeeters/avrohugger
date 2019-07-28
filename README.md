@@ -124,7 +124,6 @@ _Note:_ Currently [Treehugger](http://eed3si9n.com/treehugger/comments.html#Scal
 
     "com.julianpeeters" %% "avrohugger-core" % "1.0.0-RC18"
 
-
 ##### Description:
 
 Instantiate a `Generator` with `Standard`, `Scavro`, or `SpecificRecord` source
