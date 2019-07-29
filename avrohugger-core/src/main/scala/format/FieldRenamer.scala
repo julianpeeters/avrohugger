@@ -13,7 +13,7 @@ object FieldRenamer {
 
   def backtick(variable: String): String = s"`$variable`"
 
-  def mangle(variable: String): String = s"_$$$$${variable}"
+  def mangle(variable: String): String = s"_${variable}"
 
   def isMangled(fieldName: String): Boolean = RESERVED_WORDS.contains(fieldName)
 
