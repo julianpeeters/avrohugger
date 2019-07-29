@@ -123,7 +123,7 @@ object StandardCaseClassTree {
       }
     }
 
-    val mangledClass = if(avroFields.count(f => FieldRenamer.isMangled(f.name())) > 0) {
+    val classTree = if(avroFields.count(f => FieldRenamer.isMangled(f.name())) > 0) {
       caseClassDef := BLOCK(
         avroFields.flatMap { field =>
           if(FieldRenamer.isMangled(field.name()))
@@ -132,9 +132,6 @@ object StandardCaseClassTree {
         }
       )
     } else caseClassDef.tree
-
-    val classTree = mangledClass
-
 
     val treeWithScalaDoc = ScalaDocGenerator.docToScalaDoc(
       Left(schema),
