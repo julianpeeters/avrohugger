@@ -3,25 +3,25 @@ package example.idl
 
 import scala.annotation.switch
 
-case class Names(var `public`: String, var `ends_with_`: String) extends org.apache.avro.specific.SpecificRecordBase {
+case class Names(var _$$public: String, var `ends_with_`: String) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this("", "")
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {
-        public
+        _$$public
       }.asInstanceOf[AnyRef]
       case 1 => {
-        ends_with_
+        `ends_with_`
       }.asInstanceOf[AnyRef]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
     (field$: @switch) match {
-      case 0 => this.public = {
+      case 0 => this._$$public = {
         value.toString
       }.asInstanceOf[String]
-      case 1 => this.ends_with_ = {
+      case 1 => this.`ends_with_` = {
         value.toString
       }.asInstanceOf[String]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
