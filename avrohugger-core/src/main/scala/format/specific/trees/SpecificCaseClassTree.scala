@@ -32,7 +32,7 @@ object SpecificCaseClassTree {
 
     // generate list of constructor parameters
     val params: List[ValDef] = avroFields.map { f =>
-      val fieldName = f.name
+      val fieldName = FieldRenamer.rename(f.name)
       val fieldType = typeMatcher.toScalaType(classStore, namespace, f.schema)
       val defaultValue = DefaultValueMatcher.getDefaultValue(
         classStore,

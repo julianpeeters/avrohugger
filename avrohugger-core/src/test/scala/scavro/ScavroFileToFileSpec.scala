@@ -38,6 +38,7 @@ class ScavroFileToFileSpec extends Specification {
     correctly generate a protocol with no ADT when asked $e21
     correctly generate cases classes for AVSC files that have a equivalent common element $e22
     correctly fail if AVSC files contain non-equivalent common element $e23
+    correctly generate a class with special names $e24
   """
 
   def eA = {
@@ -263,5 +264,16 @@ class ScavroFileToFileSpec extends Specification {
     val outDir = gen.defaultOutputDir + "/scavro/"
     gen.fileToFile(inOrderSchema, outDir)
     gen.fileToFile(inReportSchema, outDir) must throwA[Exception]
+  }
+
+  def e24 = {
+    val infile = new java.io.File("avrohugger-core/src/test/avro/special_names.avdl")
+    val gen = new Generator(Scavro)
+    val outDir = gen.defaultOutputDir + "/scavro/"
+    gen.fileToFile(infile, outDir)
+
+    val source = util.Util.readFile("target/generated-sources/scavro/example/idl/model/Names.scala")
+
+    source === util.Util.readFile("avrohugger-core/src/test/expected/scavro/example/idl/model/Names.scala")
   }
 }
