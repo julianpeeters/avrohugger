@@ -48,7 +48,7 @@ object ScavroCaseClassTree {
 
     val scalaClassAccessors: List[Tree] = avroFields.map(field => {
       val javaConverter = new JavaConverter(classStore, namespace, typeMatcher)
-      javaConverter.convertToJava(field.schema, REF(field.name))
+      javaConverter.convertToJava(field.schema, REF(FieldRenamer.rename(field.name)))
     })
 
     // There could be base traits, flags, or both, and could have no fields
