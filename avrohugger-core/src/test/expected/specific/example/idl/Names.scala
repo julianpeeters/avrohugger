@@ -3,12 +3,12 @@ package example.idl
 
 import scala.annotation.switch
 
-case class Names(var __public: String, var `ends_with_`: String) extends org.apache.avro.specific.SpecificRecordBase {
+case class Names(var public$: String, var `ends_with_`: String) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this("", "")
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {
-        __public
+        public$
       }.asInstanceOf[AnyRef]
       case 1 => {
         `ends_with_`
@@ -18,7 +18,7 @@ case class Names(var __public: String, var `ends_with_`: String) extends org.apa
   }
   def put(field$: Int, value: Any): Unit = {
     (field$: @switch) match {
-      case 0 => this.__public = {
+      case 0 => this.public$ = {
         value.toString
       }.asInstanceOf[String]
       case 1 => this.`ends_with_` = {
