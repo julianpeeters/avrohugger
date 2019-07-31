@@ -35,7 +35,6 @@ object StandardCaseClassTree {
 
     val params: List[ValDef] = avroFields.map(f => {
       val fieldName = FieldRenamer.rename(f.name)
-      val isMangled = FieldRenamer.isMangled(f.name())
       val fieldType = typeMatcher.toScalaType(classStore, namespace, f.schema)
       val defaultValue = DefaultValueMatcher.getDefaultValue(
         classStore,
@@ -119,15 +118,7 @@ object StandardCaseClassTree {
       }
     }
 
-    val classTree = if(avroFields.count(f => FieldRenamer.isMangled(f.name())) > 0) {
-      caseClassDef := BLOCK(
-        avroFields.flatMap { field =>
-          if(FieldRenamer.isMangled(field.name()))
-            Some(VAL(FieldRenamer.backtick(field.name()), typeMatcher.toScalaType(classStore, namespace, field.schema)) := REF(FieldRenamer.mangle(field.name())))
-          else None
-        }
-      )
-    } else caseClassDef.tree
+    val classTree = caseClassDef.tree
 
     val treeWithScalaDoc = ScalaDocGenerator.docToScalaDoc(
       Left(schema),
