@@ -2,7 +2,7 @@ lazy val avroVersion = "1.9.0"
 
 lazy val commonSettings = Seq(
   organization := "com.julianpeeters",
-  version := "1.1.0-RC1",
+  version := "1.0.0-RC18",
   scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-Ywarn-value-discard"),
   scalacOptions in Test ++= Seq("-Yrangepos"),
   scalaVersion := "2.12.8",
