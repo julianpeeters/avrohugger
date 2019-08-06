@@ -109,11 +109,11 @@ object DefaultValueMatcher {
     * the type of the default value must match the first element of the union)
     */
   private[this] def unionDefaultArgsImpl(node: JsonNode,
-                  unionSchemas: List[Schema],
-                  treeMatcher: (JsonNode, Schema) => Tree,
-                  typeMatcher: TypeMatcher,
-                  classStore: ClassStore,
-                  namespace: Option[String]) : Tree = {
+                                         unionSchemas: List[Schema],
+                                         treeMatcher: (JsonNode, Schema) => Tree,
+                                         typeMatcher: TypeMatcher,
+                                         classStore: ClassStore,
+                                         namespace: Option[String]) : Tree = {
 
     def COPRODUCT(defaultParam: Schema, tp: List[Type]): Tree =  {
       val copTypes = tp :+ typeRef(RootClass.newClass(newTypeName("CNil")))
@@ -136,9 +136,9 @@ object DefaultValueMatcher {
     }
 
     def unionsArityStrategy(
-                             classStore: ClassStore,
-                             namespace: Option[String],
-                             typeMatcher: TypeMatcher) =
+      classStore: ClassStore,
+      namespace: Option[String],
+      typeMatcher: TypeMatcher) =
       nonNullableSchemas match {
         case List(schemaA) => //Option
           treeMatcher(node, schemaA)
