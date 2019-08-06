@@ -15,6 +15,7 @@
 
 * **sbt**: `sbt-avrohugger` - Generate source code at compile time with an sbt plugin [found here](https://github.com/julianpeeters/sbt-avrohugger).
 * **maven**: `avrohugger-maven-plugin` - Generate source code at compile time with a maven plugin [found here](https://github.com/makubi/avrohugger-maven-plugin).
+* **gradle**: `gradle-avrohugger-plugin` - Generate source code at compile time with a gradle plugin [found here](https://github.com/zladovan/gradle-avrohugger-plugin).
 * **on the web**: `avro2caseclass` - Generate source code from a web app, [found here](https://github.com/julianpeeters/avro2caseclass).
 * **freestyle-rpc**: `sbt-frees-rpc-idlgen` - Generate rpc models, messages, clients, and servers [found here](http://frees.io/docs/rpc/idl-generation).
 
@@ -86,7 +87,7 @@ _NOTE: Currently logical types are only supported for `Standard` and `SpecificRe
 * `date`: Annotates Avro `int` schemas to generate `java.time.LocalDate` or `java.sql.Date` (See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)). Examples: [avdl](https://github.com/julianpeeters/sbt-avrohugger/blob/master/src/sbt-test/avrohugger/GenericSerializationTests/src/main/avro/logical.avdl#L9), [avsc](https://github.com/julianpeeters/sbt-avrohugger/blob/master/src/sbt-test/avrohugger/GenericSerializationTests/src/main/avro/logical.avsc#L22-L27).
 * `decimal`: Annotates Avro `bytes` schemas to generate `BigDecimal`. Examples: [avdl](https://github.com/julianpeeters/sbt-avrohugger/blob/master/src/sbt-test/avrohugger/GenericSerializationTests/src/main/avro/logical.avdl#L6), [avsc](https://github.com/julianpeeters/sbt-avrohugger/blob/master/src/sbt-test/avrohugger/GenericSerializationTests/src/main/avro/logical.avsc#L6-L14).
 * `timestamp-millis`: Annotates Avro `long` schemas to genarate `java.time.Instant` or `java.sql.Timestamp` (See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)). Examples: [avdl](https://github.com/julianpeeters/sbt-avrohugger/blob/master/src/sbt-test/avrohugger/GenericSerializationTests/src/main/avro/logical.avdl#L8), [avsc](https://github.com/julianpeeters/sbt-avrohugger/blob/master/src/sbt-test/avrohugger/GenericSerializationTests/src/main/avro/logical.avsc#L15-L21).
-* `uuid`: Annotates Avro `string` schemas to genarate `java.util.UUID` (See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)). Example: [avsc](https://github.com/julianpeeters/sbt-avrohugger/blob/master/src/sbt-test/avrohugger/GenericSerializationTests/src/main/avro/logical.avsc#L29-L35).
+* `uuid`: Annotates Avro `string` schemas (but not idls as of avro 1.8.2) to generate `java.util.UUID` (See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)). Example: [avsc](https://github.com/julianpeeters/sbt-avrohugger/blob/master/src/sbt-test/avrohugger/GenericSerializationTests/src/main/avro/logical.avsc#L29-L35).
 
 ##### Protocol Support:
 
@@ -113,7 +114,7 @@ _Note:_ Currently [Treehugger](http://eed3si9n.com/treehugger/comments.html#Scal
 
 * **Library For Scala 2.10, 2.11, and 2.12**
 * **Parses Schemas and IDLs with Avro version 1.8**
-* **Generates Code Compatible with Scala 2.10, 2.11, 2.12 (and for `SpecificRecord`, Avro 1.7)**
+* **Generates Code Compatible with Scala 2.10, 2.11, 2.12**
 
 
 
@@ -121,7 +122,7 @@ _Note:_ Currently [Treehugger](http://eed3si9n.com/treehugger/comments.html#Scal
 
 ##### Get the dependency with:
 
-    "com.julianpeeters" %% "avrohugger-core" % "1.0.0-RC15"
+    "com.julianpeeters" %% "avrohugger-core" % "1.0.0-RC18"
 
 
 ##### Description:
@@ -208,7 +209,7 @@ Generate simple classes instead of case classes when fields.size > 22, useful fo
 
 ##### Get the dependency with:
 
-    "com.julianpeeters" %% "avrohugger-filesorter" % "1.0.0-RC15"
+    "com.julianpeeters" %% "avrohugger-filesorter" % "1.0.0-RC18"
     
 
 ##### Description:
@@ -228,29 +229,29 @@ To ensure dependent schemas are compiled in the proper order (thus avoiding `org
 #### `avrohugger-tools`
 
 
-  Download the avrohugger-tools jar for Scala [2.10](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.10/1.0.0-RC15/avrohugger-tools_2.10-1.0.0-RC15-assembly.jar), Scala [2.11](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.11/1.0.0-RC15/avrohugger-tools_2.11-1.0.0-RC15-assembly.jar), or Scala [2.12](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.12/1.0.0-RC15/avrohugger-tools_2.12-1.0.0-RC15-assembly.jar) (>30MB!) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
+  Download the avrohugger-tools jar for Scala [2.10](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.10/1.0.0-RC18/avrohugger-tools_2.10-1.0.0-RC18-assembly.jar), Scala [2.11](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.11/1.0.0-RC18/avrohugger-tools_2.11-1.0.0-RC18-assembly.jar), or Scala [2.12](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.12/1.0.0-RC18/avrohugger-tools_2.12-1.0.0-RC18-assembly.jar) (>30MB!) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
 
 
 * `generate` generates Scala case class definitions:
 
-`java -jar /path/to/avrohugger-tools_2.12-1.0.0-RC15-assembly.jar generate schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.12-1.0.0-RC18-assembly.jar generate schema user.avsc . `
 
 
 * `generate-specific` generates definitions that extend Avro's `SpecificRecordBase`:
 
-`java -jar /path/to/avrohugger-tools_2.12-1.0.0-RC15-assembly.jar generate-specific schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.12-1.0.0-RC18-assembly.jar generate-specific schema user.avsc . `
 
 
 * `generate-scavro` generates definitions that extend Scavro's `AvroSerializable`:
 
-`java -jar /path/to/avrohugger-tools_2.12-1.0.0-RC15-assembly.jar generate-scavro schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.12-1.0.0-RC18-assembly.jar generate-scavro schema user.avsc . `
 
 
 ## Warnings
 
 1) If your framework is one that relies on reflection to get the Schema, it
 will fail since Scala fields are private. Therefore preempt it by passing in
-a Schema to DatumReaders and DatumWriters (as in the Avro example above).
+a Schema to DatumReaders and DatumWriters (e.g. `val sdw = SpecificDatumWriter[MyRecord](schema)`).
 
 2) For the `SpecificRecord` format, generated case class fields must be
 mutable (`var`) in order to be compatible with the SpecificRecord API. _Note:_
@@ -324,6 +325,8 @@ Contributors:
 - [Andrew Gustafson](https://github.com/agustafson)
 - [Fede Fernández](https://github.com/fedefernandez)
 - [Francisco Díaz](https://github.com/franciscodr)
+- [Kostya Golikov](https://github.com/lazyval)
+- [Rob Landers](https://github.com/withinboredom)
 
 ##### Criticism is appreciated.
 

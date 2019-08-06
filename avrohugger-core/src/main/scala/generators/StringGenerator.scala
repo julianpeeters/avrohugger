@@ -95,10 +95,11 @@ private[avrohugger] object StringGenerator {
     schemaStore: SchemaStore,
     fileParser: FileInputParser,
     typeMatcher: TypeMatcher,
+    classLoader: ClassLoader,
     restrictedFields: Boolean): List[String] = {
     try {
       val schemaOrProtocols: List[Either[Schema, Protocol]] =
-        fileParser.getSchemaOrProtocols(inFile, format, classStore)
+        fileParser.getSchemaOrProtocols(inFile, format, classStore, classLoader)
       schemaOrProtocols.flatMap(schemaOrProtocol => schemaOrProtocol match {
         case Left(schema) => {
           schemaToStrings(schema, format, classStore, schemaStore, typeMatcher, restrictedFields)

@@ -6,11 +6,12 @@ package trees
 import generators.ScalaDocGenerator
 import matchers.TypeMatcher
 import stores.SchemaStore
-
 import org.apache.avro.{Protocol, Schema}
 import treehugger.forest._
 import definitions._
+import org.apache.avro.Schema.Type
 import treehuggerDSL._
+
 import scala.collection.JavaConverters._
 
 // only companions, so no doc generation is required here
@@ -33,10 +34,16 @@ object SpecificObjectTree {
     val DecimalConversion = RootClass.newClass("org.apache.avro.Conversions.DecimalConversion")
     val decimalConversionDef = VAL(REF("decimalConversion")) := NEW(DecimalConversion)
     def schemaContainsDecimal(schema: Schema): Boolean = {
+      def getNestedSchemas(s: Schema): List[Schema] = s.getType match {
+        case Schema.Type.ARRAY => getNestedSchemas(s.getElementType)
+        case Schema.Type.MAP => getNestedSchemas(s.getValueType)
+        case Schema.Type.UNION => s.getTypes.asScala.toList.flatMap(getNestedSchemas)
+        case _ => List(s)
+      }
       val topLevelSchemas = SpecificImporter.getTopLevelSchemas(Left(schema), schemaStore, typeMatcher)
       val recordSchemas = SpecificImporter.getRecordSchemas(topLevelSchemas).filter(s => s.getType == Schema.Type.RECORD)
-      val fieldSchemas = recordSchemas.flatMap(_.getFields().asScala).map(_.schema())
-      fieldSchemas.exists(s => Option(s.getLogicalType()) match {
+      val fieldSchemas = recordSchemas.flatMap(_.getFields.asScala.map(_.schema()))
+      fieldSchemas.flatMap(getNestedSchemas).exists(s => Option(s.getLogicalType()) match {
         case Some(logicalType) => logicalType.getName == "decimal"
         case None => false
       })
@@ -44,6 +51,11 @@ object SpecificObjectTree {
     // companion object definition
     if (schemaContainsDecimal(schema)) objectDef := BLOCK(schemaDef, decimalConversionDef)
     else objectDef := BLOCK(schemaDef)
+  }
+
+  // union acts as a blackbox, fields are not seen on root level, unpack is required
+  private def collectUnionFields(sc: Schema): Iterable[Schema] = {
+    sc.getTypes.asScala.toList
   }
   
   // Companion to traits that have messages

@@ -58,6 +58,7 @@ class StandardFileToFileSpec extends Specification {
     correctly generate optional logical types from IDL tagged decimals $e36
     correctly generate an either containing logical types from IDL tagged decimals $e37
     correctly generate a coproduct containing logical types from IDL tagged decimals $e38
+    correctly generate a protocol with special strings $e39
   """
   
   // tests standard to fileToX
@@ -550,5 +551,16 @@ class StandardFileToFileSpec extends Specification {
     val source = util.Util.readFile("target/generated-sources/standard-tagged/example/idl/LogicalCoproductIdl.scala")
 
     source === util.Util.readFile("avrohugger-core/src/test/expected/standard-tagged/example/idl/LogicalCoproductIdl.scala")
+  }
+
+  def e39 = {
+    val infile = new java.io.File("avrohugger-core/src/test/avro/special_names.avdl")
+    val gen = new Generator(Standard)
+    val outDir = gen.defaultOutputDir + "/standard/"
+    gen.fileToFile(infile, outDir)
+
+    val source = util.Util.readFile("target/generated-sources/standard/example/idl/Names.scala")
+
+    source === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/Names.scala")
   }
 }

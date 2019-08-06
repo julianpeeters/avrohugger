@@ -22,11 +22,13 @@ object PutGenerator {
 
       def asPutCase(field: IndexedField) = {
         CASE (LIT(field.idx)) ==> {
-          THIS DOT field.avroField.name := 
+          THIS DOT FieldRenamer.rename(field.avroField.name) :=
             BLOCK(ScalaConverter.convertFromJava(
               classStore,
               namespace,
               field.avroField.schema,
+              REF("getSchema").DOT("getFields").APPLY().DOT("get").APPLY(REF("field$")).DOT("schema").APPLY(),
+              false,
               REF("value"),
               typeMatcher,
               classSymbol))

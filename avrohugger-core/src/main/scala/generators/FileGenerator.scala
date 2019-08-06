@@ -78,9 +78,10 @@ private[avrohugger] object FileGenerator {
     schemaStore: SchemaStore,
     fileParser: FileInputParser,
     typeMatcher: TypeMatcher,
+    classLoader: ClassLoader,
     restrictedFields: Boolean): Unit = {
     val schemaOrProtocols: List[Either[Schema, Protocol]] =
-      fileParser.getSchemaOrProtocols(inFile, format, classStore)
+      fileParser.getSchemaOrProtocols(inFile, format, classStore, classLoader)
     schemaOrProtocols.foreach(schemaOrProtocol => schemaOrProtocol match {
       case Left(schema) => {
         schemaToFile(schema, outDir, format, classStore, schemaStore, typeMatcher, restrictedFields)

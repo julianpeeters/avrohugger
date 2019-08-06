@@ -18,7 +18,7 @@ object AvdlFileSorter {
     val files = filesTraversable.toList
     val importsMap = files.map{ file =>
       (file.getCanonicalFile, getImports(file))
-    }.toMap
+    }.toMap.mapValues(f => f.filter(_.exists))
 
     @tailrec def addFiles(processedFiles: Seq[File], remainingFiles: List[File]): Seq[File] = {
       remainingFiles match {

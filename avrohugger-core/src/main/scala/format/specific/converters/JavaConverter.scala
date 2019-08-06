@@ -3,6 +3,8 @@ package format
 package specific
 package converters
 
+import SchemaAccessors._
+
 import matchers.TypeMatcher
 import stores.ClassStore
 import types._
@@ -17,12 +19,15 @@ import scala.collection.JavaConverters._
 
 
 object JavaConverter {
+
   // Recursive definition takes a field's schema, and a tree that represents the source code to be written.
   // The initial tree that is passed in is a REF("fieldName"), which is wrapped in a pattern match tree (e.g.,
   // to sort None and Some(x) if the field is a union). A Schema is passed in order to get access to the field's type
   // parameters while the tree is built up.
   def convertToJava(
     schema: Schema,
+    schemaAccessor: Tree,
+    isUnionMember: Boolean,
     tree: Tree,
     classSymbol: ClassSymbol,
     typeMatcher: TypeMatcher): Tree = schema.getType match {
@@ -38,8 +43,18 @@ object JavaConverter {
         val maybeType = types.find(x => x.getType != Schema.Type.NULL)
         if (maybeType.isDefined) {
         val conversionCases = List(
-          CASE(SOME(ID("x"))) ==> convertToJava(maybeType.get, REF("x"), classSymbol, typeMatcher),
-          CASE(NONE)          ==> NULL
+          CASE(SOME(ID("x"))) ==> {
+            convertToJava(
+              maybeType.get,
+              schemaAccessor,
+              true,
+              REF("x"),
+              classSymbol,
+              typeMatcher)
+          },
+          CASE(NONE)          ==> {
+            NULL
+          }
         )
         tree MATCH(conversionCases:_*)
         }
@@ -49,7 +64,13 @@ object JavaConverter {
     case Schema.Type.ARRAY => {
       val applyParam = {
         BLOCK(tree MAP(LAMBDA(PARAM("x")) ==> BLOCK(
-          convertToJava(schema.getElementType, REF("x"), classSymbol, typeMatcher)
+          convertToJava(
+            schema.getElementType,
+            if (isUnionMember) arrayAccessor(unionAccessor(schemaAccessor, schema.getFullName)) else arrayAccessor(schemaAccessor),
+            false,
+            REF("x"),
+            classSymbol,
+            typeMatcher)
         )))
       }
       REF("scala.collection.JavaConverters.bufferAsJavaListConverter").APPLY(applyParam DOT "toBuffer").DOT("asJava")
@@ -62,7 +83,15 @@ object JavaConverter {
           BLOCK(
             VAL("key") := REF("kvp._1"),
             VAL("value") := REF("kvp._2"),
-            REF("map").DOT("put").APPLY(REF("key"), convertToJava(schema.getValueType, REF("value"), classSymbol, typeMatcher))
+            REF("map").DOT("put").APPLY(
+              REF("key"),
+              convertToJava(
+                schema.getValueType,
+                if (isUnionMember) mapAccessor(unionAccessor(schemaAccessor, schema.getFullName)) else mapAccessor(schemaAccessor),
+                false,
+                REF("value"),
+                classSymbol,
+                typeMatcher))
           )
         ),
         REF("map")
@@ -73,7 +102,7 @@ object JavaConverter {
       case decimal: LogicalTypes.Decimal => {
         val Decimal = RootClass.newClass("org.apache.avro.LogicalTypes.Decimal")
         Block(
-          VAL("schema") := (REF("getSchema").DOT("getFields").APPLY().DOT("get").APPLY(REF("field$")).DOT("schema").APPLY()),
+          VAL("schema") := {if (isUnionMember) unionAccessor(schemaAccessor, schema.getFullName) else schemaAccessor},
           VAL("decimalType") := REF("schema").DOT("getLogicalType").APPLY().AS(Decimal),
           VAL("scale") := REF("decimalType").DOT("getScale").APPLY(),
           VAL("scaledValue") := tree.DOT("setScale").APPLY(REF("scale")),

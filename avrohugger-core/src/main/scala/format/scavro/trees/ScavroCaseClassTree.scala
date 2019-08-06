@@ -37,7 +37,7 @@ object ScavroCaseClassTree {
     val shouldGenerateSimpleClass = restrictedFields && avroFields.size > 22
 
     val scalaClassParams: List[ValDef] = avroFields.map { f =>
-      val fieldName = f.name
+      val fieldName = FieldRenamer.rename(f.name)
       val fieldType = typeMatcher.toScalaType(classStore, namespace, f.schema)
       val defaultValue = DefaultValueMatcher.getDefaultValue(
         classStore,
@@ -49,7 +49,7 @@ object ScavroCaseClassTree {
 
     val scalaClassAccessors: List[Tree] = avroFields.map(field => {
       val javaConverter = new JavaConverter(classStore, namespace, typeMatcher)
-      javaConverter.convertToJava(field.schema, REF(field.name))
+      javaConverter.convertToJava(field.schema, REF(FieldRenamer.rename(field.name)))
     })
 
     // There could be base traits, flags, or both, and could have no fields

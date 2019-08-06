@@ -25,6 +25,7 @@ class FileInputParser {
     infile: File,
     format: SourceFormat,
     classStore: ClassStore,
+    classLoader: ClassLoader,
     parser: Parser = schemaParser): List[Either[Schema, Protocol]] = {
     def unUnion(schema: Schema) = {
       schema.getType match {
@@ -94,7 +95,7 @@ class FileInputParser {
           val protocol = Protocol.parse(infile)
           List(Right(protocol))
         case "avdl" =>
-          val idlParser = new Idl(infile)
+          val idlParser = new Idl(infile, classLoader)
           val protocol = idlParser.CompilationUnit()
           /**
            * IDLs may refer to types imported from another file. When converted 
@@ -104,10 +105,10 @@ class FileInputParser {
            * instead be generated in its own namespace. So, strip the protocol 
            * of all imported types and generate them separately.
            */
-          val importedFiles = IdlImportParser.getImportedFiles(infile)
+          val importedFiles = IdlImportParser.getImportedFiles(infile, classLoader)
           val importedSchemaOrProtocols = importedFiles.flatMap(file => {
             val importParser = new Parser() // else attempts to redefine schemas
-            getSchemaOrProtocols(file, format, classStore, importParser)
+            getSchemaOrProtocols(file, format, classStore, classLoader, importParser)
           }).toList
           def stripImports(
             protocol: Protocol,

@@ -34,14 +34,14 @@ object StandardCaseClassTree {
     val shouldGenerateSimpleClass = restrictedFields && avroFields.size > 22
 
     val params: List[ValDef] = avroFields.map(f => {
-      val fieldName = f.name
+      val fieldName = FieldRenamer.rename(f.name)
       val fieldType = typeMatcher.toScalaType(classStore, namespace, f.schema)
       val defaultValue = DefaultValueMatcher.getDefaultValue(
         classStore,
         namespace,
         f,
         typeMatcher)
-      PARAM(fieldName, fieldType) := defaultValue
+        PARAM(fieldName, fieldType) := defaultValue
     })
 
     // There could be base traits, flags, or both, and could have no fields
@@ -119,7 +119,6 @@ object StandardCaseClassTree {
     }
 
     val classTree = caseClassDef.tree
-
 
     val treeWithScalaDoc = ScalaDocGenerator.docToScalaDoc(
       Left(schema),

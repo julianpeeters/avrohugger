@@ -14,7 +14,8 @@ import java.io.File
 case class Generator(format: SourceFormat,
                      avroScalaCustomTypes: Option[AvroScalaTypes] = None,
                      avroScalaCustomNamespace: Map[String, String] = Map.empty,
-                     restrictedFieldNumber: Boolean = false) {
+                     restrictedFieldNumber: Boolean = false,
+                     classLoader: ClassLoader = Thread.currentThread.getContextClassLoader) {
 
   val avroScalaTypes = avroScalaCustomTypes.getOrElse(format.defaultTypes)
   val defaultOutputDir = "target/generated-sources"
@@ -71,6 +72,7 @@ case class Generator(format: SourceFormat,
       schemaStore,
       fileParser,
       typeMatcher,
+      classLoader,
       restrictedFieldNumber)
   }
 
@@ -104,6 +106,7 @@ case class Generator(format: SourceFormat,
       schemaStore,
       fileParser,
       typeMatcher,
+      classLoader,
       restrictedFieldNumber)
   }
 

@@ -18,11 +18,13 @@ object GetGenerator {
       field: IndexedField,
       classSymbol: ClassSymbol,
       typeMatcher: TypeMatcher) = {
-            
+
       CASE (LIT(field.idx)) ==> {
         BLOCK(JavaConverter.convertToJava(
           field.avroField.schema,
-          REF(field.avroField.name),
+          REF("getSchema").DOT("getFields").APPLY().DOT("get").APPLY(REF("field$")).DOT("schema").APPLY(),
+          false,
+          REF(FieldRenamer.rename(field.avroField.name)),
           classSymbol,
           typeMatcher)).AS(AnyRefClass)
       }

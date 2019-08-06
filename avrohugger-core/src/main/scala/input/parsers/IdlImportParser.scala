@@ -5,6 +5,7 @@ package parsers
 import org.apache.avro.{ Protocol, Schema }
 
 import java.io.File
+import scala.util.matching.Regex.Match
 
 object IdlImportParser {
   
@@ -16,7 +17,7 @@ object IdlImportParser {
     commentFree
   }
 
-  def getImportedFiles(infile: File): List[File] = {
+  def getImportedFiles(infile: File, classLoader: ClassLoader): List[File] = {
     def readFile(file: File): String = {
       var count = 0
       val maxTries = 3
@@ -44,7 +45,23 @@ object IdlImportParser {
     val protocolMatches = avprPattern.findAllIn(contents).matchData.toList
     val schemaMatches = avscPattern.findAllIn(contents).matchData.toList
     val importMatches = idlMatches ::: protocolMatches ::: schemaMatches
-    val importedFiles = importMatches.map(m => new File(path + m.group(1)))
+    
+    val (localImports, nonLocalMatches): (List[File], List[Match]) =
+      importMatches.foldLeft((List.empty[File], List.empty[Match])){
+        case ((ai,am), m) =>
+          val f = new File(path + m.group(1))
+          if (f.exists) (ai:+f, am)
+          else (ai, am:+m)
+      }
+      
+    val classpathImports: List[File] = nonLocalMatches.map(m =>{
+      
+      Option(classLoader.getResource(m.group(1))).map(resource =>{
+        new File(resource.getFile)
+      })
+    }).flatMap(_.toList).filter(file => file.exists)
+
+    val importedFiles = classpathImports ++ localImports
     importedFiles
   }
   

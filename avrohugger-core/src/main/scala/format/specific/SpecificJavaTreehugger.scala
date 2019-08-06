@@ -29,10 +29,11 @@ object SpecificJavaTreehugger extends JavaTreehugger {
 
     def writeJavaTempFile(
       namespace: Option[String],
-      schema: Schema, outDir: String): Unit = {
+      schema: Schema,
+      outDir: String): Unit = {
 	    // Uses Avro's SpecificCompiler, which only compiles from files, thus we 
       // write the schema to a temp file so we can compile a Java enum from it.
-	    val tempSchemaFile = File.createTempFile(schema.getName, ".avsc")
+	    val tempSchemaFile = File.createTempFile(outDir + "/" + schema.getName, ".avsc")
 	    tempSchemaFile.deleteOnExit()
 	    val out = new BufferedWriter(new FileWriter(tempSchemaFile))
 	    out.write(schema.toString)
@@ -78,9 +79,9 @@ object SpecificJavaTreehugger extends JavaTreehugger {
 
     // Avro's SpecificCompiler only writes files, but we need a string
     // so write the Java file and read
-    val outDir = "target/"
+    val outDir = System.getProperty("java.io.tmpdir")
     writeJavaTempFile(namespace, schema, outDir)
-    val tempPath = outDir + schema.getFullName.replace('.','/') + ".java"
+    val tempPath = outDir + "/" + schema.getFullName.replace('.','/') + ".java"
     val tempFile = new File(tempPath)
     val fileContents = scala.io.Source.fromFile(tempPath)
     val schemaPackage = "package " + schema.getNamespace
