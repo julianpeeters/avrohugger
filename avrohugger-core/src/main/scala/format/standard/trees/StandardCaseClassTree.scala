@@ -41,7 +41,7 @@ object StandardCaseClassTree {
         namespace,
         f,
         typeMatcher)
-      PARAM(fieldName, fieldType) := defaultValue
+        PARAM(fieldName, fieldType) := defaultValue
     })
 
     // There could be base traits, flags, or both, and could have no fields
@@ -119,7 +119,6 @@ object StandardCaseClassTree {
     }
 
     val classTree = caseClassDef.tree
-
 
     val treeWithScalaDoc = ScalaDocGenerator.docToScalaDoc(
       Left(schema),
