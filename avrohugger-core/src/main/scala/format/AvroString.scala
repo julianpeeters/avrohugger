@@ -27,5 +27,4 @@ object AvroString {
   def utf8Class(): Type = RootClass.newClass(nme.createNameType("org.apache.avro.util.Utf8"))
 
   def useUtf8() = StringType.Utf8 == stringType
-
 }
