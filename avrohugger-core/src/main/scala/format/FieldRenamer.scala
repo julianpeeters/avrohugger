@@ -13,5 +13,9 @@ object FieldRenamer {
 
   def backtick(variable: String): String = s"`$variable`"
 
-  def rename(fieldName: String): String = if(RESERVED_WORDS.contains(fieldName)) backtick(fieldName) else if (fieldName.endsWith("_")) backtick(fieldName) else fieldName
+  def mangle(variable: String): String = variable + "$"
+
+  def isMangled(fieldName: String): Boolean = RESERVED_WORDS.contains(fieldName)
+
+  def rename(fieldName: String): String = if(isMangled(fieldName)) mangle(fieldName) else if (fieldName.endsWith("_")) backtick(fieldName) else fieldName
 }

@@ -24,7 +24,7 @@ object GetGenerator {
           field.avroField.schema,
           REF("getSchema").DOT("getFields").APPLY().DOT("get").APPLY(REF("field$")).DOT("schema").APPLY(),
           false,
-          REF(field.avroField.name),
+          REF(FieldRenamer.rename(field.avroField.name)),
           classSymbol,
           typeMatcher)).AS(AnyRefClass)
       }
