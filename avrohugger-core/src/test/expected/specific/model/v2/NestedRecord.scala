@@ -5,7 +5,7 @@ import scala.annotation.switch
 
 import model.UnionRecord
 
-case class NestedRecord(var nestedunion: Option[UnionRecord]) extends org.apache.avro.specific.SpecificRecordBase {
+final case class NestedRecord(var nestedunion: Option[UnionRecord]) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this(None)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {

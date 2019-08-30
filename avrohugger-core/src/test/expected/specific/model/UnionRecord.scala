@@ -3,7 +3,7 @@ package model
 
 import scala.annotation.switch
 
-case class UnionRecord(var blah: String) extends org.apache.avro.specific.SpecificRecordBase {
+final case class UnionRecord(var blah: String) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this("")
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {

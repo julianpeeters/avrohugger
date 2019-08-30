@@ -6,4 +6,4 @@ package com.miguno.avro
  * @param tweet The content of the user's Twitter message
  * @param timestamp Unix epoch time in milliseconds
  */
-case class twitter_schema(username: String, tweet: String, timestamp: Long)
+final case class twitter_schema(username: String, tweet: String, timestamp: Long)

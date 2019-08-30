@@ -5,4 +5,4 @@ import model.UnionRecord
 
 import model.v2.NestedRecord
 
-case class ComplexExternalDependency(nestedrecord: NestedRecord)
+final case class ComplexExternalDependency(nestedrecord: NestedRecord)

@@ -7,7 +7,7 @@ import org.oedura.scavro.{AvroMetadata, AvroReader, AvroSerializeable}
 
 import example.{BinarySc => JBinarySc}
 
-case class BinarySc(data: Array[Byte]) extends AvroSerializeable {
+final case class BinarySc(data: Array[Byte]) extends AvroSerializeable {
   type J = JBinarySc
   override def toAvro: JBinarySc = {
     new JBinarySc(java.nio.ByteBuffer.wrap(data))

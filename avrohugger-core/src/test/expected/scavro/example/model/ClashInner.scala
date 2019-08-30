@@ -7,7 +7,7 @@ import org.oedura.scavro.{AvroMetadata, AvroReader, AvroSerializeable}
 
 import example.avro.{ClashInner => JClashInner}
 
-case class ClashInner(some: Option[Int], other: Option[Int], id: Option[Int]) extends AvroSerializeable {
+final case class ClashInner(some: Option[Int], other: Option[Int], id: Option[Int]) extends AvroSerializeable {
   type J = JClashInner
   override def toAvro: JClashInner = {
     new JClashInner(some match {

@@ -1,4 +1,4 @@
 /** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
 package example.idl.array
 
-case class ArrayIdl(data: Seq[Int])
+final case class ArrayIdl(data: Seq[Int])

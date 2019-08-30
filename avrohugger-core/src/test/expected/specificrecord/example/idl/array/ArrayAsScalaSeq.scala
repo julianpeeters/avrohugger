@@ -3,7 +3,7 @@ package example.idl.array
 
 import scala.annotation.switch
 
-case class ArrayIdl(var data: Seq[Int]) extends org.apache.avro.specific.SpecificRecordBase {
+final case class ArrayIdl(var data: Seq[Int]) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this(Seq.empty)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {

@@ -28,7 +28,7 @@ import scala.annotation.switch
  * end
  * ```
  */
-case class NoSpaces1(var single_line_comment_property: String, var multi_line_property: String) extends org.apache.avro.specific.SpecificRecordBase {
+final case class NoSpaces1(var single_line_comment_property: String, var multi_line_property: String) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this("", "")
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {

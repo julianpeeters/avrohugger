@@ -5,4 +5,4 @@ package com.example
 
 
 /** @param comment_property This is a single line comment on a field, in a record that has no comment. */
-case class NoSpaces2(comment_property: String)
+final case class NoSpaces2(comment_property: String)

@@ -7,7 +7,7 @@ import org.oedura.scavro.{AvroMetadata, AvroReader, AvroSerializeable}
 
 import example.idl.{BinaryIdl => JBinaryIdl}
 
-case class BinaryIdl(data: Array[Byte]) extends AvroSerializeable {
+final case class BinaryIdl(data: Array[Byte]) extends AvroSerializeable {
   type J = JBinaryIdl
   override def toAvro: JBinaryIdl = {
     new JBinaryIdl(java.nio.ByteBuffer.wrap(data))

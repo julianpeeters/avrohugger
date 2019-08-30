@@ -5,4 +5,4 @@ package test
  * @param name Auto-Generated Field
  * @param age Auto-Generated Field
  */
-case class Experiment(name: String, var age: Int)
+final case class Experiment(name: String, var age: Int)

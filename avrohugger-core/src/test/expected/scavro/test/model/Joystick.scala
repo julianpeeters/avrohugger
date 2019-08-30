@@ -7,7 +7,7 @@ import org.oedura.scavro.{AvroMetadata, AvroReader, AvroSerializeable}
 
 import test.{Down => JDown, Up => JUp}
 
-case class Up(value: Int) extends AvroSerializeable {
+final case class Up(value: Int) extends AvroSerializeable {
   type J = JUp
   override def toAvro: JUp = {
     new JUp(value)
@@ -27,7 +27,7 @@ object Up {
   }
 }
 
-case class Down(value: Int) extends AvroSerializeable {
+final case class Down(value: Int) extends AvroSerializeable {
   type J = JDown
   override def toAvro: JDown = {
     new JDown(value)

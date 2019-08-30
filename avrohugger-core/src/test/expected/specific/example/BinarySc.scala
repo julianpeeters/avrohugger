@@ -3,7 +3,7 @@ package example
 
 import scala.annotation.switch
 
-case class BinarySc(var data: Array[Byte]) extends org.apache.avro.specific.SpecificRecordBase {
+final case class BinarySc(var data: Array[Byte]) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this(null)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {

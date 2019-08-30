@@ -15,7 +15,7 @@ import model.v2.{NestedRecord => JNestedRecord}
 
 import test.{ComplexExternalDependency => JComplexExternalDependency}
 
-case class ComplexExternalDependency(nestedrecord: NestedRecord) extends AvroSerializeable {
+final case class ComplexExternalDependency(nestedrecord: NestedRecord) extends AvroSerializeable {
   type J = JComplexExternalDependency
   override def toAvro: JComplexExternalDependency = {
     new JComplexExternalDependency(nestedrecord.toAvro)

@@ -3,4 +3,4 @@
  * Auto-generated schema
  * @param x Auto-Generated Field
  */
-case class AvroTypeProviderTestNoNamespace(x: Int)
+final case class AvroTypeProviderTestNoNamespace(x: Int)

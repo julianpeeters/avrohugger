@@ -9,7 +9,7 @@ import example.avro.{ClashInner => JClashInner, ClashOuter => JClashOuter}
 
 import scala.collection.JavaConverters._
 
-case class ClashOuter(inner: Option[Array[Option[ClashInner]]]) extends AvroSerializeable {
+final case class ClashOuter(inner: Option[Array[Option[ClashInner]]]) extends AvroSerializeable {
   type J = JClashOuter
   override def toAvro: JClashOuter = {
     new JClashOuter(inner match {

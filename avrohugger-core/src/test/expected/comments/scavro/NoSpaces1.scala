@@ -32,7 +32,7 @@ import com.example.{NoSpaces1 => JNoSpaces1}
  * end
  * ```
  */
-case class NoSpaces1(single_line_comment_property: String, multi_line_property: String) extends AvroSerializeable {
+final case class NoSpaces1(single_line_comment_property: String, multi_line_property: String) extends AvroSerializeable {
   type J = JNoSpaces1
   override def toAvro: JNoSpaces1 = {
     new JNoSpaces1(single_line_comment_property, multi_line_property)

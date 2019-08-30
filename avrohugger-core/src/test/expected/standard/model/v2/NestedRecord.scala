@@ -3,4 +3,4 @@ package model.v2
 
 import model.UnionRecord
 
-case class NestedRecord(nestedunion: Option[UnionRecord])
+final case class NestedRecord(nestedunion: Option[UnionRecord])

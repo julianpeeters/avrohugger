@@ -8,7 +8,7 @@ import scala.annotation.switch
  * @param name Auto-Generated Field
  * @param age Auto-Generated Field
  */
-case class Experiment(var name: String, var age: Int) extends org.apache.avro.specific.SpecificRecordBase {
+final case class Experiment(var name: String, var age: Int) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this("", 0)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {

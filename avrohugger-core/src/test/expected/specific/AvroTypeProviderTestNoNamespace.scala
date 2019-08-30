@@ -5,7 +5,7 @@ import scala.annotation.switch
  * Auto-generated schema
  * @param x Auto-Generated Field
  */
-case class AvroTypeProviderTestNoNamespace(var x: Int) extends org.apache.avro.specific.SpecificRecordBase {
+final case class AvroTypeProviderTestNoNamespace(var x: Int) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this(0)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {

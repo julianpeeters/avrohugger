@@ -9,7 +9,7 @@ import avro.examples.baseball.{Nickname => JNickname, Player => JPlayer}
 
 import scala.collection.JavaConverters._
 
-case class Player(number: Int, first_name: String, last_name: String, nicknames: Array[Nickname]) extends AvroSerializeable {
+final case class Player(number: Int, first_name: String, last_name: String, nicknames: Array[Nickname]) extends AvroSerializeable {
   type J = JPlayer
   override def toAvro: JPlayer = {
     new JPlayer(number, first_name, last_name, {

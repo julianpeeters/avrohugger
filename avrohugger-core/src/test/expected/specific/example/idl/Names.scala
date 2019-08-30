@@ -3,7 +3,7 @@ package example.idl
 
 import scala.annotation.switch
 
-case class Names(var public$: String, var `ends_with_`: String) extends org.apache.avro.specific.SpecificRecordBase {
+final case class Names(var public$: String, var `ends_with_`: String) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this("", "")
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {

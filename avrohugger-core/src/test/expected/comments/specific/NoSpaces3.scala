@@ -11,7 +11,7 @@ import scala.annotation.switch
  * level of the record specification.
  * @param comment_property 
  */
-case class NoSpaces3(var comment_property: String) extends org.apache.avro.specific.SpecificRecordBase {
+final case class NoSpaces3(var comment_property: String) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this("")
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
