@@ -3,7 +3,7 @@ package example.idl
 
 import scala.annotation.switch
 
-case class LogicalIdl(var dec: BigDecimal = scala.math.BigDecimal("8888.88"), var maybeDec: Option[BigDecimal] = Some(scala.math.BigDecimal("9999.99")), var ts: java.time.Instant = java.time.Instant.ofEpochMilli(1526573732000L), var dt: java.time.LocalDate = java.time.LocalDate.ofEpochDay(600L), var decBig: BigDecimal = scala.math.BigDecimal("7777.77")) extends org.apache.avro.specific.SpecificRecordBase {
+final case class LogicalIdl(var dec: BigDecimal = scala.math.BigDecimal("8888.88"), var maybeDec: Option[BigDecimal] = Some(scala.math.BigDecimal("9999.99")), var ts: java.time.Instant = java.time.Instant.ofEpochMilli(1526573732000L), var dt: java.time.LocalDate = java.time.LocalDate.ofEpochDay(600L), var decBig: BigDecimal = scala.math.BigDecimal("7777.77")) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this(scala.math.BigDecimal("8888.88"), Some(scala.math.BigDecimal("9999.99")), java.time.Instant.ofEpochMilli(1526573732000L), java.time.LocalDate.ofEpochDay(600L), scala.math.BigDecimal("7777.77"))
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {

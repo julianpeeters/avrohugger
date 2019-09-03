@@ -7,7 +7,7 @@ import scala.annotation.switch
 
 
 /** @param comment_property This is a single line comment on a field, in a record that has no comment. */
-case class NoSpaces2(var comment_property: String) extends org.apache.avro.specific.SpecificRecordBase {
+final case class NoSpaces2(var comment_property: String) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this("")
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {

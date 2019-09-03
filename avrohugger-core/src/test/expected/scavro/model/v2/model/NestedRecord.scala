@@ -11,7 +11,7 @@ import model.{UnionRecord => JUnionRecord}
 
 import model.v2.{NestedRecord => JNestedRecord}
 
-case class NestedRecord(nestedunion: Option[UnionRecord]) extends AvroSerializeable {
+final case class NestedRecord(nestedunion: Option[UnionRecord]) extends AvroSerializeable {
   type J = JNestedRecord
   override def toAvro: JNestedRecord = {
     new JNestedRecord(nestedunion match {

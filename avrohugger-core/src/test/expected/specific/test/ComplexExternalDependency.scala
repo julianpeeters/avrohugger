@@ -7,7 +7,7 @@ import model.UnionRecord
 
 import model.v2.NestedRecord
 
-case class ComplexExternalDependency(var nestedrecord: NestedRecord) extends org.apache.avro.specific.SpecificRecordBase {
+final case class ComplexExternalDependency(var nestedrecord: NestedRecord) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this(new NestedRecord)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {

@@ -12,7 +12,7 @@ import com.miguno.avro.{twitter_schema => Jtwitter_schema}
  * @param tweet The content of the user's Twitter message
  * @param timestamp Unix epoch time in milliseconds
  */
-case class twitter_schema(username: String, tweet: String, timestamp: Long) extends AvroSerializeable {
+final case class twitter_schema(username: String, tweet: String, timestamp: Long) extends AvroSerializeable {
   type J = Jtwitter_schema
   override def toAvro: Jtwitter_schema = {
     new Jtwitter_schema(username, tweet, timestamp)

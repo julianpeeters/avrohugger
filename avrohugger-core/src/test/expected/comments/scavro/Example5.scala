@@ -10,7 +10,7 @@ import com.example.{NoSpaces6 => JNoSpaces6, NoSpaces7 => JNoSpaces7}
 /** Example adapted from https://github.com/delagoya. This is a comment for the whole protocol */
 
 
-case class NoSpaces6(comment_property1: String) extends AvroSerializeable {
+final case class NoSpaces6(comment_property1: String) extends AvroSerializeable {
   type J = JNoSpaces6
   override def toAvro: JNoSpaces6 = {
     new JNoSpaces6(comment_property1)
@@ -30,7 +30,7 @@ object NoSpaces6 {
   }
 }
 
-case class NoSpaces7(comment_property2: String) extends AvroSerializeable {
+final case class NoSpaces7(comment_property2: String) extends AvroSerializeable {
   type J = JNoSpaces7
   override def toAvro: JNoSpaces7 = {
     new JNoSpaces7(comment_property2)

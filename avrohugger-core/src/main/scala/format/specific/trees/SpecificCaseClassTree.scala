@@ -73,9 +73,17 @@ object SpecificCaseClassTree {
       typeMatcher,
       classSymbol)
 
+    val maybeFlagsWithCaseClassFinal =
+      if (shouldGenerateSimpleClass) maybeFlags
+      else maybeFlags.map { flags =>
+        if (flags.contains(Flags.FINAL)) flags
+        else flags :+ Flags.FINAL.toLong
+      }
+
+
     // define the class def with the members previously defined
     // There could be base traits, flags, or both, and could have no fields
-    val caseClassDef = (maybeBaseTrait, maybeFlags) match {
+    val caseClassDef = (maybeBaseTrait, maybeFlagsWithCaseClassFinal) match {
       case (Some(baseTrait), Some(flags)) =>
         if (shouldGenerateSimpleClass) {
           CLASSDEF(classSymbol)
@@ -102,12 +110,14 @@ object SpecificCaseClassTree {
         if (!avroFields.isEmpty) {
           CASECLASSDEF(classSymbol)
             .withParams(params)
+            .withFlags(Flags.FINAL)
             .withParents(baseClass)
             .withParents(baseTrait)
         }
         else { // for "empty" records: empty params and no no-arg ctor
           CASECLASSDEF(classSymbol)
             .withParams(PARAM(""))
+            .withFlags(Flags.FINAL)
             .withParents(baseClass)
             .withParents(baseTrait)
         }
@@ -140,6 +150,7 @@ object SpecificCaseClassTree {
         }
         else if (!avroFields.isEmpty) {
           CASECLASSDEF(classSymbol)
+            .withFlags(Flags.FINAL)
             .withParams(params)
             .withParents(baseClass)
         }

@@ -3,7 +3,7 @@ package example.idl
 
 import scala.annotation.switch
 
-case class Recursive(var name: String, var recursive: Option[Recursive]) extends org.apache.avro.specific.SpecificRecordBase {
+final case class Recursive(var name: String, var recursive: Option[Recursive]) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this("", None)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {

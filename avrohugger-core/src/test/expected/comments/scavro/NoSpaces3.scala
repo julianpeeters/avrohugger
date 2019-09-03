@@ -15,7 +15,7 @@ import com.example.{NoSpaces3 => JNoSpaces3}
  * level of the record specification.
  * @param comment_property 
  */
-case class NoSpaces3(comment_property: String) extends AvroSerializeable {
+final case class NoSpaces3(comment_property: String) extends AvroSerializeable {
   type J = JNoSpaces3
   override def toAvro: JNoSpaces3 = {
     new JNoSpaces3(comment_property)

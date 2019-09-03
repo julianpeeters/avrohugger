@@ -3,7 +3,7 @@ package example.logical
 
 import scala.annotation.switch
 
-case class LogicalSql(var data: BigDecimal, var ts: java.sql.Timestamp, var dt: java.sql.Date, var dataBig: BigDecimal) extends org.apache.avro.specific.SpecificRecordBase {
+final case class LogicalSql(var data: BigDecimal, var ts: java.sql.Timestamp, var dt: java.sql.Date, var dataBig: BigDecimal) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this(scala.math.BigDecimal(0), new java.sql.Timestamp(0L), new java.sql.Date(0L), scala.math.BigDecimal(0))
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {

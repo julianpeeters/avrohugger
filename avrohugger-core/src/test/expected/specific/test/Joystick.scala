@@ -3,7 +3,7 @@ package test
 
 import scala.annotation.switch
 
-case class Up(var value: Int) extends org.apache.avro.specific.SpecificRecordBase {
+final case class Up(var value: Int) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this(0)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
@@ -29,7 +29,7 @@ object Up {
   val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Up\",\"namespace\":\"test\",\"fields\":[{\"name\":\"value\",\"type\":\"int\"}]}")
 }
 
-case class Down(var value: Int) extends org.apache.avro.specific.SpecificRecordBase {
+final case class Down(var value: Int) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this(0)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {

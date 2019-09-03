@@ -7,7 +7,7 @@ import org.oedura.scavro.{AvroMetadata, AvroReader, AvroSerializeable}
 
 import example.proto.{Message => JMessage}
 
-case class Message(to: String, from: String, body: String) extends AvroSerializeable {
+final case class Message(to: String, from: String, body: String) extends AvroSerializeable {
   type J = JMessage
   override def toAvro: JMessage = {
     new JMessage(to, from, body)

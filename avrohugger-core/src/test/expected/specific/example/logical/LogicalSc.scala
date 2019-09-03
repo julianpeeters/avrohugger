@@ -3,7 +3,7 @@ package example.logical
 
 import scala.annotation.switch
 
-case class LogicalSc(var data: BigDecimal, var ts: java.time.Instant, var dt: java.time.LocalDate, var uuid: java.util.UUID, var dataBig: BigDecimal) extends org.apache.avro.specific.SpecificRecordBase {
+final case class LogicalSc(var data: BigDecimal, var ts: java.time.Instant, var dt: java.time.LocalDate, var uuid: java.util.UUID, var dataBig: BigDecimal) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this(scala.math.BigDecimal(0), java.time.Instant.now, java.time.LocalDate.now, java.util.UUID.randomUUID, scala.math.BigDecimal(0))
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {

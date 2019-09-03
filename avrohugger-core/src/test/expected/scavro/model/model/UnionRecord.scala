@@ -7,7 +7,7 @@ import org.oedura.scavro.{AvroMetadata, AvroReader, AvroSerializeable}
 
 import model.{UnionRecord => JUnionRecord}
 
-case class UnionRecord(blah: String) extends AvroSerializeable {
+final case class UnionRecord(blah: String) extends AvroSerializeable {
   type J = JUnionRecord
   override def toAvro: JUnionRecord = {
     new JUnionRecord(blah)

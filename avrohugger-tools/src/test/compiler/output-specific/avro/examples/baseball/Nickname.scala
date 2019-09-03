@@ -3,7 +3,7 @@ package avro.examples.baseball
 
 import scala.annotation.switch
 
-case class Nickname(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
+final case class Nickname(var name: String) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this("")
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {

@@ -7,7 +7,7 @@ import org.oedura.scavro.{AvroMetadata, AvroReader, AvroSerializeable}
 
 import example.{Level1 => JLevel1, Level2 => JLevel2}
 
-case class Level1(level2: Level2) extends AvroSerializeable {
+final case class Level1(level2: Level2) extends AvroSerializeable {
   type J = JLevel1
   override def toAvro: JLevel1 = {
     new JLevel1(level2.toAvro)

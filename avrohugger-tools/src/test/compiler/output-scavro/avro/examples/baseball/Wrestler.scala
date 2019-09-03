@@ -9,7 +9,7 @@ import avro.examples.baseball.{Mascot => JMascot, Wrestler => JWrestler}
 
 import scala.collection.JavaConverters._
 
-case class Wrestler(number: Int, first_name: String, last_name: String, nicknames: Array[Mascot]) extends AvroSerializeable {
+final case class Wrestler(number: Int, first_name: String, last_name: String, nicknames: Array[Mascot]) extends AvroSerializeable {
   type J = JWrestler
   override def toAvro: JWrestler = {
     new JWrestler(number, first_name, last_name, {

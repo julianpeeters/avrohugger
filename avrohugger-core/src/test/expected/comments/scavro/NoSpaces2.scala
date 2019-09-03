@@ -11,7 +11,7 @@ import com.example.{NoSpaces2 => JNoSpaces2}
 
 
 /** @param comment_property This is a single line comment on a field, in a record that has no comment. */
-case class NoSpaces2(comment_property: String) extends AvroSerializeable {
+final case class NoSpaces2(comment_property: String) extends AvroSerializeable {
   type J = JNoSpaces2
   override def toAvro: JNoSpaces2 = {
     new JNoSpaces2(comment_property)

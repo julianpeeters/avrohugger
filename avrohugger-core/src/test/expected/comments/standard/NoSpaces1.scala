@@ -26,4 +26,4 @@ package com.example
  * end
  * ```
  */
-case class NoSpaces1(single_line_comment_property: String, multi_line_property: String)
+final case class NoSpaces1(single_line_comment_property: String, multi_line_property: String)

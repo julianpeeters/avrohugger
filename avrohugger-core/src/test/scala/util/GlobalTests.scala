@@ -4,7 +4,7 @@ import avrohugger.format.abstractions.SourceFormat
 
 import java.nio.file.{FileSystems, Path}
 
-case class AvrohuggerTest(
+final case class AvrohuggerTest(
   inPath: Path,
   outputFiles: Seq[Path],
   description: String

@@ -9,7 +9,7 @@ import example.idl.array.{ArrayIdl => JArrayIdl}
 
 import scala.collection.JavaConverters._
 
-case class ArrayIdl(data: Seq[Int]) extends AvroSerializeable {
+final case class ArrayIdl(data: Seq[Int]) extends AvroSerializeable {
   type J = JArrayIdl
   override def toAvro: JArrayIdl = {
     new JArrayIdl({

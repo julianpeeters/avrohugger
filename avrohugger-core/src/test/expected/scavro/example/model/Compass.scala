@@ -7,7 +7,7 @@ import org.oedura.scavro.{AvroMetadata, AvroReader, AvroSerializeable}
 
 import example.{Compass => JCompass, Direction => JDirection}
 
-case class Compass(direction: Direction.Value) extends AvroSerializeable {
+final case class Compass(direction: Direction.Value) extends AvroSerializeable {
   type J = JCompass
   override def toAvro: JCompass = {
     new JCompass(direction match {

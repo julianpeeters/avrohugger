@@ -7,7 +7,7 @@ import org.oedura.scavro.{AvroMetadata, AvroReader, AvroSerializeable}
 
 import example.idl.{Names => JNames}
 
-case class Names(public$: String, `ends_with_`: String) extends AvroSerializeable {
+final case class Names(public$: String, `ends_with_`: String) extends AvroSerializeable {
   type J = JNames
   override def toAvro: JNames = {
     new JNames(public$, `ends_with_`)

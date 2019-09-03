@@ -3,7 +3,7 @@ package example
 
 import scala.annotation.switch
 
-case class Level0(var level1: Level1) extends org.apache.avro.specific.SpecificRecordBase {
+final case class Level0(var level1: Level1) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this(new Level1)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {

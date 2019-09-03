@@ -9,4 +9,4 @@ package com.example
  * level of the record specification.
  * @param comment_property 
  */
-case class NoSpaces3(comment_property: String)
+final case class NoSpaces3(comment_property: String)

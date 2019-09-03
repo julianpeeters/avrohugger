@@ -6,7 +6,7 @@ import scala.annotation.switch
 /** Example adapted from https://github.com/delagoya. This is a comment for the whole protocol */
 
 
-case class NoSpaces6(var comment_property1: String) extends org.apache.avro.specific.SpecificRecordBase {
+final case class NoSpaces6(var comment_property1: String) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this("")
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
@@ -32,7 +32,7 @@ object NoSpaces6 {
   val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"NoSpaces6\",\"namespace\":\"com.example\",\"fields\":[{\"name\":\"comment_property1\",\"type\":\"string\"}]}")
 }
 
-case class NoSpaces7(var comment_property2: String) extends org.apache.avro.specific.SpecificRecordBase {
+final case class NoSpaces7(var comment_property2: String) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this("")
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
