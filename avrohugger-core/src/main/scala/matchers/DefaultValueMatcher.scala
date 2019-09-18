@@ -1,6 +1,7 @@
 package avrohugger
 package matchers
 
+import avrohugger.format.AvroString
 import avrohugger.matchers.custom.CustomDefaultParamMatcher
 import avrohugger.matchers.custom.CustomDefaultValueMatcher
 import avrohugger.stores.ClassStore
@@ -56,7 +57,7 @@ object DefaultValueMatcher {
         case Schema.Type.STRING =>
           LogicalType.foldLogicalTypes[Tree](
             schema = schema,
-            default = LIT(node.textValue())) {
+            default = if (AvroString.useUtf8()) NEW("org.apache.avro.util.Utf8", LIT(node.textValue())) else LIT(node.textValue())) {
             case UUID => REF("java.util.UUID.fromString") APPLY LIT(node.textValue())
           }
         case Schema.Type.BYTES =>
