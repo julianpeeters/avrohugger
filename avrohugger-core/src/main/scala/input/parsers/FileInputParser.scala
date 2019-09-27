@@ -29,10 +29,7 @@ class FileInputParser {
     parser: Parser = schemaParser): List[Either[Schema, Protocol]] = {
     def unUnion(schema: Schema) = {
       schema.getType match {
-        //if top-level record is wrapped in a union with no other types
-        case UNION => {
-          schema.getTypes.asScala.toList
-        }
+        case UNION => schema.getTypes.asScala.toList
         case RECORD => List(schema)
         case ENUM => List(schema)
         case _ => sys.error("""Neither a record, enum nor a union of either. 
