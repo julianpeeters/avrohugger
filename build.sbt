@@ -10,11 +10,12 @@ lazy val commonSettings = Seq(
   resolvers += Resolver.typesafeIvyRepo("releases"),
   libraryDependencies += "org.apache.avro" % "avro" % avroVersion,
   libraryDependencies += "org.apache.avro" % "avro-compiler" % avroVersion,
-  // for implementing SpecificRecord from standard case class definitions
   libraryDependencies := { CrossVersion.partialVersion(scalaVersion.value) match {
     case Some((2, scalaMajor)) if scalaMajor < 13 =>
+      // for implementing SpecificRecord from standard case class definitions
       libraryDependencies.value ++ Seq(compilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full))
     case _ =>
+      // Scala 2.13 has it built-in
       libraryDependencies.value
   }},
   libraryDependencies := {
