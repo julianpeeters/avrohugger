@@ -5,13 +5,18 @@ lazy val commonSettings = Seq(
   version := "1.0.0-RC19",
   scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-Ywarn-value-discard"),
   scalacOptions in Test ++= Seq("-Yrangepos"),
-  scalaVersion := "2.12.8",
-  crossScalaVersions := Seq("2.10.7", "2.11.12", scalaVersion.value),
+  scalaVersion := "2.13.1",
+  crossScalaVersions := Seq("2.10.7", "2.11.12", "2.12.10", scalaVersion.value),
   resolvers += Resolver.typesafeIvyRepo("releases"),
   libraryDependencies += "org.apache.avro" % "avro" % avroVersion,
   libraryDependencies += "org.apache.avro" % "avro-compiler" % avroVersion,
   // for implementing SpecificRecord from standard case class definitions
-  addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full),
+  libraryDependencies := { CrossVersion.partialVersion(scalaVersion.value) match {
+    case Some((2, scalaMajor)) if scalaMajor < 13 =>
+      libraryDependencies.value ++ Seq(compilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full))
+    case _ =>
+      libraryDependencies.value
+  }},
   libraryDependencies := {
     CrossVersion.partialVersion(scalaVersion.value) match {
       case Some((2, scalaMajor)) if scalaMajor == 10 =>
@@ -25,7 +30,7 @@ lazy val commonSettings = Seq(
   libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value,
   libraryDependencies += "org.codehaus.jackson" % "jackson-core-asl" % "1.9.13",
   // for testing
-  libraryDependencies += "org.specs2" %% "specs2-core" % "3.8.6" % "test",
+  libraryDependencies += "org.specs2" %% "specs2-core" % "4.8.0" % "test",
   publishMavenStyle := true,
   publishArtifact in Test := false,
   publishTo := Some(
@@ -55,20 +60,20 @@ lazy val avrohugger = (project in file("."))
   .settings(
     commonSettings,
   ).aggregate(`avrohugger-core`, `avrohugger-filesorter`, `avrohugger-tools`)
-  
+
 
 lazy val `avrohugger-core` = (project in file("avrohugger-core"))
   .settings(
     commonSettings,
-    libraryDependencies += "com.eed3si9n" %% "treehugger" % "0.4.3"
+    libraryDependencies += "com.eed3si9n" %% "treehugger" % "0.4.4"
   )
-  
+
 lazy val `avrohugger-filesorter` = (project in file("avrohugger-filesorter"))
   .settings(
     commonSettings,
-    libraryDependencies += "io.spray" %% "spray-json" % "1.3.2"
+    libraryDependencies += "io.spray" %% "spray-json" % "1.3.5"
   )
-  
+
 lazy val `avrohugger-tools` = (project in file("avrohugger-tools"))
   .settings(
     commonSettings,
