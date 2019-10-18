@@ -14,6 +14,7 @@ lazy val commonSettings = Seq(
     case Some((2, scalaMajor)) if scalaMajor < 13 =>
       // for implementing SpecificRecord from standard case class definitions
       libraryDependencies.value ++ Seq(compilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full))
+      
     case _ =>
       // Scala 2.13 has it built-in
       libraryDependencies.value
