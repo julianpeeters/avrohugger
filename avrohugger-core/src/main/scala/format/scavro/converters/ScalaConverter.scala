@@ -91,7 +91,7 @@ class ScalaConverter(typeMatcher: TypeMatcher) {
       case Schema.Type.BYTES    => {
         val JavaBuffer = RootClass.newClass("java.nio.ByteBuffer")
         tree MATCH CASE(ID("buffer") withType(JavaBuffer)) ==> Block(
-          REF("buffer") DOT "array" APPLY()
+          REF("buffer") DOT "array" APPLY(Nil)
         )
       }
       case _ => tree

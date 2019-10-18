@@ -29,7 +29,7 @@ object SpecificObjectTree {
       case None => OBJECTDEF(schema.getName)
     }
     val schemaDef = VAL(REF("SCHEMA$")) := {
-      (NEW(ParserClass)) APPLY() DOT "parse" APPLY(LIT(schema.toString))
+      (NEW(ParserClass)) APPLY(Nil) DOT "parse" APPLY(LIT(schema.toString))
     }
     val DecimalConversion = RootClass.newClass("org.apache.avro.Conversions.DecimalConversion")
     val decimalConversionDef = VAL(REF("decimalConversion")) := NEW(DecimalConversion)
