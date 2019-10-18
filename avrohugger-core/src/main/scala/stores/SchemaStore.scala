@@ -12,7 +12,7 @@ class SchemaStore {
     JConcurrentMapWrapper(new ConcurrentHashMap[String, Schema]())
   }
 
-  def accept(schema: Schema) {
+  def accept(schema: Schema) = {
   	val fullName = schema.getFullName
     val _ = schemas += (fullName -> schema)
   }

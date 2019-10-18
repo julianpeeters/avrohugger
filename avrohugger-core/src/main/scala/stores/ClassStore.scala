@@ -13,7 +13,7 @@ class ClassStore {
   	scala.collection.convert.Wrappers.JConcurrentMapWrapper(new ConcurrentHashMap[Schema, Symbol]())
   }
 
-  def accept(schema: Schema, caseClassDef: Symbol) {
+  def accept(schema: Schema, caseClassDef: Symbol) = {
     if (!generatedClasses.contains(schema)) {
       val _ = generatedClasses += schema -> caseClassDef
     }

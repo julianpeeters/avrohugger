@@ -9,7 +9,7 @@ class TypecheckDependencyStore {
 
   val knownClasses: scala.collection.concurrent.Map[String, Tree] = scala.collection.convert.Wrappers.JConcurrentMapWrapper(new ConcurrentHashMap[String, Tree]())
 
-  def accept(tree: Tree) {
+  def accept(tree: Tree) = {
     val _ = knownClasses += (tree.toString -> tree)
   }
 
