@@ -328,6 +328,7 @@ Contributors:
 - [Kostya Golikov](https://github.com/lazyval)
 - [Rob Landers](https://github.com/withinboredom)
 - [Bobby Rauchenberg](https://github.com/bobbyrauchenberg)
+- [Plínio Pantaleão](https://github.com/plinioj)
 
 ##### Criticism is appreciated.
 
