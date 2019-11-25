@@ -5,4 +5,4 @@ import shapeless.{:+:, CNil, Coproduct}
 
 import shapeless.tag.@@
 
-case class LogicalCoproductIdl(maybeDec: @@[scala.math.BigDecimal, (shapeless.Nat._9, shapeless.Nat._2)] :+: String :+: Boolean :+: CNil = Coproduct[@@[scala.math.BigDecimal, (shapeless.Nat._9, shapeless.Nat._2)] :+: String :+: Boolean :+: CNil](shapeless.tag[(shapeless.Nat._9, shapeless.Nat._2)][scala.math.BigDecimal](scala.math.BigDecimal("9999.99"))))
+case class LogicalCoproductIdl(maybeDec: @@[scala.math.BigDecimal, (shapeless.Nat._9, shapeless.Nat._2)] :+: String :+: Boolean :+: CNil = Coproduct[@@[scala.math.BigDecimal, (shapeless.Nat._9, shapeless.Nat._2)] :+: String :+: Boolean :+: CNil](shapeless.tag[(shapeless.Nat._9, shapeless.Nat._2)][scala.math.BigDecimal](scala.math.BigDecimal("31.80"))))

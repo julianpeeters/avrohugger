@@ -5,6 +5,8 @@ import avrohugger.matchers.custom.CustomDefaultParamMatcher
 import avrohugger.matchers.custom.CustomDefaultValueMatcher
 import avrohugger.stores.ClassStore
 import avrohugger.types._
+import java.nio.charset.StandardCharsets
+
 import treehugger.forest._
 import definitions._
 import org.apache.avro.Schema
@@ -57,14 +59,20 @@ object DefaultValueMatcher {
           LogicalType.foldLogicalTypes[Tree](
             schema = schema,
             default = LIT(node.textValue())) {
-            case UUID => REF("java.util.UUID.fromString") APPLY LIT(node.textValue())
-          }
+              case UUID => REF("java.util.UUID.fromString") APPLY LIT(node.textValue())
+            }
         case Schema.Type.BYTES =>
           CustomDefaultParamMatcher.checkCustomDecimalType(
             decimalType = typeMatcher.avroScalaTypes.decimal,
             schema = schema,
             default = REF("Array[Byte]") APPLY node.textValue().getBytes.map((e: Byte) => LIT(e)),
-            decimalValue = Try(node.textValue().toDouble).toOption.map(_.toString))
+            decimalValue =
+              Try(new org.apache.avro.Conversions.DecimalConversion().fromBytes(
+                java.nio.ByteBuffer.wrap(node.textValue().getBytes(StandardCharsets.UTF_8)),
+                schema,
+                schema.getLogicalType).toString
+              ).toOption
+          )
         case Schema.Type.ENUM => typeMatcher.avroScalaTypes.enum match {
           case JavaEnum => (REF(schema.getName) DOT node.textValue())
           case ScalaEnumeration => (REF(schema.getName) DOT node.textValue())
