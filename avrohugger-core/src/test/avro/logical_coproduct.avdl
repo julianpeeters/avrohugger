@@ -3,7 +3,7 @@
 protocol LogicalCoproductIDL {
 
   record LogicalCoproductIdl {
-    union {decimal(9, 2), string, boolean} maybeDec = 9999.99;
+    union {decimal(9, 2), string, boolean} maybeDec = "\u000C\u006C";
   }
 
 }

@@ -3,11 +3,11 @@
 protocol LogicalIDL {
 
   record LogicalIdl {
-    decimal(9, 2) dec = 8888.88;
-    union {decimal(9, 2), null} maybeDec = 9999.99;
+    decimal(9, 2) dec = "\u000C\u006C";
+    union {decimal(9, 2), null} maybeDec = "\u000C\u006C";
     timestamp_ms ts = 1526573732000; //ms from the unix epoch
     date dt = 600; //days from the unix epock, no time precission
-    decimal(20, 12) decBig = 7777.77;
+    decimal(20, 2) decBig = "\u000C\u006C";
   }
 
 }

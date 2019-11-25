@@ -3,7 +3,7 @@
 protocol LogicalOptionalIDL {
 
   record LogicalOptionalIdl {
-    union {decimal(9, 2), null} maybeDec = 9999.99;
+    union {decimal(9, 2), null} maybeDec = "\u000C\u006C";
   }
 
 }

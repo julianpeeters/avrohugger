@@ -132,6 +132,16 @@ object JavaConverter {
       } else {
         tree
       }
+    case Schema.Type.ENUM => {
+      typeMatcher.avroScalaTypes.enum match {
+        case EnumAsScalaString =>
+          NEW(
+            REF("org.apache.avro.generic.GenericData.EnumSymbol").APPLY(
+              REF("getSchema").DOT("getFields").DOT("get").APPLY(REF("field$")).DOT("schema"),
+              tree))
+        case JavaEnum | ScalaEnumeration | ScalaCaseObjectEnum => tree
+      }
+    }
     case _ => tree
   }
 
