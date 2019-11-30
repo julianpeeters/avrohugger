@@ -272,8 +272,8 @@ class StandardFileToStringsSpec extends Specification {
     val gen = new Generator(Standard)
     val List(source1, source0) = gen.fileToStrings(infile)
 
-    val expected0 = util.Util.readFile("avrohugger-core/src/test/expected/standard/example/Dee.scala")
-    val expected1 = util.Util.readFile("avrohugger-core/src/test/expected/standard/example/Dum.scala")
+    val expected0 = util.Util.readFile("avrohugger-core/src/test/expected/standard/example/Dum.scala")
+    val expected1 = util.Util.readFile("avrohugger-core/src/test/expected/standard/example/Dee.scala")
     
     source0 === expected0
     source1 === expected1
