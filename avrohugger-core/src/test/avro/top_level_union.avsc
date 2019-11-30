@@ -1,0 +1,18 @@
+[
+  {
+   "namespace": "example",
+   "type": "record",
+   "name": "Dee",
+   "fields": [
+       {"name": "name", "type": "string"}
+   ]
+  },
+  {
+   "namespace": "example",
+   "type": "record",
+   "name": "Dum",
+   "fields": [
+       {"name": "name", "type": "string"}
+   ]
+  }
+] 

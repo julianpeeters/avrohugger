@@ -29,15 +29,9 @@ class FileInputParser {
     parser: Parser = schemaParser): List[Either[Schema, Protocol]] = {
     def unUnion(schema: Schema) = {
       schema.getType match {
-        //if top-level record is wrapped in a union with no other types
-        case UNION => {
-          val types = schema.getTypes.asScala.toList
-          if (types.length == 1) types.head
-          else sys.error("""Unions, beyond nullable fields, are not supported. 
-            |Found a union of more than one type: """.trim.stripMargin + types)
-        }
-        case RECORD => schema
-        case ENUM => schema
+        case UNION => schema.getTypes.asScala.toList
+        case RECORD => List(schema)
+        case ENUM => List(schema)
         case _ => sys.error("""Neither a record, enum nor a union of either. 
           |Nothing to map to a definition.""".trim.stripMargin)
       }
@@ -69,7 +63,7 @@ class FileInputParser {
       msg.contains("Undefined name:") || msg.contains("is not a defined name") 
     }
 
-    def tryParse(inFile: File, parser: Schema.Parser): Schema = {
+    def tryParse(inFile: File, parser: Schema.Parser): List[Schema] = {
       val tempParser = new Parser()
       val parsed = Try(tempParser.parse(inFile)).map(schema => {
         copySchemas(tempParser, parser)
@@ -86,11 +80,11 @@ class FileInputParser {
         case "avro" =>
           val gdr = new GenericDatumReader[GenericRecord]
           val dfr = new DataFileReader(infile, gdr)
-          val schema = unUnion(dfr.getSchema)
-          List(Left(schema))
+          val schemas = unUnion(dfr.getSchema)
+          schemas.map(Left(_))
         case "avsc" =>
-          val schema = tryParse(infile, parser)
-          List(Left(schema))
+          val schemas = tryParse(infile, parser)
+          schemas.map(Left(_))
         case "avpr" =>
           val protocol = Protocol.parse(infile)
           List(Right(protocol))
