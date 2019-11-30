@@ -329,6 +329,7 @@ Contributors:
 - [Rob Landers](https://github.com/withinboredom)
 - [Bobby Rauchenberg](https://github.com/bobbyrauchenberg)
 - [Plínio Pantaleão](https://github.com/plinioj)
+- [Simon Petty](https://github.com/simonpetty)
 
 ##### Criticism is appreciated.
 
