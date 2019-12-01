@@ -14,8 +14,8 @@ import scala.io.Source
   * Created by Jon Morra on 2/7/17.
   */
 object AvdlFileSorter {
-  def sortSchemaFiles(filesTraversable: Traversable[File]): Seq[File] = {
-    val files = filesTraversable.toList
+  def sortSchemaFiles(filesIterable: Iterable[File]): Seq[File] = {
+    val files = filesIterable.toList
     val importsMap = files.map{ file =>
       (file.getCanonicalFile, getImports(file))
     }.toMap.mapValues(f => f.filter(_.exists))

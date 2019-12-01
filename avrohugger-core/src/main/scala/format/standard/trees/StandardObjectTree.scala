@@ -25,7 +25,7 @@ object StandardObjectTree {
     // companion object definition
     objectDef := BLOCK(
       VAL(REF("SCHEMA$")) := {
-        (NEW(ParserClass)) APPLY() DOT "parse" APPLY(LIT(schema.toString))
+        (NEW(ParserClass)) APPLY(Nil) DOT "parse" APPLY(LIT(schema.toString))
       }
     )
   }
