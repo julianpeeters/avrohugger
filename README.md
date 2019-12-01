@@ -209,7 +209,7 @@ Generate simple classes instead of case classes when fields.size > 22, useful fo
 
 ##### Get the dependency with:
 
-    "com.julianpeeters" %% "avrohugger-filesorter" % "1.0.0-RC20"
+    "com.julianpeeters" %% "avrohugger-filesorter" % "1.0.0-RC21"
     
 
 ##### Description:
