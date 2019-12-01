@@ -70,7 +70,10 @@ object StandardImporter extends Importer {
         schema.getType == Schema.Type.BYTES && LogicalType.foldLogicalTypes(
           schema = schema,
           default = false) {
-          case Decimal(_, _) if typeMatcher.avroScalaTypes.decimal == ScalaBigDecimalWithPrecision => true
+            case Decimal(_, _) => typeMatcher.avroScalaTypes.decimal match {
+              case ScalaBigDecimal(_) => false
+              case ScalaBigDecimalWithPrecision(_) => true
+            }
         }
       }.map(_ => List("tag.@@")).getOrElse(Nil)
 

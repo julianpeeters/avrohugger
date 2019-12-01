@@ -259,7 +259,7 @@ class StandardStringToFileSpec extends Specification {
 
   def e23 = {
     val inputString = util.Util.readFile("avrohugger-core/src/test/avro/logical.avdl")
-    val myAvroScalaCustomTypes = Standard.defaultTypes.copy(decimal = ScalaBigDecimalWithPrecision)
+    val myAvroScalaCustomTypes = Standard.defaultTypes.copy(decimal = ScalaBigDecimalWithPrecision(None))
     val gen = new Generator(Standard, avroScalaCustomTypes = Some(myAvroScalaCustomTypes))
     val outDir = gen.defaultOutputDir + "/standard-tagged/"
     gen.stringToFile(inputString, outDir)
@@ -271,7 +271,7 @@ class StandardStringToFileSpec extends Specification {
 
   def e24 = {
     val inputString = util.Util.readFile("avrohugger-core/src/test/avro/logical_optional.avdl")
-    val myAvroScalaCustomTypes = Standard.defaultTypes.copy(decimal = ScalaBigDecimalWithPrecision)
+    val myAvroScalaCustomTypes = Standard.defaultTypes.copy(decimal = ScalaBigDecimalWithPrecision(None))
     val gen = new Generator(Standard, avroScalaCustomTypes = Some(myAvroScalaCustomTypes))
     val outDir = gen.defaultOutputDir + "/standard-tagged/"
     gen.stringToFile(inputString, outDir)
@@ -283,7 +283,7 @@ class StandardStringToFileSpec extends Specification {
 
   def e25 = {
     val inputString = util.Util.readFile("avrohugger-core/src/test/avro/logical_either.avdl")
-    val myAvroScalaCustomTypes = Standard.defaultTypes.copy(decimal = ScalaBigDecimalWithPrecision)
+    val myAvroScalaCustomTypes = Standard.defaultTypes.copy(decimal = ScalaBigDecimalWithPrecision(None))
     val gen = new Generator(Standard, avroScalaCustomTypes = Some(myAvroScalaCustomTypes))
     val outDir = gen.defaultOutputDir + "/standard-tagged/"
     gen.stringToFile(inputString, outDir)
@@ -295,7 +295,7 @@ class StandardStringToFileSpec extends Specification {
 
   def e26 = {
     val inputString = util.Util.readFile("avrohugger-core/src/test/avro/logical_coproduct.avdl")
-    val myAvroScalaCustomTypes = Standard.defaultTypes.copy(decimal = ScalaBigDecimalWithPrecision)
+    val myAvroScalaCustomTypes = Standard.defaultTypes.copy(decimal = ScalaBigDecimalWithPrecision(None))
     val gen = new Generator(Standard, avroScalaCustomTypes = Some(myAvroScalaCustomTypes))
     val outDir = gen.defaultOutputDir + "/standard-tagged/"
     gen.stringToFile(inputString, outDir)

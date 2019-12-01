@@ -50,9 +50,9 @@ object CustomTypeMatcher {
       LogicalType.foldLogicalTypes(
         schema = schema,
         default = TYPE_ARRAY(ByteClass)) {
-        case Decimal(precision, scale) =>
-          if (decimalType == ScalaBigDecimalWithPrecision)
-            decimalTaggedType(precision, scale)
-          else BigDecimalClass
-      }
+          case Decimal(precision, scale) => decimalType match {
+            case ScalaBigDecimal(_) => BigDecimalClass
+            case ScalaBigDecimalWithPrecision(_) => decimalTaggedType(precision, scale)
+          }
+        }
 }

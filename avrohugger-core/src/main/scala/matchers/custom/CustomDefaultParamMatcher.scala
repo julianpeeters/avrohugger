@@ -46,10 +46,10 @@ object CustomDefaultParamMatcher {
     LogicalType.foldLogicalTypes[Tree](
       schema = schema,
       default = default) {
-      case Decimal(precision, scale) if decimalType == ScalaBigDecimalWithPrecision =>
-        decimalTagged(precision, scale) APPLY decimalValueRef
-      case Decimal(_, _) =>
-        decimalValueRef
+        case Decimal(precision, scale) => decimalType match {
+          case ScalaBigDecimal(_) => decimalValueRef
+          case ScalaBigDecimalWithPrecision(_) => decimalTagged(precision, scale) APPLY decimalValueRef
+        }                
     }
   }
 }

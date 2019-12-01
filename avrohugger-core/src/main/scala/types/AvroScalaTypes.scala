@@ -20,7 +20,7 @@ case class AvroScalaTypes(
   map:      AvroScalaMapType      = ScalaMap,
   protocol: AvroScalaProtocolType = NoTypeGenerated,
   // logical
-  decimal:  AvroScalaDecimalType  = ScalaBigDecimal,
+  decimal:  AvroScalaDecimalType  = ScalaBigDecimal(None),
   date:     AvroScalaDateType     = JavaTimeLocalDate,
   timestampMillis: AvroScalaTimestampMillisType = JavaTimeInstant,
   uuid:     AvroUuidType          = JavaUuid

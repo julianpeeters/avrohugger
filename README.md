@@ -46,7 +46,7 @@ Table of contents
 ##### Generates Scala case classes in various formats:
 
 * `Standard` Vanilla case classes (for use with Apache Avro's [`GenericRecord`
-API](http://avro.apache.org/docs/1.8.1/gettingstartedjava.html#Serializing+and+deserializing+without+code+generation), etc.)
+API](http://avro.apache.org/docs/1.9.1/gettingstartedjava.html#Serializing+and+deserializing+without+code+generation), etc.)
 
 * `SpecificRecord` Case classes that implement `SpecificRecordBase` and
 therefore have mutable `var` fields (for use with the Avro Specific API -
@@ -113,7 +113,7 @@ _Note:_ Currently [Treehugger](http://eed3si9n.com/treehugger/comments.html#Scal
 ## Usage
 
 * **Library For Scala 2.10, 2.11, and 2.12**
-* **Parses Schemas and IDLs with Avro version 1.8**
+* **Parses Schemas and IDLs with Avro version 1.9**
 * **Generates Code Compatible with Scala 2.10, 2.11, 2.12**
 
 
@@ -178,7 +178,7 @@ To reassign Scala types to Avro types, use the following (e.g. for customizing `
 * `union` can be assigned to  `OptionShapelessCoproduct`, `OptionEitherShapelessCoproduct`, or `OptionalShapelessCoproduct`
 * `int`, `long`, `float`, `double` can be assigned to `ScalaInt`, `ScalaLong`, `ScalaFloat`, `ScalaDouble`
 * `protocol` can be assigned to `ScalaADT` and `NoTypeGenerated`
-* `decimal` can be assigned to `ScalaBigDecimal` and `ScalaBigDecimalWithPrecision` (via Shapeless Tagged Types)
+* `decimal` can be assigned to e.g. `ScalaBigDecimal(Some(BigDecimal.RoundingMode.HALF_EVEN))` and `ScalaBigDecimalWithPrecision(None)` (via Shapeless Tagged Types)
 
 ##### Customizable Namespace Mapping:
 

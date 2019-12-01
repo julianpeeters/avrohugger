@@ -4,8 +4,8 @@ package types
 import org.apache.avro.Schema
 
 sealed trait AvroScalaDecimalType extends Product with Serializable
-case object ScalaBigDecimal extends AvroScalaDecimalType
-case object ScalaBigDecimalWithPrecision extends AvroScalaDecimalType
+case class ScalaBigDecimal(maybeRoundingMode: Option[BigDecimal.RoundingMode.Value]) extends AvroScalaDecimalType
+case class ScalaBigDecimalWithPrecision(maybeRoundingMode: Option[BigDecimal.RoundingMode.Value]) extends AvroScalaDecimalType
 
 sealed trait AvroScalaDateType extends Product with Serializable
 case object JavaSqlDate extends AvroScalaDateType

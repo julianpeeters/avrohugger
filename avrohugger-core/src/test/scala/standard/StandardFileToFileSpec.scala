@@ -471,7 +471,7 @@ class StandardFileToFileSpec extends Specification {
 
   def e32 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/logical.avsc")
-    val myAvroScalaCustomTypes = Standard.defaultTypes.copy(decimal = ScalaBigDecimalWithPrecision)
+    val myAvroScalaCustomTypes = Standard.defaultTypes.copy(decimal = ScalaBigDecimalWithPrecision(None))
     val gen = new Generator(Standard, avroScalaCustomTypes = Some(myAvroScalaCustomTypes))
     val outDir = gen.defaultOutputDir + "/standard-tagged/"
     gen.fileToFile(infile, outDir)
@@ -483,7 +483,7 @@ class StandardFileToFileSpec extends Specification {
 
   def e33 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/logical.avpr")
-    val myAvroScalaCustomTypes = Standard.defaultTypes.copy(decimal = ScalaBigDecimalWithPrecision)
+    val myAvroScalaCustomTypes = Standard.defaultTypes.copy(decimal = ScalaBigDecimalWithPrecision(None))
     val gen = new Generator(Standard, avroScalaCustomTypes = Some(myAvroScalaCustomTypes))
     val outDir = gen.defaultOutputDir + "/standard-tagged/"
     gen.fileToFile(infile, outDir)
@@ -495,7 +495,7 @@ class StandardFileToFileSpec extends Specification {
 
   def e34 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/logical.avdl")
-    val myAvroScalaCustomTypes = Standard.defaultTypes.copy(decimal = ScalaBigDecimalWithPrecision)
+    val myAvroScalaCustomTypes = Standard.defaultTypes.copy(decimal = ScalaBigDecimalWithPrecision(None))
     val gen = new Generator(Standard, avroScalaCustomTypes = Some(myAvroScalaCustomTypes))
     val outDir = gen.defaultOutputDir + "/standard-tagged/"
     gen.fileToFile(infile, outDir)
@@ -507,7 +507,7 @@ class StandardFileToFileSpec extends Specification {
 
   def e35 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/logicalsql.avsc")
-    val avroScalaCustomTypes = Standard.defaultTypes.copy(date = JavaSqlDate, timestampMillis = JavaSqlTimestamp, decimal = ScalaBigDecimalWithPrecision)
+    val avroScalaCustomTypes = Standard.defaultTypes.copy(date = JavaSqlDate, timestampMillis = JavaSqlTimestamp, decimal = ScalaBigDecimalWithPrecision(None))
     val gen = new Generator(Standard, avroScalaCustomTypes = Some(avroScalaCustomTypes))
     val outDir = gen.defaultOutputDir + "/standard-tagged/"
     gen.fileToFile(infile, outDir)
@@ -519,7 +519,7 @@ class StandardFileToFileSpec extends Specification {
 
   def e36 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/logical_optional.avdl")
-    val myAvroScalaCustomTypes = Standard.defaultTypes.copy(decimal = ScalaBigDecimalWithPrecision)
+    val myAvroScalaCustomTypes = Standard.defaultTypes.copy(decimal = ScalaBigDecimalWithPrecision(None))
     val gen = new Generator(Standard, avroScalaCustomTypes = Some(myAvroScalaCustomTypes))
     val outDir = gen.defaultOutputDir + "/standard-tagged/"
     gen.fileToFile(infile, outDir)
@@ -531,7 +531,7 @@ class StandardFileToFileSpec extends Specification {
 
   def e37 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/logical_either.avdl")
-    val myAvroScalaCustomTypes = Standard.defaultTypes.copy(decimal = ScalaBigDecimalWithPrecision)
+    val myAvroScalaCustomTypes = Standard.defaultTypes.copy(decimal = ScalaBigDecimalWithPrecision(None))
     val gen = new Generator(Standard, avroScalaCustomTypes = Some(myAvroScalaCustomTypes))
     val outDir = gen.defaultOutputDir + "/standard-tagged/"
     gen.fileToFile(infile, outDir)
@@ -543,7 +543,7 @@ class StandardFileToFileSpec extends Specification {
 
   def e38 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/logical_coproduct.avdl")
-    val myAvroScalaCustomTypes = Standard.defaultTypes.copy(decimal = ScalaBigDecimalWithPrecision)
+    val myAvroScalaCustomTypes = Standard.defaultTypes.copy(decimal = ScalaBigDecimalWithPrecision(None))
     val gen = new Generator(Standard, avroScalaCustomTypes = Some(myAvroScalaCustomTypes))
     val outDir = gen.defaultOutputDir + "/standard-tagged/"
     gen.fileToFile(infile, outDir)
