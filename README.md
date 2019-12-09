@@ -330,6 +330,7 @@ Contributors:
 - [Bobby Rauchenberg](https://github.com/bobbyrauchenberg)
 - [Plínio Pantaleão](https://github.com/plinioj)
 - [Simon Petty](https://github.com/simonpetty)
+- [Leonard Ehrenfried](https://github.com/leonardehrenfried)
 
 ##### Criticism is appreciated.
 
