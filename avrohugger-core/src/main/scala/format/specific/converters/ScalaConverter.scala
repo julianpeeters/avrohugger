@@ -133,7 +133,12 @@ object ScalaConverter {
               REF("BigDecimal").APPLY(classSymbol.DOT("decimalConversion").DOT("fromBytes").APPLY(REF("buffer"),REF("schema"),REF("decimalType")))
             )
           }
-          case _ => Block(REF("buffer") DOT "array" APPLY())
+          case _ => Block(
+            VAL("dup") := REF("buffer").DOT("duplicate").APPLY(),
+            VAL("array") := NEW("Array[Byte]", REF("dup").DOT("remaining")),
+            REF("dup") DOT "get" APPLY(REF("array")),
+            REF("array")
+          )
         }  
         val bufferConversion = CASE(ID("buffer") withType (JavaBuffer)) ==> resultExpr
         tree MATCH bufferConversion

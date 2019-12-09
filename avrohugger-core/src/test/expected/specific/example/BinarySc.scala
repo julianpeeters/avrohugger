@@ -18,7 +18,10 @@ final case class BinarySc(var data: Array[Byte]) extends org.apache.avro.specifi
       case 0 => this.data = {
         value match {
           case (buffer: java.nio.ByteBuffer) => {
-            buffer.array()
+            val dup = buffer.duplicate()
+            val array = new Array[Byte](dup.remaining)
+            dup.get(array)
+            array
           }
         }
       }.asInstanceOf[Array[Byte]]

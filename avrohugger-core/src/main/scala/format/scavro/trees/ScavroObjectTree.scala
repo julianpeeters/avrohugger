@@ -102,7 +102,7 @@ object ScavroObjectTree {
             VAL("avroClass", avroType) 
               withFlags(Flags.OVERRIDE) := REF("classOf") APPLYTYPE(JavaClass),
             VAL("schema") withFlags(Flags.OVERRIDE) withType("Schema") := 
-              javaType DOT "getClassSchema" APPLY(),
+              javaType DOT "getClassSchema" APPLY(Nil),
             VAL("fromAvro", TYPE_REF(PAREN(javaType)) TYPE_=> ScalaClass)
               withFlags(Flags.OVERRIDE) := BLOCK(
                 LAMBDA(PARAM("j", JavaClass)) ==> scalaTypeApplied
