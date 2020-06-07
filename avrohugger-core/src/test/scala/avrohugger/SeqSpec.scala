@@ -28,7 +28,7 @@ trait SeqSpec {
     correctly generate strings with Vector when asked for ${strings(types = defaultTypes.copy(array = ScalaVector))}
     correctly generate files with Vector when asked for ${files(types = defaultTypes.copy(array = ScalaVector))}"""
 
-  def expectedOutput(formatType: String, arrayType: String) = s"avrohugger-core/src/test/expected/$formatType/example/idl/array/ArrayAs$arrayType.scala"
+  def expectedOutput(formatType: String, arrayType: String): String
 
 
   def actualOutput = "example/idl/array/ArrayIdl.scala"

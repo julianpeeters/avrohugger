@@ -45,7 +45,7 @@ object ScalaConverter {
     schema: Schema,
     schemaAccessor: Tree,
     isUnionMember: Boolean,
-    tree: Tree, 
+    tree: Tree,
     typeMatcher: TypeMatcher,
     classSymbol: ClassSymbol): Tree = {
 
@@ -66,7 +66,7 @@ object ScalaConverter {
           classSymbol)
         val seqArgs = {
           SEQARG(
-            REF("scala.collection.JavaConverters.asScalaIteratorConverter").APPLY(applyParam).DOT("asScala").DOT("toSeq")
+            REF(avrohugger.internal.CollectionConverterConstants.asScalaIteratorConverter).APPLY(applyParam).DOT("asScala").DOT("toSeq")
               .MAP(LAMBDA(PARAM("x")) ==> BLOCK(elementConversion))
           )
         }
@@ -99,7 +99,7 @@ object ScalaConverter {
         val JavaMap = RootClass.newClass("java.util.Map[_,_]")
         val resultExpr = {
           BLOCK(
-            REF("scala.collection.JavaConverters.mapAsScalaMapConverter")
+            REF(avrohugger.internal.CollectionConverterConstants.mapAsScalaMapConverter)
             .APPLY(REF("map"))
             .DOT("asScala")
             .DOT("toMap")
@@ -139,7 +139,7 @@ object ScalaConverter {
             REF("dup") DOT "get" APPLY(REF("array")),
             REF("array")
           )
-        }  
+        }
         val bufferConversion = CASE(ID("buffer") withType (JavaBuffer)) ==> resultExpr
         tree MATCH bufferConversion
       }
@@ -191,7 +191,7 @@ object ScalaConverter {
                   val resultExpr = BLOCK(InstantClass.DOT("ofEpochMilli").APPLY(REF("l")))
                   val longConversion = CASE(ID("l") withType (LongClass)) ==> resultExpr
                   tree MATCH longConversion
-                } 
+                }
               }
             }
             else tree
@@ -217,9 +217,9 @@ object ScalaConverter {
                   val resultExpr = BLOCK(LocalDateClass.DOT("ofEpochDay").APPLY(REF("i").DOT("toInt")))
                   val integerConversion = CASE(ID("i") withType (IntegerClass)) ==> resultExpr
                   tree MATCH integerConversion
-                } 
+                }
               }
-              
+
             }
             else tree
           }
