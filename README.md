@@ -195,6 +195,11 @@ _Scavro_: by default, a "model" package is appended to the namespace to create a
  use of the default package name), or override the package name like so:
 
     val generator = new Generator(SpecificRecord, avroScalaCustomNamespace = Map("SCAVRO_DEFAULT_PACKAGE$"->"scavro"))
+    
+Wildcarding the beginning of a namespace is permitted, place a single asterisk after the prefix that you want to map and any matching schema will have its 
+namespace rewritten. Multiple conflicting wildcards are not permitted.
+
+    val generator = new Generator(SpecificRecord, avroScalaCustomNamespace = Map("example.*"->"example.newnamespace"))
 
 
 ##### Generate Classes Instead of Case Classes

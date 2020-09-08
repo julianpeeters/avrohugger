@@ -46,6 +46,7 @@ class SpecificFileToFileSpec extends Specification {
       correctly generate logical types from IDL $e26
       correctly generate logical types with custom date and timestamp types $e27
       correctly generate a protocol with special strings $e28
+      correcty generate a simple case class with a wildcarded custom namespace $e29
   """
 
   // tests specific to fileToX
@@ -364,5 +365,19 @@ class SpecificFileToFileSpec extends Specification {
     val source = util.Util.readFile("target/generated-sources/specific/example/idl/Names.scala")
 
     source === util.Util.readFile("avrohugger-core/src/test/expected/specific/example/idl/Names.scala")
+  }
+
+  def e29 = {
+    val infile = new java.io.File("avrohugger-core/src/test/avro/mail.avpr")
+    val gen = new Generator(SpecificRecord,
+      avroScalaCustomNamespace = Map("example.*" -> "example.protocol"))
+    val outDir = gen.defaultOutputDir + "/specific"
+    gen.fileToFile(infile, outDir)
+
+    val sourceTrait = util.Util.readFile(s"$outDir/example/protocol/Mail.scala")
+    val sourceRecord = util.Util.readFile(s"$outDir/example/protocol/Message.scala")
+
+    sourceTrait === util.Util.readFile("avrohugger-core/src/test/expected/specific/example/protocol/Mail.scala")
+    sourceRecord === util.Util.readFile("avrohugger-core/src/test/expected/specific/example/protocol/Message.scala")
   }
 }
