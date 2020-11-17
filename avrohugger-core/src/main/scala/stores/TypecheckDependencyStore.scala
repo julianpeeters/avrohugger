@@ -4,7 +4,7 @@ package stores
 import java.util.concurrent.ConcurrentHashMap
 
 import scala.reflect.runtime.universe._
-import scala.jdk.CollectionConverters._
+import collection.JavaConverters._
 
 class TypecheckDependencyStore {
 

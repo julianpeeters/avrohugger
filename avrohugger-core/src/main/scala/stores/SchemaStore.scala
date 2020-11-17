@@ -4,7 +4,7 @@ package stores
 import org.apache.avro.Schema
 
 import java.util.concurrent.ConcurrentHashMap
-import scala.jdk.CollectionConverters._
+import collection.JavaConverters._
 
 class SchemaStore {
 
