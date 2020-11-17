@@ -31,7 +31,6 @@ object LogicalType {
     case _: org.apache.avro.LogicalTypes.Date => Some(Date)
     case _: org.apache.avro.LogicalTypes.TimestampMillis => Some(TimestampMillis)
     case _ if logicalType.getName == "uuid" => Some(UUID)
-    case _ if logicalType.getName == "fixed" => sys.error("TODO")
     case _ => None
   }
   

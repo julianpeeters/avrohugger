@@ -60,7 +60,7 @@ object StandardSchemahugger extends Schemahugger {
         case EnumAsScalaString => List.empty
       }
       case FIXED => List.empty
-      case _ => sys.error("Only RECORD or ENUM can be toplevel definitions")
+      case _ => sys.error("Only RECORD or ENUM or FIXED can be toplevel definitions")
     }
   }
 

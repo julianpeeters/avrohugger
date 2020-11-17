@@ -198,7 +198,7 @@ trait SourceFormat {
       case RECORD => schema.getName
       case ENUM => schema.getName + "." + selector
       case FIXED => schema.getName
-      case _ => sys.error("Only RECORD and ENUM can be top-level definitions")
+      case _ => sys.error("Only RECORD or ENUM or FIXED can be top-level definitions")
     }
   }
   
