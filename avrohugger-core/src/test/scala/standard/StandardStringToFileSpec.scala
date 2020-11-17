@@ -28,7 +28,8 @@ class StandardStringToFileSpec extends Specification {
       correctly generate records depending on others defined in a different- and same-namespaced AVDL and AVSC $e14
       correctly generate an empty case class definition $e15
       correctly generate default values $e16
-
+      correctly generate fixed from schema $e17
+      correctly generate fixed from IDL $e18
 
 
 
@@ -233,6 +234,28 @@ class StandardStringToFileSpec extends Specification {
     val adt = util.Util.readFile("target/generated-sources/standard/example/idl/Defaults.scala")
 
     adt === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/Defaults.scala")
+  }
+
+  def e17 = {
+    val inputString = util.Util.readFile("avrohugger-core/src/test/avro/fixed.avsc")
+    val gen = new Generator(Standard)
+    val outDir = gen.defaultOutputDir + "/standard/"
+    gen.stringToFile(inputString, outDir)
+
+    val source = util.Util.readFile("target/generated-sources/standard/example/FixedSc.scala")
+
+    source === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/FixedSc.scala")
+  }
+
+  def e18 = {
+    val inputString = util.Util.readFile("avrohugger-core/src/test/avro/fixed.avdl")
+    val gen = new Generator(Standard)
+    val outDir = gen.defaultOutputDir + "/standard/"
+    gen.stringToFile(inputString, outDir)
+
+    val source = util.Util.readFile("target/generated-sources/standard/example/idl/FixedIdl.scala")
+
+    source === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/FixedIdl.scala")
   }
 
   def e21 = {

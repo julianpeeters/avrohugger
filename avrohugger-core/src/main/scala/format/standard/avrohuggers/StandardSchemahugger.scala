@@ -10,7 +10,7 @@ import stores.{ClassStore, SchemaStore}
 import types._
 
 import org.apache.avro.{ Protocol, Schema }
-import org.apache.avro.Schema.Type.{ ENUM, RECORD }
+import org.apache.avro.Schema.Type.{ ENUM, FIXED, RECORD }
 
 import treehugger.forest._
 import definitions._
@@ -59,6 +59,7 @@ object StandardSchemahugger extends Schemahugger {
           List(objectDef)
         case EnumAsScalaString => List.empty
       }
+      case FIXED => List.empty
       case _ => sys.error("Only RECORD or ENUM can be toplevel definitions")
     }
   }
