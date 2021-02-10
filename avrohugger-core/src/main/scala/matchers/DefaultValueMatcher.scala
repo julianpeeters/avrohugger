@@ -17,12 +17,12 @@ import treehugger.forest
 import treehuggerDSL._
 import scala.util.Try
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 object DefaultValueMatcher {
 
   val nullNode = new TextNode("null")
-  
+
   // This code was stolen from here:
   // https://github.com/julianpeeters/avro-scala-macro-annotations/blob/104fa325a00044ff6d31184fa7ff7b6852e9acd5/macros/src/main/scala/avro/scala/macro/annotations/provider/matchers/FromJsonMatcher.scala
   def getDefaultValue(
@@ -108,7 +108,7 @@ object DefaultValueMatcher {
           }
           NEW(schema.getName, fieldValues: _*)
         }
-        case x => throw new Exception("Can't extract a default field, type not yet supported: " + x)
+        case x => throw new Exception(s"Can't extract a default field, type not yet supported: $x")
       }
     }
     val defaultValue = org.apache.avro.util.internal.Accessor.defaultValue(field)

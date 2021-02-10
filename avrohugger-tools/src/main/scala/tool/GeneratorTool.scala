@@ -20,14 +20,14 @@ import java.util.Set;
 import java.util.LinkedHashSet;
 import java.util.List;
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.util.Try
 
 /**
- * A Tool for generating Scala case classes from schemas 
+ * A Tool for generating Scala case classes from schemas
  * Adapted from https://github.com/apache/avro/blob/branch-1.7/lang/java/tools/src/main/java/org/apache/avro/tool/SpecificCompilerTool.java
  */
-class GeneratorTool(sourceFormat: SourceFormat, 
+class GeneratorTool(sourceFormat: SourceFormat,
   avroScalaCustomTypes: Option[AvroScalaTypes] = None,
   avroScalaCustomNamespace: Map[String, String] = Map.empty) extends Tool {
 
@@ -53,16 +53,16 @@ class GeneratorTool(sourceFormat: SourceFormat,
       stringType = StringType.String;
       arg+=1;
     }
-      
+
     val method: String = args.get(arg);
     var inputs: List[File] = new ArrayList[File]();
-    
+
     for (i <- (arg + 1) until (args.size() - 1)) {
       Try {
          inputs.add(new File(args.get(i)));
       }
     }
-    
+
     if ("datafile".equals(method)) {
       for (src: File <- determineInputs(inputs, DATAFILE_FILTER)) {
         generator.fileToFile(src, args.asScala.last)
@@ -71,12 +71,12 @@ class GeneratorTool(sourceFormat: SourceFormat,
       for (src: File <- AvscFileSorter.sortSchemaFiles(determineInputs(inputs, SCHEMA_FILTER))) {
         generator.fileToFile(src, args.asScala.last)
       }
-    } 
+    }
     else if ("protocol".equals(method)) {
       for (src: File <- determineInputs(inputs, PROTOCOL_FILTER)) {
         generator.fileToFile(src, args.asScala.last)
       }
-    } 
+    }
     else {
       sys.error("Expected \"datafile\", \"schema\" or \"protocol\".");
       1;
@@ -121,7 +121,7 @@ class GeneratorTool(sourceFormat: SourceFormat,
     else {
       System.err.println("No input files found.");
     }
-    Array[File](fileSet.asScala.toList:_*);
+    fileSet.asScala.toArray[File]
   }
 
   val SCHEMA_FILTER: FileExtensionFilter  =

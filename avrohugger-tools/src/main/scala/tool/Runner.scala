@@ -11,7 +11,7 @@ import java.io.{InputStream, PrintStream}
 import org.apache.avro.tool.Tool
 
 import scala.util.{Failure, Success, Try}
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 
 /** Command-line driver.*/
@@ -22,10 +22,10 @@ class Runner(in: InputStream, out: PrintStream, err: PrintStream) {
   /**
    * Available tools, initialized in constructor.
    */
-  val toolsMap = new TreeMap[String, Tool]();
+  val toolsMap: Map[String, Tool] = new TreeMap[String, Tool]();
   val formats = Array[SourceFormat](Standard, SpecificRecord, Scavro)
   val tools = formats.map(format => new GeneratorTool(format))
-  for (tool <- Array[Tool](tools:_*)) {
+  for (tool <- tools.toArray[Tool]) {
     var prev: Tool = toolsMap.put(tool.getName(), tool);
     if (prev != null) {
       throw new AssertionError(
