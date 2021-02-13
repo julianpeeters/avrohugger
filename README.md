@@ -331,6 +331,7 @@ Contributors:
 - [Plínio Pantaleão](https://github.com/plinioj)
 - [Simon Petty](https://github.com/simonpetty)
 - [Leonard Ehrenfried](https://github.com/leonardehrenfried)
+- [Sietse de Kaper](https://github.com/targeter)
 
 ##### Criticism is appreciated.
 
