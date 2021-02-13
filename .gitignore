@@ -18,3 +18,10 @@ project/plugins/project/
 
 # IntelliJ specific
 .idea
+
+# Metals
+.metals
+.bsp
+.bloop
+.vscode
+*metals.sbt
