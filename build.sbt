@@ -2,7 +2,7 @@ lazy val avroVersion = "1.9.1"
 
 lazy val commonSettings = Seq(
   organization := "com.julianpeeters",
-  version := "1.0.0-RC23-SNAPSHOT",
+  version := "1.0.0-RC23",
   scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-Ywarn-value-discard"),
   scalacOptions in Test ++= Seq("-Yrangepos"),
   scalaVersion := "2.13.1",
@@ -14,20 +14,17 @@ lazy val commonSettings = Seq(
     case Some((2, scalaMajor)) if scalaMajor < 13 =>
       // for implementing SpecificRecord from standard case class definitions
       libraryDependencies.value ++ Seq(compilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full))
-      
+
     case _ =>
       // Scala 2.13 has it built-in
       libraryDependencies.value
   }},
-  libraryDependencies := {
-    CrossVersion.partialVersion(scalaVersion.value) match {
-      case Some((2, scalaMajor)) if scalaMajor == 10 =>
-        libraryDependencies.value ++ Seq (
-          "org.scalamacros" %% "quasiquotes" % "2.0.0" cross CrossVersion.binary)
-      case _ =>
-        libraryDependencies.value ++ Seq()
-    }
-  },
+  libraryDependencies := { CrossVersion.partialVersion(scalaVersion.value) match {
+    case Some((2, scalaMajor)) if scalaMajor < 13 =>
+      libraryDependencies.value ++ Seq("org.scala-lang.modules" %% "scala-collection-compat" % "2.4.1")
+    case _ =>
+      libraryDependencies.value
+  }},
   libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value,
   libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value,
   libraryDependencies += "org.codehaus.jackson" % "jackson-core-asl" % "1.9.13",

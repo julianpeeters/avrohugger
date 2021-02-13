@@ -11,7 +11,7 @@ import org.apache.avro.Schema
 
 import treehugger.forest
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 class TypeMatcher(
   val avroScalaTypes: AvroScalaTypes,
@@ -70,10 +70,10 @@ class TypeMatcher(
           val unionSchemas = schema.getTypes.asScala.toList
           unionTypeImpl(unionSchemas, matchType)
         }
-        case x => sys.error( x + " is not supported or not a valid Avro type")
+        case x => sys.error( s"$x is not supported or not a valid Avro type")
       }
     }
-    
+
     matchType(schema)
   }
 
@@ -110,7 +110,7 @@ class TypeMatcher(
 
     def unionsAsShapelessCoproductStrategy =
       shapelessCoproductType(nonNullableSchemas.map(typeMatcher): _*)
-    
+
     def unionsAsOptionShapelessCoproductStrategy = nonNullableSchemas match {
       case List(schemaA) =>
         typeMatcher(schemaA)
@@ -140,21 +140,21 @@ class TypeMatcher(
   //Scavro requires Java types be generated for mapping Java classes to Scala
 
   // in the future, scavro may allow this to be set
-  val avroStringType = TYPE_REF("CharSequence") 
+  val avroStringType = TYPE_REF("CharSequence")
 
   def toJavaType(
     classStore: ClassStore,
     namespace: Option[String],
     schema: Schema): Type = {
-    // The schema may contain nested schemas that will use the same namespace 
-    // as the top-level schema.  Thus, when a field is parsed, the namespace is 
+    // The schema may contain nested schemas that will use the same namespace
+    // as the top-level schema.  Thus, when a field is parsed, the namespace is
     // passed in once
     def matchType(schema: Schema): Type = {
       def javaRename(schema: Schema) = {
         "J" + classStore.generatedClasses(schema)
       }
 
-      schema.getType match { 
+      schema.getType match {
         case Schema.Type.INT => TYPE_REF("java.lang.Integer")
         case Schema.Type.DOUBLE => TYPE_REF("java.lang.Double")
         case Schema.Type.FLOAT => TYPE_REF("java.lang.Float")
@@ -176,20 +176,20 @@ class TypeMatcher(
         case Schema.Type.BYTES    => TYPE_REF("java.nio.ByteBuffer")
         case Schema.Type.RECORD   => TYPE_REF(javaRename(schema))
         case Schema.Type.ENUM     => TYPE_REF(javaRename(schema))
-        case Schema.Type.UNION    => { 
+        case Schema.Type.UNION    => {
           val unionSchemas = schema.getTypes.asScala.toList
-          // unions are represented as Scala Option[T], and thus unions must be 
+          // unions are represented as Scala Option[T], and thus unions must be
           // of two types, one of them NULL
           val isTwoTypes = unionSchemas.length == 2
           val oneTypeIsNull = unionSchemas.exists(_.getType == Schema.Type.NULL)
           if (isTwoTypes && oneTypeIsNull) {
             val maybeSchema = unionSchemas.find(_.getType != Schema.Type.NULL)
             if (maybeSchema.isDefined ) matchType(maybeSchema.get)
-            else sys.error("no avro type found in this union")  
+            else sys.error("no avro type found in this union")
           }
           else sys.error("unions not yet supported beyond nullable fields")
         }
-        case x => sys.error( x +  " is not supported or not a valid Avro type")
+        case x => sys.error( s"$x is not supported or not a valid Avro type")
       }
     }
 
