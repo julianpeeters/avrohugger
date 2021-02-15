@@ -1,7 +1,7 @@
 # avrohugger
 
 
-[![Travis CI](https://travis-ci.org/julianpeeters/avrohugger.svg?branch=master)](https://travis-ci.org/julianpeeters/avrohugger)
+[![Scala CI](https://github.com/julianpeeters/avrohugger/workflows/Scala%20CI/badge.svg)](https://github.com/julianpeeters/avrohugger/actions?query=workflow%3A%22Scala+CI%22)
 [![Join the chat at https://gitter.im/julianpeeters/avrohugger](https://badges.gitter.im/julianpeeters/avrohugger.svg)](https://gitter.im/julianpeeters/avrohugger?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.julianpeeters/avrohugger-core_2.12/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.julianpeeters/avrohugger-core_2.12)
 
