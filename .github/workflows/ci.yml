@@ -1,0 +1,25 @@
+name: Scala CI
+
+on:
+  push:
+    branches: [ $default-branch ]
+  pull_request:
+    branches: [ $default-branch ]
+
+jobs:
+  build:
+    name: Build and Test
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        scala: [2.13.4, 2.12.10]
+        java: [adopt@1.8, adopt@1.11]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+      - name: Run tests
+        run: csbt ++${{ matrix.scala }} test
