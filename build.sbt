@@ -2,11 +2,11 @@ lazy val avroVersion = "1.9.1"
 
 lazy val commonSettings = Seq(
   organization := "com.julianpeeters",
-  version := "1.0.0-RC23",
+  version := "1.0.0-RC24-SNAPSHOT",
   scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-Ywarn-value-discard"),
   scalacOptions in Test ++= Seq("-Yrangepos"),
-  scalaVersion := "2.13.1",
-  crossScalaVersions := Seq("2.11.12", "2.12.10", scalaVersion.value),
+  scalaVersion := "2.13.4",
+  crossScalaVersions := Seq("2.12.10", scalaVersion.value),
   resolvers += Resolver.typesafeIvyRepo("releases"),
   libraryDependencies += "org.apache.avro" % "avro" % avroVersion,
   libraryDependencies += "org.apache.avro" % "avro-compiler" % avroVersion,
