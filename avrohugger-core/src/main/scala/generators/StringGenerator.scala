@@ -84,7 +84,7 @@ private[avrohugger] object StringGenerator {
       }
     }).distinct
     // reset the schema store after processing the whole submission
-    schemaStore.schemas.clear
+    schemaStore.schemas.clear()
     codeStrings
   }
 
