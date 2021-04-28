@@ -7,7 +7,9 @@ import org.apache.avro.Schema
 import org.apache.avro.compiler.specific.SpecificCompiler
 
 import java.io.{BufferedWriter, File, FileNotFoundException, FileWriter, IOException}
-import java.nio.file.{FileSystems, Files}
+import java.nio.file.{FileSystems, Files, Path, Paths}
+import java.util.Comparator
+import scala.tools.nsc
 
 /** Parent to all ouput format treehuggers
   * Note: Java required for generating Enums (Specific API requires Java enums)
@@ -49,26 +51,10 @@ trait JavaTreehugger {
       prefix
     ).toFile
 
-  protected def deleteTempDirOnExit(tempDir: File): Unit = {
-    def getFiles(f: File): Set[File] = {
-      Option(f.listFiles)
-        .map(a => a.toSet)
-        .getOrElse(Set.empty)
-    }
-    def getRecursively(f: File): Set[File] = {
-      val files = getFiles(f)
-      val subDirectories = files.filter(path => path.isDirectory)
-      subDirectories.flatMap(getRecursively) ++ files + tempDir
-    }
-    def sortByDepth(f1: File, f2: File): Boolean = {
-      def countLevels(f: File) = f.getAbsolutePath.count(c => c == '/')
-      countLevels(f1) > countLevels(f2)
-    }
-    val filesToDelete = getRecursively(tempDir)
-    val sortedFilesToDelete = filesToDelete.toList.sortWith(sortByDepth)
-    sortedFilesToDelete.foreach(file => {
-      if (getFiles(file).isEmpty) file.deleteOnExit()
-    })
-  }
+  protected def deleteTempDirOnExit(tempDir: File): Unit =
+    Files.walk(Paths.get(tempDir.getPath))
+      .sorted(Comparator.reverseOrder[Path]())
+      .map(_.toFile)
+      .forEach(_.deleteOnExit())
 
 }
