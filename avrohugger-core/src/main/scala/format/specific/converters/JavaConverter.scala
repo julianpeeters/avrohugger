@@ -97,7 +97,30 @@ object JavaConverter {
         REF("map")
       )
     }
-    case Schema.Type.FIXED => sys.error("the FIXED datatype is not yet supported")
+    case Schema.Type.FIXED => schema.getLogicalType match {
+      case decimal: LogicalTypes.Decimal => {
+        val Decimal = RootClass.newClass("org.apache.avro.LogicalTypes.Decimal")
+        val scale = tree.DOT("setScale").APPLY(REF("scale"))
+        def scaleAndRound(roundingMode: BigDecimal.RoundingMode.Value) =
+          tree.DOT("setScale").APPLY(REF("scale"), REF("BigDecimal.RoundingMode."+ roundingMode.toString))
+        Block(
+          VAL("schema") := {if (isUnionMember) unionAccessor(schemaAccessor, schema.getFullName) else schemaAccessor},
+          VAL("decimalType") := REF("schema").DOT("getLogicalType").APPLY().AS(Decimal),
+          VAL("scale") := REF("decimalType").DOT("getScale").APPLY(),
+          VAL("scaledValue") := {
+            typeMatcher.avroScalaTypes.decimal match {
+              case ScalaBigDecimal(None) => scale
+              case ScalaBigDecimal(Some(roundingMode)) => scaleAndRound(roundingMode)
+              case ScalaBigDecimalWithPrecision(None) => scale
+              case ScalaBigDecimalWithPrecision(Some(roundingMode)) => scaleAndRound(roundingMode)
+            }
+          },
+          VAL("bigDecimal") := REF("scaledValue").DOT("bigDecimal"),
+          classSymbol.DOT("decimalConversion").DOT("toBytes").APPLY(REF("bigDecimal"),REF("schema"),REF("decimalType"))
+        )
+      }
+      case _ => REF("java.nio.ByteBuffer") DOT "wrap" APPLY tree
+    }//sys.error("the FIXED datatype is not yet supported")
     case Schema.Type.BYTES => schema.getLogicalType match {
       case decimal: LogicalTypes.Decimal => {
         val Decimal = RootClass.newClass("org.apache.avro.LogicalTypes.Decimal")

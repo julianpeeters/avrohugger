@@ -121,7 +121,27 @@ object ScalaConverter {
         val mapConversion = CASE(ID("map") withType(JavaMap)) ==> resultExpr
         tree MATCH(mapConversion)
       }
-      case Schema.Type.FIXED => sys.error("the FIXED datatype is not yet supported")
+      case Schema.Type.FIXED =>  {
+        val JavaBuffer = RootClass.newClass("java.nio.ByteBuffer")
+        val resultExpr = schema.getLogicalType match {
+          case decimal: LogicalTypes.Decimal => {
+            val Decimal = RootClass.newClass("org.apache.avro.LogicalTypes.Decimal")
+            Block(
+              VAL("schema") := {if (isUnionMember) unionAccessor(schemaAccessor, schema.getFullName) else schemaAccessor},
+              VAL("decimalType") := REF("schema").DOT("getLogicalType").APPLY().AS(Decimal),
+              REF("BigDecimal").APPLY(classSymbol.DOT("decimalConversion").DOT("fromBytes").APPLY(REF("buffer"),REF("schema"),REF("decimalType")))
+            )
+          }
+          case _ => Block(
+            VAL("dup") := REF("buffer").DOT("duplicate").APPLY(),
+            VAL("array") := NEW("Array[Byte]", REF("dup").DOT("remaining")),
+            REF("dup") DOT "get" APPLY(REF("array")),
+            REF("array")
+          )
+        }
+        val bufferConversion = CASE(ID("buffer") withType (JavaBuffer)) ==> resultExpr
+        tree MATCH bufferConversion
+      }//sys.error("the FIXED datatype is not yet supported")
       case Schema.Type.BYTES => {
         val JavaBuffer = RootClass.newClass("java.nio.ByteBuffer")
         val resultExpr = schema.getLogicalType match {

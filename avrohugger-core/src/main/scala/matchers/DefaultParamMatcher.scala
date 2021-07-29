@@ -48,7 +48,11 @@ object DefaultParamMatcher {
           case UUID => REF("java.util.UUID.randomUUID")
         }
       case Type.NULL    => NULL
-      case Type.FIXED   => sys.error("the FIXED datatype is not yet supported")
+      case Type.FIXED   =>
+        CustomDefaultParamMatcher.checkCustomDecimalType(
+          decimalType = typeMatcher.avroScalaTypes.decimal,
+          schema = avroSchema,
+          default = NULL)
       case Type.ENUM    =>
         CustomDefaultParamMatcher.checkCustomEnumType(typeMatcher.avroScalaTypes.enum)
       case Type.BYTES   =>

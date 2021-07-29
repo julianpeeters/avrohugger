@@ -2,9 +2,9 @@ lazy val avroVersion = "1.9.1"
 
 lazy val commonSettings = Seq(
   organization := "com.julianpeeters",
-  version := "1.0.0-RC24",
+  version := "1.0.0-RC25",
   scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-Ywarn-value-discard"),
-  scalacOptions in Test ++= Seq("-Yrangepos"),
+  Test / scalacOptions ++= Seq("-Yrangepos"),
   scalaVersion := "2.13.4",
   crossScalaVersions := Seq("2.12.10", scalaVersion.value),
   resolvers += Resolver.typesafeIvyRepo("releases"),
@@ -31,7 +31,7 @@ lazy val commonSettings = Seq(
   // for testing
   libraryDependencies += "org.specs2" %% "specs2-core" % "4.8.0" % "test",
   publishMavenStyle := true,
-  publishArtifact in Test := false,
+  Test / publishArtifact := false,
   publishTo := Some(
   if (isSnapshot.value)
     Opts.resolver.sonatypeSnapshots
@@ -57,7 +57,7 @@ lazy val commonSettings = Seq(
 
 lazy val avrohugger = (project in file("."))
   .settings(
-    commonSettings,
+    commonSettings
   ).aggregate(`avrohugger-core`, `avrohugger-filesorter`, `avrohugger-tools`)
 
 
@@ -77,9 +77,9 @@ lazy val `avrohugger-tools` = (project in file("avrohugger-tools"))
   .settings(
     commonSettings,
     libraryDependencies += "org.apache.avro" % "avro-tools" % avroVersion,
-    artifact in (Compile, assembly) := {
-      val art: Artifact = (artifact in (Compile, assembly)).value
+    Compile / assembly / artifact := {
+      val art: Artifact = (Compile / assembly / artifact).value
       art.withClassifier(Some("assembly"))
     },
-    addArtifact(artifact in (Compile, assembly), assembly).settings
+    addArtifact(Compile / assembly / artifact, assembly).settings
   ).dependsOn(`avrohugger-core`, `avrohugger-filesorter`)
