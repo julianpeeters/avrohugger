@@ -571,7 +571,7 @@ class StandardFileToFileSpec extends Specification {
     val gen = new Generator(Standard)
     val outDir = gen.defaultOutputDir + "/standard/"
     gen.fileToFile(infile, outDir)
-    
+
     checkFileExist("avrohugger-core/src/test/expected/standard/example/logical/Fixed.scala") === false
   }
 }
