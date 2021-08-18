@@ -14,7 +14,16 @@ object Util {
           else sys.error("File not found: " + fileName)
       }
     }
+
     readFile0(0)
   }
+
+  def checkFileExist(fileName: String): Boolean =
+    try {
+      scala.io.Source.fromFile(fileName).close()
+      true
+    } catch {
+      case e: Throwable => false
+    }
 
 }
