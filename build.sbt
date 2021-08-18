@@ -6,14 +6,14 @@ lazy val commonSettings = Seq(
   scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-Ywarn-value-discard"),
   Test / scalacOptions ++= Seq("-Yrangepos"),
   scalaVersion := "2.13.4",
-  crossScalaVersions := Seq("2.12.10", scalaVersion.value),
+  crossScalaVersions := Seq("2.12.11", scalaVersion.value),
   resolvers += Resolver.typesafeIvyRepo("releases"),
   libraryDependencies += "org.apache.avro" % "avro" % avroVersion,
   libraryDependencies += "org.apache.avro" % "avro-compiler" % avroVersion,
   libraryDependencies := { CrossVersion.partialVersion(scalaVersion.value) match {
     case Some((2, scalaMajor)) if scalaMajor < 13 =>
       // for implementing SpecificRecord from standard case class definitions
-      libraryDependencies.value ++ Seq(compilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full))
+      libraryDependencies.value ++ Seq(compilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full))
 
     case _ =>
       // Scala 2.13 has it built-in

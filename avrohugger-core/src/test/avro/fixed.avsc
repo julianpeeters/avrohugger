@@ -1,0 +1,9 @@
+{
+  "type": "fixed",
+  "size": 12,
+  "namespace": "example",
+  "name": "Fixed",
+  "logicalType": "decimal",
+  "precision": 28,
+  "scale": 15
+}

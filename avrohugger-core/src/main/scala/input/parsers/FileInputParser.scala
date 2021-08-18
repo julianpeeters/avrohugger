@@ -4,17 +4,16 @@ package parsers
 
 import format.abstractions.SourceFormat
 import stores.ClassStore
-
-import org.apache.avro.{ Protocol, Schema }
+import org.apache.avro.{Protocol, Schema}
 import org.apache.avro.Schema.Parser
-import org.apache.avro.Schema.Type.{ RECORD, UNION, ENUM }
+import org.apache.avro.Schema.Type.{ENUM, FIXED, RECORD, UNION}
 import org.apache.avro.compiler.idl.Idl
-import org.apache.avro.generic.{ GenericDatumReader, GenericRecord }
+import org.apache.avro.generic.{GenericDatumReader, GenericRecord}
 import org.apache.avro.file.DataFileReader
 import org.apache.avro.SchemaParseException
-import java.io.File
 
-import scala.collection.JavaConverters._
+import java.io.File
+import scala.jdk.CollectionConverters._
 import scala.util.Try
 
 class FileInputParser {
@@ -32,6 +31,7 @@ class FileInputParser {
         case UNION => schema.getTypes.asScala.toList
         case RECORD => List(schema)
         case ENUM => List(schema)
+        case FIXED => List(schema)
         case _ => sys.error("""Neither a record, enum nor a union of either. 
           |Nothing to map to a definition.""".trim.stripMargin)
       }

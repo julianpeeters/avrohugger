@@ -1,0 +1,9 @@
+{
+  "type": "fixed",
+  "size": 12,
+  "namespace": "com.test",
+  "name": "Money",
+  "logicalType": "decimal",
+  "precision": 28,
+  "scale": 15
+}
