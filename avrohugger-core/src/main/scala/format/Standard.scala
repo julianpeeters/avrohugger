@@ -115,14 +115,14 @@ object Standard extends SourceFormat {
             val localSubtypes = getLocalSubtypes(protocol)
             val localRecords = localSubtypes.filterNot(isEnum)
             val localEnums = localSubtypes.filter(isEnum)
-            val javaCompilationUnits = localEnums.map(schema =>
+            val javaCompilationUnits = localEnums.map(schema => {
               getJavaEnumCompilationUnit(
                 classStore,
                 namespace,
                 schema,
                 maybeOutDir,
                 typeMatcher)
-            )
+            })
             if (localRecords.length >= 1) scalaCompilationUnit +: javaCompilationUnits
             else javaCompilationUnits
           }
@@ -135,14 +135,13 @@ object Standard extends SourceFormat {
   }
 
   def compile(
-      classStore: ClassStore,
-      ns: Option[String],
-      schemaOrProtocol: Either[Schema, Protocol],
-      outDir: String,
-      schemaStore: SchemaStore,
-      typeMatcher: TypeMatcher,
-      restrictedFields: Boolean
-  ): Unit = {
+    classStore: ClassStore,
+    ns: Option[String],
+    schemaOrProtocol: Either[Schema, Protocol],
+    outDir: String,
+    schemaStore: SchemaStore,
+    typeMatcher: TypeMatcher,
+    restrictedFields: Boolean): Unit = {
     val compilationUnits: List[CompilationUnit] = asCompilationUnits(
       classStore,
       ns,
