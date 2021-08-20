@@ -43,7 +43,7 @@ object Standard extends SourceFormat {
     schemaOrProtocol match {
       case Left(schema) =>
         schema.getType match {
-          case RECORD =>
+          case RECORD => {
             val scalaCompilationUnit = getScalaCompilationUnit(
               classStore,
               namespace,
@@ -53,13 +53,14 @@ object Standard extends SourceFormat {
               maybeOutDir,
               restrictedFields)
             List(scalaCompilationUnit)
+          }
           case ENUM =>
             enumType match {
               // java enums can't be represented as trees so they can't be
               // handled by treehugger. Their compilation unit must de generated
               // separately, and they will be excluded from scala compilation
               // units.
-              case JavaEnum =>
+              case JavaEnum => {
                 val javaCompilationUnit = getJavaEnumCompilationUnit(
                   classStore,
                   namespace,
@@ -67,7 +68,8 @@ object Standard extends SourceFormat {
                   maybeOutDir,
                   typeMatcher)
                 List(javaCompilationUnit)
-              case ScalaCaseObjectEnum =>
+              }
+              case ScalaCaseObjectEnum => {
                 val scalaCompilationUnit = getScalaCompilationUnit(
                   classStore,
                   namespace,
@@ -77,7 +79,8 @@ object Standard extends SourceFormat {
                   maybeOutDir,
                   restrictedFields)
                 List(scalaCompilationUnit)
-              case ScalaEnumeration =>
+              }
+              case ScalaEnumeration => {
                 val scalaCompilationUnit = getScalaCompilationUnit(
                   classStore,
                   namespace,
@@ -87,6 +90,7 @@ object Standard extends SourceFormat {
                   maybeOutDir,
                   restrictedFields)
                 List(scalaCompilationUnit)
+              }
               case EnumAsScalaString => List.empty
             }
           case FIXED => List.empty
