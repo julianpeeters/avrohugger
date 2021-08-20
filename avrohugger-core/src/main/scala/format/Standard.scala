@@ -19,8 +19,8 @@ object Standard extends SourceFormat {
 
   val toolShortDescription = "Generates Scala code for the given schema."
 
-  val javaTreehugger: StandardJavaTreehugger.type = StandardJavaTreehugger
-  val scalaTreehugger: StandardScalaTreehugger.type = StandardScalaTreehugger
+  val javaTreehugger = StandardJavaTreehugger
+  val scalaTreehugger = StandardScalaTreehugger
 
   def asCompilationUnits(
     classStore: ClassStore,

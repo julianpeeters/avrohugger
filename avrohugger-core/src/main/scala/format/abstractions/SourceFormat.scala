@@ -105,10 +105,10 @@ trait SourceFormat {
     maybeOutDir: Option[String],
     typeMatcher: TypeMatcher): Option[Path] = {
     maybeOutDir match {
-      case Some(outDir) =>
-        val folderPath: Path = Paths.get{
+      case Some(outDir) => {
+        val folderPath: Path = Paths.get {
           if (namespace.isDefined) {
-            s"$outDir/${namespace.get.toString.replace('.','/')}"
+            s"$outDir/${namespace.get.toString.replace('.', '/')}"
           }
           else outDir
         }
@@ -116,6 +116,7 @@ trait SourceFormat {
         val fileName = getName(schemaOrProtocol, typeMatcher) + ext
         if (!Files.exists(folderPath)) Files.createDirectories(folderPath)
         Some(Paths.get(s"$folderPath/$fileName"))
+      }
       case None => None
     }
 
