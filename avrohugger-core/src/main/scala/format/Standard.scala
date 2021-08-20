@@ -40,7 +40,7 @@ object Standard extends SourceFormat {
     val enumType = typeMatcher.avroScalaTypes.enum
 
     schemaOrProtocol match {
-      case Left(schema) =>
+      case Left(schema) => {
         schema.getType match {
           case RECORD => {
             val scalaCompilationUnit = getScalaCompilationUnit(
@@ -53,7 +53,7 @@ object Standard extends SourceFormat {
               restrictedFields)
             List(scalaCompilationUnit)
           }
-          case ENUM =>
+          case ENUM => {
             enumType match {
               // java enums can't be represented as trees so they can't be
               // handled by treehugger. Their compilation unit must de generated
@@ -92,10 +92,12 @@ object Standard extends SourceFormat {
               }
               case EnumAsScalaString => List.empty
             }
+          }
           case FIXED => List.empty
 
           case _ => sys.error("Only RECORD, ENUM or FIXED can be toplevel definitions")
         }
+      }
       case Right(protocol) => {
         val scalaCompilationUnit = getScalaCompilationUnit(
           classStore,
