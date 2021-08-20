@@ -23,13 +23,13 @@ object Standard extends SourceFormat {
   val scalaTreehugger: StandardScalaTreehugger.type = StandardScalaTreehugger
 
   def asCompilationUnits(
-      classStore: ClassStore,
-      ns: Option[String],
-      schemaOrProtocol: Either[Schema, Protocol],
-      schemaStore: SchemaStore,
-      maybeOutDir: Option[String],
-      typeMatcher: TypeMatcher,
-      restrictedFields: Boolean
+    classStore: ClassStore,
+    ns: Option[String],
+    schemaOrProtocol: Either[Schema, Protocol],
+    schemaStore: SchemaStore,
+    maybeOutDir: Option[String],
+    typeMatcher: TypeMatcher,
+    restrictedFields: Boolean
   ): List[CompilationUnit] = {
     registerTypes(schemaOrProtocol, classStore, typeMatcher)
     val namespace =
@@ -110,7 +110,7 @@ object Standard extends SourceFormat {
           // java enums can't be represented as trees so they can't be handled
           // by treehugger. Their compilation unit must de generated
           // separately, and they will be excluded from scala compilation units.
-          case JavaEnum =>
+          case JavaEnum => {
             val localSubtypes = getLocalSubtypes(protocol)
             val localRecords = localSubtypes.filterNot(isEnum)
             val localEnums = localSubtypes.filter(isEnum)
@@ -124,6 +124,7 @@ object Standard extends SourceFormat {
             )
             if (localRecords.length >= 1) scalaCompilationUnit +: javaCompilationUnits
             else javaCompilationUnits
+          }
           case ScalaCaseObjectEnum => List(scalaCompilationUnit)
           case ScalaEnumeration => List(scalaCompilationUnit)
           case EnumAsScalaString => List(scalaCompilationUnit)
