@@ -94,8 +94,14 @@ object Standard extends SourceFormat {
           case _ => sys.error("Only RECORD, ENUM or FIXED can be toplevel definitions")
         }
       case Right(protocol) => {
-        val scalaCompilationUnit =
-          getScalaCompilationUnit(classStore, namespace, Right(protocol), typeMatcher, schemaStore, maybeOutDir, restrictedFields)
+        val scalaCompilationUnit = getScalaCompilationUnit(
+          classStore,
+          namespace,
+          Right(protocol),
+          typeMatcher,
+          schemaStore,
+          maybeOutDir,
+          restrictedFields)
         enumType match {
           // java enums can't be represented as trees so they can't be handled
           // by treehugger. Their compilation unit must de generated
@@ -105,7 +111,12 @@ object Standard extends SourceFormat {
             val localRecords = localSubtypes.filterNot(isEnum)
             val localEnums = localSubtypes.filter(isEnum)
             val javaCompilationUnits = localEnums.map(schema =>
-              getJavaEnumCompilationUnit(classStore, namespace, schema, maybeOutDir, typeMatcher)
+              getJavaEnumCompilationUnit(
+                classStore,
+                namespace,
+                schema,
+                maybeOutDir,
+                typeMatcher)
             )
             if (localRecords.length >= 1) scalaCompilationUnit +: javaCompilationUnits
             else javaCompilationUnits
@@ -139,7 +150,9 @@ object Standard extends SourceFormat {
 
   val defaultTypes: AvroScalaTypes = AvroScalaTypes.defaults
 
-  def getName(schemaOrProtocol: Either[Schema, Protocol], typeMatcher: TypeMatcher): String = {
+  def getName(
+      schemaOrProtocol: Either[Schema, Protocol],
+      typeMatcher: TypeMatcher): String = {
     schemaOrProtocol match {
       case Left(schema) => schema.getName
       case Right(protocol) => {
