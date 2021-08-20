@@ -90,7 +90,9 @@ object Standard extends SourceFormat {
                   restrictedFields)
                 List(scalaCompilationUnit)
               }
-              case EnumAsScalaString => List.empty
+              case EnumAsScalaString => {
+                List.empty
+              }
             }
           }
           case FIXED => List.empty
@@ -156,8 +158,8 @@ object Standard extends SourceFormat {
   val defaultTypes: AvroScalaTypes = AvroScalaTypes.defaults
 
   def getName(
-      schemaOrProtocol: Either[Schema, Protocol],
-      typeMatcher: TypeMatcher): String = {
+    schemaOrProtocol: Either[Schema, Protocol],
+    typeMatcher: TypeMatcher): String = {
     schemaOrProtocol match {
       case Left(schema) => schema.getName
       case Right(protocol) => {
