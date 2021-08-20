@@ -29,8 +29,7 @@ object Standard extends SourceFormat {
     schemaStore: SchemaStore,
     maybeOutDir: Option[String],
     typeMatcher: TypeMatcher,
-    restrictedFields: Boolean
-  ): List[CompilationUnit] = {
+    restrictedFields: Boolean): List[CompilationUnit] = {
     registerTypes(schemaOrProtocol, classStore, typeMatcher)
     val namespace =
       CustomNamespaceMatcher.checkCustomNamespace(
