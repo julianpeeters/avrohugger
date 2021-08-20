@@ -44,8 +44,14 @@ object Standard extends SourceFormat {
       case Left(schema) =>
         schema.getType match {
           case RECORD =>
-            val scalaCompilationUnit =
-              getScalaCompilationUnit(classStore, namespace, schemaOrProtocol, typeMatcher, schemaStore, maybeOutDir, restrictedFields)
+            val scalaCompilationUnit = getScalaCompilationUnit(
+              classStore,
+              namespace,
+              schemaOrProtocol,
+              typeMatcher,
+              schemaStore,
+              maybeOutDir,
+              restrictedFields)
             List(scalaCompilationUnit)
           case ENUM =>
             enumType match {
@@ -54,16 +60,32 @@ object Standard extends SourceFormat {
               // separately, and they will be excluded from scala compilation
               // units.
               case JavaEnum =>
-                val javaCompilationUnit =
-                  getJavaEnumCompilationUnit(classStore, namespace, schema, maybeOutDir, typeMatcher)
+                val javaCompilationUnit = getJavaEnumCompilationUnit(
+                  classStore,
+                  namespace,
+                  schema,
+                  maybeOutDir,
+                  typeMatcher)
                 List(javaCompilationUnit)
               case ScalaCaseObjectEnum =>
-                val scalaCompilationUnit =
-                  getScalaCompilationUnit(classStore, namespace, schemaOrProtocol, typeMatcher, schemaStore, maybeOutDir, restrictedFields)
+                val scalaCompilationUnit = getScalaCompilationUnit(
+                  classStore,
+                  namespace,
+                  schemaOrProtocol,
+                  typeMatcher,
+                  schemaStore,
+                  maybeOutDir,
+                  restrictedFields)
                 List(scalaCompilationUnit)
               case ScalaEnumeration =>
-                val scalaCompilationUnit =
-                  getScalaCompilationUnit(classStore, namespace, schemaOrProtocol, typeMatcher, schemaStore, maybeOutDir, restrictedFields)
+                val scalaCompilationUnit = getScalaCompilationUnit(
+                  classStore,
+                  namespace,
+                  schemaOrProtocol,
+                  typeMatcher,
+                  schemaStore,
+                  maybeOutDir,
+                  restrictedFields)
                 List(scalaCompilationUnit)
               case EnumAsScalaString => List.empty
             }
