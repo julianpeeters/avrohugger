@@ -29,7 +29,7 @@ class FileInputParser {
     parser: Parser = schemaParser): List[Either[Schema, Protocol]] = {
     def unUnion(schema: Schema) = {
       schema.getType match {
-        case UNION => schema.getTypes.asScala.toList
+        case UNION => schema.getTypes().asScala.toList
         case RECORD => List(schema)
         case ENUM => List(schema)
         case _ => sys.error("""Neither a record, enum nor a union of either. 
@@ -38,11 +38,11 @@ class FileInputParser {
     }
 
     def copySchemas(tempParser: Parser, parser: Parser): Unit = {
-      val tempKeys = tempParser.getTypes.keySet().asScala
-      val keys = parser.getTypes.keySet().asScala
+      val tempKeys = tempParser.getTypes().keySet().asScala
+      val keys = parser.getTypes().keySet().asScala
       val commonElements = tempKeys.intersect(keys)
       val nonEqualElements = commonElements.filter { element =>
-        parser.getTypes.get(element) != tempParser.getTypes.get(element)
+        parser.getTypes().get(element) != tempParser.getTypes().get(element)
       }
       if (nonEqualElements.nonEmpty) {
         sys.error(s"Can't redefine:  ${nonEqualElements.mkString(",")} in $infile")
@@ -50,9 +50,9 @@ class FileInputParser {
         if (commonElements.isEmpty) {
           val _ = parser.addTypes(tempParser.getTypes)
         } else {
-          val missingTypes = tempParser.getTypes.keySet().asScala.diff(parser.getTypes.keySet().asScala)
+          val missingTypes = tempParser.getTypes().keySet().asScala.diff(parser.getTypes().keySet().asScala)
           val _ = parser.addTypes(missingTypes.map { t =>
-            t -> tempParser.getTypes.get(t)
+            t -> tempParser.getTypes().get(t)
           }.toMap.asJava)
         }
       }
@@ -110,10 +110,10 @@ class FileInputParser {
             val imported = importedSchemaOrProtocols.flatMap(avroDef => {
               avroDef match {
                 case Left(importedSchema) => List(importedSchema)
-                case Right(importedProtocol) => importedProtocol.getTypes.asScala
+                case Right(importedProtocol) => importedProtocol.getTypes().asScala
               }
             })
-            val types = protocol.getTypes.asScala.toList
+            val types = protocol.getTypes().asScala.toList
             val localTypes = imported.foldLeft(types)((remaining, imported) => {
               remaining.filterNot(remainingType => remainingType == imported)
             })

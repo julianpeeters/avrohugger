@@ -32,7 +32,7 @@ object JavaConverter {
     classSymbol: ClassSymbol,
     typeMatcher: TypeMatcher): Tree = schema.getType match {
     case Schema.Type.UNION => {
-      val types = schema.getTypes.asScala
+      val types = schema.getTypes().asScala
       // check if it's the kind of union that we support (i.e. nullable fields)
       if (types.length != 2 ||
          !types.map(x => x.getType).contains(Schema.Type.NULL) ||

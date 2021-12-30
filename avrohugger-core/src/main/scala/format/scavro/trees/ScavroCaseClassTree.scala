@@ -31,7 +31,7 @@ object ScavroCaseClassTree {
     restrictedFields: Boolean) = {
 
     val mixin = TYPE_REF(REF("AvroSerializeable"))
-    val avroFields = schema.getFields.asScala.toList
+    val avroFields = schema.getFields().asScala.toList
 
     val shouldGenerateSimpleClass = restrictedFields && avroFields.size > 22
 

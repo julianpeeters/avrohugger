@@ -36,9 +36,11 @@ object ScavroMethodRenamer {
     // Check for the special case in which the schema defines two fields whose
     // names are identical except for the case of the first character:
     val firstChar: Char = field.name().charAt(0)
-    val conflictingFieldName: String = (if (Character.isLowerCase(firstChar))
-        Character.toUpperCase(firstChar) else Character.toLowerCase(firstChar)) +
-        (if (field.name().length() > 1) field.name().substring(1) else "")
+    val conflictingFieldName: String = {
+      val s1 = if (Character.isLowerCase(firstChar)) Character.toUpperCase(firstChar) else Character.toLowerCase(firstChar)
+      val s2 = if (field.name().length() > 1) field.name().substring(1) else ""
+      s"$s1$s2"
+    }
     val fieldNameConflict: Boolean = Option(schema.getField(conflictingFieldName)).isDefined
 
     val methodBuilder: StringBuilder = new StringBuilder(prefix)

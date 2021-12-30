@@ -11,7 +11,7 @@ import java.io.{InputStream, PrintStream}
 import org.apache.avro.tool.Tool
 
 import scala.util.{Failure, Success, Try}
-import scala.jdk.CollectionConverters._
+import scala.collection.JavaConverters._
 
 
 /** Command-line driver.*/

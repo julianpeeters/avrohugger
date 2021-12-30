@@ -26,7 +26,7 @@ object SpecificCaseClassTree {
     restrictedFields: Boolean) = {
 
     val classSymbol = RootClass.newClass(schema.getName)
-    val avroFields = schema.getFields.asScala.toList
+    val avroFields = schema.getFields().asScala.toList
 
     val shouldGenerateSimpleClass = restrictedFields && avroFields.size > 22
 
@@ -38,7 +38,8 @@ object SpecificCaseClassTree {
         classStore,
         namespace,
         f,
-        typeMatcher)
+        typeMatcher,
+        fieldName == fieldType.safeToString)
       VAR(fieldName, fieldType) := defaultValue
     }
 

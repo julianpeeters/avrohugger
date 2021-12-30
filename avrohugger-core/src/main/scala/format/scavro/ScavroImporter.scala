@@ -49,7 +49,7 @@ object ScavroImporter extends Importer {
               else checkForArrays(s, used :+ s)
             })
           case Schema.Type.UNION =>
-            val types = schema.getTypes.asScala
+            val types = schema.getTypes().asScala
             if (types.length != 2 ||
                !types.map(x => x.getType).contains(Schema.Type.NULL) ||
                 types.filterNot(x => x.getType == Schema.Type.NULL).length != 1) {
@@ -69,7 +69,7 @@ object ScavroImporter extends Importer {
       val schemas: List[Schema] = schemaOrProtocol match {
         case Left(schema) => checkForArrays(schema)
         case Right(protocol) => {
-          protocol.getTypes.asScala.toList
+          protocol.getTypes().asScala.toList
             .filter(schema => isRecord(schema))
             .flatMap(schema => checkForArrays(schema))
         }

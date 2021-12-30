@@ -34,7 +34,8 @@ object StandardObjectTree {
     classStore: ClassStore, 
     schema: Schema,
     maybeBaseTrait: Option[String],
-    maybeFlags: Option[List[Long]]) = {
+    maybeFlags: Option[List[Long]]
+  ) = {
       
     val objectDef = (maybeBaseTrait, maybeFlags) match {
       case (Some(baseTrait), Some(flags)) => 

@@ -30,18 +30,20 @@ object StandardCaseClassTree {
     // register new type
 
     val classSymbol = RootClass.newClass(schema.getName)
-    val avroFields = schema.getFields.asScala.toList
+    val avroFields = schema.getFields().asScala.toList
 
     val shouldGenerateSimpleClass = restrictedFields && avroFields.size > 22
 
     val params: List[ValDef] = avroFields.map(f => {
       val fieldName = FieldRenamer.rename(f.name)
-      val fieldType = typeMatcher.toScalaType(classStore, namespace, f.schema)
+      val fieldType = typeMatcher.toScalaType(classStore, namespace, f.schema, fieldName == f.schema.getName())
       val defaultValue = DefaultValueMatcher.getDefaultValue(
         classStore,
         namespace,
         f,
-        typeMatcher)
+        typeMatcher,
+        fieldName == f.schema.getName()
+      )
       PARAM(fieldName, fieldType) := defaultValue
     })
 

@@ -57,7 +57,7 @@ trait Importer {
           case ENUM =>
             Seq(schema)
           case UNION =>
-            schema.getTypes.asScala
+            schema.getTypes().asScala
               .find(s => s.getType != NULL).toSeq
               .filter(s => alreadyImported.contains(s))
               .flatMap(s => nextSchemas(schema, alreadyImported :+ s))
@@ -79,11 +79,11 @@ trait Importer {
   }
   
   def getFieldSchemas(schema: Schema): List[Schema] = {
-    schema.getFields.asScala.toList.map(field => field.schema)
+    schema.getFields().asScala.toList.map(field => field.schema)
   }
 
   def getTypeSchemas(schema: Schema): List[Schema] = {
-    schema.getTypes.asScala.toList
+    schema.getTypes().asScala.toList
   }
 
   def getUserDefinedImports(
@@ -143,7 +143,7 @@ trait Importer {
           case ENUM =>
             Seq(schema)
           case UNION =>
-            schema.getTypes.asScala
+            schema.getTypes().asScala
               .find(s => s.getType != NULL).toSeq
               .filter(s => alreadyImported.contains(s))
               .flatMap(s => nextSchemas(schema, alreadyImported :+ s))
@@ -171,7 +171,7 @@ trait Importer {
     schemaOrProtocol match {
       case Left(schema) =>
         schema::(NestedSchemaExtractor.getNestedSchemas(schema, schemaStore, typeMatcher))
-      case Right(protocol) => protocol.getTypes.asScala.toList.flatMap(schema => {
+      case Right(protocol) => protocol.getTypes().asScala.toList.flatMap(schema => {
         schema::(NestedSchemaExtractor.getNestedSchemas(schema, schemaStore, typeMatcher))
       })
     }

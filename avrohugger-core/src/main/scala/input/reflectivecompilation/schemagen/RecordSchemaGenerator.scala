@@ -30,7 +30,7 @@ object RecordSchemaGenerator  {
     // namespace explicitly.
     def typeCheck(t: Tree) = {
       val dependencies = typecheckDependencyStore.knownClasses.values.toList
-      Toolbox.toolBox.typeCheck(q"..$dependencies; {type T = $t}") match {
+      Toolbox.toolBox.typecheck(q"..$dependencies; {type T = $t}") match {
 	      case x @ Block(classDefs, Block(List(TypeDef(mods, name, tparams, rhs)), const)) => rhs.tpe
         case _ => t.tpe // if there are no fields, then no dependencies either
       }
@@ -38,7 +38,7 @@ object RecordSchemaGenerator  {
 
     def toAvroFieldSchema(valDef: ValDef) = {
       val (referredNamespace, fieldType) = valDef.tpt match {
-        case tq"$ns.$typeName" => (Some(newTermName(ns.toString)), tq"$typeName")
+        case tq"$ns.$typeName" => (Some(TermName(ns.toString)), tq"$typeName")
         case t => (namespace, t)
       }
 

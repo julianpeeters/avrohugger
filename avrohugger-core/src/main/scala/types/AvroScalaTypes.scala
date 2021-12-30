@@ -14,7 +14,7 @@ case class AvroScalaTypes(
   // complex
   fixed:    AvroScalaFixedType    = ScalaBinary,
   record:   AvroScalaRecordType   = ScalaCaseClass,
-  enum:     AvroScalaEnumType     = ScalaEnumeration,
+  `enum`:     AvroScalaEnumType     = ScalaEnumeration,
   union:    AvroScalaUnionType    = OptionEitherShapelessCoproduct,
   array:    AvroScalaArrayType    = ScalaSeq,
   map:      AvroScalaMapType      = ScalaMap,

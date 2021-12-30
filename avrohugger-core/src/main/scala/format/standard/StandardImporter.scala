@@ -34,14 +34,14 @@ object StandardImporter extends Importer {
       potentialRecursives: List[Schema]): List[String] = schema.getType match {
       case Schema.Type.UNION  =>
         coproductImportsForUnionType(field, schema, typeMatcher) ++
-          schema.getTypes.asScala.toList.flatMap(s =>
+          schema.getTypes().asScala.toList.flatMap(s =>
             determineShapelessCoproductImports(field, s, typeMatcher, potentialRecursives))
       case Schema.Type.ARRAY  =>
         determineShapelessCoproductImports(field, schema.getElementType(), typeMatcher, potentialRecursives)
       case Schema.Type.MAP    =>
         determineShapelessCoproductImports(field, schema.getValueType(), typeMatcher, potentialRecursives)
       case Schema.Type.RECORD =>
-        schema.getFields.asScala.toList.flatMap(f => {
+        schema.getFields().asScala.toList.flatMap(f => {
           if (potentialRecursives.map(_.getFullName).contains(schema.getFullName)) List.empty
           else determineShapelessCoproductImports(field, f.schema(), typeMatcher, potentialRecursives:+schema)
         })
@@ -53,11 +53,11 @@ object StandardImporter extends Importer {
       schema: Schema,
       typeMatcher: TypeMatcher,
       potentialRecursives: List[Schema]): List[String] = schema.getType match {
-      case Schema.Type.UNION  => schema.getTypes.asScala.toList.flatMap(s =>
+      case Schema.Type.UNION  => schema.getTypes().asScala.toList.flatMap(s =>
                                    determineShapelessTagImport(s, typeMatcher, potentialRecursives))
       case Schema.Type.ARRAY  => determineShapelessTagImport(schema.getElementType(), typeMatcher, potentialRecursives)
       case Schema.Type.MAP    => determineShapelessTagImport(schema.getValueType(), typeMatcher, potentialRecursives)
-      case Schema.Type.RECORD => schema.getFields.asScala.toList.flatMap(f => {
+      case Schema.Type.RECORD => schema.getFields().asScala.toList.flatMap(f => {
                                    if (potentialRecursives.map(_.getFullName).contains(schema.getFullName)) List.empty
                                    else determineShapelessTagImport(f.schema, typeMatcher, potentialRecursives:+schema)
                                  })
@@ -93,7 +93,7 @@ object StandardImporter extends Importer {
       def defaultValueTest(field: Schema.Field, unionTypes: List[Schema], maxNonNullTypes: Int) =
         (unionTypes.length > maxNonNullTypes     && !unionTypes.exists(unionContainsNull) && field.hasDefaultValue) ||
         (unionTypes.length > maxNonNullTypes + 1 &&  unionTypes.exists(unionContainsNull) && field.hasDefaultValue)
-      val unionTypes = unionSchema.getTypes.asScala.toList
+      val unionTypes = unionSchema.getTypes().asScala.toList
       val isShapelessCoproduct: Boolean = shapelessCoproductTest(unionTypes, thresholdNonNullTypes)
       val hasDefaultValue: Boolean = defaultValueTest(field, unionTypes, thresholdNonNullTypes)
       val unionImports = if (isShapelessCoproduct && hasDefaultValue)
@@ -113,13 +113,13 @@ object StandardImporter extends Importer {
     val shapelessCopSymbols: List[String] =
       for {
         topLevelRecordSchema <- topLevelRecordSchemas
-        field <- topLevelRecordSchema.getFields.asScala
+        field <- topLevelRecordSchema.getFields().asScala
         symbol <- determineShapelessCoproductImports(field, field.schema(), typeMatcher, List.empty[Schema])
       } yield symbol
     val shapelessTag: List[String] =
       for {
         topLevelRecordSchema <- topLevelRecordSchemas
-        field <- topLevelRecordSchema.getFields.asScala
+        field <- topLevelRecordSchema.getFields().asScala
         symbol <- determineShapelessTagImport(field.schema(), typeMatcher, List.empty[Schema])
       } yield symbol
       

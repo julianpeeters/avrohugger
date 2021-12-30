@@ -21,7 +21,7 @@ object SpecificTraitTree {
   def toADTRootDef(protocol: Protocol) = {    
     val sealedTraitTree =  TRAITDEF(protocol.getName).withFlags(Flags.SEALED)
     val adtRootTree = {
-      val types = protocol.getTypes.asScala.toList
+      val types = protocol.getTypes().asScala.toList
       // filter out enums since they will be written as java and not in the adt
       val nonEnums = types.filterNot(schema => schema.getType == ENUM)
       if (nonEnums.forall(schema => schema.getType == RECORD)) {
@@ -79,7 +79,7 @@ object SpecificTraitTree {
     }
     
     def asRequestParam(message: Protocol#Message): ValDef = {
-      val request = message.getRequest.getFields.asScala.headOption match {
+      val request = message.getRequest.getFields().asScala.headOption match {
         case Some(avroField) => avroField
         case None => sys.error("""Expected a request field, found no fields.""")
       }

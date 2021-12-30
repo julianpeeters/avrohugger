@@ -44,7 +44,7 @@ object JsonMatcher {
         val jsonObject = jsonNodeFactory.objectNode
         kvps.foreach(kvp => kvp match {
           case Apply(Select(Literal(Constant(key: String)), NameTag(tn)), List(x)) =>  {
-            jsonObject.put(key, toJsonNode(namespace, x, schemaStore))
+            jsonObject.set(key, toJsonNode(namespace, x, schemaStore))
           }
         })
         jsonObject
@@ -55,7 +55,7 @@ object JsonMatcher {
         xs.zipWithIndex.map( x => {
           val value = x._1
           val index = x._2
-          val nestedRecordField = schemaStore.schemas(getFullName(name.toString)).getFields.get(index)
+          val nestedRecordField = schemaStore.schemas(getFullName(name.toString)).getFields().get(index)
           // values from the tree, field names from cross referencing tree's pos with schema field pos
           // (they always correspond since the schema is defined based on the fields in a class def)
           jsonObject.set(nestedRecordField.name, toJsonNode(namespace, value, schemaStore))

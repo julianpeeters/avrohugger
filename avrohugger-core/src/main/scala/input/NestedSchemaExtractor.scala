@@ -22,7 +22,7 @@ object NestedSchemaExtractor {
 
       schema.getType match {
         case RECORD =>
-          val fields: List[Schema.Field] = schema.getFields.asScala.toList
+          val fields: List[Schema.Field] = schema.getFields().asScala.toList
           val fieldSchemas: List[Schema] = fields.map(field => field.schema)
           def flattenSchema(fieldSchema: Schema): List[Schema] = {
             fieldSchema.getType match {
@@ -35,7 +35,7 @@ object NestedSchemaExtractor {
                 else if (fieldPath.contains(fieldSchema.getFullName)) List()
                 else fieldSchema :: extract(fieldSchema, fieldSchema.getFullName :: fieldPath)
               }
-              case UNION => fieldSchema.getTypes.asScala.toList.flatMap(x => flattenSchema(x))
+              case UNION => fieldSchema.getTypes().asScala.toList.flatMap(x => flattenSchema(x))
               case ENUM => {
                 // if the field schema is one that has already been stored, use that one
                 if (schemaStore.schemas.contains(fieldSchema.getFullName)) List()

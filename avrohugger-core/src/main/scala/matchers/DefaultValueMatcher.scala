@@ -17,7 +17,7 @@ import treehugger.forest
 import treehuggerDSL._
 import scala.util.Try
 
-import scala.jdk.CollectionConverters._
+import scala.collection.JavaConverters._
 
 object DefaultValueMatcher {
 
@@ -29,7 +29,10 @@ object DefaultValueMatcher {
     classStore: ClassStore,
     namespace: Option[String],
     field: Schema.Field,
-    typeMatcher: TypeMatcher): Tree = {
+    typeMatcher: TypeMatcher,
+    useFullName: Boolean = false): Tree = {
+
+    val nullNode = new TextNode("null")
 
     def fromJsonNode(node: JsonNode, schema: Schema): Tree = {
       schema.getType match {
@@ -73,15 +76,18 @@ object DefaultValueMatcher {
                 schema.getLogicalType).toString
               ).toOption
           )
-        case Schema.Type.ENUM => typeMatcher.avroScalaTypes.enum match {
-          case JavaEnum => (REF(schema.getName) DOT node.textValue())
-          case ScalaEnumeration => (REF(schema.getName) DOT node.textValue())
-          case ScalaCaseObjectEnum => (REF(schema.getName) DOT node.textValue())
-          case EnumAsScalaString => LIT(node.textValue())
+        case Schema.Type.ENUM => {
+          val refName = if (useFullName) schema.getFullName else schema.getName
+          typeMatcher.avroScalaTypes.enum match {
+            case JavaEnum => (REF(refName) DOT node.textValue())
+            case ScalaEnumeration => (REF(refName) DOT node.textValue())
+            case ScalaCaseObjectEnum => (REF(refName) DOT node.textValue())
+            case EnumAsScalaString => LIT(node.textValue())
+          }
         }
         case Schema.Type.NULL => LIT(null)
         case Schema.Type.UNION => {
-          val unionSchemas = schema.getTypes.asScala.toList
+          val unionSchemas = schema.getTypes().asScala.toList
           val result = unionDefaultArgsImpl(node, unionSchemas, fromJsonNode, typeMatcher, classStore, namespace)
           result
         }
@@ -154,6 +160,8 @@ object DefaultValueMatcher {
       namespace: Option[String],
       typeMatcher: TypeMatcher) =
       nonNullableSchemas match {
+        case Nil =>
+          UNIT
         case List(schemaA) => //Option
           treeMatcher(node, schemaA)
         case List(schemaA, schemaB) if typeMatcher.avroScalaTypes.union == OptionEitherShapelessCoproduct => //Either
