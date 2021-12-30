@@ -39,7 +39,7 @@ object SpecificImporter extends Importer {
         else deps
       }
       case Right(protocol) => {
-        val types = protocol.getTypes.asScala.toList
+        val types = protocol.getTypes().asScala.toList
         val messages = protocol.getMessages.asScala.toMap
         if (messages.isEmpty) switchImport :: deps // for ADT
         else List.empty // for RPC

@@ -37,12 +37,12 @@ object SpecificObjectTree {
       def getNestedSchemas(s: Schema): List[Schema] = s.getType match {
         case Schema.Type.ARRAY => getNestedSchemas(s.getElementType)
         case Schema.Type.MAP => getNestedSchemas(s.getValueType)
-        case Schema.Type.UNION => s.getTypes.asScala.toList.flatMap(getNestedSchemas)
+        case Schema.Type.UNION => s.getTypes().asScala.toList.flatMap(getNestedSchemas)
         case _ => List(s)
       }
       val topLevelSchemas = SpecificImporter.getTopLevelSchemas(Left(schema), schemaStore, typeMatcher)
       val recordSchemas = SpecificImporter.getRecordSchemas(topLevelSchemas).filter(s => s.getType == Schema.Type.RECORD)
-      val fieldSchemas = recordSchemas.flatMap(_.getFields.asScala.map(_.schema()))
+      val fieldSchemas = recordSchemas.flatMap(_.getFields().asScala.map(_.schema()))
       fieldSchemas.flatMap(getNestedSchemas).exists(s => Option(s.getLogicalType()) match {
         case Some(logicalType) => logicalType.getName == "decimal"
         case None => false
@@ -55,7 +55,7 @@ object SpecificObjectTree {
 
   // union acts as a blackbox, fields are not seen on root level, unpack is required
   private def collectUnionFields(sc: Schema): Iterable[Schema] = {
-    sc.getTypes.asScala.toList
+    sc.getTypes().asScala.toList
   }
   
   // Companion to traits that have messages

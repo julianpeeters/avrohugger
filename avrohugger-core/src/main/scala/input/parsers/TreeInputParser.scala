@@ -34,11 +34,12 @@ object TreeInputParser {
         val namespace = children match {
           case List() => s"$owner" //empty corresponds to a single-level package
           case List(child) => s"$child.$owner"
+          case _ => sys.error("multiple children not supported")
         }
         namespace
       }
       val pkgString = pkgTrees.map(tree => extractNamespace(tree)).mkString(".")
-      newTermName(pkgString)
+      TermName(pkgString)
     }
 
     def enforceSingleScalaDoc(

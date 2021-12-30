@@ -27,7 +27,7 @@ trait Protocolhugger {
 
   def getLocalSubtypes(protocol: Protocol): List[Schema] = {
     val protocolNS = protocol.getNamespace
-    val types = protocol.getTypes.asScala.toList
+    val types = protocol.getTypes().asScala.toList
     def isTopLevelNamespace(schema: Schema) = schema.getNamespace == protocolNS
     types.filter(isTopLevelNamespace)
   }

@@ -11,7 +11,7 @@ import org.apache.avro.Schema
 
 import treehugger.forest
 
-import scala.jdk.CollectionConverters._
+import scala.collection.JavaConverters._
 
 class TypeMatcher(
   val avroScalaTypes: AvroScalaTypes,
@@ -21,7 +21,9 @@ class TypeMatcher(
   def toScalaType(
     classStore: ClassStore,
     namespace: Option[String],
-    schema: Schema): Type = {
+    schema: Schema,
+    useFullName: Boolean = false
+  ): Type = {
     // May contain nested schemas that will use the same namespace as the
     // top-level schema. Thus, when a field is parsed, the namespace is passed.
     def matchType(schema: Schema): Type = {
@@ -64,10 +66,10 @@ class TypeMatcher(
         case Schema.Type.FIXED    => sys.error("FIXED datatype not yet supported")
         case Schema.Type.BYTES    => CustomTypeMatcher.checkCustomDecimalType(avroScalaTypes.decimal, schema)
         case Schema.Type.RECORD   => classStore.generatedClasses(schema)
-        case Schema.Type.ENUM     => CustomTypeMatcher.checkCustomEnumType(avroScalaTypes.enum, classStore, schema)
+        case Schema.Type.ENUM     => CustomTypeMatcher.checkCustomEnumType(avroScalaTypes.`enum`, classStore, schema, useFullName)
         case Schema.Type.UNION    => {
           //unions are represented as shapeless.Coproduct
-          val unionSchemas = schema.getTypes.asScala.toList
+          val unionSchemas = schema.getTypes().asScala.toList
           unionTypeImpl(unionSchemas, matchType)
         }
         case x => sys.error( s"$x is not supported or not a valid Avro type")
@@ -177,7 +179,7 @@ class TypeMatcher(
         case Schema.Type.RECORD   => TYPE_REF(javaRename(schema))
         case Schema.Type.ENUM     => TYPE_REF(javaRename(schema))
         case Schema.Type.UNION    => {
-          val unionSchemas = schema.getTypes.asScala.toList
+          val unionSchemas = schema.getTypes().asScala.toList
           // unions are represented as Scala Option[T], and thus unions must be
           // of two types, one of them NULL
           val isTwoTypes = unionSchemas.length == 2

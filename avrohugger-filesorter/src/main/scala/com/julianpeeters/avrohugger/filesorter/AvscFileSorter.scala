@@ -56,7 +56,7 @@ object AvscFileSorter {
   def fileText(f: File): String = {
     val src = Source.fromFile(f)
     try {
-      src.getLines.mkString
+      src.getLines().mkString
     } finally {
       src.close()
     }

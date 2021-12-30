@@ -50,7 +50,7 @@ object DefaultParamMatcher {
       case Type.NULL    => NULL
       case Type.FIXED   => sys.error("the FIXED datatype is not yet supported")
       case Type.ENUM    =>
-        CustomDefaultParamMatcher.checkCustomEnumType(typeMatcher.avroScalaTypes.enum)
+        CustomDefaultParamMatcher.checkCustomEnumType(typeMatcher.avroScalaTypes.`enum`)
       case Type.BYTES   =>
         CustomDefaultParamMatcher.checkCustomDecimalType(
           decimalType = typeMatcher.avroScalaTypes.decimal,

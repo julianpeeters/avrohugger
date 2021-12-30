@@ -17,7 +17,7 @@ class SpecificGeneratorToolSpec extends mutable.Specification {
   private def doCompile(args: Array[String])  = {
     val tool = new GeneratorTool(SpecificRecord)
     Try{
-      tool.run(null, null, null, Seq(args:_*).asJava)
+      tool.run(null, null, null, args.toIndexedSeq.asJava)
     }
   }
     
