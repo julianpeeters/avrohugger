@@ -73,7 +73,7 @@ object JavaConverter {
             typeMatcher)
         )))
       }
-      REF("scala.collection.JavaConverters.bufferAsJavaListConverter").APPLY(applyParam DOT "toBuffer").DOT("asJava")
+      REF(avrohugger.internal.CollectionConverterConstants.bufferAsJavaListConverter).APPLY(applyParam DOT "toBuffer").DOT("asJava")
     }
     case Schema.Type.MAP      => {
       val HashMapClass = RootClass.newClass("java.util.HashMap[String, Any]")
