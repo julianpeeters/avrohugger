@@ -4,7 +4,7 @@ lazy val commonSettings = Seq(
   organization := "com.julianpeeters",
   version := "1.0.0-RC25-SNAPSHOT",
   scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature"),
-  scalacOptions in Test ++= Seq("-Yrangepos"),
+  Test / scalacOptions ++= Seq("-Yrangepos"),
   scalaVersion := "2.13.8",
   crossScalaVersions := Seq("2.12.15", scalaVersion.value),
   resolvers += Resolver.typesafeIvyRepo("releases"),
@@ -30,7 +30,7 @@ lazy val commonSettings = Seq(
   // for testing
   libraryDependencies += "org.specs2" %% "specs2-core" % "4.8.0" % "test",
   publishMavenStyle := true,
-  publishArtifact in Test := false,
+  Test / publishArtifact := false,
   publishTo := Some(
   if (isSnapshot.value)
     Opts.resolver.sonatypeSnapshots
@@ -64,7 +64,7 @@ lazy val `avrohugger-core` = (project in file("avrohugger-core"))
   .settings(
     commonSettings,
     libraryDependencies += "com.eed3si9n" %% "treehugger" % "0.4.4",
-    sourceGenerators in Compile += addScalaVersionFile.taskValue
+    Compile / sourceGenerators += addScalaVersionFile.taskValue
   )
 
 lazy val `avrohugger-filesorter` = (project in file("avrohugger-filesorter"))
@@ -82,7 +82,7 @@ lazy val `avrohugger-tools` = (project in file("avrohugger-tools"))
       art.withClassifier(Some("assembly"))
     },
     addArtifact(artifact in (Compile, assembly), assembly).settings,
-    sourceGenerators in Test += addScalaVersionFile.taskValue
+    Test / sourceGenerators += addScalaVersionFile.taskValue
   ).dependsOn(`avrohugger-core`, `avrohugger-filesorter`)
 
 lazy val addScalaVersionFile = Def.task {
