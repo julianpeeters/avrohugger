@@ -335,6 +335,7 @@ Contributors:
 - [Sietse de Kaper](https://github.com/targeter)
 - [Andreas Drobisch](https://github.com/adrobisch)
 - [François Sarradin](https://github.com/fsarradin)
+- [Martin Mauch](https://github.com/nightscape)
 
 ##### Criticism is appreciated.
 
