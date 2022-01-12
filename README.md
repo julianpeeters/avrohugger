@@ -332,6 +332,8 @@ Contributors:
 - [Simon Petty](https://github.com/simonpetty)
 - [Leonard Ehrenfried](https://github.com/leonardehrenfried)
 - [Sietse de Kaper](https://github.com/targeter)
+- [Andreas Drobisch](https://github.com/adrobisch)
+- [François Sarradin](https://github.com/fsarradin)
 
 ##### Criticism is appreciated.
 
