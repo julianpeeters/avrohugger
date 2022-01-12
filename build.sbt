@@ -2,7 +2,7 @@ lazy val avroVersion = "1.9.1"
 
 lazy val commonSettings = Seq(
   organization := "com.julianpeeters",
-  version := "1.0.0-RC25",
+  version := "1.0.0-RC26-SNAPSHOT",
   scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature"),
   Test / scalacOptions ++= Seq("-Yrangepos"),
   scalaVersion := "2.13.8",
@@ -23,9 +23,9 @@ lazy val commonSettings = Seq(
     case _ =>
       libraryDependencies.value
   }},
+  libraryDependencies += "com.fasterxml.jackson.core" % "jackson-core" % "2.13.1",
   libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value,
   libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value,
-  libraryDependencies += "org.codehaus.jackson" % "jackson-core-asl" % "1.9.13",
   // for testing
   libraryDependencies += "org.specs2" %% "specs2-core" % "4.8.0" % "test",
   publishMavenStyle := true,
