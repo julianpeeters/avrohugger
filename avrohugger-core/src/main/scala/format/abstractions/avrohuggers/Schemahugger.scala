@@ -20,6 +20,7 @@ trait Schemahugger {
     typeMatcher: TypeMatcher,
     maybeBaseTrait: Option[String],
     maybeFlags: Option[List[Long]],
-    restrictedFields: Boolean): List[Tree]
+    restrictedFields: Boolean,
+    targetScalaPartialVersion: String): List[Tree]
 
 }

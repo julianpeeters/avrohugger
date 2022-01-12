@@ -20,6 +20,14 @@ import scala.collection.JavaConverters._
 
 object JavaConverter {
 
+  def bufferAsJavaListConverter(partialVersion: String): String =
+    partialVersion match {
+      case "2.11" => "scala.collection.JavaConverters.bufferAsJavaListConverter"
+      case "2.12" => "scala.collection.JavaConverters.bufferAsJavaListConverter"
+      case "2.13" => "scala.jdk.CollectionConverters.BufferHasAsJava"
+      case _ => "scala.jdk.CollectionConverters.BufferHasAsJava"
+    }
+
   // Recursive definition takes a field's schema, and a tree that represents the source code to be written.
   // The initial tree that is passed in is a REF("fieldName"), which is wrapped in a pattern match tree (e.g.,
   // to sort None and Some(x) if the field is a union). A Schema is passed in order to get access to the field's type
@@ -30,7 +38,8 @@ object JavaConverter {
     isUnionMember: Boolean,
     tree: Tree,
     classSymbol: ClassSymbol,
-    typeMatcher: TypeMatcher): Tree = schema.getType match {
+    typeMatcher: TypeMatcher,
+    targetScalaPartialVersion: String): Tree = schema.getType match {
     case Schema.Type.UNION => {
       val types = schema.getTypes().asScala
       // check if it's the kind of union that we support (i.e. nullable fields)
@@ -50,7 +59,8 @@ object JavaConverter {
               true,
               REF("x"),
               classSymbol,
-              typeMatcher)
+              typeMatcher,
+              targetScalaPartialVersion)
           },
           CASE(NONE)          ==> {
             NULL
@@ -66,14 +76,15 @@ object JavaConverter {
         BLOCK(tree MAP(LAMBDA(PARAM("x")) ==> BLOCK(
           convertToJava(
             schema.getElementType,
-            if (isUnionMember) arrayAccessor(unionAccessor(schemaAccessor, schema.getFullName)) else arrayAccessor(schemaAccessor),
+            if (isUnionMember) arrayAccessor(unionAccessor(schemaAccessor, schema.getFullName, ScalaConverter.asScalaBufferConverter(targetScalaPartialVersion))) else arrayAccessor(schemaAccessor),
             false,
             REF("x"),
             classSymbol,
-            typeMatcher)
+            typeMatcher,
+            targetScalaPartialVersion)
         )))
       }
-      REF(avrohugger.internal.CollectionConverterConstants.bufferAsJavaListConverter).APPLY(applyParam DOT "toBuffer").DOT("asJava")
+      REF(bufferAsJavaListConverter(targetScalaPartialVersion)).APPLY(applyParam DOT "toBuffer").DOT("asJava")
     }
     case Schema.Type.MAP      => {
       val HashMapClass = RootClass.newClass("java.util.HashMap[String, Any]")
@@ -87,11 +98,12 @@ object JavaConverter {
               REF("key"),
               convertToJava(
                 schema.getValueType,
-                if (isUnionMember) mapAccessor(unionAccessor(schemaAccessor, schema.getFullName)) else mapAccessor(schemaAccessor),
+                if (isUnionMember) mapAccessor(unionAccessor(schemaAccessor, schema.getFullName, ScalaConverter.asScalaBufferConverter(targetScalaPartialVersion))) else mapAccessor(schemaAccessor),
                 false,
                 REF("value"),
                 classSymbol,
-                typeMatcher))
+                typeMatcher,
+                targetScalaPartialVersion))
           )
         ),
         REF("map")
@@ -105,7 +117,7 @@ object JavaConverter {
         def scaleAndRound(roundingMode: BigDecimal.RoundingMode.Value) =
           tree.DOT("setScale").APPLY(REF("scale"), REF("BigDecimal.RoundingMode."+ roundingMode.toString))
         Block(
-          VAL("schema") := {if (isUnionMember) unionAccessor(schemaAccessor, schema.getFullName) else schemaAccessor},
+          VAL("schema") := {if (isUnionMember) unionAccessor(schemaAccessor, schema.getFullName, ScalaConverter.asScalaBufferConverter(targetScalaPartialVersion)) else schemaAccessor},
           VAL("decimalType") := REF("schema").DOT("getLogicalType").APPLY().AS(Decimal),
           VAL("scale") := REF("decimalType").DOT("getScale").APPLY(),
           VAL("scaledValue") := {

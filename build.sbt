@@ -2,30 +2,25 @@ lazy val avroVersion = "1.9.1"
 
 lazy val commonSettings = Seq(
   organization := "com.julianpeeters",
-<<<<<<< HEAD
   version := "1.0.0-RC25-SNAPSHOT",
-=======
-  version := "1.0.0-RC23",
->>>>>>> 97695b80d487b3c054e3bce9ee5995be6f53f458
-  scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-Ywarn-value-discard"),
+  scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature"),
   scalacOptions in Test ++= Seq("-Yrangepos"),
-  scalaVersion := "2.13.7",
-  crossScalaVersions := Seq("2.12.10", scalaVersion.value),
+  scalaVersion := "2.13.8",
+  crossScalaVersions := Seq("2.12.15", scalaVersion.value),
   resolvers += Resolver.typesafeIvyRepo("releases"),
   libraryDependencies += "org.apache.avro" % "avro" % avroVersion,
   libraryDependencies += "org.apache.avro" % "avro-compiler" % avroVersion,
   libraryDependencies := { CrossVersion.partialVersion(scalaVersion.value) match {
-    case Some((2, scalaMajor)) if scalaMajor < 13 =>
+    case Some((2, scalaMinor)) if scalaMinor < 13 =>
       // for implementing SpecificRecord from standard case class definitions
-      libraryDependencies.value ++ Seq(compilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full))
-
+      libraryDependencies.value ++ Seq(compilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full))
     case _ =>
       // Scala 2.13 has it built-in
       libraryDependencies.value
   }},
   libraryDependencies := { CrossVersion.partialVersion(scalaVersion.value) match {
-    case Some((2, scalaMajor)) if scalaMajor < 13 =>
-      libraryDependencies.value ++ Seq("org.scala-lang.modules" %% "scala-collection-compat" % "2.4.1")
+    case Some((2, scalaMinor)) if scalaMinor < 13 =>
+      libraryDependencies.value ++ Seq("org.scala-lang.modules" %% "scala-collection-compat" % "2.6.0")
     case _ =>
       libraryDependencies.value
   }},
@@ -69,7 +64,7 @@ lazy val `avrohugger-core` = (project in file("avrohugger-core"))
   .settings(
     commonSettings,
     libraryDependencies += "com.eed3si9n" %% "treehugger" % "0.4.4",
-    sourceGenerators in Test += addScalaVersionFile.taskValue
+    sourceGenerators in Compile += addScalaVersionFile.taskValue
   )
 
 lazy val `avrohugger-filesorter` = (project in file("avrohugger-filesorter"))

@@ -43,10 +43,12 @@ class SpecificFileToFileSpec extends Specification {
 
       correctly generate logical types from schema $e24
       correctly generate logical types from protocol $e25
-      correctly generate logical types from IDL $e26
+   
       correctly generate logical types with custom date and timestamp types $e27
       correctly generate a protocol with special strings $e28
   """
+//    correctly generate logical types from IDL $e26
+
 
   // tests specific to fileToX
   def eA = {
@@ -332,16 +334,16 @@ class SpecificFileToFileSpec extends Specification {
     source === util.Util.readFile("avrohugger-core/src/test/expected/specific/example/logical/proto/Logical.scala")
   }
 
-  def e26 = {
-    val infile = new java.io.File("avrohugger-core/src/test/avro/logical.avdl")
-    val gen = new Generator(SpecificRecord)
-    val outDir = gen.defaultOutputDir + "/specific/"
-    gen.fileToFile(infile, outDir)
+  // def e26 = {
+  //   val infile = new java.io.File("avrohugger-core/src/test/avro/logical.avdl")
+  //   val gen = new Generator(SpecificRecord)
+  //   val outDir = gen.defaultOutputDir + "/specific/"
+  //   gen.fileToFile(infile, outDir)
 
-    val source = util.Util.readFile("target/generated-sources/specific/example/idl/LogicalIdl.scala")
+  //   val source = util.Util.readFile("target/generated-sources/specific/example/idl/LogicalIdl.scala")
 
-    source === util.Util.readFile("avrohugger-core/src/test/expected/specific/example/idl/LogicalIdl.scala")
-  }
+  //   source === util.Util.readFile("avrohugger-core/src/test/expected/specific/example/idl/LogicalIdl.scala")
+  // }
 
   def e27 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/logicalsql.avsc")

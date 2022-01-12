@@ -28,7 +28,8 @@ object StandardScalaTreehugger extends ScalaTreehugger {
     schemaOrProtocol: Either[Schema, Protocol],
     typeMatcher: TypeMatcher,
     schemaStore: SchemaStore,
-    restrictedFields: Boolean): String = {
+    restrictedFields: Boolean,
+    targetScalaPartialVersion: String): String = {
 
     val imports = importer.getImports(
       schemaOrProtocol, namespace, schemaStore, typeMatcher)
@@ -42,7 +43,8 @@ object StandardScalaTreehugger extends ScalaTreehugger {
         typeMatcher,
         None,
         None,
-        restrictedFields
+        restrictedFields,
+        targetScalaPartialVersion
       )
       case Right(protocol) => protocolhugger.toTrees(
         schemaStore,
@@ -52,7 +54,8 @@ object StandardScalaTreehugger extends ScalaTreehugger {
         typeMatcher,
         None,
         None,
-        restrictedFields
+        restrictedFields,
+        targetScalaPartialVersion
       )
     }
 

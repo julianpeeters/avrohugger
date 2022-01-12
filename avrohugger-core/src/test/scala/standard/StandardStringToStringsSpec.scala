@@ -36,12 +36,14 @@ class StandardStringToStringsSpec extends Specification {
       
       
       correctly generate a protocol with no ADT when asked $e21
-      correctly generate logical types values $e22
-      correctly generate logical types values with tagged decimals $e23
+
       correctly generate optional logical types from IDL tagged decimals $e24
       correctly generate an either containing logical types from IDL tagged decimals $e25
       correctly generate a coproduct containing logical types from IDL tagged decimals $e26
   """
+
+      // correctly generate logical types values $e22
+      // correctly generate logical types values with tagged decimals $e23
   
   def eB = {
     val inputString = util.Util.readFile("avrohugger-core/src/test/avro/relative.avsc")
@@ -203,22 +205,22 @@ class StandardStringToStringsSpec extends Specification {
     source === util.Util.readFile("avrohugger-core/src/test/expected/standard/test/Joystick.scala")
   }
 
-  def e22 = {
-    val inputString = util.Util.readFile("avrohugger-core/src/test/avro/logical.avdl")
-    val gen = new Generator(Standard)
-    val List(source) = gen.stringToStrings(inputString)
-    val expected = util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/LogicalIdl.scala")
-    source === expected
-  }
+  // def e22 = {
+  //   val inputString = util.Util.readFile("avrohugger-core/src/test/avro/logical.avdl")
+  //   val gen = new Generator(Standard)
+  //   val List(source) = gen.stringToStrings(inputString)
+  //   val expected = util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/LogicalIdl.scala")
+  //   source === expected
+  // }
 
-  def e23 = {
-    val inputString = util.Util.readFile("avrohugger-core/src/test/avro/logical.avdl")
-    val myAvroScalaCustomTypes = Standard.defaultTypes.copy(decimal = ScalaBigDecimalWithPrecision(None))
-    val gen = new Generator(Standard, avroScalaCustomTypes = Some(myAvroScalaCustomTypes))
-    val List(source) = gen.stringToStrings(inputString)
-    val expected = util.Util.readFile("avrohugger-core/src/test/expected/standard-tagged/example/idl/LogicalIdl.scala")
-    source === expected
-  }
+  // def e23 = {
+  //   val inputString = util.Util.readFile("avrohugger-core/src/test/avro/logical.avdl")
+  //   val myAvroScalaCustomTypes = Standard.defaultTypes.copy(decimal = ScalaBigDecimalWithPrecision(None))
+  //   val gen = new Generator(Standard, avroScalaCustomTypes = Some(myAvroScalaCustomTypes))
+  //   val List(source) = gen.stringToStrings(inputString)
+  //   val expected = util.Util.readFile("avrohugger-core/src/test/expected/standard-tagged/example/idl/LogicalIdl.scala")
+  //   source === expected
+  // }
 
   def e24 = {
     val inputString = util.Util.readFile("avrohugger-core/src/test/avro/logical_optional.avdl")

@@ -23,7 +23,8 @@ object SpecificCaseClassTree {
     typeMatcher: TypeMatcher,
     maybeBaseTrait: Option[String],
     maybeFlags: Option[List[Long]],
-    restrictedFields: Boolean) = {
+    restrictedFields: Boolean,
+    targetScalaPartialVersion: String) = {
 
     val classSymbol = RootClass.newClass(schema.getName)
     val avroFields = schema.getFields().asScala.toList
@@ -66,13 +67,14 @@ object SpecificCaseClassTree {
       IndexedField(avroField, index)
     })
     val defGetSchema = GetSchemaGenerator(classSymbol).toDef
-    val defGet = GetGenerator.toDef(indexedFields, classSymbol, typeMatcher)
+    val defGet = GetGenerator.toDef(indexedFields, classSymbol, typeMatcher, targetScalaPartialVersion)
     val defPut = PutGenerator.toDef(
       classStore,
       namespace,
       indexedFields,
       typeMatcher,
-      classSymbol)
+      classSymbol,
+      targetScalaPartialVersion)
 
     val maybeFlagsWithCaseClassFinal =
       if (shouldGenerateSimpleClass) maybeFlags
