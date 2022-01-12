@@ -147,7 +147,8 @@ where `T` can be `File`, `Schema`, or `String`.
 
 
     import avrohugger.Generator
-    import format.SpecificRecord
+    import avrohugger.format.SpecificRecord
+    import java.io.File
 
     val schemaFile = new File("path/to/schema")
     val generator = new Generator(SpecificRecord)
