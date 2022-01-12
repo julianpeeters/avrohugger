@@ -341,6 +341,8 @@ Contributors:
 - [Andreas Drobisch](https://github.com/adrobisch)
 - [François Sarradin](https://github.com/fsarradin)
 - [Martin Mauch](https://github.com/nightscape)
+- [natefitzgerald](https://github.com/natefitzgerald)
+
 
 ##### Criticism is appreciated.
 
