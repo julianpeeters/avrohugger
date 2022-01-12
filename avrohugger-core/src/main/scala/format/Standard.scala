@@ -31,7 +31,8 @@ object Standard extends SourceFormat {
     schemaStore: SchemaStore,
     maybeOutDir: Option[String],
     typeMatcher: TypeMatcher,
-    restrictedFields: Boolean): List[CompilationUnit] = {
+    restrictedFields: Boolean,
+    targetScalaPartialVersion: String): List[CompilationUnit] = {
     registerTypes(schemaOrProtocol, classStore, typeMatcher)
     val namespace =
       CustomNamespaceMatcher.checkCustomNamespace(
@@ -52,7 +53,8 @@ object Standard extends SourceFormat {
               typeMatcher,
               schemaStore,
               maybeOutDir,
-              restrictedFields)
+              restrictedFields,
+              targetScalaPartialVersion)
             List(scalaCompilationUnit)
           }
           case ENUM => {
@@ -78,7 +80,8 @@ object Standard extends SourceFormat {
                   typeMatcher,
                   schemaStore,
                   maybeOutDir,
-                  restrictedFields)
+                  restrictedFields,
+                  targetScalaPartialVersion)
                 List(scalaCompilationUnit)
               }
               case ScalaEnumeration => {
@@ -89,7 +92,8 @@ object Standard extends SourceFormat {
                   typeMatcher,
                   schemaStore,
                   maybeOutDir,
-                  restrictedFields)
+                  restrictedFields,
+                  targetScalaPartialVersion)
                 List(scalaCompilationUnit)
               }
               case EnumAsScalaString => {
@@ -109,7 +113,8 @@ object Standard extends SourceFormat {
           typeMatcher,
           schemaStore,
           maybeOutDir,
-          restrictedFields)
+          restrictedFields,
+          targetScalaPartialVersion)
         enumType match {
           // java enums can't be represented as trees so they can't be handled
           // by treehugger. Their compilation unit must de generated
@@ -144,7 +149,8 @@ object Standard extends SourceFormat {
     outDir: String,
     schemaStore: SchemaStore,
     typeMatcher: TypeMatcher,
-    restrictedFields: Boolean): Unit = {
+    restrictedFields: Boolean,
+    targetScalaPartialVersion: String): Unit = {
     val compilationUnits: List[CompilationUnit] = asCompilationUnits(
       classStore,
       ns,
@@ -152,7 +158,8 @@ object Standard extends SourceFormat {
       schemaStore,
       Some(outDir),
       typeMatcher,
-      restrictedFields)
+      restrictedFields,
+      targetScalaPartialVersion)
     compilationUnits.foreach(writeToFile)
   }
   

@@ -48,8 +48,10 @@ object Directory {
     TEST_EXPECTED_SPECIFIC_OUTPUT_BASE_DIR + "avro/examples/baseball/Mascot.scala"
   val TEST_EXPECTED_SPECIFIC_PLAYER =
     TEST_EXPECTED_SPECIFIC_OUTPUT_BASE_DIR + "avro/examples/baseball/Player.scala"
+  val TEST_EXPECTED_SPECIFIC_PLAYER_213 = TEST_EXPECTED_SPECIFIC_OUTPUT_BASE_DIR + "avro/examples/baseball/Player_2.13.scala"
   val TEST_EXPECTED_SPECIFIC_WRESTLER =
     TEST_EXPECTED_SPECIFIC_OUTPUT_BASE_DIR + "avro/examples/baseball/Wrestler.scala"
+  val TEST_EXPECTED_SPECIFIC_WRESTLER_213 = TEST_EXPECTED_SPECIFIC_OUTPUT_BASE_DIR + "avro/examples/baseball/Wrestler_2.13.scala"
   val TEST_EXPECTED_SPECIFIC_TWITTER =
     TEST_EXPECTED_SPECIFIC_OUTPUT_BASE_DIR + "com/miguno/avro/twitter_schema.scala"
   val TEST_EXPECTED_SPECIFIC_MESSAGE =
@@ -86,7 +88,7 @@ object Directory {
     TEST_OUTPUT_BASE_DIR + "avro/examples/baseball/Mascot.scala"
   val TEST_OUTPUT_TWITTER =
     TEST_OUTPUT_BASE_DIR + "com/miguno/avro/twitter_schema.scala"
-      val TEST_OUTPUT_MESSAGE =
+  val TEST_OUTPUT_MESSAGE =
     TEST_OUTPUT_BASE_DIR + "example/proto/Message.scala"
 
   val TEST_OUTPUT_STRING_BASE_DIR = "avrohugger-tools/target/compiler/output-string/"

@@ -27,7 +27,8 @@ trait ScalaTreehugger {
     schemaOrProtocol: Either[Schema, Protocol],
     typeMatcher: TypeMatcher,
     schemaStore: SchemaStore,
-    restrictedFields: Boolean): String
+    restrictedFields: Boolean,
+    targetScalaPartialVersion: String): String
 
   val importer: Importer
 

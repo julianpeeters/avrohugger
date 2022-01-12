@@ -21,6 +21,31 @@ import scala.collection.JavaConverters._
 
 object ScalaConverter {
 
+  def asScalaIteratorConverter(partialVersion: String): String =
+    partialVersion match {
+      case "2.11" => "scala.collection.JavaConverters.asScalaIteratorConverter"
+      case "2.12" => "scala.collection.JavaConverters.asScalaIteratorConverter"
+      case "2.13" => "scala.jdk.CollectionConverters.IteratorHasAsScala"
+      case _ => "scala.jdk.CollectionConverters.IteratorHasAsScala"
+    }
+
+  def mapAsScalaMapConverter(partialVersion: String): String =
+    partialVersion match {
+      case "2.11" => "scala.collection.JavaConverters.mapAsScalaMapConverter"
+      case "2.12" => "scala.collection.JavaConverters.mapAsScalaMapConverter"
+      case "2.13" => "scala.jdk.CollectionConverters.MapHasAsScala"
+      case _ => "scala.jdk.CollectionConverters.MapHasAsScala"
+    }
+
+  def asScalaBufferConverter(partialVersion: String): String = {
+    partialVersion match {
+      case "2.11" => "scala.collection.JavaConverters.asScalaBufferConverter"
+      case "2.12" => "scala.collection.JavaConverters.asScalaBufferConverter"
+      case "2.13" => "scala.jdk.CollectionConverters.ListHasAsScala"
+      case _ => "scala.jdk.CollectionConverters.ListHasAsScala"
+    }
+  }
+
   def checkCustomArrayType(
     arrayType: AvroScalaArrayType,
     elementType: Type,
@@ -45,10 +70,10 @@ object ScalaConverter {
     schema: Schema,
     schemaAccessor: Tree,
     isUnionMember: Boolean,
-    tree: Tree, 
+    tree: Tree,
     typeMatcher: TypeMatcher,
-    classSymbol: ClassSymbol): Tree = {
-
+    classSymbol: ClassSymbol,
+    targetScalaPartialVersion: String): Tree = {
     schema.getType match {
       case Schema.Type.ARRAY => {
         val elementSchema = schema.getElementType
@@ -59,14 +84,15 @@ object ScalaConverter {
           classStore,
           namespace,
           elementSchema,
-          if (isUnionMember) arrayAccessor(unionAccessor(schemaAccessor, schema.getFullName)) else arrayAccessor(schemaAccessor),
+          if (isUnionMember) arrayAccessor(unionAccessor(schemaAccessor, schema.getFullName, asScalaBufferConverter(targetScalaPartialVersion))) else arrayAccessor(schemaAccessor),
           false,
           REF("x"),
           typeMatcher,
-          classSymbol)
+          classSymbol,
+          targetScalaPartialVersion)
         val seqArgs = {
           SEQARG(
-            REF("scala.collection.JavaConverters.asScalaIteratorConverter").APPLY(applyParam).DOT("asScala").DOT("toSeq")
+            REF(asScalaIteratorConverter(targetScalaPartialVersion)).APPLY(applyParam).DOT("asScala").DOT("toSeq")
               .MAP(LAMBDA(PARAM("x")) ==> BLOCK(elementConversion))
           )
         }
@@ -99,7 +125,7 @@ object ScalaConverter {
         val JavaMap = RootClass.newClass("java.util.Map[_,_]")
         val resultExpr = {
           BLOCK(
-            REF("scala.collection.JavaConverters.mapAsScalaMapConverter")
+            REF(mapAsScalaMapConverter(targetScalaPartialVersion))
             .APPLY(REF("map"))
             .DOT("asScala")
             .DOT("toMap")
@@ -110,11 +136,12 @@ object ScalaConverter {
                 classStore,
                 namespace,
                 schema.getValueType,
-                if (isUnionMember) mapAccessor(unionAccessor(schemaAccessor, schema.getFullName)) else mapAccessor(schemaAccessor),
+                if (isUnionMember) mapAccessor(unionAccessor(schemaAccessor, schema.getFullName, asScalaBufferConverter(targetScalaPartialVersion))) else mapAccessor(schemaAccessor),
                 false,
                 REF("value"),
                 typeMatcher,
-                classSymbol)))
+                classSymbol,
+                targetScalaPartialVersion)))
             )
           )
         }
@@ -128,7 +155,7 @@ object ScalaConverter {
           case decimal: LogicalTypes.Decimal => {
             val Decimal = RootClass.newClass("org.apache.avro.LogicalTypes.Decimal")
             Block(
-              VAL("schema") := {if (isUnionMember) unionAccessor(schemaAccessor, schema.getFullName) else schemaAccessor},
+              VAL("schema") := {if (isUnionMember) unionAccessor(schemaAccessor, schema.getFullName, asScalaBufferConverter(targetScalaPartialVersion)) else schemaAccessor},
               VAL("decimalType") := REF("schema").DOT("getLogicalType").APPLY().AS(Decimal),
               REF("BigDecimal").APPLY(classSymbol.DOT("decimalConversion").DOT("fromBytes").APPLY(REF("buffer"),REF("schema"),REF("decimalType")))
             )
@@ -139,12 +166,12 @@ object ScalaConverter {
             REF("dup") DOT "get" APPLY(REF("array")),
             REF("array")
           )
-        }  
+        }
         val bufferConversion = CASE(ID("buffer") withType (JavaBuffer)) ==> resultExpr
         tree MATCH bufferConversion
       }
       case Schema.Type.UNION  => {
-        val types = schema.getTypes().asScala
+        val types = schema.getTypes().asScala.toList
         // check if it's the kind of union that we support (i.e. nullable fields)
         if (types.length != 2 ||
            !types.map(x => x.getType).contains(Schema.Type.NULL) ||
@@ -163,7 +190,8 @@ object ScalaConverter {
             true,
             tree,
             typeMatcher,
-            classSymbol))
+            classSymbol,
+            targetScalaPartialVersion))
           val someConversion = CASE(WILDCARD) ==> someExpr
           val conversionCases = List(nullConversion, someConversion)
           tree MATCH(conversionCases:_*)
@@ -191,7 +219,7 @@ object ScalaConverter {
                   val resultExpr = BLOCK(InstantClass.DOT("ofEpochMilli").APPLY(REF("l")))
                   val longConversion = CASE(ID("l") withType (LongClass)) ==> resultExpr
                   tree MATCH longConversion
-                } 
+                }
               }
             }
             else tree
@@ -217,9 +245,9 @@ object ScalaConverter {
                   val resultExpr = BLOCK(LocalDateClass.DOT("ofEpochDay").APPLY(REF("i").DOT("toInt")))
                   val integerConversion = CASE(ID("i") withType (IntegerClass)) ==> resultExpr
                   tree MATCH integerConversion
-                } 
+                }
               }
-              
+
             }
             else tree
           }

@@ -15,7 +15,8 @@ case class Generator(format: SourceFormat,
                      avroScalaCustomTypes: Option[AvroScalaTypes] = None,
                      avroScalaCustomNamespace: Map[String, String] = Map.empty,
                      restrictedFieldNumber: Boolean = false,
-                     classLoader: ClassLoader = Thread.currentThread.getContextClassLoader) {
+                     classLoader: ClassLoader = Thread.currentThread.getContextClassLoader,
+                     targetScalaPartialVersion: String = avrohugger.internal.ScalaVersion.version) {
 
   val avroScalaTypes = avroScalaCustomTypes.getOrElse(format.defaultTypes)
   val defaultOutputDir = "target/generated-sources"
@@ -31,7 +32,7 @@ case class Generator(format: SourceFormat,
     schema: Schema,
     outDir: String = defaultOutputDir): Unit = {
     FileGenerator.schemaToFile(
-      schema, outDir, format, classStore, schemaStore, typeMatcher, restrictedFieldNumber)
+      schema, outDir, format, classStore, schemaStore, typeMatcher, restrictedFieldNumber, targetScalaPartialVersion)
   }
 
   def protocolToFile(
@@ -44,7 +45,8 @@ case class Generator(format: SourceFormat,
       classStore,
       schemaStore,
       typeMatcher,
-      restrictedFieldNumber)
+      restrictedFieldNumber,
+      targetScalaPartialVersion)
   }
 
   def stringToFile(
@@ -58,7 +60,8 @@ case class Generator(format: SourceFormat,
       schemaStore,
       stringParser,
       typeMatcher,
-      restrictedFieldNumber)
+      restrictedFieldNumber,
+      targetScalaPartialVersion)
   }
 
   def fileToFile(
@@ -73,18 +76,19 @@ case class Generator(format: SourceFormat,
       fileParser,
       typeMatcher,
       classLoader,
-      restrictedFieldNumber)
+      restrictedFieldNumber,
+      targetScalaPartialVersion)
   }
 
   //////// methods for writing to a list of definitions in String format ///////
   def schemaToStrings(schema: Schema): List[String] = {
     StringGenerator.schemaToStrings(
-      schema, format, classStore, schemaStore, typeMatcher, restrictedFieldNumber)
+      schema, format, classStore, schemaStore, typeMatcher, restrictedFieldNumber, targetScalaPartialVersion)
   }
 
   def protocolToStrings(protocol: Protocol): List[String] = {
     StringGenerator.protocolToStrings(
-      protocol, format, classStore, schemaStore, typeMatcher, restrictedFieldNumber)
+      protocol, format, classStore, schemaStore, typeMatcher, restrictedFieldNumber, targetScalaPartialVersion)
   }
 
   def stringToStrings(schemaStr: String): List[String] = {
@@ -95,7 +99,8 @@ case class Generator(format: SourceFormat,
       schemaStore,
       stringParser,
       typeMatcher,
-      restrictedFieldNumber)
+      restrictedFieldNumber,
+      targetScalaPartialVersion)
   }
 
   def fileToStrings(inFile: File): List[String] = {
@@ -107,7 +112,8 @@ case class Generator(format: SourceFormat,
       fileParser,
       typeMatcher,
       classLoader,
-      restrictedFieldNumber)
+      restrictedFieldNumber,
+      targetScalaPartialVersion)
   }
 
 }

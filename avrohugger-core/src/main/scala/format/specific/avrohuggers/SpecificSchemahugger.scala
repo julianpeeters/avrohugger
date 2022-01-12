@@ -22,7 +22,8 @@ object SpecificSchemahugger extends Schemahugger {
     typeMatcher: TypeMatcher,
     maybeBaseTrait: Option[String],
     maybeFlags: Option[List[Long]],
-    restrictedFields: Boolean): List[Tree] = {
+    restrictedFields: Boolean,
+    targetScalaPartialVersion: String): List[Tree] = {
 
     val caseClassDef = SpecificCaseClassTree.toCaseClassDef(
       classStore,
@@ -31,7 +32,8 @@ object SpecificSchemahugger extends Schemahugger {
       typeMatcher,
       maybeBaseTrait,
       maybeFlags,
-      restrictedFields)
+      restrictedFields,
+      targetScalaPartialVersion)
 
     val companionDef = SpecificObjectTree.toCaseCompanionDef(
       schema,

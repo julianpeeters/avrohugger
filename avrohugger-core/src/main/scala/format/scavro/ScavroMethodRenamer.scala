@@ -67,7 +67,7 @@ object ScavroMethodRenamer {
 
     // If there is a field name conflict append $0 or $1
     if (fieldNameConflict) {
-      if (methodBuilder.charAt(methodBuilder.length() - 1) != '$') {
+      if (methodBuilder.charAt(methodBuilder.length - 1) != '$') {
         methodBuilder.append('$')
       }
       methodBuilder.append(if(Character.isLowerCase(firstChar))'0' else '1')
