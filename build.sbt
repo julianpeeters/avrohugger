@@ -23,7 +23,6 @@ lazy val commonSettings = Seq(
     case _ =>
       libraryDependencies.value
   }},
-  libraryDependencies += "com.fasterxml.jackson.core" % "jackson-core" % "2.13.1",
   libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value,
   libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value,
   // for testing
@@ -63,19 +62,19 @@ lazy val `avrohugger-core` = (project in file("avrohugger-core"))
   .settings(
     commonSettings,
     libraryDependencies += "com.eed3si9n" %% "treehugger" % "0.4.4",
+    libraryDependencies += "org.apache.avro" % "avro-tools" % avroVersion,
     Compile / sourceGenerators += addScalaVersionFile.taskValue
   )
 
 lazy val `avrohugger-filesorter` = (project in file("avrohugger-filesorter"))
   .settings(
     commonSettings,
-    libraryDependencies += "io.spray" %% "spray-json" % "1.3.5"
+    libraryDependencies += "io.spray" %% "spray-json" % "1.3.6"
   )
 
 lazy val `avrohugger-tools` = (project in file("avrohugger-tools"))
   .settings(
     commonSettings,
-    libraryDependencies += "org.apache.avro" % "avro-tools" % avroVersion,
     artifact in (Compile, assembly) := {
       val art: Artifact = (artifact in (Compile, assembly)).value
       art.withClassifier(Some("assembly"))
