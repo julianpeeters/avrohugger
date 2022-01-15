@@ -8,7 +8,7 @@ import avrohugger.stores.{ ClassStore, SchemaStore }
 import avrohugger.types._
 
 import org.apache.avro.{ Protocol, Schema }
-import org.apache.avro.Schema.Type.{ ENUM, RECORD }
+import org.apache.avro.Schema.Type.{ ENUM, FIXED, RECORD }
 
 import java.nio.file.{ Path, Paths, Files, StandardOpenOption }
 import java.io.{ File, FileNotFoundException, IOException }
@@ -201,7 +201,8 @@ trait SourceFormat {
     schema.getType match {
       case RECORD => schema.getName
       case ENUM => schema.getName + "." + selector
-      case _ => sys.error("Only RECORD and ENUM can be top-level definitions")
+      case FIXED => schema.getName
+      case _ => sys.error("Only RECORD or ENUM or FIXED can be top-level definitions")
     }
   }
   

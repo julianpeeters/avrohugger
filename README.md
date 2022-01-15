@@ -70,7 +70,7 @@ runtime, Java classes provided separately (see [Scavro Plugin](https://github.co
 |MAP|Map|Map|Map||
 |ENUM|scala.Enumeration<br>Scala case object<br>Java Enum<br>EnumAsScalaString|Java Enum<br>EnumAsScalaString|scala.Enumeration<br>Scala case object<br>Java Enum<br>EnumAsScalaString| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 |BYTES|Array[Byte]<br>BigDecimal|Array[Byte]|Array[Byte]|See[Logical Types: `decimal`](https://github.com/julianpeeters/avrohugger#logical-types-support)|
-|FIXED|//TODO|//TODO|//TODO||
+|FIXED|Array[Byte]|//TODO|//TODO||
 |ARRAY|Seq<br>List<br>Array<br>Vector|Seq<br>List<br>Array<br>Vector|Array<br>Seq<br>List<br>Vector| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 |UNION|Option<br>Either<br>Shapeless Coproduct|Option|Option| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 |RECORD|case class<br>case class + schema|case class extending `SpecificRecordBase`|case class extending `AvroSerializeable`| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
