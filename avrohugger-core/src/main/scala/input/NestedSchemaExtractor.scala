@@ -6,7 +6,7 @@ import stores.SchemaStore
 import types.EnumAsScalaString
 
 import org.apache.avro.Schema
-import org.apache.avro.Schema.Type.{ARRAY, ENUM, MAP, RECORD, UNION}
+import org.apache.avro.Schema.Type.{ARRAY, ENUM, FIXED, MAP, RECORD, UNION}
 
 import scala.collection.JavaConverters._
 
@@ -41,17 +41,23 @@ object NestedSchemaExtractor {
                 if (schemaStore.schemas.contains(fieldSchema.getFullName)) List()
                 else List(fieldSchema)
               }
+              case FIXED => {
+                // if the field schema is one that has already been stored, use that one
+                if (schemaStore.schemas.contains(fieldSchema.getFullName)) List()
+                else List(fieldSchema)
+              }
               case _ => List(fieldSchema)
             }
           }
           val flatSchemas = fieldSchemas.flatMap(fieldSchema => flattenSchema(fieldSchema))
           def topLevelTypes(schema: Schema) = {
-            if (typeMatcher.avroScalaTypes.enum == EnumAsScalaString) schema.getType == RECORD
-            else (schema.getType == RECORD | schema.getType == ENUM)
+            if (typeMatcher.avroScalaTypes.enum == EnumAsScalaString) (schema.getType == RECORD | schema.getType == FIXED)
+            else (schema.getType == RECORD | schema.getType == ENUM | schema.getType == FIXED)
           }
           val nestedTopLevelSchemas = flatSchemas.filter(topLevelTypes)
           nestedTopLevelSchemas
         case ENUM => List(schema)
+        case FIXED => List(schema)
         case _ => Nil
       } 
     }

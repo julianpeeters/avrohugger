@@ -15,7 +15,7 @@ object DependencyInspector {
       schema.getTypes().asScala.find( innerType => innerType.getType != NULL ) flatMap getReferredNamespace
     case MAP =>
       getReferredNamespace(schema.getValueType)
-    case RECORD | ENUM =>
+    case RECORD | ENUM | FIXED =>
       Option(schema.getNamespace)
     case _ => None
 

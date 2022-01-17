@@ -114,6 +114,21 @@ object DefaultValueMatcher {
           }
           NEW(schema.getName, fieldValues: _*)
         }
+        case Schema.Type.FIXED => {
+           REF(schema.getName()) APPLY(
+            CustomDefaultParamMatcher.checkCustomDecimalType(
+              decimalType = typeMatcher.avroScalaTypes.decimal,
+              schema = schema,
+              default = REF("Array[Byte]") APPLY node.textValue().getBytes.map((e: Byte) => LIT(e)),
+              decimalValue =
+                Try(new org.apache.avro.Conversions.DecimalConversion().fromBytes(
+                  java.nio.ByteBuffer.wrap(node.textValue().getBytes(StandardCharsets.UTF_8)),
+                  schema,
+                  schema.getLogicalType).toString
+                ).toOption
+            )
+          )
+        }
         case x => throw new Exception(s"Can't extract a default field, type not yet supported: $x")
       }
     }

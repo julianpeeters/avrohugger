@@ -96,6 +96,7 @@ trait SourceFormat {
       case Left(schema) => schema.getType match {
         case RECORD => ".scala"
         case ENUM => enumExt // Avro's SpecificData requires enums be Java Enum
+        case FIXED => ".scala"
         case _ => sys.error("Only RECORD and ENUM can be top-level definitions")
       }
       case Right(protocol) => ".scala"

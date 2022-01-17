@@ -13,7 +13,7 @@ import treehugger.forest._
 import definitions.RootClass
 
 import org.apache.avro.{ Protocol, Schema }
-import org.apache.avro.Schema.Type.{ ENUM, RECORD }
+import org.apache.avro.Schema.Type.{ ENUM, FIXED, RECORD }
 
 object Standard extends SourceFormat {
 
@@ -100,9 +100,19 @@ object Standard extends SourceFormat {
                 List.empty
               }
             }
-
           }
-          case _ => sys.error("Only RECORD or ENUM can be toplevel definitions")
+          case FIXED =>
+            val scalaCompilationUnit = getScalaCompilationUnit(
+              classStore,
+              namespace,
+              schemaOrProtocol,
+              typeMatcher,
+              schemaStore,
+              maybeOutDir,
+              restrictedFields,
+              targetScalaPartialVersion)
+            List(scalaCompilationUnit)
+          case _ => sys.error("Only FIXED, RECORD, or ENUM can be toplevel definitions")
         }
       }
       case Right(protocol) => {

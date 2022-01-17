@@ -244,9 +244,11 @@ class StandardStringToFileSpec extends Specification {
     val outDir = gen.defaultOutputDir + "/standard/"
     gen.stringToFile(inputString, outDir)
 
-    val source = util.Util.readFile("target/generated-sources/standard/example/FixedSc.scala")
+    val source1 = util.Util.readFile("target/generated-sources/standard/example/FixedSc.scala")
+    val source2 = util.Util.readFile("target/generated-sources/standard/example/my_fixed.scala")
 
-    source === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/FixedSc.scala")
+    source1 === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/FixedSc.scala")
+    source2 === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/my_fixed.scala")
   }
 
   def e18 = {
