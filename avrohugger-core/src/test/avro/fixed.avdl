@@ -1,0 +1,11 @@
+@namespace("example.idl")
+
+protocol FixedIDL {
+
+  fixed my_fixed(16);
+
+  record FixedIdl {
+
+    my_fixed data;
+  }
+}

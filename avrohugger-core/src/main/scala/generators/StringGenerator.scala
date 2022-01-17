@@ -41,7 +41,8 @@ private[avrohugger] object StringGenerator {
         schemaStore,
         None,
         typeMatcher,
-        restrictedFields, targetScalaPartialVersion)
+        restrictedFields,
+        targetScalaPartialVersion)
     })
     compilationUnits.map(compUnit => removeExtraWarning(compUnit.codeString))
   }
@@ -62,7 +63,8 @@ private[avrohugger] object StringGenerator {
       schemaStore,
       None,
       typeMatcher,
-      restrictedFields, targetScalaPartialVersion)
+      restrictedFields,
+      targetScalaPartialVersion)
     compilationUnits.map(compUnit => removeExtraWarning(compUnit.codeString))
   }
 

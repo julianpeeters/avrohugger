@@ -4,13 +4,13 @@ package standard
 package avrohuggers
 
 import format.abstractions.avrohuggers.Schemahugger
-import trees.{ StandardCaseClassTree, StandardObjectTree, StandardTraitTree }
+import trees.{ StandardCaseClassTree, StandardObjectTree, StandardTraitTree, StandardValueClassTree }
 import matchers.TypeMatcher
 import stores.{ClassStore, SchemaStore}
 import types._
 
 import org.apache.avro.{ Protocol, Schema }
-import org.apache.avro.Schema.Type.{ ENUM, RECORD }
+import org.apache.avro.Schema.Type.{ ENUM, FIXED, RECORD }
 
 import treehugger.forest._
 import definitions._
@@ -60,7 +60,20 @@ object StandardSchemahugger extends Schemahugger {
           List(objectDef)
         case EnumAsScalaString => List.empty
       }
-      case _ => sys.error("Only RECORD or ENUM can be toplevel definitions")
+      case FIXED =>
+        val classDef = StandardValueClassTree.toValueClassDef(
+          classStore,
+          namespace,
+          schema,
+          typeMatcher)
+        val companionDef = StandardObjectTree.toCaseCompanionDef(
+          schema,
+          None) 
+        typeMatcher.avroScalaTypes.fixed match {
+          case ScalaValueClass => List(classDef)
+          case ScalaValueClassWithSchema => List(classDef, companionDef)
+        }
+      case _ => sys.error("Only RECORD or ENUM or FIXED can be toplevel definitions")
     }
   }
 

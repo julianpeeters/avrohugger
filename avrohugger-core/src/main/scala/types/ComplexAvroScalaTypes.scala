@@ -3,7 +3,8 @@ package types
 
 // fixed
 sealed trait AvroScalaFixedType extends Product with Serializable
-case object ScalaBinary extends AvroScalaFixedType
+case object ScalaValueClass extends AvroScalaFixedType
+case object ScalaValueClassWithSchema extends AvroScalaFixedType
 // record
 sealed trait AvroScalaRecordType extends Product with Serializable
 case object ScalaCaseClass extends AvroScalaRecordType
