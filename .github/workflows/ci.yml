@@ -22,4 +22,4 @@ jobs:
         with:
           java-version: ${{ matrix.java }}
       - name: Run tests
-        run: csbt ++${{ matrix.scala }} test
+        run: sbt ++${{ matrix.scala }} test
