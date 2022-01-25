@@ -12,11 +12,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-<<<<<<< HEAD
         scala: [2.13.8, 2.12.15]
-=======
-        scala: [2.13.4, 2.12.11]
->>>>>>> 5bc75c03c2d408d4bcad451fd5951c5614c96a96
         java: [adopt@1.8, adopt@1.11]
     runs-on: ${{ matrix.os }}
     steps:
