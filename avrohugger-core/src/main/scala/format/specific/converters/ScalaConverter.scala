@@ -148,7 +148,7 @@ object ScalaConverter {
         val mapConversion = CASE(ID("map") withType(JavaMap)) ==> resultExpr
         tree MATCH(mapConversion)
       }
-      case Schema.Type.FIXED => sys.error("the FIXED datatype is not yet supported")
+      case Schema.Type.FIXED => tree
       case Schema.Type.BYTES => {
         val JavaBuffer = RootClass.newClass("java.nio.ByteBuffer")
         val resultExpr = schema.getLogicalType match {

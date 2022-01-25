@@ -6,6 +6,7 @@ package trees
 import generators.ScalaDocGenerator
 import matchers.DefaultValueMatcher
 import matchers.TypeMatcher
+import matchers.custom.CustomTypeMatcher
 import stores.ClassStore
 
 import treehugger.forest._
@@ -15,6 +16,7 @@ import treehuggerDSL._
 import org.apache.avro.Schema
 
 import scala.collection.JavaConverters._
+import org.apache.avro.LogicalTypes
 
 object StandardCaseClassTree {
 
@@ -140,5 +142,40 @@ object StandardCaseClassTree {
 
     treeWithScalaDoc
   }
+
+
+  def toFixedClassDef(
+    classStore: ClassStore,
+    namespace: Option[String],
+    schema: Schema,
+    typeMatcher: TypeMatcher) = {
+
+    // register new type
+    val classSymbol = RootClass.newClass(schema.getName)
+
+    val params: List[ValDef] = {
+      val fieldName = schema.getLogicalType() match {
+        case _ : LogicalTypes.Decimal => "bigDecimal"
+        case _ => "bytes"
+      }
+      val fieldType = CustomTypeMatcher.checkCustomDecimalType(typeMatcher.avroScalaTypes.decimal, schema)
+      val field = PARAM(fieldName, fieldType)
+      List(field)
+    }
+
+    val caseClassDef =
+      CASECLASSDEF(classSymbol)
+        .withParams(params)
+        .withFlags(Flags.FINAL)
+
+    val classTree = caseClassDef.tree
+
+    val treeWithScalaDoc = ScalaDocGenerator.docToScalaDoc(
+      Left(schema),
+      classTree)
+
+    treeWithScalaDoc
+  }
+
 
 }

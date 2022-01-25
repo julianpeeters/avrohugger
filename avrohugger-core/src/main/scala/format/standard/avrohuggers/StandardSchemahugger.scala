@@ -4,7 +4,7 @@ package standard
 package avrohuggers
 
 import format.abstractions.avrohuggers.Schemahugger
-import trees.{ StandardCaseClassTree, StandardObjectTree, StandardTraitTree, StandardValueClassTree }
+import trees.{ StandardCaseClassTree, StandardObjectTree, StandardTraitTree }
 import matchers.TypeMatcher
 import stores.{ClassStore, SchemaStore}
 import types._
@@ -61,7 +61,7 @@ object StandardSchemahugger extends Schemahugger {
         case EnumAsScalaString => List.empty
       }
       case FIXED =>
-        val classDef = StandardValueClassTree.toValueClassDef(
+        val classDef = StandardCaseClassTree.toFixedClassDef(
           classStore,
           namespace,
           schema,
@@ -70,8 +70,8 @@ object StandardSchemahugger extends Schemahugger {
           schema,
           None) 
         typeMatcher.avroScalaTypes.fixed match {
-          case ScalaValueClass => List(classDef)
-          case ScalaValueClassWithSchema => List(classDef, companionDef)
+          case ScalaCaseClassWrapper => List(classDef)
+          case ScalaCaseClassWrapperWithSchema => List(classDef, companionDef)
         }
       case _ => sys.error("Only RECORD or ENUM or FIXED can be toplevel definitions")
     }

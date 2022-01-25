@@ -319,9 +319,11 @@ class SpecificFileToFileSpec extends Specification {
     val outDir = gen.defaultOutputDir + "/specific/"
     gen.fileToFile(infile, outDir)
 
-    val source = util.Util.readFile("target/generated-sources/specific/example/logical/LogicalSc.scala")
+    val source1 = util.Util.readFile("target/generated-sources/specific/example/logical/LogicalSc.scala")
+    val source2 = util.Util.readFile("target/generated-sources/specific/example/logical/fxType.scala")
 
-    source === util.Util.readFile("avrohugger-core/src/test/expected/specific/example/logical/LogicalSc.scala")
+    source1 === util.Util.readFile("avrohugger-core/src/test/expected/specific/example/logical/LogicalSc.scala")
+    source2 === util.Util.readFile("avrohugger-core/src/test/expected/specific/example/logical/fxType.scala")
   }
 
   def e25 = {

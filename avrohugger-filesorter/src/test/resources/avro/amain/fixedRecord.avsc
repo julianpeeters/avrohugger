@@ -1,0 +1,26 @@
+{
+  "type": "record",
+  "namespace": "com.test",
+  "name": "fixedRecord",
+  "doc": "Top-level schema testing fully-qualified dependent schema names",
+  "fields": [{
+    "doc": "fully-qualified dependent union field",
+    "name": "b",
+    "type": ["null", "int"]
+  },{
+    "doc": "fully-qualified dependent fixed field",
+    "name": "c",
+    "type": [
+      "null",
+      "com.test.Money"
+    ]
+  },{
+    "doc": "fully-qualified dependent array field",
+    "name": "d",
+    "type": {
+      "type": "array",
+      "items": "int"
+    }
+  }
+  ]
+}

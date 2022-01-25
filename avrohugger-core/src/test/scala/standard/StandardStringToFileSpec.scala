@@ -239,7 +239,7 @@ class StandardStringToFileSpec extends Specification {
   }
 
   def e17 = {
-    val inputString = util.Util.readFile("avrohugger-core/src/test/avro/fixed.avsc")
+    val inputString = util.Util.readFile("avrohugger-core/src/test/avro/fixed_sc.avsc")
     val gen = new Generator(Standard)
     val outDir = gen.defaultOutputDir + "/standard/"
     gen.stringToFile(inputString, outDir)

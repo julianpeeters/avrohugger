@@ -1,15 +1,9 @@
 {
-  "type": "record",
-  "name": "FixedSc",
+  "type": "fixed",
+  "size": 12,
   "namespace": "example",
-  "fields": [
-    {
-      "name": "data",
-      "type": {
-        "type": "fixed",
-        "name": "my_fixed",
-        "size": 16
-      }
-    }
-  ]
+  "name": "Fixed",
+  "logicalType": "decimal",
+  "precision": 28,
+  "scale": 15
 }
