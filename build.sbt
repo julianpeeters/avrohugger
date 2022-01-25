@@ -1,8 +1,8 @@
-lazy val avroVersion = "1.9.1"
+lazy val avroVersion = "1.11.0"
 
 lazy val commonSettings = Seq(
   organization := "com.julianpeeters",
-  version := "1.0.0-RC26",
+  version := "1.0.0-RC27-SNAPSHOT",
   scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature"),
   Test / scalacOptions ++= Seq("-Yrangepos"),
   scalaVersion := "2.13.8",
@@ -80,6 +80,14 @@ lazy val `avrohugger-tools` = (project in file("avrohugger-tools"))
       art.withClassifier(Some("assembly"))
     },
     addArtifact(Compile / assembly / artifact, assembly).settings,
+    Global / assembly / assemblyMergeStrategy := {
+      case PathList("javax", "servlet", xs @ _*)    => MergeStrategy.first
+      case PathList("org","jline", xs @ _*)         => MergeStrategy.first
+      case "module-info.class"                      => MergeStrategy.discard
+      case x =>
+        val oldStrategy = (Global / assembly / assemblyMergeStrategy).value
+        oldStrategy(x)
+    },
     Test / sourceGenerators += addScalaVersionFile.taskValue
   ).dependsOn(`avrohugger-core`, `avrohugger-filesorter`)
 

@@ -48,6 +48,7 @@ class StringInputParser {
 
     def tryIDL(str: String): List[Either[Schema, Protocol]] = {
       try {
+        println(str)
         val bytes = str.getBytes(Charset.forName("UTF-8"))
         val inStream = new java.io.ByteArrayInputStream(bytes)
         val idlParser = new Idl(inStream)
@@ -61,6 +62,7 @@ class StringInputParser {
           }
           else tryCaseClass(str, schemaStore)
         }
+        case npe: NullPointerException => sys.error("Imports not supported in String IDLs, only avdl files.")
         case unknown: Throwable => sys.error("Unexpected exception: " + unknown)
         }
       }
