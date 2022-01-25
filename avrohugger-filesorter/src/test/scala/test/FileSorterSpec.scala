@@ -21,6 +21,12 @@ class FileSorterSpec extends Specification {
     new File(sourceDir, "d.avsc"),
     new File(sourceDir, "e.avsc"))
 
+
+  val fixedNames = Seq(
+    new File(sourceDir, "amain/fixedRecord.avsc"),
+    new File(sourceDir, "imports/fixed.avsc")
+  )
+
   val simpleNames = Seq(
     new File(sourceDir, "_a.avsc"),
     new File(sourceDir, "_b.avsc"),
@@ -39,6 +45,11 @@ class FileSorterSpec extends Specification {
     new File(sourceDir, "d.avsc"),
     new File(sourceDir, "b.avsc"),
     new File(sourceDir, "a.avsc"))
+
+  val expectedOrderFixedNames = Seq(
+    new File(sourceDir, "imports/fixed.avsc"),
+    new File(sourceDir, "amain/fixedRecord.avsc")
+  )
 
   val expectedOrderSimpleNames = Seq(
     new File(sourceDir, "_c.avsc"),
@@ -60,6 +71,10 @@ class FileSorterSpec extends Specification {
     AvscFileSorter.sortSchemaFiles(fullyQualifiedNames.reverse) must beEqualTo(expectedOrderFullyQualifiedNames)
     AvscFileSorter.sortSchemaFiles(simpleNames) must beEqualTo(expectedOrderSimpleNames)
     AvscFileSorter.sortSchemaFiles(simpleNames.reverse) must beEqualTo(expectedOrderSimpleNames)
+  }
+
+  "Schema files with Fixed type should be sorted" >> {
+    AvscFileSorter.sortSchemaFiles(fixedNames) must beEqualTo(expectedOrderFixedNames)
   }
   
   "AVDL files should be sorted correctly for imports" >> {

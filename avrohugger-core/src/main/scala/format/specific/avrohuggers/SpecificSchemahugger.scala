@@ -9,6 +9,7 @@ import matchers.TypeMatcher
 import stores.{ClassStore, SchemaStore}
 
 import org.apache.avro.Schema
+import org.apache.avro.Schema.Type.{ FIXED, RECORD }
 
 import treehugger.forest.Tree
 
@@ -25,23 +26,41 @@ object SpecificSchemahugger extends Schemahugger {
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): List[Tree] = {
 
-    val caseClassDef = SpecificCaseClassTree.toCaseClassDef(
-      classStore,
-      namespace,
-      schema,
-      typeMatcher,
-      maybeBaseTrait,
-      maybeFlags,
-      restrictedFields,
-      targetScalaPartialVersion)
+    schema.getType match {
+      case RECORD =>
+        val caseClassDef = SpecificCaseClassTree.toCaseClassDef(
+          classStore,
+          namespace,
+          schema,
+          typeMatcher,
+          maybeBaseTrait,
+          maybeFlags,
+          restrictedFields,
+          targetScalaPartialVersion)
+        val companionDef = SpecificObjectTree.toCaseCompanionDef(
+          schema,
+          maybeFlags,
+          schemaStore,
+          typeMatcher)
+        List(caseClassDef, companionDef)
+      case FIXED =>
+        val caseClassDef = SpecificCaseClassTree.toFixedDef(
+          schema,
+          namespace,
+          maybeFlags,
+          schemaStore,
+          typeMatcher,
+          classStore,
+          targetScalaPartialVersion)
+        val companionDef = SpecificObjectTree.toCaseCompanionDef(
+          schema,
+          maybeFlags,
+          schemaStore,
+          typeMatcher)
+        List(caseClassDef, companionDef)
+      case _ => sys.error("Only RECORD or FIXED can be toplevel definitions")
 
-    val companionDef = SpecificObjectTree.toCaseCompanionDef(
-      schema,
-      maybeFlags,
-      schemaStore,
-      typeMatcher)
-
-    List(caseClassDef, companionDef)
+    }
   }
 
 }

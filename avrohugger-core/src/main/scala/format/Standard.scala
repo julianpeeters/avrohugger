@@ -6,14 +6,12 @@ import format.standard._
 import matchers.TypeMatcher
 import matchers.custom.{CustomNamespaceMatcher, CustomTypeMatcher}
 import models.CompilationUnit
-import stores.{ ClassStore, SchemaStore }
+import stores.{ClassStore, SchemaStore}
 import types._
-
 import treehugger.forest._
 import definitions.RootClass
-
-import org.apache.avro.{ Protocol, Schema }
-import org.apache.avro.Schema.Type.{ ENUM, FIXED, RECORD }
+import org.apache.avro.{Protocol, Schema}
+import org.apache.avro.Schema.Type.{ENUM, FIXED, RECORD}
 
 object Standard extends SourceFormat {
 
@@ -172,7 +170,7 @@ object Standard extends SourceFormat {
       targetScalaPartialVersion)
     compilationUnits.foreach(writeToFile)
   }
-  
+
   val defaultTypes: AvroScalaTypes = AvroScalaTypes.defaults
 
   def getName(
@@ -190,7 +188,7 @@ object Standard extends SourceFormat {
         if (localSubTypes.length > 1) protocol.getName // for ADT
         else localSubTypes.headOption match {
           case Some(schema) => schema.getName // for single class defintion
-          case None => protocol.getName  // default to protocol name
+          case None => protocol.getName // default to protocol name
         }
       }
     }

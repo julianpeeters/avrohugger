@@ -54,7 +54,7 @@ lazy val commonSettings = Seq(
 
 lazy val avrohugger = (project in file("."))
   .settings(
-    commonSettings,
+    commonSettings
   ).aggregate(`avrohugger-core`, `avrohugger-filesorter`, `avrohugger-tools`)
 
 
@@ -75,11 +75,11 @@ lazy val `avrohugger-filesorter` = (project in file("avrohugger-filesorter"))
 lazy val `avrohugger-tools` = (project in file("avrohugger-tools"))
   .settings(
     commonSettings,
-    artifact in (Compile, assembly) := {
-      val art: Artifact = (artifact in (Compile, assembly)).value
+    Compile / assembly / artifact := {
+      val art: Artifact = (Compile / assembly / artifact).value
       art.withClassifier(Some("assembly"))
     },
-    addArtifact(artifact in (Compile, assembly), assembly).settings,
+    addArtifact(Compile / assembly / artifact, assembly).settings,
     Test / sourceGenerators += addScalaVersionFile.taskValue
   ).dependsOn(`avrohugger-core`, `avrohugger-filesorter`)
 

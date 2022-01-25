@@ -4,20 +4,18 @@ package abstractions
 
 import avrohugger.matchers.TypeMatcher
 import avrohugger.models.CompilationUnit
-import avrohugger.stores.{ ClassStore, SchemaStore }
+import avrohugger.stores.{ClassStore, SchemaStore}
 import avrohugger.types._
+import org.apache.avro.{Protocol, Schema}
+import org.apache.avro.Schema.Type.{ENUM, FIXED, RECORD}
 
-import org.apache.avro.{ Protocol, Schema }
-import org.apache.avro.Schema.Type.{ ENUM, FIXED, RECORD }
-
-import java.nio.file.{ Path, Paths, Files, StandardOpenOption }
-import java.io.{ File, FileNotFoundException, IOException }
-
+import java.nio.file.{Files, Path, Paths, StandardOpenOption}
+import java.io.{File, FileNotFoundException, IOException}
 import treehugger.forest._
 import definitions._
 import treehuggerDSL._
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 /** Parent to all ouput formats
   *
@@ -111,9 +109,9 @@ trait SourceFormat {
     typeMatcher: TypeMatcher): Option[Path] = {
     maybeOutDir match {
       case Some(outDir) => {
-        val folderPath: Path = Paths.get{
+        val folderPath: Path = Paths.get {
           if (namespace.isDefined) {
-            s"$outDir/${namespace.get.toString.replace('.','/')}"
+            s"$outDir/${namespace.get.toString.replace('.', '/')}"
           }
           else outDir
         }
@@ -174,7 +172,7 @@ trait SourceFormat {
     CompilationUnit(scalaFilePath, scalaString)
   }
 
-  def isEnum(schema: Schema) = schema.getType == Schema.Type.ENUM
+  def isEnum(schema: Schema): Boolean = schema.getType == Schema.Type.ENUM
 
   def registerTypes(
     schemaOrProtocol: Either[Schema, Protocol],
@@ -198,12 +196,12 @@ trait SourceFormat {
     }
   }
 
-  def renameEnum(schema: Schema, selector: String) = {
+  def renameEnum(schema: Schema, selector: String): String = {
     schema.getType match {
       case RECORD => schema.getName
       case ENUM => schema.getName + "." + selector
       case FIXED => schema.getName
-      case _ => sys.error("Only RECORD or ENUM or FIXED can be top-level definitions")
+      case _ => sys.error("Only RECORD, ENUM or FIXED can be top-level definitions")
     }
   }
   

@@ -10,6 +10,12 @@ import avrohugger.stores.ClassStore
 import treehugger.forest._
 import definitions._
 import org.apache.avro.Schema
+import org.apache.avro.LogicalTypes
+import stores._
+import types._
+import converters._
+import avrohugger.matchers.custom.CustomTypeMatcher
+
 import treehuggerDSL._
 
 import scala.collection.JavaConverters._
@@ -183,6 +189,78 @@ object SpecificCaseClassTree {
 
     treeWithScalaDoc
 
+  }
+
+
+  def toFixedDef(
+    schema: Schema,
+    namespace: Option[String],
+    maybeFlags: Option[List[Long]],
+    schemaStore: SchemaStore,
+    typeMatcher: TypeMatcher,
+    classStore: ClassStore,
+    targetScalaPartialVersion: String
+  ) = {
+    val classSymbol = RootClass.newClass(schema.getName)
+    val defGetSchema = format.specific.methods.GetSchemaGenerator(classSymbol).toDef
+    val defReadExternal = DEF("readExternal", UnitClass).withParams(PARAM("in", TYPE_REF("java.io.ObjectInput"))) := BLOCK(
+      REF(s"${schema.getFullName()}.READER$$").DOT("read").APPLY(THIS, REF("org.apache.avro.specific.SpecificData.getDecoder(in)")),
+      PAREN()
+    )
+    val defWriteExternal = DEF("writeExternal", UnitClass).withParams(PARAM("out", TYPE_REF("java.io.ObjectOutput"))) := BLOCK(
+      REF(s"${schema.getFullName()}.WRITER$$").DOT("write").APPLY(THIS, REF("org.apache.avro.specific.SpecificData.getEncoder(out)"))
+    )
+    val defBigDecimal = DEF("bigDecimal", TYPE_REF("BigDecimal")) := {
+      val JavaBuffer = RootClass.newClass("java.nio.ByteBuffer")
+      val resultExpr = schema.getLogicalType match {
+        case decimal: LogicalTypes.Decimal => {
+          val Decimal = RootClass.newClass("org.apache.avro.LogicalTypes.Decimal")
+          Block(
+            VAL("schema") := REF("getSchema"),
+            VAL("decimalType") := REF("schema").DOT("getLogicalType").APPLY().AS(Decimal),
+            REF("BigDecimal").APPLY(classSymbol.DOT("decimalConversion").DOT("fromBytes").APPLY(REF("buffer"),REF("schema"),REF("decimalType")))
+          )
+        }
+        case _ => Block(
+          VAL("dup") := REF("buffer").DOT("duplicate").APPLY(),
+          VAL("array") := NEW("Array[Byte]", REF("dup").DOT("remaining")),
+          REF("dup") DOT "get" APPLY(REF("array")),
+          REF(schema.getFullName()).APPLY(REF("array"))
+        )
+      }
+      val bufferConversion = CASE(ID("buffer") withType (JavaBuffer)) ==> resultExpr
+      REF("java.nio.ByteBuffer").DOT("wrap").APPLY(REF("bytes")) MATCH bufferConversion
+    }
+
+    val baseClass = RootClass.newClass("org.apache.avro.specific.SpecificFixed")
+
+    schema.getLogicalType() match {
+      case decimal: LogicalTypes.Decimal =>
+        CASECLASSDEF(schema.getName)
+          .withFlags(Flags.FINAL)
+          .withParams()
+          .withParents(baseClass) := BLOCK(
+            // defCtor,
+            // defNoArgCtor,
+            defGetSchema,
+            defBigDecimal,
+            defReadExternal,
+            defWriteExternal
+          )
+      case _ =>
+        CASECLASSDEF(schema.getName)
+          .withFlags(Flags.FINAL)
+          .withParams()
+          .withParents(baseClass) := BLOCK(
+            // defCtorDefault,
+            // defNoArgCtor,
+            defGetSchema,
+            defReadExternal,
+            defWriteExternal
+          )
+    }
+
+  
   }
 
 }

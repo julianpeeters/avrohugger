@@ -12,7 +12,7 @@ case class AvroScalaTypes(
   `null`:   AvroScalaNullType     = ScalaNull,
   bytes:    AvroScalaBytesType    = ScalaByteArray,
   // complex
-  fixed:    AvroScalaFixedType    = ScalaValueClass,
+  fixed:    AvroScalaFixedType    = ScalaCaseClassWrapper,
   record:   AvroScalaRecordType   = ScalaCaseClass,
   `enum`:     AvroScalaEnumType   = ScalaEnumeration,
   union:    AvroScalaUnionType    = OptionEitherShapelessCoproduct,
