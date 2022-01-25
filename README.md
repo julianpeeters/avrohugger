@@ -345,6 +345,7 @@ Contributors:
 - [natefitzgerald](https://github.com/natefitzgerald)
 - [niqdev](https://github.com/niqdev)
 - [Konstantin](https://github.com/tyger)
+- [Timo Schmid](https://github.com/timo-schmid)
 
 
 ##### Criticism is appreciated.
