@@ -4,7 +4,7 @@ package example.idl
 import scala.annotation.switch
 
 final case class BinaryIdl(var data: Array[Byte]) extends org.apache.avro.specific.SpecificRecordBase {
-  def this() = this(null)
+  def this() = this(Array())
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {

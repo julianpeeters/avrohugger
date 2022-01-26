@@ -180,10 +180,12 @@ object JavaConverter {
     case Schema.Type.ENUM => {
       typeMatcher.avroScalaTypes.enum match {
         case EnumAsScalaString =>
+          val defaultTree: Tree = REF("getSchema").DOT("getFields").DOT("get").APPLY(REF("field$")).DOT("schema")
+          val schemaTree: Tree =
+            if (isUnionMember) defaultTree.DOT("getTypes").DOT("get").APPLY(defaultTree.DOT("getIndexNamed").APPLY(LIT(schema.getFullName())))
+            else defaultTree
           NEW(
-            REF("org.apache.avro.generic.GenericData.EnumSymbol").APPLY(
-              REF("getSchema").DOT("getFields").DOT("get").APPLY(REF("field$")).DOT("schema"),
-              tree))
+            REF("org.apache.avro.generic.GenericData.EnumSymbol").APPLY(schemaTree, tree))
         case JavaEnum | ScalaEnumeration | ScalaCaseObjectEnum => tree
       }
     }
