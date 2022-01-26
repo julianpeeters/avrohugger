@@ -2,7 +2,8 @@ lazy val avroVersion = "1.11.0"
 
 lazy val commonSettings = Seq(
   organization := "com.julianpeeters",
-  version := "1.0.0-RC27",
+  version := "1.0.0-RC28",
+  ThisBuild / versionScheme := Some("semver-spec"),
   scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature"),
   Test / scalacOptions ++= Seq("-Yrangepos"),
   scalaVersion := "2.13.8",
@@ -62,7 +63,6 @@ lazy val `avrohugger-core` = (project in file("avrohugger-core"))
   .settings(
     commonSettings,
     libraryDependencies += "com.eed3si9n" %% "treehugger" % "0.4.4",
-    libraryDependencies += "org.apache.avro" % "avro-tools" % avroVersion,
     Compile / sourceGenerators += addScalaVersionFile.taskValue
   )
 
@@ -75,6 +75,7 @@ lazy val `avrohugger-filesorter` = (project in file("avrohugger-filesorter"))
 lazy val `avrohugger-tools` = (project in file("avrohugger-tools"))
   .settings(
     commonSettings,
+    libraryDependencies += "org.apache.avro" % "avro-tools" % avroVersion exclude("org.slf4j", "*"),
     Compile / assembly / artifact := {
       val art: Artifact = (Compile / assembly / artifact).value
       art.withClassifier(Some("assembly"))
