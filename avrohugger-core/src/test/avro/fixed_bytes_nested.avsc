@@ -1,0 +1,34 @@
+{
+  "type" : "record",
+  "name" : "Outer",
+  "namespace" : "other.ns.fixedtypes.foo",
+  "fields" : [
+    {
+      "name" : "my_hash",
+      "type" : [
+        {
+          "type" : "fixed",
+          "name" : "Sha256",
+          "namespace" : "other.ns.fixedtypes",
+          "size" : 32
+        }
+      ]
+    },
+    {
+      "name" : "prop",
+      "type" : [
+        {
+          "type" : "record",
+          "name" : "Prop",
+          "namespace" : "other.ns.fixedtypes",
+          "fields": [
+            {
+              "type" : "string",
+              "name" : "id"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

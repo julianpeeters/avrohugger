@@ -1,0 +1,6 @@
+{
+  "type" : "fixed",
+  "name" : "Sha256",
+  "namespace" : "example",
+  "size" : 32
+}
