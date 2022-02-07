@@ -1,4 +1,4 @@
 /** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
-package other.ns.fixedtypes
+package example.shanested
 
 final case class Prop(id: String)

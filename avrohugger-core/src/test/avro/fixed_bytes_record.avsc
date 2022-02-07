@@ -1,0 +1,18 @@
+{
+  "type" : "record",
+  "name" : "HashRecord",
+  "namespace" : "example.sharecord",
+  "fields" : [
+    {
+      "name" : "my_hash",
+      "type" : [
+        {
+          "type" : "fixed",
+          "name" : "Sha256",
+          "namespace" : "example.sharecord",
+          "size" : 32
+        }
+      ]
+    }
+  ]
+}

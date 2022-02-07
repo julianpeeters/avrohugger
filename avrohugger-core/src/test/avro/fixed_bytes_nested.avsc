@@ -1,7 +1,7 @@
 {
   "type" : "record",
-  "name" : "Outer",
-  "namespace" : "other.ns.fixedtypes.foo",
+  "name" : "HashRecord",
+  "namespace" : "example.shanested.foo",
   "fields" : [
     {
       "name" : "my_hash",
@@ -9,7 +9,7 @@
         {
           "type" : "fixed",
           "name" : "Sha256",
-          "namespace" : "other.ns.fixedtypes",
+          "namespace" : "example.shanested",
           "size" : 32
         }
       ]
@@ -20,7 +20,7 @@
         {
           "type" : "record",
           "name" : "Prop",
-          "namespace" : "other.ns.fixedtypes",
+          "namespace" : "example.shanested",
           "fields": [
             {
               "type" : "string",

@@ -60,7 +60,8 @@ class StandardFileToFileSpec extends Specification {
 
     correctly generate fixed from schema $e40
     correctly generate simple fixed bytes from schema $e41
-    correctly generate nested fixed bytes from schema $e42
+    correctly generate record with fixed bytes from schema $e42
+    correctly generate nested fixed bytes from schema $e43
   """
 
   // correctly generate logical types from IDL $e30
@@ -585,28 +586,47 @@ class StandardFileToFileSpec extends Specification {
     val outDir = gen.defaultOutputDir + "/standard/"
     gen.fileToFile(infile, outDir)
 
-    val expected  = util.Util.readFile("avrohugger-core/src/test/expected/standard/example/Sha256.scala")
-    val generated = util.Util.readFile("target/generated-sources/standard/example/Sha256.scala")
+    val expected  = util.Util.readFile("avrohugger-core/src/test/expected/standard/example/shasimple/Sha256.scala")
+    val generated = util.Util.readFile("target/generated-sources/standard/example/shasimple/Sha256.scala")
 
     expected === generated
   }
 
   def e42 = {
+    val infile = new File("avrohugger-core/src/test/avro/fixed_bytes_record.avsc")
+    val gen = new Generator(Standard)
+    val outDir = gen.defaultOutputDir + "/standard/"
+    gen.fileToFile(infile, outDir)
+
+    val expected = List(
+      util.Util.readFile("avrohugger-core/src/test/expected/standard/example/sharecord/Sha256.scala"),
+      util.Util.readFile("avrohugger-core/src/test/expected/standard/example/sharecord/HashRecord.scala")
+    )
+
+    val generated = List(
+      util.Util.readFile("target/generated-sources/standard/example/sharecord/Sha256.scala"),
+      util.Util.readFile("target/generated-sources/standard/example/sharecord/HashRecord.scala")
+    )
+
+    expected must containAllOf(generated)
+  }
+
+  def e43 = {
     val infile = new File("avrohugger-core/src/test/avro/fixed_bytes_nested.avsc")
     val gen = new Generator(Standard)
     val outDir = gen.defaultOutputDir + "/standard/"
     gen.fileToFile(infile, outDir)
 
     val expected = List(
-      util.Util.readFile("avrohugger-core/src/test/expected/standard/other/ns/fixedtypes/foo/Outer.scala"),
-      util.Util.readFile("avrohugger-core/src/test/expected/standard/other/ns/fixedtypes/Prop.scala"),
-      util.Util.readFile("avrohugger-core/src/test/expected/standard/other/ns/fixedtypes/Sha256.scala")
+      util.Util.readFile("avrohugger-core/src/test/expected/standard/example/shanested/foo/HashRecord.scala"),
+      util.Util.readFile("avrohugger-core/src/test/expected/standard/example/shanested/Prop.scala"),
+      util.Util.readFile("avrohugger-core/src/test/expected/standard/example/shanested/Sha256.scala")
     )
 
     val generated = List(
-      util.Util.readFile("target/generated-sources/standard/other/ns/fixedtypes/foo/Outer.scala"),
-      util.Util.readFile("target/generated-sources/standard/other/ns/fixedtypes/Prop.scala"),
-      util.Util.readFile("target/generated-sources/standard/other/ns/fixedtypes/Sha256.scala")
+      util.Util.readFile("target/generated-sources/standard/example/shanested/foo/HashRecord.scala"),
+      util.Util.readFile("target/generated-sources/standard/example/shanested/Prop.scala"),
+      util.Util.readFile("target/generated-sources/standard/example/shanested/Sha256.scala")
     )
     
     expected must containAllOf(generated)
