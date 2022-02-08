@@ -9,7 +9,7 @@ import avrohugger.matchers.custom.CustomNamespaceMatcher
 import avrohugger.stores.SchemaStore
 
 import org.apache.avro.{ Schema, Protocol }
-import org.apache.avro.Schema.Type.{ ENUM, RECORD, UNION, MAP, ARRAY }
+import org.apache.avro.Schema.Type.{ ENUM, RECORD, UNION, MAP, ARRAY, FIXED }
 
 import treehugger.forest._
 import definitions.RootClass
@@ -77,6 +77,18 @@ trait Importer {
       .distinct
       .toList
   }
+
+  def getFixedSchemas(topLevelSchemas: List[Schema]): List[Schema] =
+    topLevelSchemas
+      .flatMap(schema => {
+        schema.getType match {
+          case FIXED => Seq(schema)
+          case _ => Seq.empty[Schema]
+        }
+      })
+      .filter(_.getType == FIXED)
+      .distinct
+      .toList
   
   def getFieldSchemas(schema: Schema): List[Schema] = {
     schema.getFields().asScala.toList.map(field => field.schema)
@@ -113,7 +125,7 @@ trait Importer {
     }
 
     def requiresImportDef(schema: Schema): Boolean = {
-      (isRecord(schema) || isEnum(schema)) &&
+      (isRecord(schema) || isEnum(schema) || isFixed(schema)) &&
       checkNamespace(schema).isDefined     &&
       checkNamespace(schema) != namespace
     }
@@ -177,6 +189,8 @@ trait Importer {
     }
 
   }
+
+  def isFixed(schema: Schema): Boolean = ( schema.getType == FIXED )
 
   def isEnum(schema: Schema): Boolean = ( schema.getType == ENUM )
 

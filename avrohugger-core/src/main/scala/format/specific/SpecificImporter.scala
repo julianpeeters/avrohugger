@@ -31,7 +31,8 @@ object SpecificImporter extends Importer {
       getTopLevelSchemas(schemaOrProtocol, schemaStore, typeMatcher)
     val recordSchemas = getRecordSchemas(topLevelSchemas)
     val enumSchemas = getEnumSchemas(topLevelSchemas)
-    val deps = getUserDefinedImports(recordSchemas ++ enumSchemas, currentNamespace, typeMatcher)
+    val fixedSchemas = getFixedSchemas(topLevelSchemas)
+    val deps = getUserDefinedImports(recordSchemas ++ enumSchemas ++ fixedSchemas, currentNamespace, typeMatcher)
     
     schemaOrProtocol match {
       case Left(schema) => {
