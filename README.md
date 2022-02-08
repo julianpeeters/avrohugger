@@ -341,6 +341,7 @@ Contributors:
 - [Konstantin](https://github.com/tyger)
 - [Timo Schmid](https://github.com/timo-schmid)
 - [Julien BENOIT](https://github.com/jbenoit2011)
+- [Adam Drakeford](https://github.com/dr4ke616)
 
 ##### Criticism is appreciated.
 
