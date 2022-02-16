@@ -2,20 +2,14 @@ package avrohugger
 package format
 
 object FieldRenamer {
-  val RESERVED_WORDS: Set[String] = Set("abstract", "assert", "boolean", "break", "byte", "case", "catch",
-    "char", "class", "const", "continue", "default", "do", "double",
-    "else", "enum", "extends", "false", "final", "finally", "float",
-    "for", "goto", "if", "implements", "import", "instanceof", "int",
-    "interface", "long", "native", "new", "null", "package", "private",
-    "protected", "public", "return", "short", "static", "strictfp",
-    "super", "switch", "synchronized", "this", "throw", "throws",
-    "transient", "true", "try", "void", "volatile", "while")
+  // Reserved words from https://www.scala-lang.org/files/archive/spec/2.13/01-lexical-syntax.html#identifiers
+  private val RESERVED_WORDS: Set[String] = Set("abstract", "case", "catch", "class", "def", "do", "else", "extends", "final", "finally",
+    "for", "forSome", "if", "implicit", "lazy", "macro", "match", "new", "object", "override", "package", "private", "protected", "return",
+    "sealed", "super", "this", "throw", "trait", "try", "type", "val", "var", "while", "with", "yield")
 
-  def backtick(variable: String): String = s"`$variable`"
+  private def backtick(variable: String): String = s"`$variable`"
 
-  def mangle(variable: String): String = variable + "$"
+  private def isMangled(fieldName: String): Boolean = RESERVED_WORDS.contains(fieldName) || fieldName.endsWith("_")
 
-  def isMangled(fieldName: String): Boolean = RESERVED_WORDS.contains(fieldName)
-
-  def rename(fieldName: String): String = if(isMangled(fieldName)) mangle(fieldName) else if (fieldName.endsWith("_")) backtick(fieldName) else fieldName
+  def rename(fieldName: String): String = if (isMangled(fieldName)) backtick(fieldName) else fieldName
 }
