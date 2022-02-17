@@ -2,7 +2,7 @@
 protocol SpecialNames {
 
   record Names {
-    string `public`;
+    string `protected`;
     string `ends_with_`;
   }
 }
