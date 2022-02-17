@@ -123,7 +123,7 @@ _Note:_ Currently [Treehugger](http://eed3si9n.com/treehugger/comments.html#Scal
 
 ##### Get the dependency with:
 
-    "com.julianpeeters" %% "avrohugger-core" % "1.0.0-RC30"
+    "com.julianpeeters" %% "avrohugger-core" % "1.0.0-RC31"
 
 
 ##### Description:
@@ -210,7 +210,7 @@ namespace rewritten. Multiple conflicting wildcards are not permitted.
 
 ##### Get the dependency with:
 
-    "com.julianpeeters" %% "avrohugger-filesorter" % "1.0.0-RC30"
+    "com.julianpeeters" %% "avrohugger-filesorter" % "1.0.0-RC31"
     
 
 ##### Description:
@@ -230,22 +230,22 @@ To ensure dependent schemas are compiled in the proper order (thus avoiding `org
 #### `avrohugger-tools`
 
 
-  Download the avrohugger-tools jar for Scala [2.12](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.12/1.0.0-RC30/avrohugger-tools_2.12-1.0.0-RC30-assembly.jar), or Scala [2.13](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.13/1.0.0-RC30/avrohugger-tools_2.13-1.0.0-RC30-assembly.jar) (>30MB!) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
+  Download the avrohugger-tools jar for Scala [2.12](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.12/1.0.0-RC31/avrohugger-tools_2.12-1.0.0-RC31-assembly.jar), or Scala [2.13](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.13/1.0.0-RC31/avrohugger-tools_2.13-1.0.0-RC31-assembly.jar) (>30MB!) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
 
 
 * `generate` generates Scala case class definitions:
 
-`java -jar /path/to/avrohugger-tools_2.12-1.0.0-RC30-assembly.jar generate schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.12-1.0.0-RC31-assembly.jar generate schema user.avsc . `
 
 
 * `generate-specific` generates definitions that extend Avro's `SpecificRecordBase`:
 
-`java -jar /path/to/avrohugger-tools_2.12-1.0.0-RC30-assembly.jar generate-specific schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.12-1.0.0-RC31-assembly.jar generate-specific schema user.avsc . `
 
 
 * `generate-scavro` generates definitions that extend Scavro's `AvroSerializable`:
 
-`java -jar /path/to/avrohugger-tools_2.12-1.0.0-RC30-assembly.jar generate-scavro schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.12-1.0.0-RC31-assembly.jar generate-scavro schema user.avsc . `
 
 
 ## Warnings
@@ -342,6 +342,7 @@ Contributors:
 - [Timo Schmid](https://github.com/timo-schmid)
 - [Julien BENOIT](https://github.com/jbenoit2011)
 - [Adam Drakeford](https://github.com/dr4ke616)
+- [mcenkar](https://github.com/mcenkar)
 
 ##### Criticism is appreciated.
 
