@@ -8,6 +8,7 @@ protocol LogicalIDL {
     timestamp_ms ts = 1526573732000; //ms from the unix epoch
     date dt = 600; //days from the unix epock, no time precission
     decimal(20, 2) decBig = "\u000C\u006C";
+    time_ms tm = 43200000;
   }
 
 }

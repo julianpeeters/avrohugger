@@ -45,6 +45,10 @@ object DefaultValueMatcher {
               CustomDefaultValueMatcher.checkCustomDateType(
                 node.longValue(),
                 typeMatcher.avroScalaTypes.date)
+            case TimeMillis =>
+              CustomDefaultValueMatcher.checkCustomTimeMillisType(
+                node.longValue(),
+                typeMatcher.avroScalaTypes.timeMillis)
           }
         case Schema.Type.FLOAT => LIT(node.doubleValue().asInstanceOf[Float])
         case Schema.Type.LONG =>

@@ -52,6 +52,13 @@
         "precision": 20,
         "scale": 12
       }
+    },
+    {
+      "name": "tm",
+      "type": {
+        "type": "int",
+        "logicalType": "time-millis"
+      }
     }
   ]
 }

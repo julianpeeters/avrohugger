@@ -247,7 +247,24 @@ object ScalaConverter {
                   tree MATCH integerConversion
                 }
               }
-
+            }
+            else if (logicalType.getName == "time-millis") {
+              typeMatcher.avroScalaTypes.timeMillis match {
+                case JavaSqlTime => {
+                  val IntegerClass = RootClass.newClass("Integer")
+                  val SqlTimeClass = RootClass.newClass("java.sql.Time")
+                  val resultExpr = BLOCK(NEW(SqlTimeClass, REF("i").DOT("toLong")))
+                  val integerConversion = CASE(ID("i") withType (IntegerClass)) ==> resultExpr
+                  tree MATCH integerConversion
+                }
+                case JavaTimeLocalTime => {
+                  val IntegerClass = RootClass.newClass("Integer")
+                  val LocalTimeClass = RootClass.newClass("java.time.LocalTime")
+                  val resultExpr = BLOCK(LocalTimeClass.DOT("ofNanoOfDay").APPLY(REF("i").INFIX("*", LIT(1000000L))))
+                  val integerConversion = CASE(ID("i") withType (IntegerClass)) ==> resultExpr
+                  tree MATCH integerConversion
+                }
+              }
             }
             else tree
           }

@@ -44,7 +44,7 @@ class SpecificFileToFileSpec extends Specification {
       correctly generate logical types from schema $e24
       correctly generate logical types from protocol $e25
    
-      correctly generate logical types with custom date and timestamp types $e27
+      correctly generate logical types with custom date, timestamp and time types $e27
       correctly generate a protocol with special strings $e28
       correcty generate a simple case class with a wildcarded custom namespace $e29
   """
@@ -350,7 +350,7 @@ class SpecificFileToFileSpec extends Specification {
 
   def e27 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/logicalsql.avsc")
-    val avroScalaCustomTypes = SpecificRecord.defaultTypes.copy(date = JavaSqlDate, timestampMillis = JavaSqlTimestamp)
+    val avroScalaCustomTypes = SpecificRecord.defaultTypes.copy(date = JavaSqlDate, timestampMillis = JavaSqlTimestamp, timeMillis = JavaSqlTime)
     val gen = new Generator(SpecificRecord, avroScalaCustomTypes = Some(avroScalaCustomTypes))
     val outDir = gen.defaultOutputDir + "/specific/"
     gen.fileToFile(infile, outDir)

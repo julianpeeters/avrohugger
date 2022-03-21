@@ -23,6 +23,7 @@ case class AvroScalaTypes(
   decimal:  AvroScalaDecimalType  = ScalaBigDecimal(None),
   date:     AvroScalaDateType     = JavaTimeLocalDate,
   timestampMillis: AvroScalaTimestampMillisType = JavaTimeInstant,
+  timeMillis: AvroScalaTimeMillisType = JavaTimeLocalTime,
   uuid:     AvroUuidType          = JavaUuid
 )
 

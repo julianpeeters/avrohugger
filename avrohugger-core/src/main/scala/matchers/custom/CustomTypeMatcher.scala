@@ -48,6 +48,11 @@ object CustomTypeMatcher {
     case JavaTimeInstant  => RootClass.newClass(nme.createNameType("java.time.Instant"))
   }
 
+  def checkCustomTimeMillisType(timeType: AvroScalaTimeMillisType) = timeType match {
+    case JavaSqlTime => RootClass.newClass(nme.createNameType("java.sql.Time"))
+    case JavaTimeLocalTime => RootClass.newClass(nme.createNameType("java.time.LocalTime"))
+  }
+
   def checkCustomDecimalType(decimalType: AvroScalaDecimalType, schema: Schema) =
       LogicalType.foldLogicalTypes(
         schema = schema,

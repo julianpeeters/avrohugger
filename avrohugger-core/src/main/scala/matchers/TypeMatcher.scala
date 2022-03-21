@@ -55,6 +55,7 @@ class TypeMatcher(
             schema = schema,
             default = CustomTypeMatcher.checkCustomNumberType(avroScalaTypes.int)) {
             case Date => CustomTypeMatcher.checkCustomDateType(avroScalaTypes.date)
+            case TimeMillis => CustomTypeMatcher.checkCustomTimeMillisType(avroScalaTypes.timeMillis)
           }
         case Schema.Type.NULL     => NullClass
         case Schema.Type.STRING   =>

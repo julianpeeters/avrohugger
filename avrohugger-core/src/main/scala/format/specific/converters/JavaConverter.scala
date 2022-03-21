@@ -169,6 +169,10 @@ object JavaConverter {
         case JavaSqlDate       => tree.DOT("getTime").APPLY().DOT("/").APPLY(LIT(86400000))
         case JavaTimeLocalDate => tree.DOT("toEpochDay").DOT("toInt")
       }
+      case timeMillis: LogicalTypes.TimeMillis => typeMatcher.avroScalaTypes.timeMillis match {
+        case JavaSqlTime       => tree.DOT("getTime").APPLY()
+        case JavaTimeLocalTime => tree.DOT("get").APPLY(REF("java.time.temporal.ChronoField").DOT("MILLI_OF_DAY"))
+      }
       case _ => tree
     }
     case Schema.Type.STRING =>
