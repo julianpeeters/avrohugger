@@ -15,7 +15,7 @@ import treehugger.forest._
 import definitions.RootClass
 import treehuggerDSL._
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 /** Parent to all ouput formats' importers
   *

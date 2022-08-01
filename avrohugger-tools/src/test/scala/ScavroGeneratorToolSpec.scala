@@ -4,7 +4,7 @@ import avrohugger.tool.{Main, Directory, GeneratorTool}
 import org.apache.avro.tool.Tool
 
 import org.specs2._
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.util.Try
 
 /**

@@ -7,7 +7,7 @@ import org.oedura.scavro.{AvroMetadata, AvroReader, AvroSerializeable}
 
 import avro.examples.baseball.{Mascot => JMascot, Wrestler => JWrestler}
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 final case class Wrestler(number: Int, first_name: String, last_name: String, nicknames: Array[Mascot]) extends AvroSerializeable {
   type J = JWrestler

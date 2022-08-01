@@ -13,7 +13,7 @@ import treehuggerDSL._
 import org.apache.avro.{ Protocol, Schema }
 import org.apache.avro.Schema.Type.{ ENUM, RECORD }
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 object StandardTraitTree {
 

@@ -15,7 +15,7 @@ import treehuggerDSL._
 
 import org.apache.avro.{LogicalTypes, Schema}
 import scala.language.postfixOps
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 
 object JavaConverter {

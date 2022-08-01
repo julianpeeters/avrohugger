@@ -11,7 +11,7 @@ import scala.collection.JavaConverters._
 
 sealed trait Defaults
 
-sealed trait DefaultEnum extends Defaults
+sealed trait DefaultEnum extends DefaultsF
 
 object DefaultEnum {
   case object SPADES extends DefaultEnum

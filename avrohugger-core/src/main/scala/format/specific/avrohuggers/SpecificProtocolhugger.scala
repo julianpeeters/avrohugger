@@ -16,7 +16,7 @@ import treehugger.forest._
 import definitions._
 import treehuggerDSL._
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 object SpecificProtocolhugger extends Protocolhugger {
 

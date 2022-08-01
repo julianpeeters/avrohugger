@@ -6,7 +6,7 @@ import stores.ClassStore
 
 import format.abstractions.JavaTreehugger
 import org.apache.avro.Schema
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 object StandardJavaTreehugger extends JavaTreehugger {
   

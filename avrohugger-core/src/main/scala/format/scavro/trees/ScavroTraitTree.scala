@@ -14,7 +14,7 @@ import treehuggerDSL._
 import org.apache.avro.Schema.Type.{ ENUM, RECORD }
 import org.apache.avro.{ Protocol, Schema }
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 
 object ScavroTraitTree {
