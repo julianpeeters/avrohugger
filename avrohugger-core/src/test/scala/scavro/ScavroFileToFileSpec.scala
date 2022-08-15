@@ -2,12 +2,11 @@ package avrohugger
 package test
 package scavro
 
-import java.io.File
-
 import avrohugger._
 import avrohugger.format.Scavro
 import org.specs2._
 
+import java.io.File
 import scala.util.Try
 
 class ScavroFileToFileSpec extends Specification {

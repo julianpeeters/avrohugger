@@ -2,11 +2,8 @@ package avrohugger
 package test
 package scavro
 
-import java.io.File
-
 import avrohugger.Generator
 import avrohugger.format.Scavro
-import avrohugger.generators.StringGenerator
 import org.specs2._
 
 class ScavroFileToStringsSpec extends Specification {

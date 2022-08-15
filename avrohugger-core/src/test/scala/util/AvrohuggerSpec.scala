@@ -3,13 +3,10 @@ package util
 import avrohugger._
 import avrohugger.format._
 import avrohugger.format.abstractions.SourceFormat
+import org.specs2.matcher.{Matchers, ShouldExpectable}
 
 import java.io.File
 import java.nio.file.{FileSystems, Path}
-
-import org.specs2.SpecificationLike
-import org.specs2.matcher.{Matcher, Matchers, ShouldExpectable}
-
 import scala.io.Source
 
 class AvrohuggerSpec(

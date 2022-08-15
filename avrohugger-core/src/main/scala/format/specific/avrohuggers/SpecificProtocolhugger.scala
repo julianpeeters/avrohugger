@@ -8,13 +8,8 @@ import generators.ScalaDocGenerator
 import trees.{ SpecificObjectTree, SpecificTraitTree }
 import matchers.TypeMatcher
 import stores.{ClassStore, SchemaStore}
-import types.ScalaADT
-
-import org.apache.avro.{ Protocol, Schema }
-
+import org.apache.avro.Protocol
 import treehugger.forest._
-import definitions._
-import treehuggerDSL._
 
 import scala.collection.JavaConverters._
 

@@ -6,16 +6,15 @@ package converters
 import SchemaAccessors._
 
 import matchers.TypeMatcher
-import stores.ClassStore
 import types._
 
 import treehugger.forest._
 import definitions._
+import org.apache.avro.{LogicalTypes, Schema}
 import treehuggerDSL._
 
-import org.apache.avro.{LogicalTypes, Schema}
-import scala.language.postfixOps
 import scala.collection.JavaConverters._
+import scala.language.postfixOps
 
 
 object JavaConverter {

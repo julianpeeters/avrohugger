@@ -2,11 +2,8 @@ package avrohugger
 package test
 package standard
 
-import java.io.File
-
 import avrohugger.Generator
 import avrohugger.format.Standard
-import avrohugger.generators.StringGenerator
 import avrohugger.types._
 import org.specs2._
 

@@ -6,9 +6,7 @@ import avrohugger.format.abstractions.Importer
 import avrohugger.matchers.TypeMatcher
 import avrohugger.stores.SchemaStore
 import avrohugger.types._
-import org.apache.avro.Schema.Type.RECORD
 import org.apache.avro.{Protocol, Schema}
-import com.fasterxml.jackson.databind.JsonNode
 import treehugger.forest._
 import definitions._
 import treehuggerDSL._

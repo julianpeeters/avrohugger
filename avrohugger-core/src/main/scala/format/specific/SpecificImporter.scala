@@ -3,14 +3,10 @@ package format
 package specific
 
 import avrohugger.format.abstractions.Importer
-import avrohugger.input.DependencyInspector._
-import avrohugger.input.NestedSchemaExtractor._
 import avrohugger.matchers.TypeMatcher
 import avrohugger.stores.SchemaStore
-
-import org.apache.avro.{ Protocol, Schema }
 import org.apache.avro.Schema.Type.RECORD
-
+import org.apache.avro.{Protocol, Schema}
 import treehugger.forest._
 import definitions._
 import treehuggerDSL._

@@ -8,11 +8,7 @@ import matchers.TypeMatcher
 import stores.{ ClassStore, SchemaStore }
 
 import org.apache.avro.{ Protocol, Schema }
-import org.apache.avro.Schema.Field
-import org.apache.avro.Schema.Type.RECORD
-
 import treehugger.forest._
-import definitions._
 import treehuggerDSL._
 
 

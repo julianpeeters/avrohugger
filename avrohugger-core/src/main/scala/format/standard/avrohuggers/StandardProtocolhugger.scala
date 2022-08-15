@@ -3,18 +3,14 @@ package format
 package standard
 package avrohuggers
 
+import format.abstractions.avrohuggers.Protocolhugger
 import generators.ScalaDocGenerator
 import trees.StandardTraitTree
 import matchers.TypeMatcher
 import stores.{ClassStore, SchemaStore}
 import types._
-import org.apache.avro.{ Protocol, Schema }
-
+import org.apache.avro.Protocol
 import treehugger.forest._
-import definitions._
-import treehuggerDSL._
-
-import format.abstractions.avrohuggers.Protocolhugger
 
 
 object StandardProtocolhugger extends Protocolhugger {

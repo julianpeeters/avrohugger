@@ -2,17 +2,12 @@ package avrohugger
 package format
 package scavro
 
-import format.abstractions.Importer
-import avrohugger.input.{DependencyInspector, NestedSchemaExtractor}
+import avrohugger.format.abstractions.Importer
+import avrohugger.input.DependencyInspector
 import avrohugger.matchers.TypeMatcher
-import avrohugger.matchers.custom.CustomNamespaceMatcher
 import avrohugger.stores.SchemaStore
 import avrohugger.types._
-
-import org.apache.avro.{ Protocol, Schema }
-import org.apache.avro.Schema.Field
-import org.apache.avro.Schema.Type.RECORD
-
+import org.apache.avro.{Protocol, Schema}
 import treehugger.forest._
 import definitions._
 import treehuggerDSL._

@@ -2,12 +2,8 @@ package avrohugger
 package test
 package specific
 
-import java.io.File
-
 import avrohugger.Generator
 import avrohugger.format.SpecificRecord
-import avrohugger.generators.StringGenerator
-
 import org.specs2._
 
 class SpecificStringToStringsSpec extends Specification {

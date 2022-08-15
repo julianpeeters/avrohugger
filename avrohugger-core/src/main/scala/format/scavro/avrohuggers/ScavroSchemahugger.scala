@@ -14,7 +14,6 @@ import org.apache.avro.Schema.Type.{ ENUM, RECORD }
 
 import treehugger.forest._
 import definitions._
-import treehuggerDSL._
 
 object ScavroSchemahugger extends Schemahugger{
 

@@ -3,19 +3,13 @@ package format
 package specific
 package trees
 
-import format.specific.methods.{_}
+import avrohugger.format.specific.methods._
 import avrohugger.generators.ScalaDocGenerator
 import avrohugger.matchers.{DefaultParamMatcher, DefaultValueMatcher, TypeMatcher}
-import avrohugger.stores.ClassStore
+import avrohugger.stores._
 import treehugger.forest._
 import definitions._
-import org.apache.avro.Schema
-import org.apache.avro.LogicalTypes
-import stores._
-import types._
-import converters._
-import avrohugger.matchers.custom.CustomTypeMatcher
-
+import org.apache.avro.{LogicalTypes, Schema}
 import treehuggerDSL._
 
 import scala.collection.JavaConverters._

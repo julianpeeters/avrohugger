@@ -8,7 +8,6 @@ import matchers.TypeMatcher
 import types._
 
 import treehugger.forest._
-import definitions._
 import treehuggerDSL._
 
 import org.apache.avro.Schema.Type.{ ENUM, RECORD }

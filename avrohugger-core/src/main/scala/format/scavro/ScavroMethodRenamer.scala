@@ -5,7 +5,6 @@ package scavro
 import org.apache.avro.Schema
 import org.apache.avro.Schema.Field
 import org.apache.avro.compiler.specific.SpecificCompiler
-import org.apache.avro.specific.SpecificData
 
 import scala.collection.JavaConverters._
 

@@ -6,12 +6,10 @@ package trees
 import generators.ScalaDocGenerator
 import matchers.TypeMatcher
 import types._
+import org.apache.avro.Schema.Type.{ENUM, RECORD}
+import org.apache.avro.{Protocol, Schema}
 import treehugger.forest._
-import definitions._
 import treehuggerDSL._
-
-import org.apache.avro.{ Protocol, Schema }
-import org.apache.avro.Schema.Type.{ ENUM, RECORD }
 
 import scala.collection.JavaConverters._
 
