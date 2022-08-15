@@ -3,9 +3,6 @@ package com.example
 
 import scala.annotation.switch
 
-/** Example adapted from https://github.com/delagoya. This is a comment for the whole protocol */
-
-
 final case class NoSpaces6(var comment_property1: String) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this("")
   def get(field$: Int): AnyRef = {

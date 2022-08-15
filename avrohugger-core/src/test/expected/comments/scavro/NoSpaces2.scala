@@ -7,9 +7,6 @@ import org.oedura.scavro.{AvroMetadata, AvroReader, AvroSerializeable}
 
 import com.example.{NoSpaces2 => JNoSpaces2}
 
-/** Example adapted from https://github.com/delagoya. This is a comment for the whole protocol */
-
-
 /** @param comment_property This is a single line comment on a field, in a record that has no comment. */
 final case class NoSpaces2(comment_property: String) extends AvroSerializeable {
   type J = JNoSpaces2

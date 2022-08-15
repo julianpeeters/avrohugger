@@ -7,9 +7,6 @@ import org.oedura.scavro.{AvroMetadata, AvroReader, AvroSerializeable}
 
 import com.example.{NoSpaces3 => JNoSpaces3}
 
-/** Example adapted from https://github.com/delagoya. This is a comment for the whole protocol */
-
-
 /**
  * The comment applies to the `NoSpaces3` record, but is not indented to the
  * level of the record specification.

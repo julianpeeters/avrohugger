@@ -3,7 +3,6 @@ package com.example
 
 import scala.annotation.switch
 
-/** Example adapted from https://github.com/delagoya. This is a comment for the whole protocol */
 sealed trait Example4 extends org.apache.avro.specific.SpecificRecordBase with Product with Serializable
 
 final case class NoSpaces4(var comment_property1: String) extends org.apache.avro.specific.SpecificRecordBase with Example4 {

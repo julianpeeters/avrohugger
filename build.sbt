@@ -1,4 +1,4 @@
-lazy val avroVersion = "1.11.0"
+lazy val avroVersion = "1.11.1"
 
 lazy val commonSettings = Seq(
   organization := "com.julianpeeters",

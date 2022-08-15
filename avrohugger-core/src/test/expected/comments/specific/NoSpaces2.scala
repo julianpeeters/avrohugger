@@ -3,9 +3,6 @@ package com.example
 
 import scala.annotation.switch
 
-/** Example adapted from https://github.com/delagoya. This is a comment for the whole protocol */
-
-
 /** @param comment_property This is a single line comment on a field, in a record that has no comment. */
 final case class NoSpaces2(var comment_property: String) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this("")

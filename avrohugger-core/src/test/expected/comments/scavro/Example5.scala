@@ -7,9 +7,6 @@ import org.oedura.scavro.{AvroMetadata, AvroReader, AvroSerializeable}
 
 import com.example.{NoSpaces6 => JNoSpaces6, NoSpaces7 => JNoSpaces7}
 
-/** Example adapted from https://github.com/delagoya. This is a comment for the whole protocol */
-
-
 final case class NoSpaces6(comment_property1: String) extends AvroSerializeable {
   type J = JNoSpaces6
   override def toAvro: JNoSpaces6 = {
