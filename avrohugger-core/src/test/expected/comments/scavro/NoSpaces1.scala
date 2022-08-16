@@ -7,14 +7,11 @@ import org.oedura.scavro.{AvroMetadata, AvroReader, AvroSerializeable}
 
 import com.example.{NoSpaces1 => JNoSpaces1}
 
-/** Example adapted from https://github.com/delagoya. This is a comment for the whole protocol */
-
-
 /**
  * The comment applies to the `NoSpaces1` record, but is not indented to the
  * level of the record specification.
  * @param single_line_comment_property This is a single line comment that is indented for readability,
- *     and is not affected by indentation.
+ * and is not affected by indentation.
  * @param multi_line_property This multi-line comment on `mult_line_property` that would be affected by indentation.
  * 
  * This is another paragraph

@@ -7,12 +7,9 @@ import generators.ScalaDocGenerator
 import converters.JavaConverter
 import matchers.{ DefaultValueMatcher, TypeMatcher }
 import stores.ClassStore
-
-import treehugger.forest._
-import definitions._
-import treehuggerDSL._
-
 import org.apache.avro.Schema
+import treehugger.forest._
+import treehuggerDSL._
 
 import scala.jdk.CollectionConverters._
 import scala.language.postfixOps

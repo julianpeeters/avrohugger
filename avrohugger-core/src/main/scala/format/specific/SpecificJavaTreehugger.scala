@@ -4,15 +4,7 @@ package specific
 
 import format.abstractions.JavaTreehugger
 import stores.ClassStore
-import treehugger.forest._
-import definitions._
-import treehuggerDSL._
-
-import java.io.{BufferedWriter, File, FileNotFoundException, FileWriter, IOException}
-import org.apache.avro.{Protocol, Schema}
-import org.apache.avro.compiler.specific.SpecificCompiler
-
-import java.nio.file.{FileSystems, Files, Path}
+import org.apache.avro.Schema
 
 object SpecificJavaTreehugger extends JavaTreehugger {
 

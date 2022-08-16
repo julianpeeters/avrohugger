@@ -2,10 +2,10 @@ package avrohugger
 package test
 package specific
 
-import java.io.File
-
 import avrohugger.format.SpecificRecord
 import org.specs2._
+
+import java.io.File
 
 /**
   * Test generating classes when >22 fields.

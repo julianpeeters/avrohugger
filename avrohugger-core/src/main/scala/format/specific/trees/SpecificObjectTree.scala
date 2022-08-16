@@ -3,21 +3,16 @@ package format
 package specific
 package trees
 
-import generators.ScalaDocGenerator
-import org.apache.avro.LogicalTypes
-import matchers.TypeMatcher
-import stores.SchemaStore
-import org.apache.avro.{Protocol, Schema}
+import avrohugger.matchers.TypeMatcher
+import avrohugger.matchers.custom.CustomTypeMatcher
+import avrohugger.stores.SchemaStore
+import avrohugger.types._
+import org.apache.avro.{LogicalTypes, Protocol, Schema}
 import treehugger.forest._
 import definitions._
-import org.apache.avro.Schema.Type
 import treehuggerDSL._
+
 import scala.jdk.CollectionConverters._
-import org.apache.avro.LogicalTypes
-import stores._
-import types._
-import converters._
-import avrohugger.matchers.custom.CustomTypeMatcher
 
 // only companions, so no doc generation is required here
 object SpecificObjectTree {

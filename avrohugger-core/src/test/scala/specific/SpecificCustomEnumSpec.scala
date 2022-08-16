@@ -1,8 +1,5 @@
 package avrohugger
 
-import java.io.File
-
-import avrohugger._
 import avrohugger.format.SpecificRecord
 import avrohugger.types._
 import org.specs2._

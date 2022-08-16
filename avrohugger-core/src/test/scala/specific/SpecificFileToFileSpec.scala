@@ -2,13 +2,12 @@ package avrohugger
 package test
 package specific
 
-import java.io.File
-
 import avrohugger._
 import avrohugger.format.SpecificRecord
 import avrohugger.types._
 import org.specs2._
 
+import java.io.File
 import scala.util.Try
 
 class SpecificFileToFileSpec extends Specification {

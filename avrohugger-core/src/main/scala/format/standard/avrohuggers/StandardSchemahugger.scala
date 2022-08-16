@@ -8,13 +8,9 @@ import trees.{ StandardCaseClassTree, StandardObjectTree, StandardTraitTree }
 import matchers.TypeMatcher
 import stores.{ClassStore, SchemaStore}
 import types._
-
-import org.apache.avro.{ Protocol, Schema }
-import org.apache.avro.Schema.Type.{ ENUM, FIXED, RECORD }
-
+import org.apache.avro.Schema
+import org.apache.avro.Schema.Type.{ENUM, FIXED, RECORD}
 import treehugger.forest._
-import definitions._
-import treehuggerDSL._
 
 object StandardSchemahugger extends Schemahugger {
 

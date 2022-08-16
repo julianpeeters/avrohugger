@@ -2,10 +2,9 @@ package avrohugger
 package test
 package specific
 
-import org.specs2._
 import avrohugger._
 import avrohugger.format.SpecificRecord
-import avrohugger.types._
+import org.specs2._
 
 class SpecificNullableBigDecimalSpec extends Specification {
   def is = skipAll ^ s2"SpecificFileGenerator should correctly support nullable decimals $e1"

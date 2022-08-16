@@ -6,15 +6,13 @@ import avrohugger.matchers.TypeMatcher
 import avrohugger.models.CompilationUnit
 import avrohugger.stores.{ClassStore, SchemaStore}
 import avrohugger.types._
-import org.apache.avro.{Protocol, Schema}
 import org.apache.avro.Schema.Type.{ENUM, FIXED, RECORD}
-
-import java.nio.file.{Files, Path, Paths, StandardOpenOption}
-import java.io.{File, FileNotFoundException, IOException}
+import org.apache.avro.{Protocol, Schema}
 import treehugger.forest._
 import definitions._
-import treehuggerDSL._
 
+import java.io.{FileNotFoundException, IOException}
+import java.nio.file.{Files, Path, Paths, StandardOpenOption}
 import scala.jdk.CollectionConverters._
 
 /** Parent to all ouput formats
