@@ -6,7 +6,6 @@ package converters
 
 
 import treehugger.forest._
-import definitions._
 import treehuggerDSL._
 
 object SchemaAccessors {

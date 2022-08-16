@@ -7,7 +7,6 @@ import org.oedura.scavro.{AvroMetadata, AvroReader, AvroSerializeable}
 
 import com.example.{NoSpaces4 => JNoSpaces4, NoSpaces5 => JNoSpaces5}
 
-/** Example adapted from https://github.com/delagoya. This is a comment for the whole protocol */
 sealed trait Example4 extends AvroSerializeable with Product with Serializable
 
 final case class NoSpaces4(comment_property1: String) extends AvroSerializeable with Example4 {

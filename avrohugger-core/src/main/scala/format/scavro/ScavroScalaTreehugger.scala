@@ -4,14 +4,12 @@ package scavro
 
 import format.abstractions.ScalaTreehugger
 import avrohuggers.{ ScavroProtocolhugger, ScavroSchemahugger }
-import input.reflectivecompilation.schemagen._
 import matchers.TypeMatcher
 import stores.{ ClassStore, SchemaStore }
 
 import org.apache.avro.{ Protocol, Schema }
 
 import treehugger.forest._
-import definitions._
 import treehuggerDSL._
 
 object ScavroScalaTreehugger extends ScalaTreehugger {

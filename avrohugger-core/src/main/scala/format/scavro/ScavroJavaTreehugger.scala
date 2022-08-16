@@ -6,8 +6,6 @@ import format.abstractions.JavaTreehugger
 import stores.ClassStore
 import org.apache.avro.Schema
 
-import java.nio.file.{FileSystems, Files, Path}
-
 
 object ScavroJavaTreehugger extends JavaTreehugger {
 

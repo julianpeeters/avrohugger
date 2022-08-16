@@ -6,10 +6,9 @@ import stores.ClassStore
 import org.apache.avro.Schema
 import org.apache.avro.compiler.specific.SpecificCompiler
 
-import java.io.{BufferedWriter, File, FileNotFoundException, FileWriter, IOException}
+import java.io._
 import java.nio.file.{FileSystems, Files, Path, Paths}
 import java.util.Comparator
-import scala.tools.nsc
 
 /** Parent to all ouput format treehuggers
   * Note: Java required for generating Enums (Specific API requires Java enums)

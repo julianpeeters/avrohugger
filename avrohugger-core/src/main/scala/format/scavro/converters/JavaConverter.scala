@@ -6,14 +6,11 @@ package converters
 import matchers.TypeMatcher
 import stores.ClassStore
 import types._
+import org.apache.avro.Schema
 import treehugger.forest._
-import definitions._
 import treehuggerDSL._
 
-import org.apache.avro.Schema
-
 import scala.jdk.CollectionConverters._
-
 
 class JavaConverter(
   classStore: ClassStore,
