@@ -7,7 +7,7 @@ import org.apache.avro.Schema.Field
 import org.apache.avro.compiler.specific.SpecificCompiler
 import org.apache.avro.specific.SpecificData
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 object ScavroMethodRenamer {
 

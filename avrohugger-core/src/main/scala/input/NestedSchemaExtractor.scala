@@ -8,7 +8,7 @@ import types.EnumAsScalaString
 import org.apache.avro.Schema
 import org.apache.avro.Schema.Type.{ARRAY, ENUM, FIXED, MAP, RECORD, UNION}
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 object NestedSchemaExtractor {
   // if a record is found, extract nested RECORDs and ENUMS (i.e. top-level types) 

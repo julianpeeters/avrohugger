@@ -13,7 +13,7 @@ import java.util.{ Arrays => JArrays }
 
 import scala.reflect.runtime.universe._
 import scala.reflect.runtime.currentMirror
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 object RecordSchemaGenerator  {
 

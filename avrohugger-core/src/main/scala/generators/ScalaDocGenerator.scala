@@ -10,7 +10,7 @@ import org.apache.avro.Schema.Field
 import org.apache.avro.Schema.Type.{ ENUM, FIXED, RECORD }
 
 import scala.language.postfixOps
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 object ScalaDocGenerator {
 

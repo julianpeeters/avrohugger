@@ -12,7 +12,7 @@ import org.apache.avro.SchemaParseException
 import org.apache.avro.compiler.idl.Idl
 import org.apache.avro.compiler.idl.ParseException
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import java.nio.charset.Charset
 import java.io.FileNotFoundException
 

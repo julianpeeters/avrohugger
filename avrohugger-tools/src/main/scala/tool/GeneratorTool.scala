@@ -20,7 +20,7 @@ import java.util.Set;
 import java.util.LinkedHashSet;
 import java.util.List;
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.util.Try
 
 /**
