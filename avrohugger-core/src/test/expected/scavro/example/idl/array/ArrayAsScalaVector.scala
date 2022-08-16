@@ -7,7 +7,7 @@ import org.oedura.scavro.{AvroMetadata, AvroReader, AvroSerializeable}
 
 import example.idl.array.{ArrayIdl => JArrayIdl}
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 final case class ArrayIdl(data: Vector[Int]) extends AvroSerializeable {
   type J = JArrayIdl

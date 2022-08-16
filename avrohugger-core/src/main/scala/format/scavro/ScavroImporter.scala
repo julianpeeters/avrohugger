@@ -17,7 +17,7 @@ import treehugger.forest._
 import definitions._
 import treehuggerDSL._
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 object ScavroImporter extends Importer {
 
@@ -78,7 +78,7 @@ object ScavroImporter extends Importer {
       val hasArrayField: Boolean =
         schemas.map(schema => schema.getType).contains(Schema.Type.ARRAY)
 
-      val convPackage = RootClass.newClass("scala.collection.JavaConverters")
+      val convPackage = RootClass.newClass("scala.jdk.CollectionConverters")
       val javaConvertersImport = IMPORT(convPackage, "_")
 
       if(hasArrayField) Some(javaConvertersImport)

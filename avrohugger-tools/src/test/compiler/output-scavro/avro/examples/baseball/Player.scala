@@ -7,7 +7,7 @@ import org.oedura.scavro.{AvroMetadata, AvroReader, AvroSerializeable}
 
 import avro.examples.baseball.{Nickname => JNickname, Player => JPlayer}
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 final case class Player(number: Int, first_name: String, last_name: String, nicknames: Array[Nickname]) extends AvroSerializeable {
   type J = JPlayer

@@ -18,7 +18,7 @@ import avrohugger.matchers.custom.CustomTypeMatcher
 
 import treehuggerDSL._
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 object SpecificCaseClassTree {
 

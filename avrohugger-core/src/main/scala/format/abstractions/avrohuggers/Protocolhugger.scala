@@ -10,7 +10,7 @@ import org.apache.avro.{ Protocol, Schema }
 
 import treehugger.forest.Tree
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 trait Protocolhugger {
 

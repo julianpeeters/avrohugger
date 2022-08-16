@@ -12,7 +12,7 @@ import org.apache.avro.SchemaParseException
 import org.apache.avro.compiler.idl.Idl
 import org.apache.avro.compiler.idl.ParseException
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import java.nio.charset.Charset
 import java.io.FileNotFoundException
 
@@ -48,7 +48,6 @@ class StringInputParser {
 
     def tryIDL(str: String): List[Either[Schema, Protocol]] = {
       try {
-        println(str)
         val bytes = str.getBytes(Charset.forName("UTF-8"))
         val inStream = new java.io.ByteArrayInputStream(bytes)
         val idlParser = new Idl(inStream)

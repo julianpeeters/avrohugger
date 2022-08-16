@@ -3,7 +3,7 @@ package input
 
 import org.apache.avro.Schema
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 
 object DependencyInspector {

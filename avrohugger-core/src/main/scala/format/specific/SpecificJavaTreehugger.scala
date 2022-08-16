@@ -25,7 +25,7 @@ object SpecificJavaTreehugger extends JavaTreehugger {
     // so write the Java file and read
     val tempDir = createTempDir("avrohugger_specific")
     writeJavaTempFile(schema, tempDir)
-    val tempPath = tempDir + "/" + schema.getFullName.replace('.','/') + ".java"
+    val tempPath = s"$tempDir/${schema.getFullName.replace('.','/')}.java"
     val fileContents = scala.io.Source.fromFile(tempPath)
     val schemaPackage = "package " + schema.getNamespace
     val updatedPackage = namespace match {

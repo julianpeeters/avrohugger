@@ -2,7 +2,7 @@ lazy val avroVersion = "1.11.0"
 
 lazy val commonSettings = Seq(
   organization := "com.julianpeeters",
-  version := "1.1.0",
+  version := "1.1.1-SNAPSHOT",
   ThisBuild / versionScheme := Some("semver-spec"),
   scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature"),
   Test / scalacOptions ++= Seq("-Yrangepos"),
@@ -20,7 +20,7 @@ lazy val commonSettings = Seq(
   }},
   libraryDependencies := { CrossVersion.partialVersion(scalaVersion.value) match {
     case Some((2, scalaMinor)) if scalaMinor < 13 =>
-      libraryDependencies.value ++ Seq("org.scala-lang.modules" %% "scala-collection-compat" % "2.6.0")
+      libraryDependencies.value ++ Seq("org.scala-lang.modules" %% "scala-collection-compat" % "2.8.1")
     case _ =>
       libraryDependencies.value
   }},

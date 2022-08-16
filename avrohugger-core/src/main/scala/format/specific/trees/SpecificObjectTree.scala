@@ -12,7 +12,7 @@ import treehugger.forest._
 import definitions._
 import org.apache.avro.Schema.Type
 import treehuggerDSL._
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import org.apache.avro.LogicalTypes
 import stores._
 import types._
