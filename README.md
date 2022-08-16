@@ -300,50 +300,14 @@ Depends on [Avro](https://github.com/apache/avro) and [Treehugger](https://githu
 
 
 Contributors:
-- [Marius Soutier](https://github.com/mariussoutier)
-- [Paul Pearcy](https://github.com/ppearcy)
-- [Stefano Galarraga](https://github.com/galarragas)
-- [Brian London](https://github.com/BrianLondon)
-- [Matt Allen](https://github.com/Matt343)
-- [Lars Albertsson](https://github.com/lallea)
-- [alancnet](https://github.com/alancnet)
-- [C-zito](https://github.com/C-Zito)
-- [Eugene Platonov](https://github.com/jozic)
-- [Matt Coffin](https://github.com/mcoffin)
-- [Tim Chan](https://github.com/timchan-lumoslabs)
-- [Jerome Wacongne](https://github.com/ch4mpy)
-- [Ryan Koval](http://github.ryankoval.com)
-- [Saket](https://github.com/skate056)
-- [Jon Morra](https://github.com/jon-morra-zefr)
-- [Simonas Gelazevicius](https://github.com/simsasg)
-- [Daniel Davis](https://github.com/wabu)
-- [Raúl Raja Martínez](https://github.com/raulraja)
-- [Paul Snively](https://github.com/PaulAtBanno)
-- [Zach Cox](https://github.com/zcox)
-- [Kaur Matas](https://github.com/kmatasflp)
-- [Marco Stefani](https://github.com/inafets)
-- [Diego E. Alonso Blas](https://github.com/diesalbla)
-- [Chris Albright](https://github.com/chrisalbright)
-- [Andrew Gustafson](https://github.com/agustafson)
-- [Fede Fernández](https://github.com/fedefernandez)
-- [Francisco Díaz](https://github.com/franciscodr)
-- [Kostya Golikov](https://github.com/lazyval)
-- [Rob Landers](https://github.com/withinboredom)
-- [Bobby Rauchenberg](https://github.com/bobbyrauchenberg)
-- [Plínio Pantaleão](https://github.com/plinioj)
-- [Simon Petty](https://github.com/simonpetty)
-- [Leonard Ehrenfried](https://github.com/leonardehrenfried)
-- [Sietse de Kaper](https://github.com/targeter)
-- [Andreas Drobisch](https://github.com/adrobisch)
-- [François Sarradin](https://github.com/fsarradin)
-- [Martin Mauch](https://github.com/nightscape)
-- [natefitzgerald](https://github.com/natefitzgerald)
-- [niqdev](https://github.com/niqdev)
-- [Konstantin](https://github.com/tyger)
-- [Timo Schmid](https://github.com/timo-schmid)
-- [Julien BENOIT](https://github.com/jbenoit2011)
-- [Adam Drakeford](https://github.com/dr4ke616)
-- [mcenkar](https://github.com/mcenkar)
+
+| | | |
+| :---         |     :---      |          :--- |
+| [Marius Soutier](https://github.com/mariussoutier) </br> [Brian London](https://github.com/BrianLondon) </br> [alancnet](https://github.com/alancnet) </br> [Matt Coffin](https://github.com/mcoffin) </br> [Ryan Koval](http://github.ryankoval.com) </br> [Simonas Gelazevicius](https://github.com/simsasg) </br> [Paul Snively](https://github.com/PaulAtBanno) </br> [Marco Stefani](https://github.com/inafets) </br> [Andrew Gustafson](https://github.com/agustafson) </br> [Kostya Golikov](https://github.com/lazyval) </br> [Plínio Pantaleão](https://github.com/plinioj) </br> [Sietse de Kaper](https://github.com/targeter) </br> [Martin Mauch](https://github.com/nightscape) </br> [Konstantin](https://github.com/tyger) </br> [Adam Drakeford](https://github.com/dr4ke616) | [Paul Pearcy](https://github.com/ppearcy) </br> [Matt Allen](https://github.com/Matt343) </br> [C-zito](https://github.com/C-Zito) </br> [Tim Chan](https://github.com/timchan-lumoslabs) </br> [Saket](https://github.com/skate056) </br> [Daniel Davis](https://github.com/wabu) </br> [Zach Cox](https://github.com/zcox) </br> [Diego E. Alonso Blas](https://github.com/diesalbla) </br> [Fede Fernández](https://github.com/fedefernandez) </br> [Rob Landers](https://github.com/withinboredom) </br> [Simon Petty](https://github.com/simonpetty) </br> [Andreas Drobisch](https://github.com/adrobisch) </br> [natefitzgerald](https://github.com/natefitzgerald) </br> [Timo Schmid](https://github.com/timo-schmid) </br> [mcenkar](https://github.com/mcenkar) | [Stefano Galarraga](https://github.com/galarragas) </br> [Lars Albertsson](https://github.com/lallea) </br> [Eugene Platonov](https://github.com/jozic) </br> [Jerome Wacongne](https://github.com/ch4mpy) </br> [Jon Morra](https://github.com/jon-morra-zefr) </br> [Raúl Raja Martínez](https://github.com/raulraja) </br> [Kaur Matas](https://github.com/kmatasflp) </br> [Chris Albright](https://github.com/chrisalbright) </br> [Francisco Díaz](https://github.com/franciscodr) </br> [Bobby Rauchenberg](https://github.com/bobbyrauchenberg) </br> [Leonard Ehrenfried](https://github.com/leonardehrenfried) </br> [François Sarradin](https://github.com/fsarradin) </br> [niqdev](https://github.com/niqdev) </br> [Julien BENOIT](https://github.com/jbenoit2011) </br> [Algimantas Milašius](https://github.com/AlgMi) |
+
+
+
+
 
 ##### Criticism is appreciated.
 
