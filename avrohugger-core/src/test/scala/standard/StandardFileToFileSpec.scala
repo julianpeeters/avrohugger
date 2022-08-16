@@ -49,10 +49,10 @@ class StandardFileToFileSpec extends Specification {
     correctly generate a protocol with no ADT when asked $e27
     correctly generate logical types from schema $e28
     correctly generate logical types from protocol $e29
-    correctly generate logical types with custom date and timestamp types $e31
+    correctly generate logical types with custom date, timestamp and time types $e31
     correctly generate logical types from schema with tagged decimals $e32
     correctly generate logical types from protocol tagged decimals $e33
-    correctly generate logical types with custom date and timestamp types tagged decimals $e35
+    correctly generate logical types with custom date, timestamp and time types tagged decimals $e35
     correctly generate optional logical types from IDL tagged decimals $e36
     correctly generate an either containing logical types from IDL tagged decimals $e37
     correctly generate a coproduct containing logical types from IDL tagged decimals $e38
@@ -466,7 +466,7 @@ class StandardFileToFileSpec extends Specification {
   
   def e31 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/logicalsql.avsc")
-    val avroScalaCustomTypes = Standard.defaultTypes.copy(date = JavaSqlDate, timestampMillis = JavaSqlTimestamp)
+    val avroScalaCustomTypes = Standard.defaultTypes.copy(date = JavaSqlDate, timestampMillis = JavaSqlTimestamp, timeMillis = JavaSqlTime)
     val gen = new Generator(Standard, avroScalaCustomTypes = Some(avroScalaCustomTypes))
     val outDir = gen.defaultOutputDir + "/standard/"
     gen.fileToFile(infile, outDir)
@@ -514,7 +514,8 @@ class StandardFileToFileSpec extends Specification {
 
   def e35 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/logicalsql.avsc")
-    val avroScalaCustomTypes = Standard.defaultTypes.copy(date = JavaSqlDate, timestampMillis = JavaSqlTimestamp, decimal = ScalaBigDecimalWithPrecision(None))
+    val avroScalaCustomTypes = Standard.defaultTypes.copy(date = JavaSqlDate, timestampMillis = JavaSqlTimestamp,
+      decimal = ScalaBigDecimalWithPrecision(None), timeMillis = JavaSqlTime)
     val gen = new Generator(Standard, avroScalaCustomTypes = Some(avroScalaCustomTypes))
     val outDir = gen.defaultOutputDir + "/standard-tagged/"
     gen.fileToFile(infile, outDir)

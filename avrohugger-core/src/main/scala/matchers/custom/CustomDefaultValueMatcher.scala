@@ -20,4 +20,9 @@ object CustomDefaultValueMatcher {
       case JavaTimeInstant   => REF("java.time.Instant.ofEpochMilli") APPLY LIT(value)
     }
 
+  def checkCustomTimeMillisType(value: Long, timeMillisType: AvroScalaTimeMillisType) =
+    timeMillisType match {
+      case JavaSqlTime => NEW("java.sql.Time", LIT(value))
+      case JavaTimeLocalTime => REF("java.time.LocalTime.ofNanoOfDay").APPLY(LIT(value).INFIX("*", LIT(1000000L)))
+    }
 }

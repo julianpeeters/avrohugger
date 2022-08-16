@@ -52,4 +52,10 @@ object CustomDefaultParamMatcher {
         }                
     }
   }
+
+  def checkCustomTimeMillisType(timeMillisType: AvroScalaTimeMillisType) =
+    timeMillisType match {
+      case JavaSqlTime => NEW(REF("java.sql.Time"), LIT(0L))
+      case JavaTimeLocalTime  => REF("java.time.LocalTime.now")
+    }
 }

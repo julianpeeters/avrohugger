@@ -3,8 +3,8 @@ package example.logical.proto
 
 import scala.annotation.switch
 
-final case class Logical(var dec: BigDecimal, var ts: java.time.Instant, var dt: java.time.LocalDate, var uuid: java.util.UUID, var decBig: BigDecimal) extends org.apache.avro.specific.SpecificRecordBase {
-  def this() = this(scala.math.BigDecimal(0), java.time.Instant.now, java.time.LocalDate.now, java.util.UUID.randomUUID, scala.math.BigDecimal(0))
+final case class Logical(var dec: BigDecimal, var ts: java.time.Instant, var dt: java.time.LocalDate, var uuid: java.util.UUID, var decBig: BigDecimal, var time: java.time.LocalTime) extends org.apache.avro.specific.SpecificRecordBase {
+  def this() = this(scala.math.BigDecimal(0), java.time.Instant.now, java.time.LocalDate.now, java.util.UUID.randomUUID, scala.math.BigDecimal(0), java.time.LocalTime.now)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {
@@ -31,6 +31,9 @@ final case class Logical(var dec: BigDecimal, var ts: java.time.Instant, var dt:
         val scaledValue = decBig.setScale(scale)
         val bigDecimal = scaledValue.bigDecimal
         Logical.decimalConversion.toBytes(bigDecimal, schema, decimalType)
+      }.asInstanceOf[AnyRef]
+      case 5 => {
+        time.get(java.time.temporal.ChronoField.MILLI_OF_DAY)
       }.asInstanceOf[AnyRef]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
     }
@@ -76,6 +79,13 @@ final case class Logical(var dec: BigDecimal, var ts: java.time.Instant, var dt:
           }
         }
       }.asInstanceOf[BigDecimal]
+      case 5 => this.time = {
+        value match {
+          case (i: Integer) => {
+            java.time.LocalTime.ofNanoOfDay(i * 1000000L)
+          }
+        }
+      }.asInstanceOf[java.time.LocalTime]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
@@ -84,6 +94,6 @@ final case class Logical(var dec: BigDecimal, var ts: java.time.Instant, var dt:
 }
 
 object Logical {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Logical\",\"namespace\":\"example.logical.proto\",\"fields\":[{\"name\":\"dec\",\"type\":{\"type\":\"bytes\",\"logicalType\":\"decimal\",\"precision\":9,\"scale\":2},\"logicalType\":\"decimal\",\"precision\":9,\"scale\":2},{\"name\":\"ts\",\"type\":{\"type\":\"long\",\"logicalType\":\"timestamp-millis\"}},{\"name\":\"dt\",\"type\":{\"type\":\"int\",\"logicalType\":\"date\"}},{\"name\":\"uuid\",\"type\":{\"type\":\"string\",\"logicalType\":\"uuid\"}},{\"name\":\"decBig\",\"type\":{\"type\":\"bytes\",\"logicalType\":\"decimal\",\"precision\":20,\"scale\":12},\"logicalType\":\"decimal\",\"precision\":20,\"scale\":12}]}")
+  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Logical\",\"namespace\":\"example.logical.proto\",\"fields\":[{\"name\":\"dec\",\"type\":{\"type\":\"bytes\",\"logicalType\":\"decimal\",\"precision\":9,\"scale\":2},\"logicalType\":\"decimal\",\"precision\":9,\"scale\":2},{\"name\":\"ts\",\"type\":{\"type\":\"long\",\"logicalType\":\"timestamp-millis\"}},{\"name\":\"dt\",\"type\":{\"type\":\"int\",\"logicalType\":\"date\"}},{\"name\":\"uuid\",\"type\":{\"type\":\"string\",\"logicalType\":\"uuid\"}},{\"name\":\"decBig\",\"type\":{\"type\":\"bytes\",\"logicalType\":\"decimal\",\"precision\":20,\"scale\":12},\"logicalType\":\"decimal\",\"precision\":20,\"scale\":12},{\"name\":\"time\",\"type\":{\"type\":\"int\",\"logicalType\":\"time-millis\"}}]}")
   val decimalConversion = new org.apache.avro.Conversions.DecimalConversion
 }

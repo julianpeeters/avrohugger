@@ -30,6 +30,10 @@ object DefaultParamMatcher {
           case Date =>
             CustomDefaultParamMatcher.checkCustomDateType(
               typeMatcher.avroScalaTypes.date)
+          case TimeMillis =>
+            CustomDefaultParamMatcher.checkCustomTimeMillisType(
+              typeMatcher.avroScalaTypes.timeMillis
+            )
         }
       case Type.LONG    =>
         LogicalType.foldLogicalTypes[Tree](
