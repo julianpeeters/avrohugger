@@ -7,7 +7,7 @@ import org.oedura.scavro.{AvroMetadata, AvroReader, AvroSerializeable}
 
 import example.idl.{DefaultTest => JDefaultTest, Embedded => JEmbedded}
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 sealed trait Defaults extends AvroSerializeable with Product with Serializable
 

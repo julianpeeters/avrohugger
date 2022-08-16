@@ -73,7 +73,7 @@ class ScalaConverter(typeMatcher: TypeMatcher) {
         val JavaMap = RootClass.newClass("java.util.Map[_,_]")
         val resultExpr = {
           BLOCK(
-            REF("scala.collection.JavaConverters.mapAsScalaMapConverter")
+            REF("scala.jdk.CollectionConverters.mapAsScalaMapConverter")
             .APPLY(REF("map"))
             .DOT("asScala")
             .DOT("toMap")

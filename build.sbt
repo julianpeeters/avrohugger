@@ -20,7 +20,7 @@ lazy val commonSettings = Seq(
   }},
   libraryDependencies := { CrossVersion.partialVersion(scalaVersion.value) match {
     case Some((2, scalaMinor)) if scalaMinor < 13 =>
-      libraryDependencies.value ++ Seq("org.scala-lang.modules" %% "scala-collection-compat" % "2.6.0")
+      libraryDependencies.value ++ Seq("org.scala-lang.modules" %% "scala-collection-compat" % "2.8.1")
     case _ =>
       libraryDependencies.value
   }},
