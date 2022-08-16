@@ -48,7 +48,6 @@ class StringInputParser {
 
     def tryIDL(str: String): List[Either[Schema, Protocol]] = {
       try {
-        println(str)
         val bytes = str.getBytes(Charset.forName("UTF-8"))
         val inStream = new java.io.ByteArrayInputStream(bytes)
         val idlParser = new Idl(inStream)

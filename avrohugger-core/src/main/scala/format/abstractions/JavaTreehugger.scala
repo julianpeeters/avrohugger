@@ -28,7 +28,7 @@ trait JavaTreehugger {
     outDir: File): Unit = {
     // Uses Avro's SpecificCompiler, which only compiles from files, thus we
     // write the schema to a temp file so we can compile a Java enum from it.
-    val tempSchemaFile = File.createTempFile(outDir + "/" + schema.getName, ".avsc")
+    val tempSchemaFile = File.createTempFile(s"$outDir/${schema.getName}", ".avsc")
     tempSchemaFile.deleteOnExit()
     val out = new BufferedWriter(new FileWriter(tempSchemaFile))
     out.write(schema.toString)
