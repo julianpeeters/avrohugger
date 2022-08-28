@@ -49,15 +49,13 @@ object ScalaConverter {
   def checkCustomArrayType(
     arrayType: AvroScalaArrayType,
     elementType: Type,
-    seqArgs: Typed,
-    defaultConversion: Tree) = {
+    asScalaTree: Tree): Tree = {
     val classTagIdent = REF(s"scala.reflect.ClassTag(classOf[$elementType])")
-    val arrayConversion = ARRAY(seqArgs).APPLY(classTagIdent).AS(TYPE_ARRAY(elementType))
     arrayType match {
-      case ScalaArray  => arrayConversion
-      case ScalaList   => LIST(seqArgs)
-      case ScalaSeq    => SEQ(seqArgs)
-      case ScalaVector => VECTOR(seqArgs)
+      case ScalaArray  => asScalaTree.DOT("toArray").APPLY(classTagIdent).AS(TYPE_ARRAY(elementType))
+      case ScalaList   => asScalaTree.DOT("toList")
+      case ScalaSeq    => asScalaTree.DOT("toSeq")
+      case ScalaVector => asScalaTree.DOT("toVector")
     }
   }
 
@@ -90,15 +88,13 @@ object ScalaConverter {
           typeMatcher,
           classSymbol,
           targetScalaPartialVersion)
-        val seqArgs = {
-          SEQARG(
-            REF(asScalaIteratorConverter(targetScalaPartialVersion)).APPLY(applyParam).DOT("asScala").DOT("toSeq")
-              .MAP(LAMBDA(PARAM("x")) ==> BLOCK(elementConversion))
-          )
+        val asScalaTree: Tree = {
+            REF(asScalaIteratorConverter(targetScalaPartialVersion)).APPLY(applyParam).DOT("asScala")
+              .DOT("map").APPLY(LAMBDA(PARAM("x")) ==> BLOCK(elementConversion))
         }
         val arrayType = typeMatcher.avroScalaTypes.array
         val resultExpr = BLOCK(
-          checkCustomArrayType(arrayType, elementType, seqArgs, LIST(seqArgs))
+          checkCustomArrayType(arrayType, elementType, asScalaTree)
         )
         val arrayConversion = CASE(ID("array") withType(JavaList)) ==> resultExpr
         val errorMessage = INTERP("s", LIT(s"expected array with type $JavaList, found "), LIT("array"))

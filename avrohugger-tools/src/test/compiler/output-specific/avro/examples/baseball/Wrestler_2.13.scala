@@ -40,9 +40,9 @@ final case class Wrestler(var number: Int, var first_name: String, var last_name
       case 3 => this.nicknames = {
         value match {
           case (array: java.util.List[_]) => {
-            Seq((scala.jdk.CollectionConverters.IteratorHasAsScala(array.iterator).asScala.toSeq map { x =>
+            scala.jdk.CollectionConverters.IteratorHasAsScala(array.iterator).asScala.map({ x =>
               x
-            }: _*))
+            }).toSeq
           }
         }
       }.asInstanceOf[Seq[Mascot]]

@@ -116,9 +116,9 @@ final case class DefaultTest(var suit: DefaultEnum = DefaultEnum.SPADES, var num
       case 6 => this.defaultArray = {
         value match {
           case (array: java.util.List[_]) => {
-            Seq((scala.collection.JavaConverters.asScalaIteratorConverter(array.iterator).asScala.toSeq map { x =>
+            scala.collection.JavaConverters.asScalaIteratorConverter(array.iterator).asScala.map({ x =>
               x
-            }: _*))
+            }).toSeq
           }
         }
       }.asInstanceOf[Seq[Int]]

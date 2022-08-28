@@ -22,9 +22,9 @@ final case class ArrayIdl(var data: List[Int]) extends org.apache.avro.specific.
       case 0 => this.data = {
         value match {
           case (array: java.util.List[_]) => {
-            List((scala.collection.JavaConverters.asScalaIteratorConverter(array.iterator).asScala.toSeq map { x =>
+            scala.collection.JavaConverters.asScalaIteratorConverter(array.iterator).asScala.map({ x =>
               x
-            }: _*))
+            }).toList
           }
         }
       }.asInstanceOf[List[Int]]
