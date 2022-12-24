@@ -65,7 +65,13 @@ object DefaultParamMatcher {
           schema = avroSchema,
           default = ArrayClass.APPLY())
       case Type.RECORD  => NEW(classStore.generatedClasses(avroSchema))
-      case Type.UNION   => NONE
+      case Type.UNION   =>
+        if (avroSchema.isNullable) NONE
+        else {typeMatcher.avroScalaTypes.union match {
+          case OptionEitherShapelessCoproduct => LEFT(asDefaultParam(classStore, avroSchema.getTypes().get(0), typeMatcher))
+          case OptionShapelessCoproduct => ???
+          case OptionalShapelessCoproduct => ???
+        }}
       case Type.ARRAY   =>
         CustomDefaultParamMatcher.checkCustomArrayType(typeMatcher.avroScalaTypes.array) DOT "empty"
       case Type.MAP     =>

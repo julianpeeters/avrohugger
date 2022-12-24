@@ -40,33 +40,28 @@ object JavaConverter {
     targetScalaPartialVersion: String): Tree = schema.getType match {
     case Schema.Type.UNION => {
       val types = schema.getTypes().asScala
-      // check if it's the kind of union that we support (i.e. nullable fields)
-      if (types.length != 2 ||
-         !types.map(x => x.getType).contains(Schema.Type.NULL) ||
-          types.filterNot(x => x.getType == Schema.Type.NULL).length != 1) {
-        sys.error("Unions beyond nullable fields are not supported")
-      }
-      else {
-        val maybeType = types.find(x => x.getType != Schema.Type.NULL)
-        if (maybeType.isDefined) {
+      val hasNull = types.exists(_.getType == Schema.Type.NULL)
+      val typeParamSchemas = types.filterNot(_.getType == Schema.Type.NULL)
+      if (hasNull) {
         val conversionCases = List(
           CASE(SOME(ID("x"))) ==> {
             convertToJava(
-              maybeType.get,
+              typeParamSchemas.head,
               schemaAccessor,
               true,
               REF("x"),
               classSymbol,
               typeMatcher,
-              targetScalaPartialVersion)
+              targetScalaPartialVersion
+            )
           },
-          CASE(NONE)          ==> {
+          CASE(NONE) ==> {
             NULL
           }
         )
-        tree MATCH(conversionCases:_*)
-        }
-        else sys.error("There was no type in this union")
+        tree MATCH (conversionCases: _*)
+      } else {
+        tree
       }
     }
     case Schema.Type.ARRAY => {

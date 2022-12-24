@@ -1,0 +1,39 @@
+@namespace("example.idl")
+protocol WithShapelessCoproduct {
+
+  record Event1 {
+  }
+
+  record Event2 {
+  }
+
+  record Event3 {
+  }
+
+  record Event4 {
+  }
+
+  record ShouldRenderAsOption {
+    union { null, Event1 } value;
+  }
+
+  record ShouldRenderAsOption2 {
+    union { Event1, null } value;
+  }
+
+  record ShouldRenderAsOptionEither {
+    union { null, Event1, Event2 } value;
+  }
+
+  record ShouldRenderAsOptionEither2 {
+    union { Event1, null, Event2 } value;
+  }
+
+  record ShouldRenderAsOptionEither3 {
+    union { Event1, Event2, null } value;
+  }
+
+  record ShouldRenderAsEither {
+    union { Event1, Event2 } value;
+  }
+}

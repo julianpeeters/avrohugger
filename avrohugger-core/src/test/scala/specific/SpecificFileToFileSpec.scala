@@ -33,7 +33,7 @@ class SpecificFileToFileSpec extends Specification {
       correctly generate an empty case class definition $e15
       correctly generate default values $e16
 
-
+      correctly generate union values with shapeless Coproduct $e18
 
 
       correctly generate a protocol with no ADT when asked $e21
@@ -269,6 +269,18 @@ class SpecificFileToFileSpec extends Specification {
 
     sourceRecord === util.Util.readFile("avrohugger-core/src/test/expected/specific/example/idl/Defaults.scala")
     sourceEnum === util.Util.readFile("avrohugger-core/src/test/expected/specific/example/idl/DefaultEnum.java")
+  }
+
+  def e18 = {
+    val infile = new java.io.File("avrohugger-core/src/test/avro/unions_with_coproduct_small.avdl")
+    val gen = new Generator(SpecificRecord)
+    val outDir = gen.defaultOutputDir + "/specific/"
+    gen.fileToFile(infile, outDir)
+
+    val source = util.Util.readFile("target/generated-sources/specific/example/idl/WithShapelessCoproduct.scala")
+
+    import com.softwaremill.diffx.specs2.DiffMatcher._
+    source must matchTo(util.Util.readFile("avrohugger-core/src/test/expected/specific/example/idl/WithShapelessCoproduct.scala"))
   }
 
   def e21 = {
