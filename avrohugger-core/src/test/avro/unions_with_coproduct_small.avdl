@@ -33,6 +33,18 @@ protocol WithShapelessCoproduct {
     union { Event1, Event2, null } value;
   }
 
+  record ShouldRenderAsOptionCoproduct {
+    union { null, Event1, Event2, Event3 } value;
+  }
+
+  record ShouldRenderAsOptionCoproduct2 {
+    union { Event1, Event2, Event3, null } value;
+  }
+
+  record ShouldRenderAsOptionCoproduct3 {
+    union { Event1, Event2, null, Event3 } value;
+  }
+
   record ShouldRenderAsEither {
     union { Event1, Event2 } value;
   }
