@@ -272,7 +272,7 @@ class SpecificFileToFileSpec extends Specification {
   }
 
   def e18 = {
-    val infile = new java.io.File("avrohugger-core/src/test/avro/unions_with_coproduct_small.avdl")
+    val infile = new java.io.File("avrohugger-core/src/test/avro/unions_with_coproduct.avdl")
     val gen = new Generator(SpecificRecord)
     val outDir = gen.defaultOutputDir + "/specific/"
     gen.fileToFile(infile, outDir)
@@ -280,7 +280,7 @@ class SpecificFileToFileSpec extends Specification {
     val source = util.Util.readFile("target/generated-sources/specific/example/idl/WithShapelessCoproduct.scala")
 
     import com.softwaremill.diffx.specs2.DiffMatcher._
-    source must matchTo(util.Util.readFile("avrohugger-core/src/test/expected/specific/example/idl/WithShapelessCoproduct.scala"))
+    source === util.Util.readFile("avrohugger-core/src/test/expected/specific/example/idl/WithShapelessCoproduct.scala")
   }
 
   def e21 = {

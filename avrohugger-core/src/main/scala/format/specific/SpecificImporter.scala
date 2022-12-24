@@ -121,8 +121,8 @@ object SpecificImporter extends Importer {
         (unionTypes.length > maxNonNullTypes     && !unionTypes.exists(unionContainsNull)) ||
         (unionTypes.length > maxNonNullTypes + 1 &&  unionTypes.exists(unionContainsNull))
       def defaultValueTest(field: Schema.Field, unionTypes: List[Schema], maxNonNullTypes: Int) =
-        (unionTypes.length > maxNonNullTypes     && !unionTypes.exists(unionContainsNull) && field.hasDefaultValue) ||
-        (unionTypes.length > maxNonNullTypes + 1 &&  unionTypes.exists(unionContainsNull) && field.hasDefaultValue)
+        (unionTypes.length > maxNonNullTypes + 1 && !unionTypes.exists(unionContainsNull)) ||
+        (unionTypes.length > maxNonNullTypes + 2 &&  unionTypes.exists(unionContainsNull))
       val unionTypes = unionSchema.getTypes().asScala.toList
       val isShapelessCoproduct: Boolean = shapelessCoproductTest(unionTypes, thresholdNonNullTypes)
       val hasDefaultValue: Boolean = defaultValueTest(field, unionTypes, thresholdNonNullTypes)

@@ -2,7 +2,7 @@ lazy val avroVersion = "1.11.1"
 
 lazy val commonSettings = Seq(
   organization := "com.julianpeeters",
-  version := "1.2.1",
+  version := "1.2.1-SNAPSHOT",
   ThisBuild / versionScheme := Some("semver-spec"),
   scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature"),
   Test / scalacOptions ++= Seq("-Yrangepos"),
@@ -63,7 +63,6 @@ lazy val `avrohugger-core` = (project in file("avrohugger-core"))
   .settings(
     commonSettings,
     libraryDependencies += "com.eed3si9n" %% "treehugger" % "0.4.4",
-    libraryDependencies += "com.softwaremill.diffx" %% "diffx-specs2" % "0.8.2" % Test,
     Compile / sourceGenerators += addScalaVersionFile.taskValue
   )
 

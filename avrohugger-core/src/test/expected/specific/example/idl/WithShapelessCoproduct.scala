@@ -3,7 +3,7 @@ package example.idl
 
 import scala.annotation.switch
 
-import shapeless.{:+:, CNil}
+import shapeless.{:+:, CNil, Coproduct}
 
 case class Event1() extends org.apache.avro.specific.SpecificRecordBase {
   def get(field$: Int): AnyRef = {
@@ -361,4 +361,56 @@ final case class ShouldRenderAsEither(var value: Either[Event1, Event2]) extends
 
 object ShouldRenderAsEither {
   val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"ShouldRenderAsEither\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"value\",\"type\":[{\"type\":\"record\",\"name\":\"Event1\",\"fields\":[]},{\"type\":\"record\",\"name\":\"Event2\",\"fields\":[]}]}]}")
+}
+
+final case class ShouldRenderAsCoproduct(var value: Event1 :+: Event2 :+: Event3 :+: Event4 :+: CNil) extends org.apache.avro.specific.SpecificRecordBase {
+  def this() = this(Coproduct[Event1 :+: Event2 :+: Event3 :+: Event4 :+: CNil](new Event1))
+  def get(field$: Int): AnyRef = {
+    (field$: @switch) match {
+      case 0 => {
+        value
+      }.asInstanceOf[AnyRef]
+      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+    }
+  }
+  def put(field$: Int, value: Any): Unit = {
+    (field$: @switch) match {
+      case 0 => this.value = {
+        value
+      }.asInstanceOf[Event1 :+: Event2 :+: Event3 :+: Event4 :+: CNil]
+      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+    }
+    ()
+  }
+  def getSchema: org.apache.avro.Schema = ShouldRenderAsCoproduct.SCHEMA$
+}
+
+object ShouldRenderAsCoproduct {
+  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"ShouldRenderAsCoproduct\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"value\",\"type\":[{\"type\":\"record\",\"name\":\"Event1\",\"fields\":[]},{\"type\":\"record\",\"name\":\"Event2\",\"fields\":[]},{\"type\":\"record\",\"name\":\"Event3\",\"fields\":[]},{\"type\":\"record\",\"name\":\"Event4\",\"fields\":[]}]}]}")
+}
+
+final case class ShouldRenderAsCoproduct2(var value: Event1 :+: Event2 :+: Event3 :+: Event4 :+: CNil) extends org.apache.avro.specific.SpecificRecordBase {
+  def this() = this(Coproduct[Event1 :+: Event2 :+: Event3 :+: Event4 :+: CNil](new Event1))
+  def get(field$: Int): AnyRef = {
+    (field$: @switch) match {
+      case 0 => {
+        value
+      }.asInstanceOf[AnyRef]
+      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+    }
+  }
+  def put(field$: Int, value: Any): Unit = {
+    (field$: @switch) match {
+      case 0 => this.value = {
+        value
+      }.asInstanceOf[Event1 :+: Event2 :+: Event3 :+: Event4 :+: CNil]
+      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+    }
+    ()
+  }
+  def getSchema: org.apache.avro.Schema = ShouldRenderAsCoproduct2.SCHEMA$
+}
+
+object ShouldRenderAsCoproduct2 {
+  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"ShouldRenderAsCoproduct2\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"value\",\"type\":[{\"type\":\"record\",\"name\":\"Event1\",\"fields\":[]},{\"type\":\"record\",\"name\":\"Event2\",\"fields\":[]},{\"type\":\"record\",\"name\":\"Event3\",\"fields\":[]},{\"type\":\"record\",\"name\":\"Event4\",\"fields\":[]}]}]}")
 }
