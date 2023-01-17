@@ -3,8 +3,8 @@ package example.idl
 
 import scala.annotation.switch
 
-final case class Names(var `protected`: String, var `ends_with_`: String) extends org.apache.avro.specific.SpecificRecordBase {
-  def this() = this("", "")
+final case class Names(var `protected`: String, var `ends_with_`: String, var `unit`: String) extends org.apache.avro.specific.SpecificRecordBase {
+  def this() = this("", "", "")
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {
@@ -12,6 +12,9 @@ final case class Names(var `protected`: String, var `ends_with_`: String) extend
       }.asInstanceOf[AnyRef]
       case 1 => {
         `ends_with_`
+      }.asInstanceOf[AnyRef]
+      case 2 => {
+        `unit`
       }.asInstanceOf[AnyRef]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
     }
@@ -24,6 +27,9 @@ final case class Names(var `protected`: String, var `ends_with_`: String) extend
       case 1 => this.`ends_with_` = {
         value.toString
       }.asInstanceOf[String]
+      case 2 => this.`unit` = {
+        value.toString
+      }.asInstanceOf[String]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
@@ -32,5 +38,5 @@ final case class Names(var `protected`: String, var `ends_with_`: String) extend
 }
 
 object Names {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Names\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"protected\",\"type\":\"string\"},{\"name\":\"ends_with_\",\"type\":\"string\"}]}")
+  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Names\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"protected\",\"type\":\"string\"},{\"name\":\"ends_with_\",\"type\":\"string\"},{\"name\":\"unit\",\"type\":\"string\"}]}")
 }

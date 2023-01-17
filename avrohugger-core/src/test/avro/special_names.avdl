@@ -4,5 +4,6 @@ protocol SpecialNames {
   record Names {
     string `protected`;
     string `ends_with_`;
+    string `unit`;
   }
 }

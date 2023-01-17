@@ -7,10 +7,10 @@ import org.oedura.scavro.{AvroMetadata, AvroReader, AvroSerializeable}
 
 import example.idl.{Names => JNames}
 
-final case class Names(`protected`: String, `ends_with_`: String) extends AvroSerializeable {
+final case class Names(`protected`: String, `ends_with_`: String, `unit`: String) extends AvroSerializeable {
   type J = JNames
   override def toAvro: JNames = {
-    new JNames(`protected`, `ends_with_`)
+    new JNames(`protected`, `ends_with_`, `unit`)
   }
 }
 
@@ -22,7 +22,7 @@ object Names {
     override val avroClass: Class[JNames] = classOf[JNames]
     override val schema: Schema = JNames.getClassSchema()
     override val fromAvro: (JNames) => Names = {
-      (j: JNames) => Names(j.getProtected$.toString, j.getEndsWith.toString)
+      (j: JNames) => Names(j.getProtected$.toString, j.getEndsWith.toString, j.getUnit.toString)
     }
   }
 }
