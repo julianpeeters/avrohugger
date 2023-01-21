@@ -166,31 +166,28 @@ object ScalaConverter {
         val bufferConversion = CASE(ID("buffer") withType (JavaBuffer)) ==> resultExpr
         tree MATCH bufferConversion
       }
-      case Schema.Type.UNION  => {
+      case Schema.Type.UNION => {
         val types = schema.getTypes().asScala.toList
-        // check if it's the kind of union that we support (i.e. nullable fields)
-        if (types.length != 2 ||
-           !types.map(x => x.getType).contains(Schema.Type.NULL) ||
-            types.filterNot(x => x.getType == Schema.Type.NULL).length != 1) {
-              sys.error("Unions beyond nullable fields are not supported")
-        }
-        // the union represents a nullable field, the kind of union supported in avrohugger
-        else {
-          val typeParamSchema = types.find(x => x.getType != Schema.Type.NULL).get
+        val hasNull = types.exists(_.getType == Schema.Type.NULL)
+        val typeParamSchemas = types.filterNot(_.getType == Schema.Type.NULL)
+        val expr = convertFromJava(
+          classStore,
+          namespace,
+          typeParamSchemas.head,
+          schemaAccessor,
+          true,
+          tree,
+          typeMatcher,
+          classSymbol,
+          targetScalaPartialVersion
+        )
+        if (hasNull) {
           val nullConversion = CASE(NULL) ==> NONE
-          val someExpr = SOME(convertFromJava(
-            classStore,
-            namespace,
-            typeParamSchema,
-            schemaAccessor,
-            true,
-            tree,
-            typeMatcher,
-            classSymbol,
-            targetScalaPartialVersion))
-          val someConversion = CASE(WILDCARD) ==> someExpr
+          val someConversion = CASE(WILDCARD) ==> SOME(expr)
           val conversionCases = List(nullConversion, someConversion)
-          tree MATCH(conversionCases:_*)
+          tree MATCH (conversionCases: _*)
+        } else {
+          tree
         }
       }
       case Schema.Type.ENUM => {
