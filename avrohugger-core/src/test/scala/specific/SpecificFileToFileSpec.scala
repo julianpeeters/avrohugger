@@ -279,7 +279,6 @@ class SpecificFileToFileSpec extends Specification {
 
     val source = util.Util.readFile("target/generated-sources/specific/example/idl/WithShapelessCoproduct.scala")
 
-    import com.softwaremill.diffx.specs2.DiffMatcher._
     source === util.Util.readFile("avrohugger-core/src/test/expected/specific/example/idl/WithShapelessCoproduct.scala")
   }
 
