@@ -81,7 +81,7 @@ object Event4 {
   val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Event4\",\"namespace\":\"example.idl\",\"fields\":[]}")
 }
 
-final case class ShouldRenderAsOption(var value: Option[Event1]) extends org.apache.avro.specific.SpecificRecordBase {
+final case class ShouldRenderAsOption(var value: Option[example.idl.Event1]) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this(None)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
@@ -101,7 +101,7 @@ final case class ShouldRenderAsOption(var value: Option[Event1]) extends org.apa
           case null => None
           case _ => Some(value)
         }
-      }.asInstanceOf[Option[Event1]]
+      }.asInstanceOf[Option[example.idl.Event1]]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
@@ -113,7 +113,7 @@ object ShouldRenderAsOption {
   val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"ShouldRenderAsOption\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"value\",\"type\":[\"null\",{\"type\":\"record\",\"name\":\"Event1\",\"fields\":[]}]}]}")
 }
 
-final case class ShouldRenderAsOption2(var value: Option[Event1]) extends org.apache.avro.specific.SpecificRecordBase {
+final case class ShouldRenderAsOption2(var value: Option[example.idl.Event1]) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this(None)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
@@ -133,7 +133,7 @@ final case class ShouldRenderAsOption2(var value: Option[Event1]) extends org.ap
           case null => None
           case _ => Some(value)
         }
-      }.asInstanceOf[Option[Event1]]
+      }.asInstanceOf[Option[example.idl.Event1]]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
@@ -145,7 +145,7 @@ object ShouldRenderAsOption2 {
   val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"ShouldRenderAsOption2\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"value\",\"type\":[{\"type\":\"record\",\"name\":\"Event1\",\"fields\":[]},\"null\"]}]}")
 }
 
-final case class ShouldRenderAsOptionEither(var value: Option[Either[Event1, Event2]]) extends org.apache.avro.specific.SpecificRecordBase {
+final case class ShouldRenderAsOptionEither(var value: Option[Either[example.idl.Event1, example.idl.Event2]]) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this(None)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
@@ -165,7 +165,7 @@ final case class ShouldRenderAsOptionEither(var value: Option[Either[Event1, Eve
           case null => None
           case _ => Some(value)
         }
-      }.asInstanceOf[Option[Either[Event1, Event2]]]
+      }.asInstanceOf[Option[Either[example.idl.Event1, example.idl.Event2]]]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
@@ -177,7 +177,7 @@ object ShouldRenderAsOptionEither {
   val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"ShouldRenderAsOptionEither\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"value\",\"type\":[\"null\",{\"type\":\"record\",\"name\":\"Event1\",\"fields\":[]},{\"type\":\"record\",\"name\":\"Event2\",\"fields\":[]}]}]}")
 }
 
-final case class ShouldRenderAsOptionEither2(var value: Option[Either[Event1, Event2]]) extends org.apache.avro.specific.SpecificRecordBase {
+final case class ShouldRenderAsOptionEither2(var value: Option[Either[example.idl.Event1, example.idl.Event2]]) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this(None)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
@@ -197,7 +197,7 @@ final case class ShouldRenderAsOptionEither2(var value: Option[Either[Event1, Ev
           case null => None
           case _ => Some(value)
         }
-      }.asInstanceOf[Option[Either[Event1, Event2]]]
+      }.asInstanceOf[Option[Either[example.idl.Event1, example.idl.Event2]]]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
@@ -209,7 +209,7 @@ object ShouldRenderAsOptionEither2 {
   val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"ShouldRenderAsOptionEither2\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"value\",\"type\":[{\"type\":\"record\",\"name\":\"Event1\",\"fields\":[]},\"null\",{\"type\":\"record\",\"name\":\"Event2\",\"fields\":[]}]}]}")
 }
 
-final case class ShouldRenderAsOptionEither3(var value: Option[Either[Event1, Event2]]) extends org.apache.avro.specific.SpecificRecordBase {
+final case class ShouldRenderAsOptionEither3(var value: Option[Either[example.idl.Event1, example.idl.Event2]]) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this(None)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
@@ -229,7 +229,7 @@ final case class ShouldRenderAsOptionEither3(var value: Option[Either[Event1, Ev
           case null => None
           case _ => Some(value)
         }
-      }.asInstanceOf[Option[Either[Event1, Event2]]]
+      }.asInstanceOf[Option[Either[example.idl.Event1, example.idl.Event2]]]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
@@ -241,7 +241,7 @@ object ShouldRenderAsOptionEither3 {
   val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"ShouldRenderAsOptionEither3\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"value\",\"type\":[{\"type\":\"record\",\"name\":\"Event1\",\"fields\":[]},{\"type\":\"record\",\"name\":\"Event2\",\"fields\":[]},\"null\"]}]}")
 }
 
-final case class ShouldRenderAsOptionCoproduct(var value: Option[Event1 :+: Event2 :+: Event3 :+: CNil]) extends org.apache.avro.specific.SpecificRecordBase {
+final case class ShouldRenderAsOptionCoproduct(var value: Option[example.idl.Event1 :+: example.idl.Event2 :+: example.idl.Event3 :+: CNil]) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this(None)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
@@ -261,7 +261,7 @@ final case class ShouldRenderAsOptionCoproduct(var value: Option[Event1 :+: Even
           case null => None
           case _ => Some(value)
         }
-      }.asInstanceOf[Option[Event1 :+: Event2 :+: Event3 :+: CNil]]
+      }.asInstanceOf[Option[example.idl.Event1 :+: example.idl.Event2 :+: example.idl.Event3 :+: CNil]]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
@@ -273,7 +273,7 @@ object ShouldRenderAsOptionCoproduct {
   val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"ShouldRenderAsOptionCoproduct\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"value\",\"type\":[\"null\",{\"type\":\"record\",\"name\":\"Event1\",\"fields\":[]},{\"type\":\"record\",\"name\":\"Event2\",\"fields\":[]},{\"type\":\"record\",\"name\":\"Event3\",\"fields\":[]}]}]}")
 }
 
-final case class ShouldRenderAsOptionCoproduct2(var value: Option[Event1 :+: Event2 :+: Event3 :+: CNil]) extends org.apache.avro.specific.SpecificRecordBase {
+final case class ShouldRenderAsOptionCoproduct2(var value: Option[example.idl.Event1 :+: example.idl.Event2 :+: example.idl.Event3 :+: CNil]) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this(None)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
@@ -293,7 +293,7 @@ final case class ShouldRenderAsOptionCoproduct2(var value: Option[Event1 :+: Eve
           case null => None
           case _ => Some(value)
         }
-      }.asInstanceOf[Option[Event1 :+: Event2 :+: Event3 :+: CNil]]
+      }.asInstanceOf[Option[example.idl.Event1 :+: example.idl.Event2 :+: example.idl.Event3 :+: CNil]]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
@@ -305,7 +305,7 @@ object ShouldRenderAsOptionCoproduct2 {
   val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"ShouldRenderAsOptionCoproduct2\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"value\",\"type\":[{\"type\":\"record\",\"name\":\"Event1\",\"fields\":[]},{\"type\":\"record\",\"name\":\"Event2\",\"fields\":[]},{\"type\":\"record\",\"name\":\"Event3\",\"fields\":[]},\"null\"]}]}")
 }
 
-final case class ShouldRenderAsOptionCoproduct3(var value: Option[Event1 :+: Event2 :+: Event3 :+: CNil]) extends org.apache.avro.specific.SpecificRecordBase {
+final case class ShouldRenderAsOptionCoproduct3(var value: Option[example.idl.Event1 :+: example.idl.Event2 :+: example.idl.Event3 :+: CNil]) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this(None)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
@@ -325,7 +325,7 @@ final case class ShouldRenderAsOptionCoproduct3(var value: Option[Event1 :+: Eve
           case null => None
           case _ => Some(value)
         }
-      }.asInstanceOf[Option[Event1 :+: Event2 :+: Event3 :+: CNil]]
+      }.asInstanceOf[Option[example.idl.Event1 :+: example.idl.Event2 :+: example.idl.Event3 :+: CNil]]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
@@ -337,7 +337,7 @@ object ShouldRenderAsOptionCoproduct3 {
   val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"ShouldRenderAsOptionCoproduct3\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"value\",\"type\":[{\"type\":\"record\",\"name\":\"Event1\",\"fields\":[]},{\"type\":\"record\",\"name\":\"Event2\",\"fields\":[]},\"null\",{\"type\":\"record\",\"name\":\"Event3\",\"fields\":[]}]}]}")
 }
 
-final case class ShouldRenderAsEither(var value: Either[Event1, Event2]) extends org.apache.avro.specific.SpecificRecordBase {
+final case class ShouldRenderAsEither(var value: Either[example.idl.Event1, example.idl.Event2]) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this(Left(new Event1))
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
@@ -351,7 +351,7 @@ final case class ShouldRenderAsEither(var value: Either[Event1, Event2]) extends
     (field$: @switch) match {
       case 0 => this.value = {
         value
-      }.asInstanceOf[Either[Event1, Event2]]
+      }.asInstanceOf[Either[example.idl.Event1, example.idl.Event2]]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
@@ -363,7 +363,7 @@ object ShouldRenderAsEither {
   val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"ShouldRenderAsEither\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"value\",\"type\":[{\"type\":\"record\",\"name\":\"Event1\",\"fields\":[]},{\"type\":\"record\",\"name\":\"Event2\",\"fields\":[]}]}]}")
 }
 
-final case class ShouldRenderAsCoproduct(var value: Event1 :+: Event2 :+: Event3 :+: Event4 :+: CNil) extends org.apache.avro.specific.SpecificRecordBase {
+final case class ShouldRenderAsCoproduct(var value: example.idl.Event1 :+: example.idl.Event2 :+: example.idl.Event3 :+: example.idl.Event4 :+: CNil) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this(Coproduct[Event1 :+: Event2 :+: Event3 :+: Event4 :+: CNil](new Event1))
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
@@ -377,7 +377,7 @@ final case class ShouldRenderAsCoproduct(var value: Event1 :+: Event2 :+: Event3
     (field$: @switch) match {
       case 0 => this.value = {
         value
-      }.asInstanceOf[Event1 :+: Event2 :+: Event3 :+: Event4 :+: CNil]
+      }.asInstanceOf[example.idl.Event1 :+: example.idl.Event2 :+: example.idl.Event3 :+: example.idl.Event4 :+: CNil]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
@@ -389,7 +389,7 @@ object ShouldRenderAsCoproduct {
   val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"ShouldRenderAsCoproduct\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"value\",\"type\":[{\"type\":\"record\",\"name\":\"Event1\",\"fields\":[]},{\"type\":\"record\",\"name\":\"Event2\",\"fields\":[]},{\"type\":\"record\",\"name\":\"Event3\",\"fields\":[]},{\"type\":\"record\",\"name\":\"Event4\",\"fields\":[]}]}]}")
 }
 
-final case class ShouldRenderAsCoproduct2(var value: Event1 :+: Event2 :+: Event3 :+: Event4 :+: CNil) extends org.apache.avro.specific.SpecificRecordBase {
+final case class ShouldRenderAsCoproduct2(var value: example.idl.Event1 :+: example.idl.Event2 :+: example.idl.Event3 :+: example.idl.Event4 :+: CNil) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this(Coproduct[Event1 :+: Event2 :+: Event3 :+: Event4 :+: CNil](new Event1))
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
@@ -403,7 +403,7 @@ final case class ShouldRenderAsCoproduct2(var value: Event1 :+: Event2 :+: Event
     (field$: @switch) match {
       case 0 => this.value = {
         value
-      }.asInstanceOf[Event1 :+: Event2 :+: Event3 :+: Event4 :+: CNil]
+      }.asInstanceOf[example.idl.Event1 :+: example.idl.Event2 :+: example.idl.Event3 :+: example.idl.Event4 :+: CNil]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()

@@ -1,0 +1,61 @@
+{
+  "type": "record",
+  "name": "Country",
+  "namespace": "com.countries",
+  "fields": [
+    {
+      "name": "key",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
+    },
+    {
+      "name": "paris",
+      "type": [
+        "null",
+        {
+          "type": "record",
+          "name": "City",
+          "namespace": "com.europe",
+          "fields": [
+            {
+              "name": "key",
+              "type": "string",
+              "default": "Paris"
+            }
+          ]
+        }
+      ],
+      "default": null
+    },
+    {
+      "name": "london",
+      "type": [
+        "null",
+        "com.europe.City"
+      ],
+      "default": null
+    },
+    {
+      "name": "newYork",
+      "type": [
+        "null",
+        {
+          "type": "record",
+          "name": "City",
+          "namespace": "com.america",
+          "fields": [
+            {
+              "name": "name",
+              "type": "string",
+              "default": "Paris"
+            }
+          ]
+        }
+      ],
+      "default": null
+    }
+  ]
+}

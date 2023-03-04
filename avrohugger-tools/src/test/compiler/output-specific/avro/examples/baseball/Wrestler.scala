@@ -3,7 +3,7 @@ package avro.examples.baseball
 
 import scala.annotation.switch
 
-final case class Wrestler(var number: Int, var first_name: String, var last_name: String, var nicknames: Seq[Mascot]) extends org.apache.avro.specific.SpecificRecordBase {
+final case class Wrestler(var number: Int, var first_name: String, var last_name: String, var nicknames: Seq[avro.examples.baseball.Mascot]) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this(0, "", "", Seq.empty)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
@@ -17,7 +17,7 @@ final case class Wrestler(var number: Int, var first_name: String, var last_name
         last_name
       }.asInstanceOf[AnyRef]
       case 3 => {
-        scala.collection.JavaConverters.bufferAsJavaListConverter({
+        scala.jdk.CollectionConverters.BufferHasAsJava({
           nicknames map { x =>
             x
           }
@@ -40,12 +40,12 @@ final case class Wrestler(var number: Int, var first_name: String, var last_name
       case 3 => this.nicknames = {
         value match {
           case (array: java.util.List[_]) => {
-            scala.collection.JavaConverters.asScalaIteratorConverter(array.iterator).asScala.map({ x =>
+            scala.jdk.CollectionConverters.IteratorHasAsScala(array.iterator).asScala.map({ x =>
               x
             }).toSeq
           }
         }
-      }.asInstanceOf[Seq[Mascot]]
+      }.asInstanceOf[Seq[avro.examples.baseball.Mascot]]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()

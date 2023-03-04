@@ -2,7 +2,7 @@ lazy val avroVersion = "1.11.1"
 
 lazy val commonSettings = Seq(
   organization := "com.julianpeeters",
-  version := "1.3.0",
+  version := "1.3.1",
   ThisBuild / versionScheme := Some("semver-spec"),
   scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature"),
   Test / scalacOptions ++= Seq("-Yrangepos"),
@@ -30,12 +30,12 @@ lazy val commonSettings = Seq(
   libraryDependencies += "org.specs2" %% "specs2-core" % "4.16.1" % "test",
   publishMavenStyle := true,
   Test / publishArtifact := false,
-  publishTo := Some(
+  publishTo := {
   if (isSnapshot.value)
-    Opts.resolver.sonatypeSnapshots
+    Opts.resolver.sonatypeOssSnapshots.headOption
   else
-    Opts.resolver.sonatypeStaging
-  ),
+    Some(Opts.resolver.sonatypeStaging)
+  },
   pomIncludeRepository := { _ => false },
   licenses := Seq("Apache 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
   homepage := Some(url("https://github.com/julianpeeters/avrohugger")),

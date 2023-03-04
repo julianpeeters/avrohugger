@@ -3,7 +3,7 @@ package avro.examples.baseball
 
 import scala.annotation.switch
 
-final case class Player(var number: Int, var first_name: String, var last_name: String, var nicknames: Seq[Nickname]) extends org.apache.avro.specific.SpecificRecordBase {
+final case class Player(var number: Int, var first_name: String, var last_name: String, var nicknames: Seq[avro.examples.baseball.Nickname]) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this(0, "", "", Seq.empty)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
@@ -45,7 +45,7 @@ final case class Player(var number: Int, var first_name: String, var last_name: 
             }).toSeq
           }
         }
-      }.asInstanceOf[Seq[Nickname]]
+      }.asInstanceOf[Seq[avro.examples.baseball.Nickname]]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
