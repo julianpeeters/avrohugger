@@ -1,10 +1,6 @@
 package avrohugger
 
-import java.io.File
-
-import avrohugger._
 import avrohugger.format.SpecificRecord
-import avrohugger.types.ScalaADT
 import org.specs2._
 
 class SpecificCommentsSpec extends Specification {

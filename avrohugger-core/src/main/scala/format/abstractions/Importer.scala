@@ -9,13 +9,13 @@ import avrohugger.matchers.custom.CustomNamespaceMatcher
 import avrohugger.stores.SchemaStore
 
 import org.apache.avro.{ Schema, Protocol }
-import org.apache.avro.Schema.Type.{ ENUM, RECORD, UNION, MAP, ARRAY }
+import org.apache.avro.Schema.Type.{ ENUM, RECORD, UNION, MAP, ARRAY, FIXED }
 
 import treehugger.forest._
 import definitions.RootClass
 import treehuggerDSL._
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 /** Parent to all ouput formats' importers
   *
@@ -57,7 +57,7 @@ trait Importer {
           case ENUM =>
             Seq(schema)
           case UNION =>
-            schema.getTypes.asScala
+            schema.getTypes().asScala
               .find(s => s.getType != NULL).toSeq
               .filter(s => alreadyImported.contains(s))
               .flatMap(s => nextSchemas(schema, alreadyImported :+ s))
@@ -77,13 +77,25 @@ trait Importer {
       .distinct
       .toList
   }
+
+  def getFixedSchemas(topLevelSchemas: List[Schema]): List[Schema] =
+    topLevelSchemas
+      .flatMap(schema => {
+        schema.getType match {
+          case FIXED => Seq(schema)
+          case _ => Seq.empty[Schema]
+        }
+      })
+      .filter(_.getType == FIXED)
+      .distinct
+      .toList
   
   def getFieldSchemas(schema: Schema): List[Schema] = {
-    schema.getFields.asScala.toList.map(field => field.schema)
+    schema.getFields().asScala.toList.map(field => field.schema)
   }
 
   def getTypeSchemas(schema: Schema): List[Schema] = {
-    schema.getTypes.asScala.toList
+    schema.getTypes().asScala.toList
   }
 
   def getUserDefinedImports(
@@ -113,7 +125,7 @@ trait Importer {
     }
 
     def requiresImportDef(schema: Schema): Boolean = {
-      (isRecord(schema) || isEnum(schema)) &&
+      (isRecord(schema) || isEnum(schema) || isFixed(schema)) &&
       checkNamespace(schema).isDefined     &&
       checkNamespace(schema) != namespace
     }
@@ -143,7 +155,7 @@ trait Importer {
           case ENUM =>
             Seq(schema)
           case UNION =>
-            schema.getTypes.asScala
+            schema.getTypes().asScala
               .find(s => s.getType != NULL).toSeq
               .filter(s => alreadyImported.contains(s))
               .flatMap(s => nextSchemas(schema, alreadyImported :+ s))
@@ -171,12 +183,14 @@ trait Importer {
     schemaOrProtocol match {
       case Left(schema) =>
         schema::(NestedSchemaExtractor.getNestedSchemas(schema, schemaStore, typeMatcher))
-      case Right(protocol) => protocol.getTypes.asScala.toList.flatMap(schema => {
+      case Right(protocol) => protocol.getTypes().asScala.toList.flatMap(schema => {
         schema::(NestedSchemaExtractor.getNestedSchemas(schema, schemaStore, typeMatcher))
       })
     }
 
   }
+
+  def isFixed(schema: Schema): Boolean = ( schema.getType == FIXED )
 
   def isEnum(schema: Schema): Boolean = ( schema.getType == ENUM )
 

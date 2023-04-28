@@ -11,7 +11,7 @@ import org.apache.avro.Schema
 import java.util.{Arrays => JArrays}
 
 import scala.reflect.runtime.universe.Name
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 object EnumSchemaGenerator  {
 

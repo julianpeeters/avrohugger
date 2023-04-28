@@ -13,6 +13,17 @@
       }
     },
     {
+      "name": "fxField",
+      "type": {
+        "type": "fixed",
+        "name": "fxType",
+        "size": 2,
+        "logicalType": "decimal",
+        "precision": 2,
+        "scale": 1
+      }
+    },
+    {
       "name": "ts",
       "type": {
         "type": "long",
@@ -40,6 +51,13 @@
         "logicalType": "decimal",
         "precision": 20,
         "scale": 12
+      }
+    },
+    {
+      "name": "tm",
+      "type": {
+        "type": "int",
+        "logicalType": "time-millis"
       }
     }
   ]

@@ -17,19 +17,22 @@ import treehugger.forest
 import treehuggerDSL._
 import scala.util.Try
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 object DefaultValueMatcher {
 
   val nullNode = new TextNode("null")
-  
+
   // This code was stolen from here:
   // https://github.com/julianpeeters/avro-scala-macro-annotations/blob/104fa325a00044ff6d31184fa7ff7b6852e9acd5/macros/src/main/scala/avro/scala/macro/annotations/provider/matchers/FromJsonMatcher.scala
   def getDefaultValue(
     classStore: ClassStore,
     namespace: Option[String],
     field: Schema.Field,
-    typeMatcher: TypeMatcher): Tree = {
+    typeMatcher: TypeMatcher,
+    useFullName: Boolean = false): Tree = {
+
+    val nullNode = new TextNode("null")
 
     def fromJsonNode(node: JsonNode, schema: Schema): Tree = {
       schema.getType match {
@@ -42,6 +45,10 @@ object DefaultValueMatcher {
               CustomDefaultValueMatcher.checkCustomDateType(
                 node.longValue(),
                 typeMatcher.avroScalaTypes.date)
+            case TimeMillis =>
+              CustomDefaultValueMatcher.checkCustomTimeMillisType(
+                node.longValue(),
+                typeMatcher.avroScalaTypes.timeMillis)
           }
         case Schema.Type.FLOAT => LIT(node.doubleValue().asInstanceOf[Float])
         case Schema.Type.LONG =>
@@ -73,15 +80,18 @@ object DefaultValueMatcher {
                 schema.getLogicalType).toString
               ).toOption
           )
-        case Schema.Type.ENUM => typeMatcher.avroScalaTypes.enum match {
-          case JavaEnum => (REF(schema.getName) DOT node.textValue())
-          case ScalaEnumeration => (REF(schema.getName) DOT node.textValue())
-          case ScalaCaseObjectEnum => (REF(schema.getName) DOT node.textValue())
-          case EnumAsScalaString => LIT(node.textValue())
+        case Schema.Type.ENUM => {
+          val refName = if (useFullName) schema.getFullName else schema.getName
+          typeMatcher.avroScalaTypes.enum match {
+            case JavaEnum => (REF(refName) DOT node.textValue())
+            case ScalaEnumeration => (REF(refName) DOT node.textValue())
+            case ScalaCaseObjectEnum => (REF(refName) DOT node.textValue())
+            case EnumAsScalaString => LIT(node.textValue())
+          }
         }
         case Schema.Type.NULL => LIT(null)
         case Schema.Type.UNION => {
-          val unionSchemas = schema.getTypes.asScala.toList
+          val unionSchemas = schema.getTypes().asScala.toList
           val result = unionDefaultArgsImpl(node, unionSchemas, fromJsonNode, typeMatcher, classStore, namespace)
           result
         }
@@ -108,7 +118,22 @@ object DefaultValueMatcher {
           }
           NEW(schema.getName, fieldValues: _*)
         }
-        case x => throw new Exception("Can't extract a default field, type not yet supported: " + x)
+        case Schema.Type.FIXED => {
+           REF(schema.getName()) APPLY(
+            CustomDefaultParamMatcher.checkCustomDecimalType(
+              decimalType = typeMatcher.avroScalaTypes.decimal,
+              schema = schema,
+              default = REF("Array[Byte]") APPLY node.textValue().getBytes.map((e: Byte) => LIT(e)),
+              decimalValue =
+                Try(new org.apache.avro.Conversions.DecimalConversion().fromBytes(
+                  java.nio.ByteBuffer.wrap(node.textValue().getBytes(StandardCharsets.UTF_8)),
+                  schema,
+                  schema.getLogicalType).toString
+                ).toOption
+            )
+          )
+        }
+        case x => throw new Exception(s"Can't extract a default field, type not yet supported: $x")
       }
     }
     val defaultValue = org.apache.avro.util.internal.Accessor.defaultValue(field)
@@ -154,6 +179,8 @@ object DefaultValueMatcher {
       namespace: Option[String],
       typeMatcher: TypeMatcher) =
       nonNullableSchemas match {
+        case Nil =>
+          UNIT
         case List(schemaA) => //Option
           treeMatcher(node, schemaA)
         case List(schemaA, schemaB) if typeMatcher.avroScalaTypes.union == OptionEitherShapelessCoproduct => //Either

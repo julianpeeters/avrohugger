@@ -3,8 +3,8 @@ package example.logical
 
 import scala.annotation.switch
 
-final case class LogicalSql(var data: BigDecimal, var ts: java.sql.Timestamp, var dt: java.sql.Date, var dataBig: BigDecimal) extends org.apache.avro.specific.SpecificRecordBase {
-  def this() = this(scala.math.BigDecimal(0), new java.sql.Timestamp(0L), new java.sql.Date(0L), scala.math.BigDecimal(0))
+final case class LogicalSql(var data: BigDecimal, var ts: java.sql.Timestamp, var dt: java.sql.Date, var dataBig: BigDecimal, var tm: java.sql.Time) extends org.apache.avro.specific.SpecificRecordBase {
+  def this() = this(scala.math.BigDecimal(0), new java.sql.Timestamp(0L), new java.sql.Date(0L), scala.math.BigDecimal(0), new java.sql.Time(0L))
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {
@@ -28,6 +28,9 @@ final case class LogicalSql(var data: BigDecimal, var ts: java.sql.Timestamp, va
         val scaledValue = dataBig.setScale(scale)
         val bigDecimal = scaledValue.bigDecimal
         LogicalSql.decimalConversion.toBytes(bigDecimal, schema, decimalType)
+      }.asInstanceOf[AnyRef]
+      case 4 => {
+        tm.getTime()
       }.asInstanceOf[AnyRef]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
     }
@@ -66,6 +69,13 @@ final case class LogicalSql(var data: BigDecimal, var ts: java.sql.Timestamp, va
           }
         }
       }.asInstanceOf[BigDecimal]
+      case 4 => this.tm = {
+        value match {
+          case (i: Integer) => {
+            new java.sql.Time(i.toLong)
+          }
+        }
+      }.asInstanceOf[java.sql.Time]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
@@ -74,6 +84,6 @@ final case class LogicalSql(var data: BigDecimal, var ts: java.sql.Timestamp, va
 }
 
 object LogicalSql {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"LogicalSql\",\"namespace\":\"example.logical\",\"fields\":[{\"name\":\"data\",\"type\":{\"type\":\"bytes\",\"logicalType\":\"decimal\",\"precision\":9,\"scale\":2}},{\"name\":\"ts\",\"type\":{\"type\":\"long\",\"logicalType\":\"timestamp-millis\"}},{\"name\":\"dt\",\"type\":{\"type\":\"int\",\"logicalType\":\"date\"}},{\"name\":\"dataBig\",\"type\":{\"type\":\"bytes\",\"logicalType\":\"decimal\",\"precision\":20,\"scale\":12}}]}")
+  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"LogicalSql\",\"namespace\":\"example.logical\",\"fields\":[{\"name\":\"data\",\"type\":{\"type\":\"bytes\",\"logicalType\":\"decimal\",\"precision\":9,\"scale\":2}},{\"name\":\"ts\",\"type\":{\"type\":\"long\",\"logicalType\":\"timestamp-millis\"}},{\"name\":\"dt\",\"type\":{\"type\":\"int\",\"logicalType\":\"date\"}},{\"name\":\"dataBig\",\"type\":{\"type\":\"bytes\",\"logicalType\":\"decimal\",\"precision\":20,\"scale\":12}},{\"name\":\"tm\",\"type\":{\"type\":\"int\",\"logicalType\":\"time-millis\"}}]}")
   val decimalConversion = new org.apache.avro.Conversions.DecimalConversion
 }

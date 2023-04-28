@@ -23,7 +23,8 @@ private[avrohugger] object StringGenerator {
     classStore: ClassStore,
     schemaStore: SchemaStore,
     typeMatcher: TypeMatcher,
-    restrictedFields: Boolean): List[String] = {
+    restrictedFields: Boolean,
+    targetScalaPartialVersion: String): List[String] = {
     val maybeNamespace = DependencyInspector.getReferredNamespace(schema)
     val topLevels =
       NestedSchemaExtractor.getNestedSchemas(schema, schemaStore, typeMatcher)
@@ -40,7 +41,8 @@ private[avrohugger] object StringGenerator {
         schemaStore,
         None,
         typeMatcher,
-        restrictedFields)
+        restrictedFields,
+        targetScalaPartialVersion)
     })
     compilationUnits.map(compUnit => removeExtraWarning(compUnit.codeString))
   }
@@ -51,7 +53,8 @@ private[avrohugger] object StringGenerator {
     classStore: ClassStore,
     schemaStore: SchemaStore,
     typeMatcher: TypeMatcher,
-    restrictedFields: Boolean): List[String] = {
+    restrictedFields: Boolean,
+    targetScalaPartialVersion: String): List[String] = {
     val namespace: Option[String] = Option(protocol.getNamespace)
     val compilationUnits = format.asCompilationUnits(
       classStore,
@@ -60,7 +63,8 @@ private[avrohugger] object StringGenerator {
       schemaStore,
       None,
       typeMatcher,
-      restrictedFields)
+      restrictedFields,
+      targetScalaPartialVersion)
     compilationUnits.map(compUnit => removeExtraWarning(compUnit.codeString))
   }
 
@@ -71,20 +75,21 @@ private[avrohugger] object StringGenerator {
     schemaStore: SchemaStore,
     stringParser: StringInputParser,
     typeMatcher: TypeMatcher,
-    restrictedFields: Boolean): List[String] = {
+    restrictedFields: Boolean,
+    targetScalaPartialVersion: String): List[String] = {
     val schemaOrProtocols = stringParser.getSchemaOrProtocols(str, schemaStore)
     val codeStrings = schemaOrProtocols.flatMap(schemaOrProtocol => {
       schemaOrProtocol match {
         case Left(schema) => {
-          schemaToStrings(schema, format, classStore, schemaStore, typeMatcher, restrictedFields)
+          schemaToStrings(schema, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
         }
         case Right(protocol) => {
-          protocolToStrings(protocol, format, classStore, schemaStore, typeMatcher, restrictedFields)
+          protocolToStrings(protocol, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
         }
       }
     }).distinct
     // reset the schema store after processing the whole submission
-    schemaStore.schemas.clear
+    schemaStore.schemas.clear()
     codeStrings
   }
 
@@ -96,16 +101,17 @@ private[avrohugger] object StringGenerator {
     fileParser: FileInputParser,
     typeMatcher: TypeMatcher,
     classLoader: ClassLoader,
-    restrictedFields: Boolean): List[String] = {
+    restrictedFields: Boolean,
+    targetScalaPartialVersion: String): List[String] = {
     try {
       val schemaOrProtocols: List[Either[Schema, Protocol]] =
         fileParser.getSchemaOrProtocols(inFile, format, classStore, classLoader)
       schemaOrProtocols.flatMap(schemaOrProtocol => schemaOrProtocol match {
         case Left(schema) => {
-          schemaToStrings(schema, format, classStore, schemaStore, typeMatcher, restrictedFields)
+          schemaToStrings(schema, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
         }
         case Right(protocol) => {
-          protocolToStrings(protocol, format, classStore, schemaStore, typeMatcher, restrictedFields)
+          protocolToStrings(protocol, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
         }
       })
     }

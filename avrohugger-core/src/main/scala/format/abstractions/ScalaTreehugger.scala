@@ -8,8 +8,6 @@ import avrohuggers.{ Schemahugger, Protocolhugger }
 
 import org.apache.avro.{ Protocol, Schema }
 
-import treehugger.forest.Tree
-
 /** Parent to all ouput format treehuggers
   *
   * _ABSTRACT MEMBERS_: to be implemented by a subclass
@@ -27,7 +25,8 @@ trait ScalaTreehugger {
     schemaOrProtocol: Either[Schema, Protocol],
     typeMatcher: TypeMatcher,
     schemaStore: SchemaStore,
-    restrictedFields: Boolean): String
+    restrictedFields: Boolean,
+    targetScalaPartialVersion: String): String
 
   val importer: Importer
 

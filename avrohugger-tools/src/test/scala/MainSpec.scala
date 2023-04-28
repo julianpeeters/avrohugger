@@ -3,7 +3,7 @@ import java.io.{ByteArrayOutputStream, PrintStream}
 import avrohugger.tool.{Directory, Runner}
 import org.specs2._
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 
 class MainSpec extends mutable.Specification {

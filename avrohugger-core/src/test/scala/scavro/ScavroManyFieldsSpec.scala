@@ -2,10 +2,10 @@ package avrohugger
 package test
 package scavro
 
-import java.io.File
-
 import avrohugger.format.Scavro
 import org.specs2._
+
+import java.io.File
 
 /**
   * Test generating classes when >22 fields.

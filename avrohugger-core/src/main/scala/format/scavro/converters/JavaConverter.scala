@@ -6,14 +6,11 @@ package converters
 import matchers.TypeMatcher
 import stores.ClassStore
 import types._
+import org.apache.avro.Schema
 import treehugger.forest._
-import definitions._
 import treehuggerDSL._
 
-import org.apache.avro.Schema
-
-import scala.collection.JavaConverters._
-
+import scala.jdk.CollectionConverters._
 
 class JavaConverter(
   classStore: ClassStore,
@@ -58,13 +55,13 @@ class JavaConverter(
       
     schema.getType match {
       case Schema.Type.ENUM  => {
-        checkCustomEnumType(schema, typeMatcher.avroScalaTypes.enum, tree)
+        checkCustomEnumType(schema, typeMatcher.avroScalaTypes.`enum`, tree)
       }
       case Schema.Type.RECORD => {
         tree DOT "toAvro"
       }
       case Schema.Type.UNION => {
-        val types = schema.getTypes.asScala
+        val types = schema.getTypes().asScala
         // check if it's the kind of union that we support (nullable fields)
         if (types.length != 2 ||
            !types.map(x => x.getType).contains(Schema.Type.NULL) || 

@@ -4,7 +4,7 @@ import avrohugger.tool.{Main, Directory, GeneratorTool}
 import org.apache.avro.tool.Tool
 
 import org.specs2._
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.util.Try
 
 /**
@@ -17,7 +17,7 @@ class SpecificGeneratorToolSpec extends mutable.Specification {
   private def doCompile(args: Array[String])  = {
     val tool = new GeneratorTool(SpecificRecord)
     Try{
-      tool.run(null, null, null, Seq(args:_*).asJava)
+      tool.run(null, null, null, args.toIndexedSeq.asJava)
     }
   }
     
@@ -52,8 +52,15 @@ class SpecificGeneratorToolSpec extends mutable.Specification {
       Directory.TEST_INPUT_DIR + "player.avsc",
       Directory.TEST_OUTPUT_SPECIFIC_BASE_DIR
     ))
-   Util.readFile(Directory.TEST_OUTPUT_SPECIFIC_NICKNAME)  === Util.readFile(Directory.TEST_EXPECTED_SPECIFIC_NICKNAME)   
-   Util.readFile(Directory.TEST_OUTPUT_SPECIFIC_PLAYER)  === Util.readFile(Directory.TEST_EXPECTED_SPECIFIC_PLAYER)   
+
+    val testPlayerFile =
+      if (avrohugger.internal.ScalaVersion.version == "2.13")
+        Directory.TEST_EXPECTED_SPECIFIC_PLAYER_213
+      else
+        Directory.TEST_EXPECTED_SPECIFIC_PLAYER
+
+    Util.readFile(Directory.TEST_OUTPUT_SPECIFIC_NICKNAME) === Util.readFile(Directory.TEST_EXPECTED_SPECIFIC_NICKNAME)
+    Util.readFile(Directory.TEST_OUTPUT_SPECIFIC_PLAYER) === Util.readFile(testPlayerFile)
   }
   
   "match the expected file and directory" in {
@@ -62,8 +69,15 @@ class SpecificGeneratorToolSpec extends mutable.Specification {
       Directory.TEST_INPUT_DIR,
       Directory.TEST_OUTPUT_SPECIFIC_BASE_DIR
     ))
-    Util.readFile(Directory.TEST_OUTPUT_SPECIFIC_MASCOT)  === Util.readFile(Directory.TEST_EXPECTED_SPECIFIC_MASCOT)   
-    Util.readFile(Directory.TEST_OUTPUT_SPECIFIC_WRESTLER)  === Util.readFile(Directory.TEST_EXPECTED_SPECIFIC_WRESTLER)
+
+    val testWrestlerFile =
+      if (avrohugger.internal.ScalaVersion.version == "2.13")
+        Directory.TEST_EXPECTED_SPECIFIC_WRESTLER_213
+      else
+        Directory.TEST_EXPECTED_SPECIFIC_WRESTLER
+
+    Util.readFile(Directory.TEST_OUTPUT_SPECIFIC_MASCOT) === Util.readFile(Directory.TEST_EXPECTED_SPECIFIC_MASCOT)
+    Util.readFile(Directory.TEST_OUTPUT_SPECIFIC_WRESTLER) === Util.readFile(testWrestlerFile)
   }
 
 }

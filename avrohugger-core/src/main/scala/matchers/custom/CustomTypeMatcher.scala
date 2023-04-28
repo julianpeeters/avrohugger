@@ -22,9 +22,11 @@ object CustomTypeMatcher {
   def checkCustomEnumType(
     enumType: AvroScalaEnumType,
     classStore: ClassStore,
-    schema: Schema) = enumType match {
+    schema: Schema,
+    useFullName: Boolean = false
+  ) = enumType match {
       case JavaEnum => classStore.generatedClasses(schema)
-      case ScalaEnumeration => classStore.generatedClasses(schema)
+      case ScalaEnumeration => if (useFullName) RootClass.newClass(s"${schema.getNamespace()}.${classStore.generatedClasses(schema)}") else classStore.generatedClasses(schema)
       case ScalaCaseObjectEnum => classStore.generatedClasses(schema)
       case EnumAsScalaString => StringClass
     }
@@ -44,6 +46,11 @@ object CustomTypeMatcher {
   def checkCustomTimestampMillisType(timestampType: AvroScalaTimestampMillisType) = timestampType match {
     case JavaSqlTimestamp => RootClass.newClass(nme.createNameType("java.sql.Timestamp"))
     case JavaTimeInstant  => RootClass.newClass(nme.createNameType("java.time.Instant"))
+  }
+
+  def checkCustomTimeMillisType(timeType: AvroScalaTimeMillisType) = timeType match {
+    case JavaSqlTime => RootClass.newClass(nme.createNameType("java.sql.Time"))
+    case JavaTimeLocalTime => RootClass.newClass(nme.createNameType("java.time.LocalTime"))
   }
 
   def checkCustomDecimalType(decimalType: AvroScalaDecimalType, schema: Schema) =

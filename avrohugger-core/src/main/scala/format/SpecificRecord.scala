@@ -14,7 +14,7 @@ import treehugger.forest._
 import definitions.RootClass
 
 import org.apache.avro.{ Protocol, Schema }
-import org.apache.avro.Schema.Type.{ ENUM, RECORD }
+import org.apache.avro.Schema.Type.{ ENUM, FIXED, RECORD }
 
 import java.nio.file.Path
 
@@ -36,7 +36,8 @@ object SpecificRecord extends SourceFormat{
     schemaStore: SchemaStore,
     maybeOutDir: Option[String],
     typeMatcher: TypeMatcher,
-    restrictedFields: Boolean): List[CompilationUnit] = {
+    restrictedFields: Boolean,
+    targetScalaPartialVersion: String): List[CompilationUnit] = {
 
     registerTypes(schemaOrProtocol, classStore, typeMatcher)
     val enumType = typeMatcher.avroScalaTypes.enum
@@ -63,7 +64,8 @@ object SpecificRecord extends SourceFormat{
         Right(protocol),
         typeMatcher,
         schemaStore,
-        restrictedFields)
+        restrictedFields,
+        targetScalaPartialVersion)
       val rpcTraitCompUnit = CompilationUnit(maybePath, rpcTraitString)
       val scalaCompUnits = localNonEnums.map(schema => {
         val scalaCompilationUnit = getScalaCompilationUnit(
@@ -73,7 +75,8 @@ object SpecificRecord extends SourceFormat{
           typeMatcher,
           schemaStore,
           maybeOutDir,
-          restrictedFields)
+          restrictedFields,
+          targetScalaPartialVersion)
         scalaCompilationUnit
       })
       val javaCompUnits = localEnums.map(schema => {
@@ -99,7 +102,8 @@ object SpecificRecord extends SourceFormat{
               typeMatcher,
               schemaStore,
               maybeOutDir,
-              restrictedFields)
+              restrictedFields,
+              targetScalaPartialVersion)
             List(scalaCompilationUnit)
           }
           case ENUM => {
@@ -119,7 +123,19 @@ object SpecificRecord extends SourceFormat{
                 sys.error("Only JavaEnum and EnumAsScalaString are supported for SpecificRecord format")
             }
           }
-          case _ => sys.error("Only RECORD or ENUM can be toplevel definitions")
+          case FIXED => {
+            val scalaCompilationUnit = getScalaCompilationUnit(
+              classStore,
+              namespace,
+              schemaOrProtocol,
+              typeMatcher,
+              schemaStore,
+              maybeOutDir,
+              restrictedFields,
+              targetScalaPartialVersion)
+            List(scalaCompilationUnit)
+          }
+          case _ => sys.error("Only FIXED, RECORD, or ENUM can be toplevel definitions")
         }
       }
       case Right(protocol) => {
@@ -154,7 +170,8 @@ object SpecificRecord extends SourceFormat{
             typeMatcher,
             schemaStore,
             maybeOutDir,
-            restrictedFields)
+            restrictedFields,
+            targetScalaPartialVersion)
           if (localRecords.length >= 1) scalaCompilationUnit +: javaCompilationUnits
           else javaCompilationUnits
         }
@@ -191,7 +208,8 @@ object SpecificRecord extends SourceFormat{
     outDir: String,
     schemaStore: SchemaStore,
     typeMatcher: TypeMatcher,
-    restrictedFields: Boolean): Unit = {
+    restrictedFields: Boolean,
+    targetScalaPartialVersion: String): Unit = {
     val compilationUnits: List[CompilationUnit] = asCompilationUnits(
       classStore,
       ns,
@@ -199,7 +217,8 @@ object SpecificRecord extends SourceFormat{
       schemaStore,
       Some(outDir),
       typeMatcher,
-      restrictedFields)
+      restrictedFields,
+      targetScalaPartialVersion)
     compilationUnits.foreach(writeToFile)
   }
 

@@ -16,10 +16,10 @@ import scala.io.Source
 object AvdlFileSorter {
   def sortSchemaFiles(filesIterable: Iterable[File]): Seq[File] = {
     val files = filesIterable.toList
-    val importsMap = files.map{ file =>
-      (file.getCanonicalFile, getImports(file))
-    }.toMap.mapValues(f => f.filter(_.exists))
-
+    val importsMap = files.map ( file => {
+      (file.getCanonicalFile, getImports(file).filter(_.exists))
+    }).toMap
+      
     @tailrec def addFiles(processedFiles: Seq[File], remainingFiles: List[File]): Seq[File] = {
       remainingFiles match {
         case Nil => processedFiles

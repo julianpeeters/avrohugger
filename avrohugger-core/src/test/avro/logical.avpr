@@ -50,6 +50,13 @@
           "logicalType": "decimal",
           "precision": 20,
           "scale": 12
+        },
+        {
+          "name": "time",
+          "type": {
+            "type": "int",
+            "logicalType": "time-millis"
+          }
         }
       ]
     }

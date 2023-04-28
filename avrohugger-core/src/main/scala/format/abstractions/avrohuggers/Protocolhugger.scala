@@ -10,7 +10,7 @@ import org.apache.avro.{ Protocol, Schema }
 
 import treehugger.forest.Tree
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 trait Protocolhugger {
 
@@ -22,12 +22,13 @@ trait Protocolhugger {
     typeMatcher: TypeMatcher,
     maybeBaseTrait: Option[String],
     maybeFlags: Option[List[Long]],
-    restrictedFields: Boolean): List[Tree]
+    restrictedFields: Boolean,
+    targetScalaPartialVersion: String): List[Tree]
 
 
   def getLocalSubtypes(protocol: Protocol): List[Schema] = {
     val protocolNS = protocol.getNamespace
-    val types = protocol.getTypes.asScala.toList
+    val types = protocol.getTypes().asScala.toList
     def isTopLevelNamespace(schema: Schema) = schema.getNamespace == protocolNS
     types.filter(isTopLevelNamespace)
   }

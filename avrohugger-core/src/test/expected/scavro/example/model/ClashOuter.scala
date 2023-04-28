@@ -7,7 +7,7 @@ import org.oedura.scavro.{AvroMetadata, AvroReader, AvroSerializeable}
 
 import example.avro.{ClashInner => JClashInner, ClashOuter => JClashOuter}
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 final case class ClashOuter(inner: Option[Array[Option[ClashInner]]]) extends AvroSerializeable {
   type J = JClashOuter

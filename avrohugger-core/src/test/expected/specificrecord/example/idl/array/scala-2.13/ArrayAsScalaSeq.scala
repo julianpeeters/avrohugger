@@ -8,7 +8,7 @@ final case class ArrayIdl(var data: Seq[Int]) extends org.apache.avro.specific.S
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {
-        scala.collection.JavaConverters.bufferAsJavaListConverter({
+        scala.jdk.CollectionConverters.BufferHasAsJava({
           data map { x =>
             x
           }
@@ -22,9 +22,9 @@ final case class ArrayIdl(var data: Seq[Int]) extends org.apache.avro.specific.S
       case 0 => this.data = {
         value match {
           case (array: java.util.List[_]) => {
-            Seq((scala.collection.JavaConverters.asScalaIteratorConverter(array.iterator).asScala.toSeq map { x =>
+            scala.jdk.CollectionConverters.IteratorHasAsScala(array.iterator).asScala.map({ x =>
               x
-            }: _*))
+            }).toSeq
           }
         }
       }.asInstanceOf[Seq[Int]]

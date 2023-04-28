@@ -1,7 +1,7 @@
 # avrohugger
 
 
-[![Travis CI](https://travis-ci.org/julianpeeters/avrohugger.svg?branch=master)](https://travis-ci.org/julianpeeters/avrohugger)
+[![Scala CI](https://github.com/julianpeeters/avrohugger/workflows/Scala%20CI/badge.svg)](https://github.com/julianpeeters/avrohugger/actions?query=workflow%3A%22Scala+CI%22)
 [![Join the chat at https://gitter.im/julianpeeters/avrohugger](https://badges.gitter.im/julianpeeters/avrohugger.svg)](https://gitter.im/julianpeeters/avrohugger?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.julianpeeters/avrohugger-core_2.12/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.julianpeeters/avrohugger-core_2.12)
 
@@ -13,11 +13,12 @@
 
 **Alternative Distributions:**
 
-* **sbt**: `sbt-avrohugger` - Generate source code at compile time with an sbt plugin [found here](https://github.com/julianpeeters/sbt-avrohugger).
-* **maven**: `avrohugger-maven-plugin` - Generate source code at compile time with a maven plugin [found here](https://github.com/makubi/avrohugger-maven-plugin).
-* **gradle**: `gradle-avrohugger-plugin` - Generate source code at compile time with a gradle plugin [found here](https://github.com/zladovan/gradle-avrohugger-plugin).
-* **on the web**: `avro2caseclass` - Generate source code from a web app, [found here](https://github.com/julianpeeters/avro2caseclass).
-* **freestyle-rpc**: `sbt-frees-rpc-idlgen` - Generate rpc models, messages, clients, and servers [found here](http://frees.io/docs/rpc/idl-generation).
+* [sbt](https://github.com/julianpeeters/sbt-avrohugger): `sbt-avrohugger` - Generate source code at compile time with an sbt plugin.
+* [Maven](https://github.com/makubi/avrohugger-maven-plugin): `avrohugger-maven-plugin` - Generate source code at compile time with a maven plugin.
+* [Mill](https://github.com/joan38/mill-avro): `mill-avro` - Generate source code at compile time with a Mill plugin.
+* [Gradle](https://github.com/zladovan/gradle-avrohugger-plugin): `gradle-avrohugger-plugin` - Generate source code at compile time with a gradle plugin.
+* [On the web](https://github.com/julianpeeters/avro2caseclass): `avro2caseclass` - Generate source code from a web app,.
+* [mu-rpc](https://github.com/higherkindness/mu-scala): `mu-scala` - Generate rpc models, messages, clients, and servers.
 
 Table of contents
 =================
@@ -46,7 +47,7 @@ Table of contents
 ##### Generates Scala case classes in various formats:
 
 * `Standard` Vanilla case classes (for use with Apache Avro's [`GenericRecord`
-API](http://avro.apache.org/docs/1.9.1/gettingstartedjava.html#Serializing+and+deserializing+without+code+generation), etc.)
+API](https://avro.apache.org/docs/1.11.1/getting-started-java/#serializing-and-deserializing-with-code-generation), etc.)
 
 * `SpecificRecord` Case classes that implement `SpecificRecordBase` and
 therefore have mutable `var` fields (for use with the Avro Specific API -
@@ -69,8 +70,8 @@ runtime, Java classes provided separately (see [Scavro Plugin](https://github.co
 |NULL|Null|Null|Null||
 |MAP|Map|Map|Map||
 |ENUM|scala.Enumeration<br>Scala case object<br>Java Enum<br>EnumAsScalaString|Java Enum<br>EnumAsScalaString|scala.Enumeration<br>Scala case object<br>Java Enum<br>EnumAsScalaString| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
-|BYTES|Array[Byte]<br>BigDecimal|Array[Byte]|Array[Byte]|See[Logical Types: `decimal`](https://github.com/julianpeeters/avrohugger#logical-types-support)|
-|FIXED|//TODO|//TODO|//TODO||
+|BYTES|Array[Byte]<br>BigDecimal|Array[Byte]<br>BigDecimal|Array[Byte]|See [Logical Types: `decimal`](https://github.com/julianpeeters/avrohugger#logical-types-support)|
+|FIXED|case class<br>case class + schema|case class extending `SpecificFixed`|//TODO|See [Logical Types: `decimal`](https://github.com/julianpeeters/avrohugger#logical-types-support)|
 |ARRAY|Seq<br>List<br>Array<br>Vector|Seq<br>List<br>Array<br>Vector|Array<br>Seq<br>List<br>Vector| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 |UNION|Option<br>Either<br>Shapeless Coproduct|Option|Option| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 |RECORD|case class<br>case class + schema|case class extending `SpecificRecordBase`|case class extending `AvroSerializeable`| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
@@ -85,9 +86,10 @@ runtime, Java classes provided separately (see [Scavro Plugin](https://github.co
 _NOTE: Currently logical types are only supported for `Standard` and `SpecificRecord` formats_
 
 * `date`: Annotates Avro `int` schemas to generate `java.time.LocalDate` or `java.sql.Date` (See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)). Examples: [avdl](https://github.com/julianpeeters/sbt-avrohugger/blob/master/src/sbt-test/avrohugger/GenericSerializationTests/src/main/avro/logical.avdl#L9), [avsc](https://github.com/julianpeeters/sbt-avrohugger/blob/master/src/sbt-test/avrohugger/GenericSerializationTests/src/main/avro/logical.avsc#L22-L27).
-* `decimal`: Annotates Avro `bytes` schemas to generate `BigDecimal`. Examples: [avdl](https://github.com/julianpeeters/sbt-avrohugger/blob/master/src/sbt-test/avrohugger/GenericSerializationTests/src/main/avro/logical.avdl#L6), [avsc](https://github.com/julianpeeters/sbt-avrohugger/blob/master/src/sbt-test/avrohugger/GenericSerializationTests/src/main/avro/logical.avsc#L6-L14).
+* `decimal`: Annotates Avro `bytes` and `fixed` schemas to generate `BigDecimal`. Examples: [avdl](https://github.com/julianpeeters/sbt-avrohugger/blob/master/src/sbt-test/avrohugger/GenericSerializationTests/src/main/avro/logical.avdl#L6), [avsc](https://github.com/julianpeeters/sbt-avrohugger/blob/master/src/sbt-test/avrohugger/GenericSerializationTests/src/main/avro/logical.avsc#L6-L14).
 * `timestamp-millis`: Annotates Avro `long` schemas to genarate `java.time.Instant` or `java.sql.Timestamp` (See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)). Examples: [avdl](https://github.com/julianpeeters/sbt-avrohugger/blob/master/src/sbt-test/avrohugger/GenericSerializationTests/src/main/avro/logical.avdl#L8), [avsc](https://github.com/julianpeeters/sbt-avrohugger/blob/master/src/sbt-test/avrohugger/GenericSerializationTests/src/main/avro/logical.avsc#L15-L21).
 * `uuid`: Annotates Avro `string` schemas (but not idls as of avro 1.8.2) to generate `java.util.UUID` (See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)). Example: [avsc](https://github.com/julianpeeters/sbt-avrohugger/blob/master/src/sbt-test/avrohugger/GenericSerializationTests/src/main/avro/logical.avsc#L29-L35).
+* `time-millis`: Annotates Avro `int` schemas to genarate `java.time.LocalTime` or `java.sql.Time`
 
 ##### Protocol Support:
 
@@ -112,9 +114,9 @@ _Note:_ Currently [Treehugger](http://eed3si9n.com/treehugger/comments.html#Scal
 
 ## Usage
 
-* **Library For Scala 2.11, 2.12, and 2.13**
-* **Parses Schemas and IDLs with Avro version 1.9**
-* **Generates Code Compatible with Scala 2.11, 2.12, 2.13**
+* **Library For Scala 2.12, and 2.13**
+* **Parses Schemas and IDLs with Avro version 1.11**
+* **Generates Code Compatible with Scala 2.12, 2.13**
 
 
 
@@ -122,7 +124,7 @@ _Note:_ Currently [Treehugger](http://eed3si9n.com/treehugger/comments.html#Scal
 
 ##### Get the dependency with:
 
-    "com.julianpeeters" %% "avrohugger-core" % "1.0.0-RC22"
+    "com.julianpeeters" %% "avrohugger-core" % "1.3.1"
 
 
 ##### Description:
@@ -147,7 +149,8 @@ where `T` can be `File`, `Schema`, or `String`.
 
 
     import avrohugger.Generator
-    import format.SpecificRecord
+    import avrohugger.format.SpecificRecord
+    import java.io.File
 
     val schemaFile = new File("path/to/schema")
     val generator = new Generator(SpecificRecord)
@@ -175,6 +178,7 @@ To reassign Scala types to Avro types, use the following (e.g. for customizing `
 * `record` can be assigned to `ScalaCaseClass` and `ScalaCaseClassWithSchema`(with schema in a companion object)
 * `array` can be assigned to `ScalaSeq`, `ScalaArray`, `ScalaList`, and `ScalaVector`
 * `enum` can be assigned to `JavaEnum`, `ScalaCaseObjectEnum`, `EnumAsScalaString`, and `ScalaEnumeration`
+* `fixed` can be assigned to , `ScalaCaseClassWrapper` and `ScalaCaseClassWrapperWithSchema`(with schema in a companion object)
 * `union` can be assigned to  `OptionShapelessCoproduct`, `OptionEitherShapelessCoproduct`, or `OptionalShapelessCoproduct`
 * `int`, `long`, `float`, `double` can be assigned to `ScalaInt`, `ScalaLong`, `ScalaFloat`, `ScalaDouble`
 * `protocol` can be assigned to `ScalaADT` and `NoTypeGenerated`
@@ -202,19 +206,12 @@ namespace rewritten. Multiple conflicting wildcards are not permitted.
     val generator = new Generator(SpecificRecord, avroScalaCustomNamespace = Map("example.*"->"example.newnamespace"))
 
 
-##### Generate Classes Instead of Case Classes
-
-Generate simple classes instead of case classes when fields.size > 22, useful for generating code for Scala 2.10 from large schemas.
-
-    val generator = new Generator(SpecificRecord, restrictedFieldNumber = true)
-
-
 #### `avrohugger-filesorter`
 
 
 ##### Get the dependency with:
 
-    "com.julianpeeters" %% "avrohugger-filesorter" % "1.0.0-RC22"
+    "com.julianpeeters" %% "avrohugger-filesorter" % "1.3.1"
     
 
 ##### Description:
@@ -234,22 +231,22 @@ To ensure dependent schemas are compiled in the proper order (thus avoiding `org
 #### `avrohugger-tools`
 
 
-  Download the avrohugger-tools jar for Scala [2.10](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.10/1.0.0-RC22/avrohugger-tools_2.10-1.0.0-RC22-assembly.jar), Scala [2.11](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.11/1.0.0-RC22/avrohugger-tools_2.11-1.0.0-RC22-assembly.jar), or Scala [2.12](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.12/1.0.0-RC22/avrohugger-tools_2.12-1.0.0-RC22-assembly.jar) (>30MB!) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
+  Download the avrohugger-tools jar for Scala [2.12](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.12/1.3.1/avrohugger-tools_2.12-1.3.1-assembly.jar), or Scala [2.13](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.13/1.3.1/avrohugger-tools_2.13-1.3.1-assembly.jar) (>30MB!) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
 
 
 * `generate` generates Scala case class definitions:
 
-`java -jar /path/to/avrohugger-tools_2.12-1.0.0-RC22-assembly.jar generate schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.12-1.3.1-assembly.jar generate schema user.avsc . `
 
 
 * `generate-specific` generates definitions that extend Avro's `SpecificRecordBase`:
 
-`java -jar /path/to/avrohugger-tools_2.12-1.0.0-RC22-assembly.jar generate-specific schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.12-1.3.1-assembly.jar generate-specific schema user.avsc . `
 
 
 * `generate-scavro` generates definitions that extend Scavro's `AvroSerializable`:
 
-`java -jar /path/to/avrohugger-tools_2.12-1.0.0-RC22-assembly.jar generate-scavro schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.12-1.3.1-assembly.jar generate-scavro schema user.avsc . `
 
 
 ## Warnings
@@ -303,39 +300,14 @@ Depends on [Avro](https://github.com/apache/avro) and [Treehugger](https://githu
 
 
 Contributors:
-- [Marius Soutier](https://github.com/mariussoutier)
-- [Paul Pearcy](https://github.com/ppearcy)
-- [Stefano Galarraga](https://github.com/galarragas)
-- [Brian London](https://github.com/BrianLondon)
-- [Matt Allen](https://github.com/Matt343)
-- [Lars Albertsson](https://github.com/lallea)
-- [alancnet](https://github.com/alancnet)
-- [C-zito](https://github.com/C-Zito)
-- [Eugene Platonov](https://github.com/jozic)
-- [Matt Coffin](https://github.com/mcoffin)
-- [Tim Chan](https://github.com/timchan-lumoslabs)
-- [Jerome Wacongne](https://github.com/ch4mpy)
-- [Ryan Koval](http://github.ryankoval.com)
-- [Saket](https://github.com/skate056)
-- [Jon Morra](https://github.com/jon-morra-zefr)
-- [Simonas Gelazevicius](https://github.com/simsasg)
-- [Daniel Davis](https://github.com/wabu)
-- [Raúl Raja Martínez](https://github.com/raulraja)
-- [Paul Snively](https://github.com/PaulAtBanno)
-- [Zach Cox](https://github.com/zcox)
-- [Kaur Matas](https://github.com/kmatasflp)
-- [Marco Stefani](https://github.com/inafets)
-- [Diego E. Alonso Blas](https://github.com/diesalbla)
-- [Chris Albright](https://github.com/chrisalbright)
-- [Andrew Gustafson](https://github.com/agustafson)
-- [Fede Fernández](https://github.com/fedefernandez)
-- [Francisco Díaz](https://github.com/franciscodr)
-- [Kostya Golikov](https://github.com/lazyval)
-- [Rob Landers](https://github.com/withinboredom)
-- [Bobby Rauchenberg](https://github.com/bobbyrauchenberg)
-- [Plínio Pantaleão](https://github.com/plinioj)
-- [Simon Petty](https://github.com/simonpetty)
-- [Leonard Ehrenfried](https://github.com/leonardehrenfried)
+
+| | | |
+| :---         |     :---      |          :--- |
+| [Marius Soutier](https://github.com/mariussoutier) </br> [Brian London](https://github.com/BrianLondon) </br> [alancnet](https://github.com/alancnet) </br> [Matt Coffin](https://github.com/mcoffin) </br> [Ryan Koval](http://github.ryankoval.com) </br> [Simonas Gelazevicius](https://github.com/simsasg) </br> [Paul Snively](https://github.com/PaulAtBanno) </br> [Marco Stefani](https://github.com/inafets) </br> [Andrew Gustafson](https://github.com/agustafson) </br> [Kostya Golikov](https://github.com/lazyval) </br> [Plínio Pantaleão](https://github.com/plinioj) </br> [Sietse de Kaper](https://github.com/targeter) </br> [Martin Mauch](https://github.com/nightscape) </br> [Konstantin](https://github.com/tyger) </br> [Adam Drakeford](https://github.com/dr4ke616) </br> [Carlos Silva](https://github.com/alchimystic) | [Paul Pearcy](https://github.com/ppearcy) </br> [Matt Allen](https://github.com/Matt343) </br> [C-zito](https://github.com/C-Zito) </br> [Tim Chan](https://github.com/timchan-lumoslabs) </br> [Saket](https://github.com/skate056) </br> [Daniel Davis](https://github.com/wabu) </br> [Zach Cox](https://github.com/zcox) </br> [Diego E. Alonso Blas](https://github.com/diesalbla) </br> [Fede Fernández](https://github.com/fedefernandez) </br> [Rob Landers](https://github.com/withinboredom) </br> [Simon Petty](https://github.com/simonpetty) </br> [Andreas Drobisch](https://github.com/adrobisch) </br> [natefitzgerald](https://github.com/natefitzgerald) </br> [Timo Schmid](https://github.com/timo-schmid) </br> [mcenkar](https://github.com/mcenkar) </br> [Luca Tronchin](https://github.com/ltronky) | [Stefano Galarraga](https://github.com/galarragas) </br> [Lars Albertsson](https://github.com/lallea) </br> [Eugene Platonov](https://github.com/jozic) </br> [Jerome Wacongne](https://github.com/ch4mpy) </br> [Jon Morra](https://github.com/jon-morra-zefr) </br> [Raúl Raja Martínez](https://github.com/raulraja) </br> [Kaur Matas](https://github.com/kmatasflp) </br> [Chris Albright](https://github.com/chrisalbright) </br> [Francisco Díaz](https://github.com/franciscodr) </br> [Bobby Rauchenberg](https://github.com/bobbyrauchenberg) </br> [Leonard Ehrenfried](https://github.com/leonardehrenfried) </br> [François Sarradin](https://github.com/fsarradin) </br> [niqdev](https://github.com/niqdev) </br> [Julien BENOIT](https://github.com/jbenoit2011) </br> [Algimantas Milašius](https://github.com/AlgMi) </br> [Leonard Ehrenfried](https://github.com/leonardehrenfried) </br> [Massimo Siani](https://github.com/massimosiani)| 
+
+
+
+
 
 ##### Criticism is appreciated.
 

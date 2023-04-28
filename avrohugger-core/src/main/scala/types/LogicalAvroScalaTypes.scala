@@ -18,10 +18,15 @@ case object JavaTimeInstant extends AvroScalaTimestampMillisType
 sealed trait AvroUuidType extends Product with Serializable
 case object JavaUuid extends AvroUuidType
 
+sealed trait AvroScalaTimeMillisType extends Product with Serializable
+case object JavaSqlTime extends AvroScalaTimeMillisType
+case object JavaTimeLocalTime extends AvroScalaTimeMillisType
+
 sealed abstract class LogicalType(name: String)
 case class Decimal(precision: Int, scale: Int) extends LogicalType("decimal")
 case object Date extends LogicalType("date")
 case object TimestampMillis extends LogicalType("timestamp-millis")
+case object TimeMillis extends LogicalType("time-millis")
 case object UUID extends LogicalType("uuid")
 
 object LogicalType {
@@ -30,6 +35,7 @@ object LogicalType {
     case d: org.apache.avro.LogicalTypes.Decimal => Some(Decimal(d.getPrecision, d.getScale))
     case _: org.apache.avro.LogicalTypes.Date => Some(Date)
     case _: org.apache.avro.LogicalTypes.TimestampMillis => Some(TimestampMillis)
+    case _: org.apache.avro.LogicalTypes.TimeMillis => Some(TimeMillis)
     case _ if logicalType.getName == "uuid" => Some(UUID)
     case _ => None
   }

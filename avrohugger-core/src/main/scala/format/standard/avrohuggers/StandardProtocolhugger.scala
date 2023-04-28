@@ -3,18 +3,14 @@ package format
 package standard
 package avrohuggers
 
+import format.abstractions.avrohuggers.Protocolhugger
 import generators.ScalaDocGenerator
 import trees.StandardTraitTree
 import matchers.TypeMatcher
 import stores.{ClassStore, SchemaStore}
 import types._
-import org.apache.avro.{ Protocol, Schema }
-
+import org.apache.avro.Protocol
 import treehugger.forest._
-import definitions._
-import treehuggerDSL._
-
-import format.abstractions.avrohuggers.Protocolhugger
 
 
 object StandardProtocolhugger extends Protocolhugger {
@@ -27,7 +23,8 @@ object StandardProtocolhugger extends Protocolhugger {
     typeMatcher: TypeMatcher,
     maybeBaseTrait: Option[String],
     maybeFlags: Option[List[Long]],
-    restrictedFields: Boolean): List[Tree] = {
+    restrictedFields: Boolean,
+    targetScalaPartialVersion: String): List[Tree] = {
 
     val name: String = protocol.getName
 
@@ -53,7 +50,8 @@ object StandardProtocolhugger extends Protocolhugger {
           typeMatcher,
           maybeNewBaseTrait,
           maybeNewFlags,
-          restrictedFields)
+          restrictedFields,
+          targetScalaPartialVersion)
       })
     }
     // if only one Scala type is defined, then don't generate sealed trait
@@ -75,7 +73,8 @@ object StandardProtocolhugger extends Protocolhugger {
           typeMatcher,
           maybeBaseTrait,
           maybeFlags,
-          restrictedFields)
+          restrictedFields,
+          targetScalaPartialVersion)
       })
     }
   }

@@ -15,16 +15,16 @@ object JsonMatcher {
 
     def getFullName(nme: String): String = {
       namespace match {
-        case Some(ns) => ns + "+" + nme
+        case Some(ns) => s"$ns+$nme"
         case None => nme
       }
-    } 
+    }
 
-    lazy val jsonNodeFactory = JsonNodeFactory.instance 
+    lazy val jsonNodeFactory = JsonNodeFactory.instance
 
     dv match {
       // use of null here is for Java interop, builds Avro FieldConstructor w/o default value
-      case EmptyTree                                   => null 
+      case EmptyTree                                   => null
       case Literal(Constant(x: Unit))                  => jsonNodeFactory.nullNode
       case Literal(Constant(x: Boolean))               => jsonNodeFactory.booleanNode(x)
       case Literal(Constant(x: Int))                   => jsonNodeFactory.numberNode(x)
@@ -44,7 +44,7 @@ object JsonMatcher {
         val jsonObject = jsonNodeFactory.objectNode
         kvps.foreach(kvp => kvp match {
           case Apply(Select(Literal(Constant(key: String)), NameTag(tn)), List(x)) =>  {
-            jsonObject.put(key, toJsonNode(namespace, x, schemaStore))
+            jsonObject.set(key, toJsonNode(namespace, x, schemaStore))
           }
         })
         jsonObject
@@ -55,16 +55,16 @@ object JsonMatcher {
         xs.zipWithIndex.map( x => {
           val value = x._1
           val index = x._2
-          val nestedRecordField = schemaStore.schemas(getFullName(name.toString)).getFields.get(index)
+          val nestedRecordField = schemaStore.schemas(getFullName(name.toString)).getFields().get(index)
           // values from the tree, field names from cross referencing tree's pos with schema field pos
           // (they always correspond since the schema is defined based on the fields in a class def)
-          jsonObject.put(nestedRecordField.name, toJsonNode(namespace, value, schemaStore))
+          jsonObject.set(nestedRecordField.name, toJsonNode(namespace, value, schemaStore))
         })
         jsonObject
       }
       // enum
       case Select(Ident(NameTag(enum)), NameTag(enumValue)) => jsonNodeFactory.textNode(enumValue.toString())
-      case x => sys.error("Could not extract default value. Found: " + x + ", " + showRaw(x))
+      case x => sys.error(s"Could not extract default value. Found: $x, ${showRaw(x)}")
     }
-  } 
+  }
 }

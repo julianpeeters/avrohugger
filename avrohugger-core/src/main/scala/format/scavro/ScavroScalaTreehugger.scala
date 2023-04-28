@@ -4,14 +4,12 @@ package scavro
 
 import format.abstractions.ScalaTreehugger
 import avrohuggers.{ ScavroProtocolhugger, ScavroSchemahugger }
-import input.reflectivecompilation.schemagen._
 import matchers.TypeMatcher
 import stores.{ ClassStore, SchemaStore }
 
 import org.apache.avro.{ Protocol, Schema }
 
 import treehugger.forest._
-import definitions._
 import treehuggerDSL._
 
 object ScavroScalaTreehugger extends ScalaTreehugger {
@@ -28,7 +26,8 @@ object ScavroScalaTreehugger extends ScalaTreehugger {
     schemaOrProtocol: Either[Schema, Protocol],
     typeMatcher: TypeMatcher,
     schemaStore: SchemaStore,
-    restrictedFields: Boolean): String = {
+    restrictedFields: Boolean,
+    targetScalaPartialVersion: String): String = {
 
     val imports: List[Import] = importer.getImports(
       schemaOrProtocol, namespace, schemaStore, typeMatcher)
@@ -42,7 +41,8 @@ object ScavroScalaTreehugger extends ScalaTreehugger {
         typeMatcher,
         None,
         None,
-        restrictedFields
+        restrictedFields,
+        targetScalaPartialVersion
       )
       case Right(protocol) => protocolhugger.toTrees(
         schemaStore,
@@ -52,7 +52,8 @@ object ScavroScalaTreehugger extends ScalaTreehugger {
         typeMatcher,
         None,
         None,
-        restrictedFields
+        restrictedFields,
+        targetScalaPartialVersion
       )
     }
     // wrap the imports and classdef in a block with a comment and a package

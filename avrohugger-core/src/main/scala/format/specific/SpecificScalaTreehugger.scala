@@ -8,11 +8,7 @@ import matchers.TypeMatcher
 import stores.{ ClassStore, SchemaStore }
 
 import org.apache.avro.{ Protocol, Schema }
-import org.apache.avro.Schema.Field
-import org.apache.avro.Schema.Type.RECORD
-
 import treehugger.forest._
-import definitions._
 import treehuggerDSL._
 
 
@@ -30,7 +26,8 @@ object SpecificScalaTreehugger extends ScalaTreehugger {
     schemaOrProtocol: Either[Schema, Protocol],
     typeMatcher: TypeMatcher,
     schemaStore: SchemaStore,
-    restrictedFields: Boolean): String = {
+    restrictedFields: Boolean,
+    targetScalaPartialVersion: String): String = {
 
     // imports in case a field type is from a different namespace
     val imports: List[Import] = importer.getImports(
@@ -48,7 +45,8 @@ object SpecificScalaTreehugger extends ScalaTreehugger {
         typeMatcher,
         None,
         None,
-        restrictedFields
+        restrictedFields,
+        targetScalaPartialVersion
       )
       case Right(protocol) => protocolhugger.toTrees(
         schemaStore,
@@ -58,7 +56,8 @@ object SpecificScalaTreehugger extends ScalaTreehugger {
         typeMatcher,
         None,
         None,
-        restrictedFields
+        restrictedFields,
+        targetScalaPartialVersion
       )
     }
 

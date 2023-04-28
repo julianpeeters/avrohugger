@@ -14,7 +14,6 @@ import org.apache.avro.Schema.Type.{ ENUM, RECORD }
 
 import treehugger.forest._
 import definitions._
-import treehuggerDSL._
 
 object ScavroSchemahugger extends Schemahugger{
 
@@ -26,7 +25,8 @@ object ScavroSchemahugger extends Schemahugger{
     typeMatcher: TypeMatcher,
     maybeBaseTrait: Option[String],
     maybeFlags: Option[List[Long]],
-    restrictedFields: Boolean): List[Tree] = {
+    restrictedFields: Boolean,
+    targetScalaPartialVersion: String): List[Tree] = {
     val ScalaClass = RootClass.newClass(schema.getName)
     val JavaClass = RootClass.newClass("J" + schema.getName)
     schema.getType match {

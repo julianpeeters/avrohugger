@@ -1,0 +1,17 @@
+{
+  "namespace": "example",
+  "name": "Room",
+  "type": "record",
+  "fields": [
+    {
+      "name": "door",
+      "default": "NORTH",
+      "type": {
+        "name": "door",
+        "namespace" : "example.types",
+        "type": "enum",
+        "symbols" : ["NORTH", "SOUTH", "EAST", "WEST"]
+      }
+    }
+  ]
+}

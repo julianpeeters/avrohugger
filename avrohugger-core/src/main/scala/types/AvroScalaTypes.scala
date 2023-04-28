@@ -12,9 +12,9 @@ case class AvroScalaTypes(
   `null`:   AvroScalaNullType     = ScalaNull,
   bytes:    AvroScalaBytesType    = ScalaByteArray,
   // complex
-  fixed:    AvroScalaFixedType    = ScalaBinary,
+  fixed:    AvroScalaFixedType    = ScalaCaseClassWrapper,
   record:   AvroScalaRecordType   = ScalaCaseClass,
-  enum:     AvroScalaEnumType     = ScalaEnumeration,
+  `enum`:     AvroScalaEnumType   = ScalaEnumeration,
   union:    AvroScalaUnionType    = OptionEitherShapelessCoproduct,
   array:    AvroScalaArrayType    = ScalaSeq,
   map:      AvroScalaMapType      = ScalaMap,
@@ -23,6 +23,7 @@ case class AvroScalaTypes(
   decimal:  AvroScalaDecimalType  = ScalaBigDecimal(None),
   date:     AvroScalaDateType     = JavaTimeLocalDate,
   timestampMillis: AvroScalaTimestampMillisType = JavaTimeInstant,
+  timeMillis: AvroScalaTimeMillisType = JavaTimeLocalTime,
   uuid:     AvroUuidType          = JavaUuid
 )
 

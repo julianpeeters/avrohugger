@@ -4,20 +4,16 @@ package abstractions
 
 import avrohugger.matchers.TypeMatcher
 import avrohugger.models.CompilationUnit
-import avrohugger.stores.{ ClassStore, SchemaStore }
+import avrohugger.stores.{ClassStore, SchemaStore}
 import avrohugger.types._
-
-import org.apache.avro.{ Protocol, Schema }
-import org.apache.avro.Schema.Type.{ ENUM, RECORD }
-
-import java.nio.file.{ Path, Paths, Files, StandardOpenOption }
-import java.io.{ File, FileNotFoundException, IOException }
-
+import org.apache.avro.Schema.Type.{ENUM, FIXED, RECORD}
+import org.apache.avro.{Protocol, Schema}
 import treehugger.forest._
 import definitions._
-import treehuggerDSL._
 
-import scala.collection.JavaConverters._
+import java.io.{FileNotFoundException, IOException}
+import java.nio.file.{Files, Path, Paths, StandardOpenOption}
+import scala.jdk.CollectionConverters._
 
 /** Parent to all ouput formats
   *
@@ -53,7 +49,8 @@ trait SourceFormat {
     schemaStore: SchemaStore,
     maybeOutDir: Option[String],
     typeMatcher: TypeMatcher,
-    restrictedFields: Boolean): List[CompilationUnit]
+    restrictedFields: Boolean,
+    targetScalaPartialVersion: String): List[CompilationUnit]
     
   def compile(
     classStore: ClassStore,
@@ -62,7 +59,8 @@ trait SourceFormat {
     outDir: String,
     schemaStore: SchemaStore,
     typeMatcher: TypeMatcher,
-    restrictedFields: Boolean): Unit
+    restrictedFields: Boolean,
+    targetScalaPartialVersion: String): Unit
     
   val defaultTypes: AvroScalaTypes
 
@@ -94,6 +92,7 @@ trait SourceFormat {
       case Left(schema) => schema.getType match {
         case RECORD => ".scala"
         case ENUM => enumExt // Avro's SpecificData requires enums be Java Enum
+        case FIXED => ".scala"
         case _ => sys.error("Only RECORD and ENUM can be top-level definitions")
       }
       case Right(protocol) => ".scala"
@@ -108,9 +107,9 @@ trait SourceFormat {
     typeMatcher: TypeMatcher): Option[Path] = {
     maybeOutDir match {
       case Some(outDir) => {
-        val folderPath: Path = Paths.get{
+        val folderPath: Path = Paths.get {
           if (namespace.isDefined) {
-            s"$outDir/${namespace.get.toString.replace('.','/')}"
+            s"$outDir/${namespace.get.toString.replace('.', '/')}"
           }
           else outDir
         }
@@ -126,7 +125,7 @@ trait SourceFormat {
 
   def getLocalSubtypes(protocol: Protocol): List[Schema] = {
     val protocolNS = protocol.getNamespace
-    val types = protocol.getTypes.asScala.toList
+    val types = protocol.getTypes().asScala.toList
     def isTopLevelNamespace(schema: Schema) = schema.getNamespace == protocolNS
     types.filter(isTopLevelNamespace)
   }
@@ -156,7 +155,8 @@ trait SourceFormat {
     typeMatcher: TypeMatcher,
     schemaStore: SchemaStore,
     maybeOutDir: Option[String],
-    restrictedFields: Boolean): CompilationUnit = {
+    restrictedFields: Boolean,
+    targetScalaPartialVersion: String): CompilationUnit = {
     val scalaFilePath =
       getFilePath(namespace, schemaOrProtocol, maybeOutDir, typeMatcher)
     val scalaString = scalaTreehugger.asScalaCodeString(
@@ -165,11 +165,12 @@ trait SourceFormat {
       schemaOrProtocol,
       typeMatcher,
       schemaStore,
-      restrictedFields)
+      restrictedFields,
+      targetScalaPartialVersion)
     CompilationUnit(scalaFilePath, scalaString)
   }
 
-  def isEnum(schema: Schema) = schema.getType == Schema.Type.ENUM
+  def isEnum(schema: Schema): Boolean = schema.getType == Schema.Type.ENUM
 
   def registerTypes(
     schemaOrProtocol: Either[Schema, Protocol],
@@ -187,17 +188,18 @@ trait SourceFormat {
     }
     schemaOrProtocol match {
       case Left(schema) => registerSchema(schema)
-      case Right(protocol) => protocol.getTypes.asScala.foreach(schema => {
+      case Right(protocol) => protocol.getTypes().asScala.foreach(schema => {
         registerSchema(schema)
       })
     }
   }
 
-  def renameEnum(schema: Schema, selector: String) = {
+  def renameEnum(schema: Schema, selector: String): String = {
     schema.getType match {
       case RECORD => schema.getName
       case ENUM => schema.getName + "." + selector
-      case _ => sys.error("Only RECORD and ENUM can be top-level definitions")
+      case FIXED => schema.getName
+      case _ => sys.error("Only RECORD, ENUM or FIXED can be top-level definitions")
     }
   }
   
@@ -220,7 +222,8 @@ trait SourceFormat {
     }
     val contents = compilationUnit.codeString.getBytes()
     try { // delete old and/or create new
-      Files.deleteIfExists(path)
+      Files.deleteIfExists(path) // delete file if exists
+      Files.createDirectories(path.getParent) // create all parent folders
       Files.write(path, contents, StandardOpenOption.CREATE)
       ()
     }

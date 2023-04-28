@@ -13,7 +13,7 @@ import treehuggerDSL._
 import org.apache.avro.Schema
 
 import scala.language.postfixOps
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 class ScalaConverter(typeMatcher: TypeMatcher) {
 
@@ -36,7 +36,7 @@ class ScalaConverter(typeMatcher: TypeMatcher) {
         REF(schema.getName).DOT("metadata").DOT("fromAvro").APPLY(tree)
       }
       case Schema.Type.UNION  => {
-        val types = schema.getTypes.asScala
+        val types = schema.getTypes().asScala
         // check if it's the kind of union that we support (i.e. nullable fields)
         if (types.length != 2 ||
            !types.map(x => x.getType).contains(Schema.Type.NULL) ||
@@ -73,7 +73,7 @@ class ScalaConverter(typeMatcher: TypeMatcher) {
         val JavaMap = RootClass.newClass("java.util.Map[_,_]")
         val resultExpr = {
           BLOCK(
-            REF("scala.collection.JavaConverters.mapAsScalaMapConverter")
+            REF("scala.jdk.CollectionConverters.mapAsScalaMapConverter")
             .APPLY(REF("map"))
             .DOT("asScala")
             .DOT("toMap")

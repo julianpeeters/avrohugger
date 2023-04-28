@@ -16,23 +16,46 @@ import treehuggerDSL._
 import org.apache.avro.{LogicalTypes, Schema}
 
 import scala.language.postfixOps
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 
 object ScalaConverter {
 
+  def asScalaIteratorConverter(partialVersion: String): String =
+    partialVersion match {
+      case "2.11" => "scala.collection.JavaConverters.asScalaIteratorConverter"
+      case "2.12" => "scala.collection.JavaConverters.asScalaIteratorConverter"
+      case "2.13" => "scala.jdk.CollectionConverters.IteratorHasAsScala"
+      case _ => "scala.jdk.CollectionConverters.IteratorHasAsScala"
+    }
+
+  def mapAsScalaMapConverter(partialVersion: String): String =
+    partialVersion match {
+      case "2.11" => "scala.collection.JavaConverters.mapAsScalaMapConverter"
+      case "2.12" => "scala.collection.JavaConverters.mapAsScalaMapConverter"
+      case "2.13" => "scala.jdk.CollectionConverters.MapHasAsScala"
+      case _ => "scala.jdk.CollectionConverters.MapHasAsScala"
+    }
+
+  def asScalaBufferConverter(partialVersion: String): String = {
+    partialVersion match {
+      case "2.11" => "scala.collection.JavaConverters.asScalaBufferConverter"
+      case "2.12" => "scala.collection.JavaConverters.asScalaBufferConverter"
+      case "2.13" => "scala.jdk.CollectionConverters.ListHasAsScala"
+      case _ => "scala.jdk.CollectionConverters.ListHasAsScala"
+    }
+  }
+
   def checkCustomArrayType(
     arrayType: AvroScalaArrayType,
     elementType: Type,
-    seqArgs: Typed,
-    defaultConversion: Tree) = {
+    asScalaTree: Tree): Tree = {
     val classTagIdent = REF(s"scala.reflect.ClassTag(classOf[$elementType])")
-    val arrayConversion = ARRAY(seqArgs).APPLY(classTagIdent).AS(TYPE_ARRAY(elementType))
     arrayType match {
-      case ScalaArray  => arrayConversion
-      case ScalaList   => LIST(seqArgs)
-      case ScalaSeq    => SEQ(seqArgs)
-      case ScalaVector => VECTOR(seqArgs)
+      case ScalaArray  => asScalaTree.DOT("toArray").APPLY(classTagIdent).AS(TYPE_ARRAY(elementType))
+      case ScalaList   => asScalaTree.DOT("toList")
+      case ScalaSeq    => asScalaTree.DOT("toSeq")
+      case ScalaVector => asScalaTree.DOT("toVector")
     }
   }
 
@@ -45,10 +68,10 @@ object ScalaConverter {
     schema: Schema,
     schemaAccessor: Tree,
     isUnionMember: Boolean,
-    tree: Tree, 
+    tree: Tree,
     typeMatcher: TypeMatcher,
-    classSymbol: ClassSymbol): Tree = {
-
+    classSymbol: ClassSymbol,
+    targetScalaPartialVersion: String): Tree = {
     schema.getType match {
       case Schema.Type.ARRAY => {
         val elementSchema = schema.getElementType
@@ -59,20 +82,19 @@ object ScalaConverter {
           classStore,
           namespace,
           elementSchema,
-          if (isUnionMember) arrayAccessor(unionAccessor(schemaAccessor, schema.getFullName)) else arrayAccessor(schemaAccessor),
+          if (isUnionMember) arrayAccessor(unionAccessor(schemaAccessor, schema.getFullName, asScalaBufferConverter(targetScalaPartialVersion))) else arrayAccessor(schemaAccessor),
           false,
           REF("x"),
           typeMatcher,
-          classSymbol)
-        val seqArgs = {
-          SEQARG(
-            REF("scala.collection.JavaConverters.asScalaIteratorConverter").APPLY(applyParam).DOT("asScala").DOT("toSeq")
-              .MAP(LAMBDA(PARAM("x")) ==> BLOCK(elementConversion))
-          )
+          classSymbol,
+          targetScalaPartialVersion)
+        val asScalaTree: Tree = {
+            REF(asScalaIteratorConverter(targetScalaPartialVersion)).APPLY(applyParam).DOT("asScala")
+              .DOT("map").APPLY(LAMBDA(PARAM("x")) ==> BLOCK(elementConversion))
         }
         val arrayType = typeMatcher.avroScalaTypes.array
         val resultExpr = BLOCK(
-          checkCustomArrayType(arrayType, elementType, seqArgs, LIST(seqArgs))
+          checkCustomArrayType(arrayType, elementType, asScalaTree)
         )
         val arrayConversion = CASE(ID("array") withType(JavaList)) ==> resultExpr
         val errorMessage = INTERP("s", LIT(s"expected array with type $JavaList, found "), LIT("array"))
@@ -99,7 +121,7 @@ object ScalaConverter {
         val JavaMap = RootClass.newClass("java.util.Map[_,_]")
         val resultExpr = {
           BLOCK(
-            REF("scala.collection.JavaConverters.mapAsScalaMapConverter")
+            REF(mapAsScalaMapConverter(targetScalaPartialVersion))
             .APPLY(REF("map"))
             .DOT("asScala")
             .DOT("toMap")
@@ -110,25 +132,26 @@ object ScalaConverter {
                 classStore,
                 namespace,
                 schema.getValueType,
-                if (isUnionMember) mapAccessor(unionAccessor(schemaAccessor, schema.getFullName)) else mapAccessor(schemaAccessor),
+                if (isUnionMember) mapAccessor(unionAccessor(schemaAccessor, schema.getFullName, asScalaBufferConverter(targetScalaPartialVersion))) else mapAccessor(schemaAccessor),
                 false,
                 REF("value"),
                 typeMatcher,
-                classSymbol)))
+                classSymbol,
+                targetScalaPartialVersion)))
             )
           )
         }
         val mapConversion = CASE(ID("map") withType(JavaMap)) ==> resultExpr
         tree MATCH(mapConversion)
       }
-      case Schema.Type.FIXED => sys.error("the FIXED datatype is not yet supported")
+      case Schema.Type.FIXED => tree
       case Schema.Type.BYTES => {
         val JavaBuffer = RootClass.newClass("java.nio.ByteBuffer")
         val resultExpr = schema.getLogicalType match {
           case decimal: LogicalTypes.Decimal => {
             val Decimal = RootClass.newClass("org.apache.avro.LogicalTypes.Decimal")
             Block(
-              VAL("schema") := {if (isUnionMember) unionAccessor(schemaAccessor, schema.getFullName) else schemaAccessor},
+              VAL("schema") := {if (isUnionMember) unionAccessor(schemaAccessor, schema.getFullName, asScalaBufferConverter(targetScalaPartialVersion)) else schemaAccessor},
               VAL("decimalType") := REF("schema").DOT("getLogicalType").APPLY().AS(Decimal),
               REF("BigDecimal").APPLY(classSymbol.DOT("decimalConversion").DOT("fromBytes").APPLY(REF("buffer"),REF("schema"),REF("decimalType")))
             )
@@ -139,34 +162,32 @@ object ScalaConverter {
             REF("dup") DOT "get" APPLY(REF("array")),
             REF("array")
           )
-        }  
+        }
         val bufferConversion = CASE(ID("buffer") withType (JavaBuffer)) ==> resultExpr
         tree MATCH bufferConversion
       }
-      case Schema.Type.UNION  => {
-        val types = schema.getTypes.asScala
-        // check if it's the kind of union that we support (i.e. nullable fields)
-        if (types.length != 2 ||
-           !types.map(x => x.getType).contains(Schema.Type.NULL) ||
-            types.filterNot(x => x.getType == Schema.Type.NULL).length != 1) {
-              sys.error("Unions beyond nullable fields are not supported")
-        }
-        // the union represents a nullable field, the kind of union supported in avrohugger
-        else {
-          val typeParamSchema = types.find(x => x.getType != Schema.Type.NULL).get
+      case Schema.Type.UNION => {
+        val types = schema.getTypes().asScala.toList
+        val hasNull = types.exists(_.getType == Schema.Type.NULL)
+        val typeParamSchemas = types.filterNot(_.getType == Schema.Type.NULL)
+        val expr = convertFromJava(
+          classStore,
+          namespace,
+          typeParamSchemas.head,
+          schemaAccessor,
+          true,
+          tree,
+          typeMatcher,
+          classSymbol,
+          targetScalaPartialVersion
+        )
+        if (hasNull) {
           val nullConversion = CASE(NULL) ==> NONE
-          val someExpr = SOME(convertFromJava(
-            classStore,
-            namespace,
-            typeParamSchema,
-            schemaAccessor,
-            true,
-            tree,
-            typeMatcher,
-            classSymbol))
-          val someConversion = CASE(WILDCARD) ==> someExpr
+          val someConversion = CASE(WILDCARD) ==> SOME(expr)
           val conversionCases = List(nullConversion, someConversion)
-          tree MATCH(conversionCases:_*)
+          tree MATCH (conversionCases: _*)
+        } else {
+          tree
         }
       }
       case Schema.Type.ENUM => {
@@ -191,7 +212,7 @@ object ScalaConverter {
                   val resultExpr = BLOCK(InstantClass.DOT("ofEpochMilli").APPLY(REF("l")))
                   val longConversion = CASE(ID("l") withType (LongClass)) ==> resultExpr
                   tree MATCH longConversion
-                } 
+                }
               }
             }
             else tree
@@ -217,9 +238,26 @@ object ScalaConverter {
                   val resultExpr = BLOCK(LocalDateClass.DOT("ofEpochDay").APPLY(REF("i").DOT("toInt")))
                   val integerConversion = CASE(ID("i") withType (IntegerClass)) ==> resultExpr
                   tree MATCH integerConversion
-                } 
+                }
               }
-              
+            }
+            else if (logicalType.getName == "time-millis") {
+              typeMatcher.avroScalaTypes.timeMillis match {
+                case JavaSqlTime => {
+                  val IntegerClass = RootClass.newClass("Integer")
+                  val SqlTimeClass = RootClass.newClass("java.sql.Time")
+                  val resultExpr = BLOCK(NEW(SqlTimeClass, REF("i").DOT("toLong")))
+                  val integerConversion = CASE(ID("i") withType (IntegerClass)) ==> resultExpr
+                  tree MATCH integerConversion
+                }
+                case JavaTimeLocalTime => {
+                  val IntegerClass = RootClass.newClass("Integer")
+                  val LocalTimeClass = RootClass.newClass("java.time.LocalTime")
+                  val resultExpr = BLOCK(LocalTimeClass.DOT("ofNanoOfDay").APPLY(REF("i").INFIX("*", LIT(1000000L))))
+                  val integerConversion = CASE(ID("i") withType (IntegerClass)) ==> resultExpr
+                  tree MATCH integerConversion
+                }
+              }
             }
             else tree
           }

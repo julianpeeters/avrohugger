@@ -1,5 +1,5 @@
 /** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
-package example.idl.case.model
+package example.idl.`case`.model
 
 import org.apache.avro.Schema
 
@@ -7,11 +7,11 @@ import org.oedura.scavro.{AvroMetadata, AvroReader, AvroSerializeable}
 
 import example.idl.{DefaultEnum => JDefaultEnum, DefaultTest => JDefaultTest, Embedded => JEmbedded}
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 sealed trait Defaults
 
-sealed trait DefaultEnum extends Defaults
+sealed trait DefaultEnum extends DefaultsF
 
 object DefaultEnum {
   case object SPADES extends DefaultEnum
@@ -111,7 +111,7 @@ final object DefaultTest {
         })
       }, j.getDefaultMap match {
         case (map: java.util.Map[_,_]) => {
-          scala.collection.JavaConverters.mapAsScalaMapConverter(map).asScala.toMap map { kvp =>
+          scala.jdk.CollectionConverters.mapAsScalaMapConverter(map).asScala.toMap map { kvp =>
             val key = kvp._1.toString
             val value = kvp._2
             (key, value.toString)

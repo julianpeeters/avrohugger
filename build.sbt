@@ -1,46 +1,41 @@
-lazy val avroVersion = "1.9.1"
+lazy val avroVersion = "1.11.1"
 
 lazy val commonSettings = Seq(
   organization := "com.julianpeeters",
-  version := "1.0.0-RC22",
-  scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-Ywarn-value-discard"),
-  scalacOptions in Test ++= Seq("-Yrangepos"),
-  scalaVersion := "2.13.1",
-  crossScalaVersions := Seq("2.11.12", "2.12.10", scalaVersion.value),
-  resolvers += Resolver.typesafeIvyRepo("releases"),
+  version := "1.3.1",
+  ThisBuild / versionScheme := Some("semver-spec"),
+  scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature"),
+  Test / scalacOptions ++= Seq("-Yrangepos"),
+  scalaVersion := "2.13.10",
+  crossScalaVersions := Seq("2.12.17", scalaVersion.value),
   libraryDependencies += "org.apache.avro" % "avro" % avroVersion,
   libraryDependencies += "org.apache.avro" % "avro-compiler" % avroVersion,
   libraryDependencies := { CrossVersion.partialVersion(scalaVersion.value) match {
-    case Some((2, scalaMajor)) if scalaMajor < 13 =>
+    case Some((2, scalaMinor)) if scalaMinor < 13 =>
       // for implementing SpecificRecord from standard case class definitions
-      libraryDependencies.value ++ Seq(compilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full))
-      
+      libraryDependencies.value ++ Seq(compilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full))
     case _ =>
       // Scala 2.13 has it built-in
       libraryDependencies.value
   }},
-  libraryDependencies := {
-    CrossVersion.partialVersion(scalaVersion.value) match {
-      case Some((2, scalaMajor)) if scalaMajor == 10 =>
-        libraryDependencies.value ++ Seq (
-          "org.scalamacros" %% "quasiquotes" % "2.0.0" cross CrossVersion.binary)
-      case _ =>
-        libraryDependencies.value ++ Seq()
-    }
-  },
+  libraryDependencies := { CrossVersion.partialVersion(scalaVersion.value) match {
+    case Some((2, scalaMinor)) if scalaMinor < 13 =>
+      libraryDependencies.value ++ Seq("org.scala-lang.modules" %% "scala-collection-compat" % "2.8.1")
+    case _ =>
+      libraryDependencies.value
+  }},
   libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value,
   libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value,
-  libraryDependencies += "org.codehaus.jackson" % "jackson-core-asl" % "1.9.13",
   // for testing
-  libraryDependencies += "org.specs2" %% "specs2-core" % "4.8.0" % "test",
+  libraryDependencies += "org.specs2" %% "specs2-core" % "4.16.1" % "test",
   publishMavenStyle := true,
-  publishArtifact in Test := false,
-  publishTo := Some(
+  Test / publishArtifact := false,
+  publishTo := {
   if (isSnapshot.value)
-    Opts.resolver.sonatypeSnapshots
+    Opts.resolver.sonatypeOssSnapshots.headOption
   else
-    Opts.resolver.sonatypeStaging
-  ),
+    Some(Opts.resolver.sonatypeStaging)
+  },
   pomIncludeRepository := { _ => false },
   licenses := Seq("Apache 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
   homepage := Some(url("https://github.com/julianpeeters/avrohugger")),
@@ -60,29 +55,59 @@ lazy val commonSettings = Seq(
 
 lazy val avrohugger = (project in file("."))
   .settings(
-    commonSettings,
+    commonSettings
   ).aggregate(`avrohugger-core`, `avrohugger-filesorter`, `avrohugger-tools`)
 
 
 lazy val `avrohugger-core` = (project in file("avrohugger-core"))
   .settings(
     commonSettings,
-    libraryDependencies += "com.eed3si9n" %% "treehugger" % "0.4.4"
+    libraryDependencies += "com.eed3si9n" %% "treehugger" % "0.4.4",
+    Compile / sourceGenerators += addScalaVersionFile.taskValue
   )
 
 lazy val `avrohugger-filesorter` = (project in file("avrohugger-filesorter"))
   .settings(
     commonSettings,
-    libraryDependencies += "io.spray" %% "spray-json" % "1.3.5"
+    libraryDependencies += "io.spray" %% "spray-json" % "1.3.6"
   )
 
 lazy val `avrohugger-tools` = (project in file("avrohugger-tools"))
   .settings(
     commonSettings,
-    libraryDependencies += "org.apache.avro" % "avro-tools" % avroVersion,
-    artifact in (Compile, assembly) := {
-      val art: Artifact = (artifact in (Compile, assembly)).value
+    libraryDependencies += "org.apache.avro" % "avro-tools" % avroVersion exclude("org.slf4j", "*"),
+    Compile / assembly / artifact := {
+      val art: Artifact = (Compile / assembly / artifact).value
       art.withClassifier(Some("assembly"))
     },
-    addArtifact(artifact in (Compile, assembly), assembly).settings
+    addArtifact(Compile / assembly / artifact, assembly).settings,
+    Global / assembly / assemblyMergeStrategy := {
+      case PathList("javax", "servlet", xs @ _*)    => MergeStrategy.first
+      case PathList("org","jline", xs @ _*)         => MergeStrategy.first
+      case "module-info.class"                      => MergeStrategy.discard
+      case x =>
+        val oldStrategy = (Global / assembly / assemblyMergeStrategy).value
+        oldStrategy(x)
+    },
+    Test / sourceGenerators += addScalaVersionFile.taskValue
   ).dependsOn(`avrohugger-core`, `avrohugger-filesorter`)
+
+lazy val addScalaVersionFile = Def.task {
+  val partialScalaVersion =
+    CrossVersion.partialVersion(scalaVersion.value)
+      .map(v => v._1 + "." + v._2)
+
+  val pv = partialScalaVersion.get
+  val content =
+    s"""package avrohugger
+       |package internal
+       |
+       |object ScalaVersion {
+       |  val version = "$pv"
+       |}""".stripMargin
+
+  val file = (Test / sourceManaged).value / "avrohugger" / "internal" / "ScalaVersion.scala"
+  IO.write(file, content)
+
+  Seq(file)
+}

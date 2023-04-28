@@ -12,7 +12,7 @@ import org.apache.avro.SchemaParseException
 import org.apache.avro.compiler.idl.Idl
 import org.apache.avro.compiler.idl.ParseException
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import java.nio.charset.Charset
 import java.io.FileNotFoundException
 
@@ -61,6 +61,7 @@ class StringInputParser {
           }
           else tryCaseClass(str, schemaStore)
         }
+        case npe: NullPointerException => sys.error("Imports not supported in String IDLs, only avdl files.")
         case unknown: Throwable => sys.error("Unexpected exception: " + unknown)
         }
       }

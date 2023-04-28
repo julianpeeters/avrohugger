@@ -36,7 +36,8 @@ object Scavro extends SourceFormat {
     schemaStore: SchemaStore,
     maybeOutDir: Option[String],
     typeMatcher: TypeMatcher,
-    restrictedFields: Boolean): List[CompilationUnit] = {
+    restrictedFields: Boolean,
+    targetScalaPartialVersion: String): List[CompilationUnit] = {
 
     registerTypes(schemaOrProtocol, classStore, typeMatcher)
 
@@ -61,7 +62,8 @@ object Scavro extends SourceFormat {
               typeMatcher,
               schemaStore,
               maybeOutDir,
-              restrictedFields)
+              restrictedFields,
+              targetScalaPartialVersion)
             List(scalaCompilationUnit)
           }
           case ENUM => {
@@ -87,7 +89,8 @@ object Scavro extends SourceFormat {
                   typeMatcher,
                   schemaStore,
                   maybeOutDir,
-                  restrictedFields)
+                  restrictedFields,
+                  targetScalaPartialVersion)
                 List(scalaCompilationUnit)
               }
               case ScalaCaseObjectEnum => {
@@ -98,7 +101,8 @@ object Scavro extends SourceFormat {
                   typeMatcher,
                   schemaStore,
                   maybeOutDir,
-                  restrictedFields)
+                  restrictedFields,
+                  targetScalaPartialVersion)
                 List(scalaCompilationUnit)
               }
               case EnumAsScalaString => {
@@ -118,7 +122,8 @@ object Scavro extends SourceFormat {
           typeMatcher,
           schemaStore,
           maybeOutDir,
-          restrictedFields)
+          restrictedFields,
+          targetScalaPartialVersion)
         enumType match {
           // java enums can't be represented as trees so they can't be
           // handled by treehugger. Their compilation unit must de generated
@@ -176,7 +181,8 @@ object Scavro extends SourceFormat {
     outDir: String,
     schemaStore: SchemaStore,
     typeMatcher: TypeMatcher,
-    restrictedFields: Boolean): Unit = {
+    restrictedFields: Boolean,
+    targetScalaPartialVersion: String): Unit = {
     val compilationUnits: List[CompilationUnit] = asCompilationUnits(
       classStore,
       maybeNamespace,
@@ -184,7 +190,8 @@ object Scavro extends SourceFormat {
       schemaStore,
       Some(outDir),
       typeMatcher,
-      restrictedFields)
+      restrictedFields,
+      targetScalaPartialVersion)
     compilationUnits.foreach(writeToFile)
   }
 

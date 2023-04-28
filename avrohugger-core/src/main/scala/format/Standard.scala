@@ -6,14 +6,12 @@ import format.standard._
 import matchers.TypeMatcher
 import matchers.custom.{CustomNamespaceMatcher, CustomTypeMatcher}
 import models.CompilationUnit
-import stores.{ ClassStore, SchemaStore }
+import stores.{ClassStore, SchemaStore}
 import types._
-
 import treehugger.forest._
 import definitions.RootClass
-
-import org.apache.avro.{ Protocol, Schema }
-import org.apache.avro.Schema.Type.{ ENUM, RECORD }
+import org.apache.avro.{Protocol, Schema}
+import org.apache.avro.Schema.Type.{ENUM, FIXED, RECORD}
 
 object Standard extends SourceFormat {
 
@@ -31,7 +29,8 @@ object Standard extends SourceFormat {
     schemaStore: SchemaStore,
     maybeOutDir: Option[String],
     typeMatcher: TypeMatcher,
-    restrictedFields: Boolean): List[CompilationUnit] = {
+    restrictedFields: Boolean,
+    targetScalaPartialVersion: String): List[CompilationUnit] = {
     registerTypes(schemaOrProtocol, classStore, typeMatcher)
     val namespace =
       CustomNamespaceMatcher.checkCustomNamespace(
@@ -52,7 +51,8 @@ object Standard extends SourceFormat {
               typeMatcher,
               schemaStore,
               maybeOutDir,
-              restrictedFields)
+              restrictedFields,
+              targetScalaPartialVersion)
             List(scalaCompilationUnit)
           }
           case ENUM => {
@@ -78,7 +78,8 @@ object Standard extends SourceFormat {
                   typeMatcher,
                   schemaStore,
                   maybeOutDir,
-                  restrictedFields)
+                  restrictedFields,
+                  targetScalaPartialVersion)
                 List(scalaCompilationUnit)
               }
               case ScalaEnumeration => {
@@ -89,16 +90,27 @@ object Standard extends SourceFormat {
                   typeMatcher,
                   schemaStore,
                   maybeOutDir,
-                  restrictedFields)
+                  restrictedFields,
+                  targetScalaPartialVersion)
                 List(scalaCompilationUnit)
               }
               case EnumAsScalaString => {
                 List.empty
               }
             }
-
           }
-          case _ => sys.error("Only RECORD or ENUM can be toplevel definitions")
+          case FIXED =>
+            val scalaCompilationUnit = getScalaCompilationUnit(
+              classStore,
+              namespace,
+              schemaOrProtocol,
+              typeMatcher,
+              schemaStore,
+              maybeOutDir,
+              restrictedFields,
+              targetScalaPartialVersion)
+            List(scalaCompilationUnit)
+          case _ => sys.error("Only FIXED, RECORD, or ENUM can be toplevel definitions")
         }
       }
       case Right(protocol) => {
@@ -109,7 +121,8 @@ object Standard extends SourceFormat {
           typeMatcher,
           schemaStore,
           maybeOutDir,
-          restrictedFields)
+          restrictedFields,
+          targetScalaPartialVersion)
         enumType match {
           // java enums can't be represented as trees so they can't be handled
           // by treehugger. Their compilation unit must de generated
@@ -144,7 +157,8 @@ object Standard extends SourceFormat {
     outDir: String,
     schemaStore: SchemaStore,
     typeMatcher: TypeMatcher,
-    restrictedFields: Boolean): Unit = {
+    restrictedFields: Boolean,
+    targetScalaPartialVersion: String): Unit = {
     val compilationUnits: List[CompilationUnit] = asCompilationUnits(
       classStore,
       ns,
@@ -152,10 +166,11 @@ object Standard extends SourceFormat {
       schemaStore,
       Some(outDir),
       typeMatcher,
-      restrictedFields)
+      restrictedFields,
+      targetScalaPartialVersion)
     compilationUnits.foreach(writeToFile)
   }
-  
+
   val defaultTypes: AvroScalaTypes = AvroScalaTypes.defaults
 
   def getName(
@@ -173,7 +188,7 @@ object Standard extends SourceFormat {
         if (localSubTypes.length > 1) protocol.getName // for ADT
         else localSubTypes.headOption match {
           case Some(schema) => schema.getName // for single class defintion
-          case None => protocol.getName  // default to protocol name
+          case None => protocol.getName // default to protocol name
         }
       }
     }

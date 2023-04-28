@@ -1,0 +1,15 @@
+{
+  "type": "record",
+  "name": "FixedSc",
+  "namespace": "example",
+  "fields": [
+    {
+      "name": "data",
+      "type": {
+        "type": "fixed",
+        "name": "my_fixed",
+        "size": 16
+      }
+    }
+  ]
+}

@@ -7,14 +7,11 @@ import generators.ScalaDocGenerator
 import converters.ScalaConverter
 import matchers.TypeMatcher
 import stores.ClassStore
-
+import org.apache.avro.Schema
 import treehugger.forest._
-import definitions._
 import treehuggerDSL._
 
-import org.apache.avro.Schema
-
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 object ScavroObjectTree {
 
@@ -23,7 +20,9 @@ object ScavroObjectTree {
     classStore: ClassStore, 
     schema: Schema,
     maybeBaseTrait: Option[String],
-    maybeFlags: Option[List[Long]]) = {
+    maybeFlags: Option[List[Long]],
+    useFullName: Boolean = false
+  ) = {
       
     val objectDef = (maybeBaseTrait, maybeFlags) match {
       case (Some(baseTrait), Some(flags)) =>
@@ -75,7 +74,7 @@ object ScavroObjectTree {
       TYPE_REF(LAMBDA(PARAM("j", JavaClass)) ==> TYPE_REF(ScalaClass))
 
     val javaClassAccessors: List[Tree] =
-      schema.getFields.asScala.toList.map(avroField => {
+      schema.getFields().asScala.toList.map(avroField => {
         val nameGet = ScavroMethodRenamer.generateMethodName(schema, avroField, "get", "")
         val getterTree = REF("j") DOT nameGet
         val scalaConverter = new ScalaConverter(typeMatcher)

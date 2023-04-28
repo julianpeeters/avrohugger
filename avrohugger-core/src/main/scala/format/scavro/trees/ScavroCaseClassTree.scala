@@ -7,14 +7,11 @@ import generators.ScalaDocGenerator
 import converters.JavaConverter
 import matchers.{ DefaultValueMatcher, TypeMatcher }
 import stores.ClassStore
-
+import org.apache.avro.Schema
 import treehugger.forest._
-import definitions._
 import treehuggerDSL._
 
-import org.apache.avro.Schema
-
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.language.postfixOps
 
 object ScavroCaseClassTree {
@@ -31,7 +28,7 @@ object ScavroCaseClassTree {
     restrictedFields: Boolean) = {
 
     val mixin = TYPE_REF(REF("AvroSerializeable"))
-    val avroFields = schema.getFields.asScala.toList
+    val avroFields = schema.getFields().asScala.toList
 
     val shouldGenerateSimpleClass = restrictedFields && avroFields.size > 22
 

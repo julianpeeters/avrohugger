@@ -2,22 +2,17 @@ package avrohugger
 package format
 package scavro
 
-import format.abstractions.Importer
-import avrohugger.input.{DependencyInspector, NestedSchemaExtractor}
+import avrohugger.format.abstractions.Importer
+import avrohugger.input.DependencyInspector
 import avrohugger.matchers.TypeMatcher
-import avrohugger.matchers.custom.CustomNamespaceMatcher
 import avrohugger.stores.SchemaStore
 import avrohugger.types._
-
-import org.apache.avro.{ Protocol, Schema }
-import org.apache.avro.Schema.Field
-import org.apache.avro.Schema.Type.RECORD
-
+import org.apache.avro.{Protocol, Schema}
 import treehugger.forest._
 import definitions._
 import treehuggerDSL._
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 object ScavroImporter extends Importer {
 
@@ -49,7 +44,7 @@ object ScavroImporter extends Importer {
               else checkForArrays(s, used :+ s)
             })
           case Schema.Type.UNION =>
-            val types = schema.getTypes.asScala
+            val types = schema.getTypes().asScala
             if (types.length != 2 ||
                !types.map(x => x.getType).contains(Schema.Type.NULL) ||
                 types.filterNot(x => x.getType == Schema.Type.NULL).length != 1) {
@@ -69,7 +64,7 @@ object ScavroImporter extends Importer {
       val schemas: List[Schema] = schemaOrProtocol match {
         case Left(schema) => checkForArrays(schema)
         case Right(protocol) => {
-          protocol.getTypes.asScala.toList
+          protocol.getTypes().asScala.toList
             .filter(schema => isRecord(schema))
             .flatMap(schema => checkForArrays(schema))
         }
@@ -78,7 +73,7 @@ object ScavroImporter extends Importer {
       val hasArrayField: Boolean =
         schemas.map(schema => schema.getType).contains(Schema.Type.ARRAY)
 
-      val convPackage = RootClass.newClass("scala.collection.JavaConverters")
+      val convPackage = RootClass.newClass("scala.jdk.CollectionConverters")
       val javaConvertersImport = IMPORT(convPackage, "_")
 
       if(hasArrayField) Some(javaConvertersImport)

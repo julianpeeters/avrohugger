@@ -18,7 +18,8 @@ object PutGenerator {
       namespace: Option[String], 
       indexedFields: List[IndexedField],
       typeMatcher: TypeMatcher,
-      classSymbol: ClassSymbol) = {
+      classSymbol: ClassSymbol,
+      targetScalaPartialVersion: String) = {
 
       def asPutCase(field: IndexedField) = {
         CASE (LIT(field.idx)) ==> {
@@ -31,7 +32,8 @@ object PutGenerator {
               false,
               REF("value"),
               typeMatcher,
-              classSymbol))
+              classSymbol,
+              targetScalaPartialVersion))
             .AS(typeMatcher.toScalaType(classStore, namespace, field.avroField.schema))
         }
       }

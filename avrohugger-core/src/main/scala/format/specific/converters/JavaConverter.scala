@@ -6,19 +6,25 @@ package converters
 import SchemaAccessors._
 
 import matchers.TypeMatcher
-import stores.ClassStore
 import types._
 
 import treehugger.forest._
 import definitions._
+import org.apache.avro.{LogicalTypes, Schema}
 import treehuggerDSL._
 
-import org.apache.avro.{LogicalTypes, Schema}
+import scala.jdk.CollectionConverters._
 import scala.language.postfixOps
-import scala.collection.JavaConverters._
-
 
 object JavaConverter {
+
+  def bufferAsJavaListConverter(partialVersion: String): String =
+    partialVersion match {
+      case "2.11" => "scala.collection.JavaConverters.bufferAsJavaListConverter"
+      case "2.12" => "scala.collection.JavaConverters.bufferAsJavaListConverter"
+      case "2.13" => "scala.jdk.CollectionConverters.BufferHasAsJava"
+      case _ => "scala.jdk.CollectionConverters.BufferHasAsJava"
+    }
 
   // Recursive definition takes a field's schema, and a tree that represents the source code to be written.
   // The initial tree that is passed in is a REF("fieldName"), which is wrapped in a pattern match tree (e.g.,
@@ -30,35 +36,32 @@ object JavaConverter {
     isUnionMember: Boolean,
     tree: Tree,
     classSymbol: ClassSymbol,
-    typeMatcher: TypeMatcher): Tree = schema.getType match {
+    typeMatcher: TypeMatcher,
+    targetScalaPartialVersion: String): Tree = schema.getType match {
     case Schema.Type.UNION => {
-      val types = schema.getTypes.asScala
-      // check if it's the kind of union that we support (i.e. nullable fields)
-      if (types.length != 2 ||
-         !types.map(x => x.getType).contains(Schema.Type.NULL) ||
-          types.filterNot(x => x.getType == Schema.Type.NULL).length != 1) {
-        sys.error("Unions beyond nullable fields are not supported")
-      }
-      else {
-        val maybeType = types.find(x => x.getType != Schema.Type.NULL)
-        if (maybeType.isDefined) {
+      val types = schema.getTypes().asScala
+      val hasNull = types.exists(_.getType == Schema.Type.NULL)
+      val typeParamSchemas = types.filterNot(_.getType == Schema.Type.NULL)
+      if (hasNull) {
         val conversionCases = List(
           CASE(SOME(ID("x"))) ==> {
             convertToJava(
-              maybeType.get,
+              typeParamSchemas.head,
               schemaAccessor,
               true,
               REF("x"),
               classSymbol,
-              typeMatcher)
+              typeMatcher,
+              targetScalaPartialVersion
+            )
           },
-          CASE(NONE)          ==> {
+          CASE(NONE) ==> {
             NULL
           }
         )
-        tree MATCH(conversionCases:_*)
-        }
-        else sys.error("There was no type in this union")
+        tree MATCH (conversionCases: _*)
+      } else {
+        tree
       }
     }
     case Schema.Type.ARRAY => {
@@ -66,14 +69,15 @@ object JavaConverter {
         BLOCK(tree MAP(LAMBDA(PARAM("x")) ==> BLOCK(
           convertToJava(
             schema.getElementType,
-            if (isUnionMember) arrayAccessor(unionAccessor(schemaAccessor, schema.getFullName)) else arrayAccessor(schemaAccessor),
+            if (isUnionMember) arrayAccessor(unionAccessor(schemaAccessor, schema.getFullName, ScalaConverter.asScalaBufferConverter(targetScalaPartialVersion))) else arrayAccessor(schemaAccessor),
             false,
             REF("x"),
             classSymbol,
-            typeMatcher)
+            typeMatcher,
+            targetScalaPartialVersion)
         )))
       }
-      REF("scala.collection.JavaConverters.bufferAsJavaListConverter").APPLY(applyParam DOT "toBuffer").DOT("asJava")
+      REF(bufferAsJavaListConverter(targetScalaPartialVersion)).APPLY(applyParam DOT "toBuffer").DOT("asJava")
     }
     case Schema.Type.MAP      => {
       val HashMapClass = RootClass.newClass("java.util.HashMap[String, Any]")
@@ -87,17 +91,41 @@ object JavaConverter {
               REF("key"),
               convertToJava(
                 schema.getValueType,
-                if (isUnionMember) mapAccessor(unionAccessor(schemaAccessor, schema.getFullName)) else mapAccessor(schemaAccessor),
+                if (isUnionMember) mapAccessor(unionAccessor(schemaAccessor, schema.getFullName, ScalaConverter.asScalaBufferConverter(targetScalaPartialVersion))) else mapAccessor(schemaAccessor),
                 false,
                 REF("value"),
                 classSymbol,
-                typeMatcher))
+                typeMatcher,
+                targetScalaPartialVersion))
           )
         ),
         REF("map")
       )
     }
-    case Schema.Type.FIXED => sys.error("the FIXED datatype is not yet supported")
+    case Schema.Type.FIXED => schema.getLogicalType match {
+      case decimal: LogicalTypes.Decimal => {
+        val Decimal = RootClass.newClass("org.apache.avro.LogicalTypes.Decimal")
+        val scale = tree.DOT("bytes").DOT("setScale").APPLY(REF("scale"))
+        def scaleAndRound(roundingMode: BigDecimal.RoundingMode.Value) =
+          tree.DOT("bigDecimal").DOT("setScale").APPLY(REF("scale"), REF("BigDecimal.RoundingMode."+ roundingMode.toString))
+        Block(
+          VAL("schema") := {if (isUnionMember) unionAccessor(schemaAccessor, schema.getFullName, ScalaConverter.asScalaBufferConverter(targetScalaPartialVersion)) else schemaAccessor},
+          VAL("decimalType") := REF("schema").DOT("getLogicalType").APPLY().AS(Decimal),
+          VAL("scale") := REF("decimalType").DOT("getScale").APPLY(),
+          VAL("scaledValue") := {
+            typeMatcher.avroScalaTypes.decimal match {
+              case ScalaBigDecimal(None) => scale
+              case ScalaBigDecimal(Some(roundingMode)) => scaleAndRound(roundingMode)
+              case ScalaBigDecimalWithPrecision(None) => scale
+              case ScalaBigDecimalWithPrecision(Some(roundingMode)) => scaleAndRound(roundingMode)
+            }
+          },
+          VAL("bigDecimal") := REF("scaledValue").DOT("bigDecimal"),
+          classSymbol.DOT("decimalConversion").DOT("toFixed").APPLY(REF("bigDecimal"),REF("schema"),REF("decimalType"))
+        )
+      }
+      case _ => tree
+    }
     case Schema.Type.BYTES => schema.getLogicalType match {
       case decimal: LogicalTypes.Decimal => {
         val Decimal = RootClass.newClass("org.apache.avro.LogicalTypes.Decimal")
@@ -105,7 +133,7 @@ object JavaConverter {
         def scaleAndRound(roundingMode: BigDecimal.RoundingMode.Value) =
           tree.DOT("setScale").APPLY(REF("scale"), REF("BigDecimal.RoundingMode."+ roundingMode.toString))
         Block(
-          VAL("schema") := {if (isUnionMember) unionAccessor(schemaAccessor, schema.getFullName) else schemaAccessor},
+          VAL("schema") := {if (isUnionMember) unionAccessor(schemaAccessor, schema.getFullName, ScalaConverter.asScalaBufferConverter(targetScalaPartialVersion)) else schemaAccessor},
           VAL("decimalType") := REF("schema").DOT("getLogicalType").APPLY().AS(Decimal),
           VAL("scale") := REF("decimalType").DOT("getScale").APPLY(),
           VAL("scaledValue") := {
@@ -134,6 +162,10 @@ object JavaConverter {
         case JavaSqlDate       => tree.DOT("getTime").APPLY().DOT("/").APPLY(LIT(86400000))
         case JavaTimeLocalDate => tree.DOT("toEpochDay").DOT("toInt")
       }
+      case timeMillis: LogicalTypes.TimeMillis => typeMatcher.avroScalaTypes.timeMillis match {
+        case JavaSqlTime       => tree.DOT("getTime").APPLY()
+        case JavaTimeLocalTime => tree.DOT("get").APPLY(REF("java.time.temporal.ChronoField").DOT("MILLI_OF_DAY"))
+      }
       case _ => tree
     }
     case Schema.Type.STRING =>
@@ -145,10 +177,12 @@ object JavaConverter {
     case Schema.Type.ENUM => {
       typeMatcher.avroScalaTypes.enum match {
         case EnumAsScalaString =>
+          val defaultTree: Tree = REF("getSchema").DOT("getFields").DOT("get").APPLY(REF("field$")).DOT("schema")
+          val schemaTree: Tree =
+            if (isUnionMember) defaultTree.DOT("getTypes").DOT("get").APPLY(defaultTree.DOT("getIndexNamed").APPLY(LIT(schema.getFullName())))
+            else defaultTree
           NEW(
-            REF("org.apache.avro.generic.GenericData.EnumSymbol").APPLY(
-              REF("getSchema").DOT("getFields").DOT("get").APPLY(REF("field$")).DOT("schema"),
-              tree))
+            REF("org.apache.avro.generic.GenericData.EnumSymbol").APPLY(schemaTree, tree))
         case JavaEnum | ScalaEnumeration | ScalaCaseObjectEnum => tree
       }
     }

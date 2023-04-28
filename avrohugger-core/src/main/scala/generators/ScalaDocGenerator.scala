@@ -7,10 +7,10 @@ import treehuggerDSL._
 
 import org.apache.avro.{ Protocol, Schema }
 import org.apache.avro.Schema.Field
-import org.apache.avro.Schema.Type.{ ENUM, RECORD }
+import org.apache.avro.Schema.Type.{ ENUM, FIXED, RECORD }
 
 import scala.language.postfixOps
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 object ScalaDocGenerator {
 
@@ -19,7 +19,7 @@ object ScalaDocGenerator {
     tree: Tree): Tree = {
 
     def aFieldHasDoc(schema: Schema): Boolean = {
-      schema.getFields.asScala.exists(field => {
+      schema.getFields().asScala.exists(field => {
         val maybeFieldDoc = Option(field.doc)
         isDoc(maybeFieldDoc)
       })
@@ -39,7 +39,7 @@ object ScalaDocGenerator {
 
     // Need arbitrary number of fields, so can't use DocTags, must return String
     def getFieldFauxDocTags(schema: Schema): List[String] = {
-      val docStrings = schema.getFields.asScala.toList.map(field => {
+      val docStrings = schema.getFields().asScala.toList.map(field => {
         val fieldName = field.name
         val fieldDoc = Option(field.doc).getOrElse("")
         s"@param $fieldName $fieldDoc"
@@ -49,6 +49,11 @@ object ScalaDocGenerator {
 
     def wrapClassWithDoc(schema: Schema, tree: Tree, docs: List[String]) = {
       if (topLevelHasDoc(schema) || aFieldHasDoc(schema)) tree.withDoc(docs)
+      else tree
+    }
+
+    def wrapValueClassWithDoc(schema: Schema, tree: Tree, docs: List[String]) = {
+      if (topLevelHasDoc(schema)) tree.withDoc(docs)
       else tree
     }
 
@@ -74,8 +79,10 @@ object ScalaDocGenerator {
           wrapClassWithDoc(schema, tree, docStrings:::paramDocs)
         case ENUM =>
           wrapEnumWithDoc(schema, tree, docStrings)
+        case FIXED =>
+          wrapValueClassWithDoc(schema, tree, docStrings)
         case _ =>
-          sys.error("Error generating ScalaDoc from Avro doc. Not ENUM/RECORD")
+          sys.error("Error generating ScalaDoc from Avro doc. Not FIXED/ENUM/RECORD")
       }
       case Right(protocol) => wrapTraitWithDoc(protocol, tree, docStrings)
     }

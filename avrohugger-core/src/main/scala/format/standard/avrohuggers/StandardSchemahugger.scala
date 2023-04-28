@@ -8,13 +8,9 @@ import trees.{ StandardCaseClassTree, StandardObjectTree, StandardTraitTree }
 import matchers.TypeMatcher
 import stores.{ClassStore, SchemaStore}
 import types._
-
-import org.apache.avro.{ Protocol, Schema }
-import org.apache.avro.Schema.Type.{ ENUM, RECORD }
-
+import org.apache.avro.Schema
+import org.apache.avro.Schema.Type.{ENUM, FIXED, RECORD}
 import treehugger.forest._
-import definitions._
-import treehuggerDSL._
 
 object StandardSchemahugger extends Schemahugger {
 
@@ -26,7 +22,8 @@ object StandardSchemahugger extends Schemahugger {
     typeMatcher: TypeMatcher,
     maybeBaseTrait: Option[String],
     maybeFlags: Option[List[Long]],
-    restrictedFields: Boolean): List[Tree] = { // as case class definition
+    restrictedFields: Boolean,
+    targetScalaPartialVersion: String): List[Tree] = { // as case class definition
 
     schema.getType match {
       case RECORD =>
@@ -59,7 +56,20 @@ object StandardSchemahugger extends Schemahugger {
           List(objectDef)
         case EnumAsScalaString => List.empty
       }
-      case _ => sys.error("Only RECORD or ENUM can be toplevel definitions")
+      case FIXED =>
+        val classDef = StandardCaseClassTree.toFixedClassDef(
+          classStore,
+          namespace,
+          schema,
+          typeMatcher)
+        val companionDef = StandardObjectTree.toCaseCompanionDef(
+          schema,
+          None) 
+        typeMatcher.avroScalaTypes.fixed match {
+          case ScalaCaseClassWrapper => List(classDef)
+          case ScalaCaseClassWrapperWithSchema => List(classDef, companionDef)
+        }
+      case _ => sys.error("Only RECORD or ENUM or FIXED can be toplevel definitions")
     }
   }
 

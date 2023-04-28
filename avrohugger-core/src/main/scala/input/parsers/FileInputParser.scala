@@ -4,17 +4,16 @@ package parsers
 
 import format.abstractions.SourceFormat
 import stores.ClassStore
-
-import org.apache.avro.{ Protocol, Schema }
+import org.apache.avro.{Protocol, Schema}
 import org.apache.avro.Schema.Parser
-import org.apache.avro.Schema.Type.{ RECORD, UNION, ENUM }
+import org.apache.avro.Schema.Type.{ENUM, FIXED, RECORD, UNION}
 import org.apache.avro.compiler.idl.Idl
-import org.apache.avro.generic.{ GenericDatumReader, GenericRecord }
+import org.apache.avro.generic.{GenericDatumReader, GenericRecord}
 import org.apache.avro.file.DataFileReader
 import org.apache.avro.SchemaParseException
-import java.io.File
 
-import scala.collection.JavaConverters._
+import java.io.File
+import scala.jdk.CollectionConverters._
 import scala.util.Try
 
 class FileInputParser {
@@ -29,20 +28,21 @@ class FileInputParser {
     parser: Parser = schemaParser): List[Either[Schema, Protocol]] = {
     def unUnion(schema: Schema) = {
       schema.getType match {
-        case UNION => schema.getTypes.asScala.toList
+        case UNION => schema.getTypes().asScala.toList
         case RECORD => List(schema)
         case ENUM => List(schema)
+        case FIXED => List(schema)
         case _ => sys.error("""Neither a record, enum nor a union of either. 
           |Nothing to map to a definition.""".trim.stripMargin)
       }
     }
 
     def copySchemas(tempParser: Parser, parser: Parser): Unit = {
-      val tempKeys = tempParser.getTypes.keySet().asScala
-      val keys = parser.getTypes.keySet().asScala
+      val tempKeys = tempParser.getTypes().keySet().asScala
+      val keys = parser.getTypes().keySet().asScala
       val commonElements = tempKeys.intersect(keys)
       val nonEqualElements = commonElements.filter { element =>
-        parser.getTypes.get(element) != tempParser.getTypes.get(element)
+        parser.getTypes().get(element) != tempParser.getTypes().get(element)
       }
       if (nonEqualElements.nonEmpty) {
         sys.error(s"Can't redefine:  ${nonEqualElements.mkString(",")} in $infile")
@@ -50,9 +50,9 @@ class FileInputParser {
         if (commonElements.isEmpty) {
           val _ = parser.addTypes(tempParser.getTypes)
         } else {
-          val missingTypes = tempParser.getTypes.keySet().asScala.diff(parser.getTypes.keySet().asScala)
+          val missingTypes = tempParser.getTypes().keySet().asScala.diff(parser.getTypes().keySet().asScala)
           val _ = parser.addTypes(missingTypes.map { t =>
-            t -> tempParser.getTypes.get(t)
+            t -> tempParser.getTypes().get(t)
           }.toMap.asJava)
         }
       }
@@ -110,10 +110,10 @@ class FileInputParser {
             val imported = importedSchemaOrProtocols.flatMap(avroDef => {
               avroDef match {
                 case Left(importedSchema) => List(importedSchema)
-                case Right(importedProtocol) => importedProtocol.getTypes.asScala
+                case Right(importedProtocol) => importedProtocol.getTypes().asScala
               }
             })
-            val types = protocol.getTypes.asScala.toList
+            val types = protocol.getTypes().asScala.toList
             val localTypes = imported.foldLeft(types)((remaining, imported) => {
               remaining.filterNot(remainingType => remainingType == imported)
             })

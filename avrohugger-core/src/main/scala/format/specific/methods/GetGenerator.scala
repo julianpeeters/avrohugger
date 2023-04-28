@@ -13,11 +13,13 @@ object GetGenerator {
   def toDef(
     indexedFields: List[IndexedField],
     classSymbol: ClassSymbol,
-    typeMatcher: TypeMatcher) = {
+    typeMatcher: TypeMatcher,
+    targetScalaPartialVersion: String) = {
     def asGetCase(
       field: IndexedField,
       classSymbol: ClassSymbol,
-      typeMatcher: TypeMatcher) = {
+      typeMatcher: TypeMatcher,
+      targetScalaPartialVersion: String) = {
 
       CASE (LIT(field.idx)) ==> {
         BLOCK(JavaConverter.convertToJava(
@@ -26,12 +28,13 @@ object GetGenerator {
           false,
           REF(FieldRenamer.rename(field.avroField.name)),
           classSymbol,
-          typeMatcher)).AS(AnyRefClass)
+          typeMatcher,
+          targetScalaPartialVersion)).AS(AnyRefClass)
       }
     }
 
     val errorCase = CASE(WILDCARD) ==> NEW("org.apache.avro.AvroRuntimeException", LIT("Bad index"))
-    val casesGet = indexedFields.map(field => asGetCase(field, classSymbol, typeMatcher)):+errorCase
+    val casesGet = indexedFields.map(field => asGetCase(field, classSymbol, typeMatcher, targetScalaPartialVersion)):+errorCase
 
     DEF("get", AnyRefClass) withParams(PARAM("field$", IntClass)) := BLOCK(
       REF("field$") withAnnots(ANNOT("switch")) MATCH(casesGet:_*)
