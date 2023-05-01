@@ -51,8 +51,18 @@ object SpecificObjectTree {
       case Some(flags) => OBJECTDEF(schema.getName).withFlags(flags:_*)
       case None => OBJECTDEF(schema.getName)
     }
+
     val schemaDef = VAL(REF("SCHEMA$")) := {
-      (NEW(ParserClass)) APPLY(Nil) DOT "parse" APPLY(LIT(schema.toString))
+      if(schema.toString.length < 65000)
+        (NEW(ParserClass)) APPLY(Nil) DOT "parse" APPLY(LIT(schema.toString))
+      else {
+        BLOCK(
+          (VAL(REF("schemaBuilder")) := NEW(StringBuilderClass)) +:
+              schema.toString.grouped(65000).map(schemaChunk =>
+                REF("schemaBuilder").DOT("append").APPLY(LIT(schemaChunk))
+              ).toList :+ ((NEW(ParserClass)) APPLY(Nil) DOT "parse" APPLY(REF("schemaBuilder") DOT("toString")))
+        )
+      }
     }
     val externalReader = VAL("READER$") := NEW("org.apache.avro.specific.SpecificDatumReader").APPLYTYPE(TYPE_REF(schema.getName)).APPLY(
       REF(s"${schema.getFullName()}.SCHEMA$$")
