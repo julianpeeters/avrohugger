@@ -17,7 +17,7 @@ final case class Wrestler(var number: Int, var first_name: String, var last_name
         last_name
       }.asInstanceOf[AnyRef]
       case 3 => {
-        scala.jdk.CollectionConverters.BufferHasAsJava({
+        scala.collection.JavaConverters.bufferAsJavaListConverter({
           nicknames map { x =>
             x
           }
@@ -40,7 +40,7 @@ final case class Wrestler(var number: Int, var first_name: String, var last_name
       case 3 => this.nicknames = {
         value match {
           case (array: java.util.List[_]) => {
-            scala.jdk.CollectionConverters.IteratorHasAsScala(array.iterator).asScala.map({ x =>
+            scala.collection.JavaConverters.asScalaIteratorConverter(array.iterator).asScala.map({ x =>
               x
             }).toSeq
           }
