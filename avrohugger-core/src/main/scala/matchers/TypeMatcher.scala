@@ -66,7 +66,7 @@ class TypeMatcher(
           }
         case Schema.Type.FIXED    => classStore.generatedClasses(schema)
         case Schema.Type.BYTES    => CustomTypeMatcher.checkCustomDecimalType(avroScalaTypes.decimal, schema)
-        case Schema.Type.RECORD   => classStore.generatedClasses(schema)
+        case Schema.Type.RECORD   => schema.getFullName
         case Schema.Type.ENUM     => CustomTypeMatcher.checkCustomEnumType(avroScalaTypes.`enum`, classStore, schema, useFullName)
         case Schema.Type.UNION    => {
           //unions are represented as shapeless.Coproduct

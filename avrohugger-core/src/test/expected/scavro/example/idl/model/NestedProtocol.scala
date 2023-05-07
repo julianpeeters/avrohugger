@@ -29,7 +29,7 @@ final object Level2 {
   }
 }
 
-final case class Level1(level2: Level2) extends AvroSerializeable with NestedProtocol {
+final case class Level1(level2: example.idl.Level2) extends AvroSerializeable with NestedProtocol {
   type J = JLevel1
   override def toAvro: JLevel1 = {
     new JLevel1(level2.toAvro)
@@ -49,7 +49,7 @@ final object Level1 {
   }
 }
 
-final case class Level0(level1: Level1) extends AvroSerializeable with NestedProtocol {
+final case class Level0(level1: example.idl.Level1) extends AvroSerializeable with NestedProtocol {
   type J = JLevel0
   override def toAvro: JLevel0 = {
     new JLevel0(level1.toAvro)

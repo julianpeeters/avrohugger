@@ -3,7 +3,7 @@ package example.idl
 
 import scala.annotation.switch
 
-final case class Recursive(var name: String, var recursive: Option[Recursive]) extends org.apache.avro.specific.SpecificRecordBase {
+final case class Recursive(var name: String, var recursive: Option[example.idl.Recursive]) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this("", None)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
@@ -29,7 +29,7 @@ final case class Recursive(var name: String, var recursive: Option[Recursive]) e
           case null => None
           case _ => Some(value)
         }
-      }.asInstanceOf[Option[Recursive]]
+      }.asInstanceOf[Option[example.idl.Recursive]]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
