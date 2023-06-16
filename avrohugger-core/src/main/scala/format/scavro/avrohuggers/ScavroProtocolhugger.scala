@@ -16,6 +16,7 @@ import treehugger.forest._
 
 object ScavroProtocolhugger extends Protocolhugger {
 
+  @deprecated("Scavro will no longer be supported", "avrohugger 1.5.0")
   def toTrees(
     schemaStore: SchemaStore,
     classStore: ClassStore,

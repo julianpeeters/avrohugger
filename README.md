@@ -2,7 +2,6 @@
 
 
 [![Scala CI](https://github.com/julianpeeters/avrohugger/workflows/Scala%20CI/badge.svg)](https://github.com/julianpeeters/avrohugger/actions?query=workflow%3A%22Scala+CI%22)
-[![Join the chat at https://gitter.im/julianpeeters/avrohugger](https://badges.gitter.im/julianpeeters/avrohugger.svg)](https://gitter.im/julianpeeters/avrohugger?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.julianpeeters/avrohugger-core_2.12/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.julianpeeters/avrohugger-core_2.12)
 
 **Schema-to-case-class code generation for working with Avro in Scala.**
@@ -22,7 +21,7 @@
 Table of contents
 =================
 
-  * [Supported Formats: `Standard`, `SpecificRecord`, `Scavro`](#generates-scala-case-classes-in-various-formats)
+  * [Supported Formats: `Standard`, `SpecificRecord`](#generates-scala-case-classes-in-various-formats)
   * [Supported Datatypes](#supports-generating-case-classes-with-arbitrary-fields-of-the-following-datatypes)
   * [Logical Types Support](#logical-types-support)
   * [Protocol Support](#protocol-support)
@@ -52,33 +51,33 @@ API](https://avro.apache.org/docs/1.11.1/getting-started-java/#serializing-and-d
 therefore have mutable `var` fields (for use with the Avro Specific API -
 Scalding, Spark, Avro, etc.).
 
-* `Scavro` Case classes with immutable fields, intended to wrap Java generated
+* `Scavro` (@deprecated since avrohugger v1.5.0) Case classes with immutable fields, intended to wrap Java generated
 Avro classes (for use with the [Scavro](https://github.com/oedura/scavro#scavro-reader-and-writer)
 runtime, Java classes provided separately (see [Scavro Plugin](https://github.com/oedura/scavro#scavro-plugin) or [sbt-avro](https://github.com/sbt/sbt-avro))).
 
 ##### Supports generating case classes with arbitrary fields of the following datatypes:
 
-|Avro|`Standard`|`SpecificRecord`|`Scavro`|Notes|
+|Avro|`Standard`|`SpecificRecord`|Notes|
 |----------|---------|----------|---------|---------|
-|INT|Int|Int|Int| See [Logical Types: `date`](https://github.com/julianpeeters/avrohugger#logical-types-support)|
-|LONG|Long|Long|Long| See [Logical Types: `timestamp-millis`](https://github.com/julianpeeters/avrohugger#logical-types-support)|
-|FLOAT|Float|Float|Float||
-|DOUBLE|Double|Double|Double||
-|STRING|String|String|String||
-|BOOLEAN|Boolean|Boolean|Boolean||
-|NULL|Null|Null|Null||
-|MAP|Map|Map|Map||
-|ENUM|scala.Enumeration<br>Scala case object<br>Java Enum<br>EnumAsScalaString|Java Enum<br>EnumAsScalaString|scala.Enumeration<br>Scala case object<br>Java Enum<br>EnumAsScalaString| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
-|BYTES|Array[Byte]<br>BigDecimal|Array[Byte]<br>BigDecimal|Array[Byte]|See [Logical Types: `decimal`](https://github.com/julianpeeters/avrohugger#logical-types-support)|
-|FIXED|case class<br>case class + schema|case class extending `SpecificFixed`|//TODO|See [Logical Types: `decimal`](https://github.com/julianpeeters/avrohugger#logical-types-support)|
-|ARRAY|Seq<br>List<br>Array<br>Vector|Seq<br>List<br>Array<br>Vector|Array<br>Seq<br>List<br>Vector| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
-|UNION|Option<br>Either<br>Shapeless Coproduct|Option<br>Either<br>Shapeless Coproduct|Option| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
-|RECORD|case class<br>case class + schema|case class extending `SpecificRecordBase`|case class extending `AvroSerializeable`| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
-|PROTOCOL|_No Type_<br>Scala ADT|RPC trait<br>Scala ADT|_No Type_<br>Scala ADT| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
-|Date|java.time.LocalDate<br>java.sql.Date|java.time.LocalDate<br>java.sql.Date|Not yet supported| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
-|TimestampMillis|java.time.Instant<br>java.sql.Timestamp|java.time.Instant<br>java.sql.Timestamp|Not yet supported|  See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
-|UUID|java.util.UUID|java.util.UUID|Not yet supported|  See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
-|Decimal|BigDecimal|BigDecimal|Not yet supported|  See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
+|INT|Int|Int| See [Logical Types: `date`](https://github.com/julianpeeters/avrohugger#logical-types-support)|
+|LONG|Long|Long| See [Logical Types: `timestamp-millis`](https://github.com/julianpeeters/avrohugger#logical-types-support)|
+|FLOAT|Float|Float||
+|DOUBLE|Double|Double||
+|STRING|String|String||
+|BOOLEAN|Boolean|Boolean||
+|NULL|Null|Null||
+|MAP|Map|Map||
+|ENUM|scala.Enumeration<br>Scala case object<br>Java Enum<br>EnumAsScalaString|Java Enum<br>EnumAsScalaString| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
+|BYTES|Array[Byte]<br>BigDecimal|Array[Byte]<br>BigDecimal| See [Logical Types: `decimal`](https://github.com/julianpeeters/avrohugger#logical-types-support)|
+|FIXED|case class<br>case class + schema|case class extending `SpecificFixed`| See [Logical Types: `decimal`](https://github.com/julianpeeters/avrohugger#logical-types-support)|
+|ARRAY|Seq<br>List<br>Array<br>Vector|Seq<br>List<br>Array<br>Vector| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
+|UNION|Option<br>Either<br>Shapeless Coproduct|Option<br>Either<br>Shapeless Coproduct| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
+|RECORD|case class<br>case class + schema|case class extending `SpecificRecordBase`| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
+|PROTOCOL|_No Type_<br>Scala ADT|RPC trait<br>Scala ADT| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
+|Date|java.time.LocalDate<br>java.sql.Date|java.time.LocalDate<br>java.sql.Date| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
+|TimestampMillis|java.time.Instant<br>java.sql.Timestamp|java.time.Instant<br>java.sql.Timestamp| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
+|UUID|java.util.UUID|java.util.UUID| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
+|Decimal|BigDecimal|BigDecimal| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 
 ##### Logical Types Support:
 
@@ -87,7 +86,7 @@ _NOTE: Currently logical types are only supported for `Standard` and `SpecificRe
 * `date`: Annotates Avro `int` schemas to generate `java.time.LocalDate` or `java.sql.Date` (See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)). Examples: [avdl](https://github.com/julianpeeters/sbt-avrohugger/blob/master/src/sbt-test/avrohugger/GenericSerializationTests/src/main/avro/logical.avdl#L9), [avsc](https://github.com/julianpeeters/sbt-avrohugger/blob/master/src/sbt-test/avrohugger/GenericSerializationTests/src/main/avro/logical.avsc#L22-L27).
 * `decimal`: Annotates Avro `bytes` and `fixed` schemas to generate `BigDecimal`. Examples: [avdl](https://github.com/julianpeeters/sbt-avrohugger/blob/master/src/sbt-test/avrohugger/GenericSerializationTests/src/main/avro/logical.avdl#L6), [avsc](https://github.com/julianpeeters/sbt-avrohugger/blob/master/src/sbt-test/avrohugger/GenericSerializationTests/src/main/avro/logical.avsc#L6-L14).
 * `timestamp-millis`: Annotates Avro `long` schemas to genarate `java.time.Instant` or `java.sql.Timestamp` (See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)). Examples: [avdl](https://github.com/julianpeeters/sbt-avrohugger/blob/master/src/sbt-test/avrohugger/GenericSerializationTests/src/main/avro/logical.avdl#L8), [avsc](https://github.com/julianpeeters/sbt-avrohugger/blob/master/src/sbt-test/avrohugger/GenericSerializationTests/src/main/avro/logical.avsc#L15-L21).
-* `uuid`: Annotates Avro `string` schemas (but not idls as of avro 1.8.2) to generate `java.util.UUID` (See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)). Example: [avsc](https://github.com/julianpeeters/sbt-avrohugger/blob/master/src/sbt-test/avrohugger/GenericSerializationTests/src/main/avro/logical.avsc#L29-L35).
+* `uuid`: Annotates Avro `string` schemas and idls to generate `java.util.UUID` (See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)). Example: [avsc](https://github.com/julianpeeters/sbt-avrohugger/blob/master/src/sbt-test/avrohugger/GenericSerializationTests/src/main/avro/logical.avsc#L29-L35).
 * `time-millis`: Annotates Avro `int` schemas to genarate `java.time.LocalTime` or `java.sql.Time`
 
 ##### Protocol Support:
@@ -191,13 +190,6 @@ namespace map (please see warnings below):
 
     val generator = new Generator(SpecificRecord, avroScalaCustomNamespace = Map("oldnamespace"->"newnamespace"))
 
-
-_Scavro_: by default, a "model" package is appended to the namespace to create a
- Scala namespace that does not conflict with Scavro's generated Java. To
- override, either customize each package namespace separately (preempting the
- use of the default package name), or override the package name like so:
-
-    val generator = new Generator(SpecificRecord, avroScalaCustomNamespace = Map("SCAVRO_DEFAULT_PACKAGE$"->"scavro"))
     
 Wildcarding the beginning of a namespace is permitted, place a single asterisk after the prefix that you want to map and any matching schema will have its 
 namespace rewritten. Multiple conflicting wildcards are not permitted.
@@ -243,7 +235,7 @@ To ensure dependent schemas are compiled in the proper order (thus avoiding `org
 `java -jar /path/to/avrohugger-tools_2.12-1.4.0-assembly.jar generate-specific schema user.avsc . `
 
 
-* `generate-scavro` generates definitions that extend Scavro's `AvroSerializable`:
+* `generate-scavro` (@deprecated since avrohugger v1.5.0) generates definitions that extend Scavro's `AvroSerializable`:
 
 `java -jar /path/to/avrohugger-tools_2.12-1.4.0-assembly.jar generate-scavro schema user.avsc . `
 
@@ -259,28 +251,7 @@ mutable (`var`) in order to be compatible with the SpecificRecord API. _Note:_
 If your framework allows `GenericRecord`, [avro4s](https://github.com/sksamuel/avro4s)
 provides a type class that converts to and from immutable case classes cleanly.
 
-3) When the input is a case class definition `String`, import statements are
-not supported, please use fully qualified type names if using records/classes
-from multiple namespaces.
-
-4) By default, a schema's namespace is used as a package name. In the case of
-the Scavro output format, the default is the namespace with `model` appended.
-
-5) While Scavro format uses custom namespaces in a way that leaves it
-unaffected, most formats fail on schemas with records within unions
-(see [avro forum](see http://apache-avro.679487.n3.nabble.com/Deserialize-with-different-schema-td4032782.html)).
-
-6) `SpecificRecord` requires that `enum` be represented as `JavaEnum`
-
-
-## Best Practices
-
-1) Avoid recursive schemas since they can cause compatibility issues if trying
-to flow data into a system that doesn't support them (e.g., Hive).
-
-2) Use namespaces to ensure compatibility when importing into Java/Scala.
-
-3) Use default field values in case of future schema evolution ([further reading](https://github.com/julianpeeters/avrohugger/issues/23)).
+3) `SpecificRecord` requires that `enum` be represented as `JavaEnum`
 
 
 ## Testing
@@ -302,7 +273,7 @@ Contributors:
 
 | | | |
 | :---         |     :---      |          :--- |
-| [Marius Soutier](https://github.com/mariussoutier) </br> [Brian London](https://github.com/BrianLondon) </br> [alancnet](https://github.com/alancnet) </br> [Matt Coffin](https://github.com/mcoffin) </br> [Ryan Koval](http://github.ryankoval.com) </br> [Simonas Gelazevicius](https://github.com/simsasg) </br> [Paul Snively](https://github.com/PaulAtBanno) </br> [Marco Stefani](https://github.com/inafets) </br> [Andrew Gustafson](https://github.com/agustafson) </br> [Kostya Golikov](https://github.com/lazyval) </br> [Plínio Pantaleão](https://github.com/plinioj) </br> [Sietse de Kaper](https://github.com/targeter) </br> [Martin Mauch](https://github.com/nightscape) </br> [Konstantin](https://github.com/tyger) </br> [Adam Drakeford](https://github.com/dr4ke616) </br> [Carlos Silva](https://github.com/alchimystic) </br> [ismailBenammar](https://github.com/ismailBenammar) | [Paul Pearcy](https://github.com/ppearcy) </br> [Matt Allen](https://github.com/Matt343) </br> [C-zito](https://github.com/C-Zito) </br> [Tim Chan](https://github.com/timchan-lumoslabs) </br> [Saket](https://github.com/skate056) </br> [Daniel Davis](https://github.com/wabu) </br> [Zach Cox](https://github.com/zcox) </br> [Diego E. Alonso Blas](https://github.com/diesalbla) </br> [Fede Fernández](https://github.com/fedefernandez) </br> [Rob Landers](https://github.com/withinboredom) </br> [Simon Petty](https://github.com/simonpetty) </br> [Andreas Drobisch](https://github.com/adrobisch) </br> [natefitzgerald](https://github.com/natefitzgerald) </br> [Timo Schmid](https://github.com/timo-schmid) </br> [mcenkar](https://github.com/mcenkar) </br> [Luca Tronchin](https://github.com/ltronky) | [Stefano Galarraga](https://github.com/galarragas) </br> [Lars Albertsson](https://github.com/lallea) </br> [Eugene Platonov](https://github.com/jozic) </br> [Jerome Wacongne](https://github.com/ch4mpy) </br> [Jon Morra](https://github.com/jon-morra-zefr) </br> [Raúl Raja Martínez](https://github.com/raulraja) </br> [Kaur Matas](https://github.com/kmatasflp) </br> [Chris Albright](https://github.com/chrisalbright) </br> [Francisco Díaz](https://github.com/franciscodr) </br> [Bobby Rauchenberg](https://github.com/bobbyrauchenberg) </br> [Leonard Ehrenfried](https://github.com/leonardehrenfried) </br> [François Sarradin](https://github.com/fsarradin) </br> [niqdev](https://github.com/niqdev) </br> [Julien BENOIT](https://github.com/jbenoit2011) </br> [Algimantas Milašius](https://github.com/AlgMi) </br> [Leonard Ehrenfried](https://github.com/leonardehrenfried) </br> [Massimo Siani](https://github.com/massimosiani)| 
+| [Marius Soutier](https://github.com/mariussoutier) </br> [Brian London](https://github.com/BrianLondon) </br> [alancnet](https://github.com/alancnet) </br> [Matt Coffin](https://github.com/mcoffin) </br> [Ryan Koval](http://github.ryankoval.com) </br> [Simonas Gelazevicius](https://github.com/simsasg) </br> [Paul Snively](https://github.com/PaulAtBanno) </br> [Marco Stefani](https://github.com/inafets) </br> [Andrew Gustafson](https://github.com/agustafson) </br> [Kostya Golikov](https://github.com/lazyval) </br> [Plínio Pantaleão](https://github.com/plinioj) </br> [Sietse de Kaper](https://github.com/targeter) </br> [Martin Mauch](https://github.com/nightscape) </br> [Konstantin](https://github.com/tyger) </br> [Adam Drakeford](https://github.com/dr4ke616) </br> [Carlos Silva](https://github.com/alchimystic) </br> [ismail Benammar](https://github.com/ismailBenammar) | [Paul Pearcy](https://github.com/ppearcy) </br> [Matt Allen](https://github.com/Matt343) </br> [C-zito](https://github.com/C-Zito) </br> [Tim Chan](https://github.com/timchan-lumoslabs) </br> [Saket](https://github.com/skate056) </br> [Daniel Davis](https://github.com/wabu) </br> [Zach Cox](https://github.com/zcox) </br> [Diego E. Alonso Blas](https://github.com/diesalbla) </br> [Fede Fernández](https://github.com/fedefernandez) </br> [Rob Landers](https://github.com/withinboredom) </br> [Simon Petty](https://github.com/simonpetty) </br> [Andreas Drobisch](https://github.com/adrobisch) </br> [natefitzgerald](https://github.com/natefitzgerald) </br> [Timo Schmid](https://github.com/timo-schmid) </br> [mcenkar](https://github.com/mcenkar) </br> [Luca Tronchin](https://github.com/ltronky) </br> [LydiaSkuse](https://github.com/LydiaSkuse) | [Stefano Galarraga](https://github.com/galarragas) </br> [Lars Albertsson](https://github.com/lallea) </br> [Eugene Platonov](https://github.com/jozic) </br> [Jerome Wacongne](https://github.com/ch4mpy) </br> [Jon Morra](https://github.com/jon-morra-zefr) </br> [Raúl Raja Martínez](https://github.com/raulraja) </br> [Kaur Matas](https://github.com/kmatasflp) </br> [Chris Albright](https://github.com/chrisalbright) </br> [Francisco Díaz](https://github.com/franciscodr) </br> [Bobby Rauchenberg](https://github.com/bobbyrauchenberg) </br> [Leonard Ehrenfried](https://github.com/leonardehrenfried) </br> [François Sarradin](https://github.com/fsarradin) </br> [niqdev](https://github.com/niqdev) </br> [Julien BENOIT](https://github.com/jbenoit2011) </br> [Algimantas Milašius](https://github.com/AlgMi) </br> [Leonard Ehrenfried](https://github.com/leonardehrenfried) </br> [Massimo Siani](https://github.com/massimosiani)| 
 
 
 

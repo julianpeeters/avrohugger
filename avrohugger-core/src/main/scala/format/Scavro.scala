@@ -29,6 +29,7 @@ object Scavro extends SourceFormat {
   
   val defaultTypes: AvroScalaTypes = AvroScalaTypes.defaults.copy(array = ScalaArray)
 
+  @deprecated("Scavro will no longer be supported", "avrohugger 1.5.0")
   def asCompilationUnits(
     classStore: ClassStore,
     maybeNamespace: Option[String],
@@ -174,6 +175,7 @@ object Scavro extends SourceFormat {
     }
   }
 
+  @deprecated("Scavro will no longer be supported", "avrohugger 1.5.0")
   def compile(
     classStore: ClassStore,
     maybeNamespace: Option[String],

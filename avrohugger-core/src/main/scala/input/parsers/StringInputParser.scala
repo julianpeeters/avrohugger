@@ -66,6 +66,7 @@ class StringInputParser {
         }
       }
 
+    @deprecated("Reflective compilation will no longer be supported", "avrohugger 1.5.0")
     def tryCaseClass(
       str: String,
       schemaStore: SchemaStore): List[Either[Schema, Protocol]] = {

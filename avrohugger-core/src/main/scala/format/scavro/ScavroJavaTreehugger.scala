@@ -9,6 +9,7 @@ import org.apache.avro.Schema
 
 object ScavroJavaTreehugger extends JavaTreehugger {
 
+  @deprecated("Scavro will no longer be supported", "avrohugger 1.5.0")
   def asJavaCodeString(
     classStore: ClassStore,
     namespace: Option[String],

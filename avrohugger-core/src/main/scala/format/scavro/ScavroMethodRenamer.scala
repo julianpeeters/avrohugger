@@ -18,6 +18,7 @@ object ScavroMethodRenamer {
     * @param postfix method name postfix, e.g. "" or "Builder".
     * @return the generated method name.
     */
+  @deprecated("Scavro will no longer be supported", "avrohugger 1.5.0")
   def generateMethodName(
     schema: Schema,
     field: Field,

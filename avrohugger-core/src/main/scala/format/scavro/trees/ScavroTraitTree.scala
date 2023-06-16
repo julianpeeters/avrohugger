@@ -18,6 +18,7 @@ import scala.jdk.CollectionConverters._
 
 object ScavroTraitTree {
 
+  @deprecated("Scavro will no longer be supported", "avrohugger 1.5.0")
   def toADTRootDef(protocol: Protocol, typeMatcher: TypeMatcher) = {
     def isEnum(schema: Schema) = schema.getType == ENUM
     val sealedTraitTree =  TRAITDEF(protocol.getName).withFlags(Flags.SEALED)
@@ -42,7 +43,8 @@ object ScavroTraitTree {
     
     treeWithScalaDoc
   }
-  
+
+  @deprecated("Scavro will no longer be supported", "avrohugger 1.5.0")
   def toCaseObjectEnumDef(schema: Schema,
     maybeBaseTrait: Option[String]): List[Tree] = {
     val adtRootTree: Tree = maybeBaseTrait match {

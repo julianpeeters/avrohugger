@@ -16,7 +16,8 @@ class JavaConverter(
   classStore: ClassStore,
   namespace: Option[String],
   typeMatcher: TypeMatcher) {
-  
+
+  @deprecated("Scavro will no longer be supported", "avrohugger 1.5.0")
   def checkCustomNumberType(
     numberType: AvroScalaNumberType,
     defaultNumberType: AvroScalaNumberType,
@@ -25,7 +26,8 @@ class JavaConverter(
     if (numberType == defaultNumberType) tree
     else tree DOT nativeType
   }
-  
+
+  @deprecated("Scavro will no longer be supported", "avrohugger 1.5.0")
   def checkCustomEnumType(
     schema: Schema,
     enumType: AvroScalaEnumType,
@@ -48,6 +50,7 @@ class JavaConverter(
   // REF("fieldName"), which is wrapped in a pattern match tree (e.g., to sort 
   // None and Some(x) if the field is a union). A Schema is passed in order to 
   // get access to the field's type parameters while the tree is built up.
+  @deprecated("Scavro will no longer be supported", "avrohugger 1.5.0")
   def convertToJava(
     schema: Schema,
     tree: Tree,
