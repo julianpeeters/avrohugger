@@ -72,7 +72,7 @@ runtime, Java classes provided separately (see [Scavro Plugin](https://github.co
 |BYTES|Array[Byte]<br>BigDecimal|Array[Byte]<br>BigDecimal|Array[Byte]|See [Logical Types: `decimal`](https://github.com/julianpeeters/avrohugger#logical-types-support)|
 |FIXED|case class<br>case class + schema|case class extending `SpecificFixed`|//TODO|See [Logical Types: `decimal`](https://github.com/julianpeeters/avrohugger#logical-types-support)|
 |ARRAY|Seq<br>List<br>Array<br>Vector|Seq<br>List<br>Array<br>Vector|Array<br>Seq<br>List<br>Vector| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
-|UNION|Option<br>Either<br>Shapeless Coproduct|Option|Option| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
+|UNION|Option<br>Either<br>Shapeless Coproduct|Option<br>Either<br>Shapeless Coproduct|Option| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 |RECORD|case class<br>case class + schema|case class extending `SpecificRecordBase`|case class extending `AvroSerializeable`| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 |PROTOCOL|_No Type_<br>Scala ADT|RPC trait<br>Scala ADT|_No Type_<br>Scala ADT| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 |Date|java.time.LocalDate<br>java.sql.Date|java.time.LocalDate<br>java.sql.Date|Not yet supported| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
