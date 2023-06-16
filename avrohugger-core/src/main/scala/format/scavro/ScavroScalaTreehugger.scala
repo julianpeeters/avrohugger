@@ -20,6 +20,7 @@ object ScavroScalaTreehugger extends ScalaTreehugger {
 
   // SpecificCompiler can't return a tree for Java enums, so return
   // a String here for a consistent api vis a vis *ToFile and *ToStrings
+  @deprecated("Scavro will no longer be supported", "avrohugger 1.5.0")
   def asScalaCodeString(
     classStore: ClassStore,
     namespace: Option[String],

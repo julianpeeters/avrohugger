@@ -17,7 +17,8 @@ import scala.reflect.runtime.universe._
 import scala.tools.reflect.ToolBox
 
 class FieldSchemaGenerator() {
- 
+
+  @deprecated("Reflective compilation will no longer be supported", "avrohugger 1.5.0")
   def toAvroField(
     namespace: Option[Name], 
     nme: TermName, 

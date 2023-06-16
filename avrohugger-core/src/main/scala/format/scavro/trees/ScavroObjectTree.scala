@@ -16,6 +16,7 @@ import scala.jdk.CollectionConverters._
 object ScavroObjectTree {
 
   // for generating enums
+  @deprecated("Scavro will no longer be supported", "avrohugger 1.5.0")
   def toScalaEnumDef(
     classStore: ClassStore, 
     schema: Schema,

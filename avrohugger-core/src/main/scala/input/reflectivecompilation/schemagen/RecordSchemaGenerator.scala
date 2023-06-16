@@ -17,6 +17,7 @@ import scala.jdk.CollectionConverters._
 
 object RecordSchemaGenerator  {
 
+  @deprecated("Reflective compilation will no longer be supported", "avrohugger 1.5.0")
   def generateSchema(
     className: String, 
     namespace: Option[Name], 

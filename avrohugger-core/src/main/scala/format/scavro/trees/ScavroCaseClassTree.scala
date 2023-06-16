@@ -16,6 +16,7 @@ import scala.language.postfixOps
 
 object ScavroCaseClassTree {
 
+  @deprecated("Scavro will no longer be supported", "avrohugger 1.5.0")
   def toCaseClassDef(
     classStore: ClassStore,
     namespace: Option[String],

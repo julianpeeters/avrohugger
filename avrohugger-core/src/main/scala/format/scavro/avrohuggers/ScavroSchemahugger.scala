@@ -17,6 +17,7 @@ import definitions._
 
 object ScavroSchemahugger extends Schemahugger{
 
+  @deprecated("Scavro will no longer be supported", "avrohugger 1.5.0")
   def toTrees(
     schemaStore: SchemaStore,
     classStore: ClassStore,

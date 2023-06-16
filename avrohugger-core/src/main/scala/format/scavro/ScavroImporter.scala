@@ -16,6 +16,7 @@ import scala.jdk.CollectionConverters._
 
 object ScavroImporter extends Importer {
 
+  @deprecated("Scavro will no longer be supported", "avrohugger 1.5.0")
   def asRenamedImportTree(imported: Import) = {
     val packageSym = imported.expr
     val typeNames = imported.selectors.map(s => treeToString(s.name))
@@ -26,6 +27,7 @@ object ScavroImporter extends Importer {
     IMPORT(packageSym, renames)
   }
 
+  @deprecated("Scavro will no longer be supported", "avrohugger 1.5.0")
   def getImports(
     schemaOrProtocol: Either[Schema, Protocol],
     currentNamespace: Option[String],

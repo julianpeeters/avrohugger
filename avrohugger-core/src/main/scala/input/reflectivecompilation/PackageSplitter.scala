@@ -6,6 +6,7 @@ import scala.jdk.CollectionConverters._
 
 object PackageSplitter {
 
+  @deprecated("Reflective compilation will no longer be supported", "avrohugger 1.5.0")
   def getCompilationUnits(code: String): List[String] = {
 
     def getCompilationUnits(

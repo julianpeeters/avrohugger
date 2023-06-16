@@ -16,7 +16,8 @@ import scala.language.postfixOps
 import scala.jdk.CollectionConverters._
 
 class ScalaConverter(typeMatcher: TypeMatcher) {
-
+  
+  @deprecated("Scavro will no longer be supported", "avrohugger 1.5.0")
   def convertFromJava(
     schema: Schema,
     tree: Tree,
