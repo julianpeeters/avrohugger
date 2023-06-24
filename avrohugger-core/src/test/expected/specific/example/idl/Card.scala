@@ -28,7 +28,7 @@ final case class Card(var suit: Suit, var number: Int) extends org.apache.avro.s
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = Card.SCHEMA$
+  def getSchema: org.apache.avro.Schema = example.idl.Card.SCHEMA$
 }
 
 object Card {

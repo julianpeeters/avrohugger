@@ -66,7 +66,7 @@ object SpecificCaseClassTree {
       val index = p._2
       IndexedField(avroField, index)
     })
-    val defGetSchema = GetSchemaGenerator(classSymbol).toDef
+    val defGetSchema = namespace.fold(GetSchemaGenerator(classSymbol).toDef)(ns => GetSchemaGenerator(RootClass.newClass(s"$ns.${classSymbol}")).toDef)
     val defGet = GetGenerator.toDef(indexedFields, classSymbol, typeMatcher, targetScalaPartialVersion)
     val defPut = PutGenerator.toDef(
       classStore,
@@ -196,7 +196,7 @@ object SpecificCaseClassTree {
     targetScalaPartialVersion: String
   ) = {
     val classSymbol = RootClass.newClass(schema.getName)
-    val defGetSchema = format.specific.methods.GetSchemaGenerator(classSymbol).toDef
+    val defGetSchema = namespace.fold(GetSchemaGenerator(classSymbol).toDef)(ns => GetSchemaGenerator(RootClass.newClass(s"$ns.${classSymbol}")).toDef)
     val defReadExternal = DEF("readExternal", UnitClass).withParams(PARAM("in", TYPE_REF("java.io.ObjectInput"))) := BLOCK(
       REF(s"${schema.getFullName()}.READER$$").DOT("read").APPLY(THIS, REF("org.apache.avro.specific.SpecificData.getDecoder(in)")),
       PAREN()

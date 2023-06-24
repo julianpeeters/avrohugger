@@ -28,7 +28,7 @@ case class Card(var suit: Suit = Suit.SPADES, var number: Int) extends org.apach
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = Card.SCHEMA$
+  def getSchema: org.apache.avro.Schema = deck.Card.SCHEMA$
 }
 
 object Card {

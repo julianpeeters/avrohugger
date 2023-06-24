@@ -24,7 +24,7 @@ final case class Added(var value: Int) extends org.apache.avro.specific.Specific
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = Added.SCHEMA$
+  def getSchema: org.apache.avro.Schema = test.Added.SCHEMA$
 }
 
 final object Added {
@@ -50,7 +50,7 @@ final case class Subtracted(var value: Int) extends org.apache.avro.specific.Spe
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = Subtracted.SCHEMA$
+  def getSchema: org.apache.avro.Schema = test.Subtracted.SCHEMA$
 }
 
 final object Subtracted {
@@ -76,7 +76,7 @@ final case class Divided(var value: Int) extends org.apache.avro.specific.Specif
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = Divided.SCHEMA$
+  def getSchema: org.apache.avro.Schema = test.Divided.SCHEMA$
 }
 
 final object Divided {
@@ -102,7 +102,7 @@ final case class Multiplied(var value: Int) extends org.apache.avro.specific.Spe
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = Multiplied.SCHEMA$
+  def getSchema: org.apache.avro.Schema = test.Multiplied.SCHEMA$
 }
 
 final object Multiplied {
@@ -121,7 +121,7 @@ final case class Reset() extends org.apache.avro.specific.SpecificRecordBase wit
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = Reset.SCHEMA$
+  def getSchema: org.apache.avro.Schema = test.Reset.SCHEMA$
 }
 
 final object Reset {

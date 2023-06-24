@@ -68,7 +68,7 @@ final case class Country(var key: Option[String] = None, var paris: Option[com.e
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = Country.SCHEMA$
+  def getSchema: org.apache.avro.Schema = com.countries.Country.SCHEMA$
 }
 
 object Country {

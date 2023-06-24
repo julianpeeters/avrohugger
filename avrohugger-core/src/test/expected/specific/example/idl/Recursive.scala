@@ -34,7 +34,7 @@ final case class Recursive(var name: String, var recursive: Option[example.idl.R
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = Recursive.SCHEMA$
+  def getSchema: org.apache.avro.Schema = example.idl.Recursive.SCHEMA$
 }
 
 object Recursive {

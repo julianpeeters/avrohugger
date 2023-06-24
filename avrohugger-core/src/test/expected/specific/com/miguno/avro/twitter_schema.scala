@@ -39,7 +39,7 @@ final case class twitter_schema(var username: String, var tweet: String, var tim
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = twitter_schema.SCHEMA$
+  def getSchema: org.apache.avro.Schema = com.miguno.avro.twitter_schema.SCHEMA$
 }
 
 object twitter_schema {

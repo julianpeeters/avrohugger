@@ -46,7 +46,7 @@ final case class User(var name: String, var favorite_number: Option[Int], var fa
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = User.SCHEMA$
+  def getSchema: org.apache.avro.Schema = example.User.SCHEMA$
 }
 
 object User {

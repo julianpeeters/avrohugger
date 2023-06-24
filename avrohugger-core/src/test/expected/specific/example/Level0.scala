@@ -22,7 +22,7 @@ final case class Level0(var level1: Level1) extends org.apache.avro.specific.Spe
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = Level0.SCHEMA$
+  def getSchema: org.apache.avro.Schema = example.Level0.SCHEMA$
 }
 
 object Level0 {

@@ -22,7 +22,7 @@ final case class Mascot(var name: String) extends org.apache.avro.specific.Speci
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = Mascot.SCHEMA$
+  def getSchema: org.apache.avro.Schema = avro.examples.baseball.Mascot.SCHEMA$
 }
 
 object Mascot {

@@ -90,7 +90,7 @@ final case class Logical(var dec: BigDecimal, var ts: java.time.Instant, var dt:
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = Logical.SCHEMA$
+  def getSchema: org.apache.avro.Schema = example.logical.proto.Logical.SCHEMA$
 }
 
 object Logical {

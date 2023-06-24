@@ -22,7 +22,7 @@ final case class Compass(var direction: Direction) extends org.apache.avro.speci
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = Compass.SCHEMA$
+  def getSchema: org.apache.avro.Schema = example.Compass.SCHEMA$
 }
 
 object Compass {
