@@ -22,7 +22,7 @@ final case class Nickname(var name: String) extends org.apache.avro.specific.Spe
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = Nickname.SCHEMA$
+  def getSchema: org.apache.avro.Schema = avro.examples.baseball.Nickname.SCHEMA$
 }
 
 object Nickname {

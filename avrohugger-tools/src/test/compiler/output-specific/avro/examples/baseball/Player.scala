@@ -50,7 +50,7 @@ final case class Player(var number: Int, var first_name: String, var last_name: 
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = Player.SCHEMA$
+  def getSchema: org.apache.avro.Schema = avro.examples.baseball.Player.SCHEMA$
 }
 
 object Player {

@@ -32,7 +32,7 @@ final case class ArrayIdl(var data: Seq[Int]) extends org.apache.avro.specific.S
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = ArrayIdl.SCHEMA$
+  def getSchema: org.apache.avro.Schema = example.idl.array.ArrayIdl.SCHEMA$
 }
 
 object ArrayIdl {

@@ -50,7 +50,7 @@ final case class NoSpaces1(var single_line_comment_property: String, var multi_l
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = NoSpaces1.SCHEMA$
+  def getSchema: org.apache.avro.Schema = com.example.NoSpaces1.SCHEMA$
 }
 
 object NoSpaces1 {

@@ -28,7 +28,7 @@ final case class Names(var `protected`: String, var `ends_with_`: String) extend
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = Names.SCHEMA$
+  def getSchema: org.apache.avro.Schema = example.idl.Names.SCHEMA$
 }
 
 object Names {

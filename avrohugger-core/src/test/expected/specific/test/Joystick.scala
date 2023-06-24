@@ -22,7 +22,7 @@ final case class Up(var value: Int) extends org.apache.avro.specific.SpecificRec
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = Up.SCHEMA$
+  def getSchema: org.apache.avro.Schema = test.Up.SCHEMA$
 }
 
 object Up {
@@ -48,7 +48,7 @@ final case class Down(var value: Int) extends org.apache.avro.specific.SpecificR
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = Down.SCHEMA$
+  def getSchema: org.apache.avro.Schema = test.Down.SCHEMA$
 }
 
 object Down {

@@ -29,7 +29,7 @@ final case class BinaryIdl(var data: Array[Byte]) extends org.apache.avro.specif
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = BinaryIdl.SCHEMA$
+  def getSchema: org.apache.avro.Schema = example.idl.BinaryIdl.SCHEMA$
 }
 
 object BinaryIdl {

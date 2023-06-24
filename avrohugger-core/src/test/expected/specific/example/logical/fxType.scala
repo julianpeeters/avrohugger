@@ -2,7 +2,7 @@
 package example.logical
 
 final case class fxType() extends org.apache.avro.specific.SpecificFixed {
-  def getSchema: org.apache.avro.Schema = fxType.SCHEMA$
+  def getSchema: org.apache.avro.Schema = example.logical.fxType.SCHEMA$
   def bigDecimal: BigDecimal =
     java.nio.ByteBuffer.wrap(bytes) match {
       case (buffer: java.nio.ByteBuffer) => {

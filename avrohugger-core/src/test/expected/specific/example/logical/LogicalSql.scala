@@ -80,7 +80,7 @@ final case class LogicalSql(var data: BigDecimal, var ts: java.sql.Timestamp, va
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = LogicalSql.SCHEMA$
+  def getSchema: org.apache.avro.Schema = example.logical.LogicalSql.SCHEMA$
 }
 
 object LogicalSql {

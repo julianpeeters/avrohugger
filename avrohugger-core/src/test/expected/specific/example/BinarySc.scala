@@ -29,7 +29,7 @@ final case class BinarySc(var data: Array[Byte]) extends org.apache.avro.specifi
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = BinarySc.SCHEMA$
+  def getSchema: org.apache.avro.Schema = example.BinarySc.SCHEMA$
 }
 
 object BinarySc {

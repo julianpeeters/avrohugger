@@ -24,7 +24,7 @@ final case class Room(var door: door = example.types.door.NORTH) extends org.apa
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = Room.SCHEMA$
+  def getSchema: org.apache.avro.Schema = example.Room.SCHEMA$
 }
 
 object Room {

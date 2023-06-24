@@ -26,7 +26,7 @@ final case class ComplexExternalDependency(var nestedrecord: NestedRecord) exten
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = ComplexExternalDependency.SCHEMA$
+  def getSchema: org.apache.avro.Schema = test.ComplexExternalDependency.SCHEMA$
 }
 
 object ComplexExternalDependency {

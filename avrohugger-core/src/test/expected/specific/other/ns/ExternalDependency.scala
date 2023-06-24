@@ -22,7 +22,7 @@ final case class ExternalDependency(var number: Int) extends org.apache.avro.spe
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = ExternalDependency.SCHEMA$
+  def getSchema: org.apache.avro.Schema = other.ns.ExternalDependency.SCHEMA$
 }
 
 object ExternalDependency {

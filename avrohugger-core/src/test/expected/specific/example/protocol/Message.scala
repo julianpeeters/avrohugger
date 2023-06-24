@@ -34,7 +34,7 @@ final case class Message(var to: String, var from: String, var body: String) ext
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = Message.SCHEMA$
+  def getSchema: org.apache.avro.Schema = example.protocol.Message.SCHEMA$
 }
 
 object Message {

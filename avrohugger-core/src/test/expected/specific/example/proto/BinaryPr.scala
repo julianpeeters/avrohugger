@@ -29,7 +29,7 @@ final case class BinaryPr(var data: Array[Byte]) extends org.apache.avro.specifi
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = BinaryPr.SCHEMA$
+  def getSchema: org.apache.avro.Schema = example.proto.BinaryPr.SCHEMA$
 }
 
 object BinaryPr {

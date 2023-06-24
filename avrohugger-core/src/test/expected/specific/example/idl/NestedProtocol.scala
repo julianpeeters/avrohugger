@@ -24,7 +24,7 @@ final case class Level2(var name: String) extends org.apache.avro.specific.Speci
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = Level2.SCHEMA$
+  def getSchema: org.apache.avro.Schema = example.idl.Level2.SCHEMA$
 }
 
 final object Level2 {
@@ -50,7 +50,7 @@ final case class Level1(var level2: example.idl.Level2) extends org.apache.avro.
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = Level1.SCHEMA$
+  def getSchema: org.apache.avro.Schema = example.idl.Level1.SCHEMA$
 }
 
 final object Level1 {
@@ -76,7 +76,7 @@ final case class Level0(var level1: example.idl.Level1) extends org.apache.avro.
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = Level0.SCHEMA$
+  def getSchema: org.apache.avro.Schema = example.idl.Level0.SCHEMA$
 }
 
 final object Level0 {

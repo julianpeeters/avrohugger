@@ -17,7 +17,7 @@ case class Event1() extends org.apache.avro.specific.SpecificRecordBase {
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = Event1.SCHEMA$
+  def getSchema: org.apache.avro.Schema = example.idl.Event1.SCHEMA$
 }
 
 object Event1 {
@@ -36,7 +36,7 @@ case class Event2() extends org.apache.avro.specific.SpecificRecordBase {
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = Event2.SCHEMA$
+  def getSchema: org.apache.avro.Schema = example.idl.Event2.SCHEMA$
 }
 
 object Event2 {
@@ -55,7 +55,7 @@ case class Event3() extends org.apache.avro.specific.SpecificRecordBase {
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = Event3.SCHEMA$
+  def getSchema: org.apache.avro.Schema = example.idl.Event3.SCHEMA$
 }
 
 object Event3 {
@@ -74,7 +74,7 @@ case class Event4() extends org.apache.avro.specific.SpecificRecordBase {
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = Event4.SCHEMA$
+  def getSchema: org.apache.avro.Schema = example.idl.Event4.SCHEMA$
 }
 
 object Event4 {
@@ -106,7 +106,7 @@ final case class ShouldRenderAsOption(var value: Option[example.idl.Event1]) ext
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = ShouldRenderAsOption.SCHEMA$
+  def getSchema: org.apache.avro.Schema = example.idl.ShouldRenderAsOption.SCHEMA$
 }
 
 object ShouldRenderAsOption {
@@ -138,7 +138,7 @@ final case class ShouldRenderAsOption2(var value: Option[example.idl.Event1]) ex
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = ShouldRenderAsOption2.SCHEMA$
+  def getSchema: org.apache.avro.Schema = example.idl.ShouldRenderAsOption2.SCHEMA$
 }
 
 object ShouldRenderAsOption2 {
@@ -170,7 +170,7 @@ final case class ShouldRenderAsOptionEither(var value: Option[Either[example.idl
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = ShouldRenderAsOptionEither.SCHEMA$
+  def getSchema: org.apache.avro.Schema = example.idl.ShouldRenderAsOptionEither.SCHEMA$
 }
 
 object ShouldRenderAsOptionEither {
@@ -202,7 +202,7 @@ final case class ShouldRenderAsOptionEither2(var value: Option[Either[example.id
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = ShouldRenderAsOptionEither2.SCHEMA$
+  def getSchema: org.apache.avro.Schema = example.idl.ShouldRenderAsOptionEither2.SCHEMA$
 }
 
 object ShouldRenderAsOptionEither2 {
@@ -234,7 +234,7 @@ final case class ShouldRenderAsOptionEither3(var value: Option[Either[example.id
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = ShouldRenderAsOptionEither3.SCHEMA$
+  def getSchema: org.apache.avro.Schema = example.idl.ShouldRenderAsOptionEither3.SCHEMA$
 }
 
 object ShouldRenderAsOptionEither3 {
@@ -266,7 +266,7 @@ final case class ShouldRenderAsOptionCoproduct(var value: Option[example.idl.Eve
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = ShouldRenderAsOptionCoproduct.SCHEMA$
+  def getSchema: org.apache.avro.Schema = example.idl.ShouldRenderAsOptionCoproduct.SCHEMA$
 }
 
 object ShouldRenderAsOptionCoproduct {
@@ -298,7 +298,7 @@ final case class ShouldRenderAsOptionCoproduct2(var value: Option[example.idl.Ev
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = ShouldRenderAsOptionCoproduct2.SCHEMA$
+  def getSchema: org.apache.avro.Schema = example.idl.ShouldRenderAsOptionCoproduct2.SCHEMA$
 }
 
 object ShouldRenderAsOptionCoproduct2 {
@@ -330,7 +330,7 @@ final case class ShouldRenderAsOptionCoproduct3(var value: Option[example.idl.Ev
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = ShouldRenderAsOptionCoproduct3.SCHEMA$
+  def getSchema: org.apache.avro.Schema = example.idl.ShouldRenderAsOptionCoproduct3.SCHEMA$
 }
 
 object ShouldRenderAsOptionCoproduct3 {
@@ -356,7 +356,7 @@ final case class ShouldRenderAsEither(var value: Either[example.idl.Event1, exam
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = ShouldRenderAsEither.SCHEMA$
+  def getSchema: org.apache.avro.Schema = example.idl.ShouldRenderAsEither.SCHEMA$
 }
 
 object ShouldRenderAsEither {
@@ -382,7 +382,7 @@ final case class ShouldRenderAsCoproduct(var value: example.idl.Event1 :+: examp
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = ShouldRenderAsCoproduct.SCHEMA$
+  def getSchema: org.apache.avro.Schema = example.idl.ShouldRenderAsCoproduct.SCHEMA$
 }
 
 object ShouldRenderAsCoproduct {
@@ -408,7 +408,7 @@ final case class ShouldRenderAsCoproduct2(var value: example.idl.Event1 :+: exam
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = ShouldRenderAsCoproduct2.SCHEMA$
+  def getSchema: org.apache.avro.Schema = example.idl.ShouldRenderAsCoproduct2.SCHEMA$
 }
 
 object ShouldRenderAsCoproduct2 {

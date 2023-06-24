@@ -27,7 +27,7 @@ final case class NoSpaces3(var comment_property: String) extends org.apache.avro
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = NoSpaces3.SCHEMA$
+  def getSchema: org.apache.avro.Schema = com.example.NoSpaces3.SCHEMA$
 }
 
 object NoSpaces3 {

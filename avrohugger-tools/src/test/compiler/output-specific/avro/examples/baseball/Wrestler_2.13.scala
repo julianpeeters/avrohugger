@@ -50,7 +50,7 @@ final case class Wrestler(var number: Int, var first_name: String, var last_name
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = Wrestler.SCHEMA$
+  def getSchema: org.apache.avro.Schema = avro.examples.baseball.Wrestler.SCHEMA$
 }
 
 object Wrestler {
