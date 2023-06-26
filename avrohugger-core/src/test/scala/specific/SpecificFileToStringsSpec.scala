@@ -6,6 +6,9 @@ import avrohugger.Generator
 import avrohugger.format.SpecificRecord
 import org.specs2._
 
+import java.nio.charset.StandardCharsets
+import java.nio.file.{Files, Paths}
+
 class SpecificFileToStringsSpec extends Specification {
 
   def is = s2"""
