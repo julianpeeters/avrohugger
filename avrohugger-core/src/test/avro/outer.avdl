@@ -1,0 +1,13 @@
+@namespace("a.b.c")
+
+protocol Test{
+  record Inner {
+    string a;
+    long b;
+    boolean c;
+  }
+
+  record Outer{
+    Inner inner;
+  }
+}

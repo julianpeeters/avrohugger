@@ -62,6 +62,8 @@ class StandardFileToFileSpec extends Specification {
     correctly generate simple fixed bytes from schema $e41
     correctly generate record with fixed bytes from schema $e42
     correctly generate nested fixed bytes from schema $e43
+
+    correctly generate nested references with custom namespaces $e44
   """
 
   // correctly generate logical types from IDL $e30
@@ -632,4 +634,17 @@ class StandardFileToFileSpec extends Specification {
     
     expected must containAllOf(generated)
   }
+
+  def e44 = {
+    val infile = new File("avrohugger-core/src/test/avro/outer.avdl")
+    val customNs = Map("a.b.c" -> "aa.bb.cc")
+    val gen = new Generator(Standard, avroScalaCustomNamespace = customNs)
+    val outDir = gen.defaultOutputDir + "/standard/"
+    gen.fileToFile(infile, outDir)
+
+    val source = util.Util.readFile("target/generated-sources/standard/aa/bb/cc/Test.scala")
+
+    source === util.Util.readFile("avrohugger-core/src/test/expected/standard/aa/bb/cc/Test.scala")
+  }
+
 }

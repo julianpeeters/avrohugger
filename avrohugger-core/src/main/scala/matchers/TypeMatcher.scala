@@ -1,7 +1,7 @@
 package avrohugger
 package matchers
 
-import avrohugger.matchers.custom.CustomTypeMatcher
+import avrohugger.matchers.custom.{CustomNamespaceMatcher, CustomTypeMatcher}
 import avrohugger.stores.ClassStore
 import avrohugger.types._
 import treehugger.forest._
@@ -66,7 +66,18 @@ class TypeMatcher(
           }
         case Schema.Type.FIXED    => classStore.generatedClasses(schema)
         case Schema.Type.BYTES    => CustomTypeMatcher.checkCustomDecimalType(avroScalaTypes.decimal, schema)
-        case Schema.Type.RECORD   => schema.getFullName
+        case Schema.Type.RECORD   =>
+          {
+          val maybeNamespace = CustomNamespaceMatcher.checkCustomNamespace(
+            Option(schema.getNamespace()),
+            this,
+            maybeDefaultNamespace = Option(schema.getNamespace())
+          )
+          maybeNamespace match {
+              case Some(ns) => s"${ns}.${schema.getName()}"
+              case None => schema.getName()
+          }
+        }
         case Schema.Type.ENUM     => CustomTypeMatcher.checkCustomEnumType(avroScalaTypes.`enum`, classStore, schema, useFullName)
         case Schema.Type.UNION    => {
           //unions are represented as shapeless.Coproduct
