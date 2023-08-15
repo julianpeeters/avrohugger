@@ -1,9 +1,5 @@
 # avrohugger
 
-
-[![Scala CI](https://github.com/julianpeeters/avrohugger/workflows/Scala%20CI/badge.svg)](https://github.com/julianpeeters/avrohugger/actions?query=workflow%3A%22Scala+CI%22)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.julianpeeters/avrohugger-core_2.12/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.julianpeeters/avrohugger-core_2.12)
-
 **Schema-to-case-class code generation for working with Avro in Scala.**
 
 * `avrohugger-core`: Generate source code at runtime for evaluation at a later step.
