@@ -27,7 +27,7 @@ lazy val commonSettings = Seq(
   libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value,
   libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value,
   // for testing
-  libraryDependencies += "org.specs2" %% "specs2-core" % "4.20.0" % "test",
+  libraryDependencies += "org.specs2" %% "specs2-core" % "4.20.2" % "test",
   publishMavenStyle := true,
   Test / publishArtifact := false,
   publishTo := {
@@ -84,7 +84,7 @@ lazy val `avrohugger-tools` = (project in file("avrohugger-tools"))
     Global / assembly / assemblyMergeStrategy := {
       case PathList("javax", "servlet", xs @ _*)    => MergeStrategy.first
       case PathList("org","jline", xs @ _*)         => MergeStrategy.first
-      case "module-info.class"                      => MergeStrategy.discard
+      case p if p.contains("module-info.class")     => MergeStrategy.discard
       case x =>
         val oldStrategy = (Global / assembly / assemblyMergeStrategy).value
         oldStrategy(x)
