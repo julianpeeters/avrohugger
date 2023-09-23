@@ -159,7 +159,7 @@ object DefaultValueMatcher {
       val chain: forest.Tree = INFIX_CHAIN(":+:", copTypes.map(t => Ident(t.safeToString)))
       val chainedS = treeToString(chain)
       val copType = typeRef(RootClass.newClass(newTypeName(chainedS)))
-      REF("Coproduct") APPLYTYPE copType APPLY treeMatcher(node, defaultParam)
+      REF("shapeless.Coproduct") APPLYTYPE copType APPLY treeMatcher(node, defaultParam)
     }
 
     val includesNull: Boolean = unionSchemas.exists(_.getType == Schema.Type.NULL)
