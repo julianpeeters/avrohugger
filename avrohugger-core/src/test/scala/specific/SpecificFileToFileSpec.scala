@@ -6,6 +6,7 @@ import avrohugger._
 import avrohugger.format.SpecificRecord
 import avrohugger.types._
 import org.specs2._
+import org.specs2.execute.Result
 
 import java.io.File
 import scala.util.Try
@@ -34,6 +35,7 @@ class SpecificFileToFileSpec extends Specification {
       correctly generate default values $e16
 
       correctly generate union values with shapeless Coproduct $e18
+      correctly generate union values with shapeless Coproduct from avsc $e19
 
 
       correctly generate a protocol with no ADT when asked $e21
@@ -280,6 +282,20 @@ class SpecificFileToFileSpec extends Specification {
     val source = util.Util.readFile("target/generated-sources/specific/example/idl/WithShapelessCoproduct.scala")
 
     source === util.Util.readFile("avrohugger-core/src/test/expected/specific/example/idl/WithShapelessCoproduct.scala")
+  }
+
+  def e19 = {
+    val inOrderSchema = new java.io.File("avrohugger-core/src/test/avro/unions_with_coproduct.avsc")
+    val gen = new Generator(format = SpecificRecord)
+    val outDir = gen.defaultOutputDir + "/specific/"
+    gen.fileToFile(inOrderSchema, outDir)
+
+    val classes = List("r1", "r2", "r3", "s")
+    val sources = classes.map(className => util.Util.readFile(s"avrohugger-core/src/test/expected/specific/com/example/avrohugger/unions_with_coproduct_avsc/$className.scala"))
+
+    Result.foreach(classes.zip(sources)){ case (className, expect) =>
+      util.Util.readFile(s"target/generated-sources/specific/com/example/avrohugger/unions_with_coproduct_avsc/$className.scala") === expect
+    }
   }
 
   def e21 = {
