@@ -3,7 +3,7 @@ package com.example.avrohugger.unions_with_coproduct_avsc
 
 import scala.annotation.switch
 
-import shapeless.{:+:, CNil}
+import shapeless.{:+:, CNil, Coproduct}
 
 final case class s(var s: String, var ns: Option[String], var multi2: Either[com.example.avrohugger.unions_with_coproduct_avsc.r1, com.example.avrohugger.unions_with_coproduct_avsc.r2], var multi2opt: Option[Either[com.example.avrohugger.unions_with_coproduct_avsc.r1, com.example.avrohugger.unions_with_coproduct_avsc.r2]], var multi3: com.example.avrohugger.unions_with_coproduct_avsc.r3 :+: com.example.avrohugger.unions_with_coproduct_avsc.r1 :+: com.example.avrohugger.unions_with_coproduct_avsc.r2 :+: CNil, var multi3opt: Option[com.example.avrohugger.unions_with_coproduct_avsc.r3 :+: com.example.avrohugger.unions_with_coproduct_avsc.r1 :+: com.example.avrohugger.unions_with_coproduct_avsc.r2 :+: CNil]) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this("", None, Left(new r1), None, shapeless.Coproduct[r3 :+: r1 :+: r2 :+: CNil](new r3), None)

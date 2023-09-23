@@ -116,16 +116,11 @@ object SpecificImporter extends Importer {
         case OptionShapelessCoproduct => 1
         case OptionEitherShapelessCoproduct => 2 // unions of one nullable type become Option, two become Either
       }
-      val unionContainsNull: Schema => Boolean = _.getType == Schema.Type.NULL
-      def shapelessCoproductTest(unionTypes: List[Schema], maxNonNullTypes: Int): Boolean =
-        (unionTypes.length > maxNonNullTypes     && !unionTypes.exists(unionContainsNull)) ||
-        (unionTypes.length > maxNonNullTypes + 1 &&  unionTypes.exists(unionContainsNull))
-      def defaultValueTest(field: Schema.Field, unionTypes: List[Schema], maxNonNullTypes: Int) =
-        (unionTypes.length > maxNonNullTypes + 1 && !unionTypes.exists(unionContainsNull)) ||
-        (unionTypes.length > maxNonNullTypes + 2 &&  unionTypes.exists(unionContainsNull))
       val unionTypes = unionSchema.getTypes().asScala.toList
-      val isShapelessCoproduct: Boolean = shapelessCoproductTest(unionTypes, thresholdNonNullTypes)
-      val hasDefaultValue: Boolean = defaultValueTest(field, unionTypes, thresholdNonNullTypes)
+      val unionNonNullTypes = unionTypes.filterNot(_.getType == Schema.Type.NULL)
+      val unionContainsNull: Boolean = unionNonNullTypes.length < unionTypes.length
+      val isShapelessCoproduct: Boolean = unionNonNullTypes.length > thresholdNonNullTypes
+      val hasDefaultValue: Boolean = !unionContainsNull
       val unionImports = if (isShapelessCoproduct && hasDefaultValue)
         List(":+:", "CNil", "Coproduct")
       else if (isShapelessCoproduct)

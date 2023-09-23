@@ -3,7 +3,7 @@ package com.example.avrohugger.unions_with_coproduct_avsc2
 
 import scala.annotation.switch
 
-import shapeless.{:+:, CNil, Coproduct}
+import shapeless.{:+:, CNil}
 
 final case class UnionOfNullWithMoreThanTwoNonNullTypes(var r7: Option[Boolean :+: Int :+: String :+: CNil]) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this(None)
