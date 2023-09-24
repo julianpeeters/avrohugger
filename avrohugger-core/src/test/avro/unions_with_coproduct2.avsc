@@ -1,0 +1,76 @@
+[
+  {
+    "namespace": "com.example.avrohugger.unions_with_coproduct_avsc2",
+    "name": "UnionOfNullWithOneNonNullType",
+    "type": "record",
+    "fields": [
+      {
+        "name": "f3",
+        "type": [
+          "null",
+          "double"
+        ]
+      }
+    ]
+  },
+  {
+    "namespace": "com.example.avrohugger.unions_with_coproduct_avsc2",
+    "name": "UnionOfTwoNonNullTypes",
+    "type": "record",
+    "fields": [
+      {
+        "name": "r4",
+        "type": [
+          "int",
+          "string"
+        ]
+      }
+    ]
+  },
+  {
+    "namespace": "com.example.avrohugger.unions_with_coproduct_avsc2",
+    "name": "UnionOfNullWithTwoNonNullTypes",
+    "type": "record",
+    "fields": [
+      {
+        "name": "r5",
+        "type": [
+          "null",
+          "int",
+          "string"
+        ]
+      }
+    ]
+  },
+  {
+    "namespace": "com.example.avrohugger.unions_with_coproduct_avsc2",
+    "name": "UnionOfMoreThanTwoNonNullTypes",
+    "type": "record",
+    "fields": [
+      {
+        "name": "r6",
+        "type": [
+          "boolean",
+          "int",
+          "string"
+        ]
+      }
+    ]
+  },
+  {
+    "namespace": "com.example.avrohugger.unions_with_coproduct_avsc2",
+    "name": "UnionOfNullWithMoreThanTwoNonNullTypes",
+    "type": "record",
+    "fields": [
+      {
+        "name": "r7",
+        "type": [
+          "null",
+          "boolean",
+          "int",
+          "string"
+        ]
+      }
+    ]
+  }
+]
