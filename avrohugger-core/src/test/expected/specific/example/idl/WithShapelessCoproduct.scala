@@ -364,7 +364,7 @@ object ShouldRenderAsEither {
 }
 
 final case class ShouldRenderAsCoproduct(var value: example.idl.Event1 :+: example.idl.Event2 :+: example.idl.Event3 :+: example.idl.Event4 :+: CNil) extends org.apache.avro.specific.SpecificRecordBase {
-  def this() = this(shapeless.Coproduct[Event1 :+: Event2 :+: Event3 :+: Event4 :+: CNil](new Event1))
+  def this() = this(shapeless.Coproduct[example.idl.Event1 :+: example.idl.Event2 :+: example.idl.Event3 :+: example.idl.Event4 :+: CNil](new Event1))
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {
@@ -390,7 +390,7 @@ object ShouldRenderAsCoproduct {
 }
 
 final case class ShouldRenderAsCoproduct2(var value: example.idl.Event1 :+: example.idl.Event2 :+: example.idl.Event3 :+: example.idl.Event4 :+: CNil) extends org.apache.avro.specific.SpecificRecordBase {
-  def this() = this(shapeless.Coproduct[Event1 :+: Event2 :+: Event3 :+: Event4 :+: CNil](new Event1))
+  def this() = this(shapeless.Coproduct[example.idl.Event1 :+: example.idl.Event2 :+: example.idl.Event3 :+: example.idl.Event4 :+: CNil](new Event1))
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {

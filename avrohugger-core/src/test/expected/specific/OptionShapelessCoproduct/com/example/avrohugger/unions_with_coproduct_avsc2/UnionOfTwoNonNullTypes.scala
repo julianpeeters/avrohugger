@@ -6,7 +6,7 @@ import scala.annotation.switch
 import shapeless.{:+:, CNil, Coproduct}
 
 final case class UnionOfTwoNonNullTypes(var r4: Int :+: String :+: CNil) extends org.apache.avro.specific.SpecificRecordBase {
-  def this() = this(shapeless.Coproduct[int :+: string :+: CNil](0))
+  def this() = this(shapeless.Coproduct[Int :+: String :+: CNil](0))
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {
