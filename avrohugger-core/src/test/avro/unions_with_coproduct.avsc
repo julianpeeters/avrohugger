@@ -1,0 +1,85 @@
+[
+  {
+    "namespace": "com.example.avrohugger.unions_with_coproduct_avsc",
+    "name": "r1",
+    "type": "record",
+    "fields": [
+      {
+        "name": "f1",
+        "type": "int"
+      }
+    ]
+  },
+  {
+    "namespace": "com.example.avrohugger.unions_with_coproduct_avsc",
+    "name": "r2",
+    "type": "record",
+    "fields": [
+      {
+        "name": "f2",
+        "type": "double"
+      }
+    ]
+  },
+  {
+    "namespace": "com.example.avrohugger.unions_with_coproduct_avsc",
+    "name": "r3",
+    "type": "record",
+    "fields": [
+      {
+        "name": "f3",
+        "type": "boolean"
+      }
+    ]
+  },
+  {
+    "namespace": "com.example.avrohugger.unions_with_coproduct_avsc",
+    "name": "s",
+    "type": "record",
+    "fields": [
+      {
+        "name": "s",
+        "type": "string"
+      },
+      {
+        "name": "ns",
+        "type": [
+          "null",
+          "string"
+        ]
+      },
+      {
+        "name": "multi2",
+        "type": [
+          "r1",
+          "r2"
+        ]
+      },
+      {
+        "name": "multi2opt",
+        "type": [
+          "null",
+          "r1",
+          "r2"
+        ]
+      },
+      {
+        "name": "multi3",
+        "type": [
+          "r3",
+          "r1",
+          "r2"
+        ]
+      },
+      {
+        "name": "multi3opt",
+        "type": [
+          "null",
+          "r3",
+          "r1",
+          "r2"
+        ]
+      }
+    ]
+  }
+]
