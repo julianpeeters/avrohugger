@@ -16,10 +16,17 @@ case object JavaEnum extends AvroScalaEnumType
 case object ScalaCaseObjectEnum extends AvroScalaEnumType
 case object EnumAsScalaString extends AvroScalaEnumType
 // union
-sealed trait AvroScalaUnionType extends Product with Serializable
+sealed trait AvroScalaUnionType extends Product with Serializable {
+  val useEitherForTwoNonNullTypes: Boolean = false
+
+}
+
 case object OptionalShapelessCoproduct extends AvroScalaUnionType
 case object OptionShapelessCoproduct extends AvroScalaUnionType
-case object OptionEitherShapelessCoproduct extends AvroScalaUnionType
+case object OptionEitherShapelessCoproduct extends AvroScalaUnionType {
+  override val useEitherForTwoNonNullTypes: Boolean = true
+
+}
 // array
 sealed trait AvroScalaArrayType extends Product with Serializable
 case object ScalaArray extends AvroScalaArrayType

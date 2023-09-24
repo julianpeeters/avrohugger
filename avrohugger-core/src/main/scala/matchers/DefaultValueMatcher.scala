@@ -177,13 +177,14 @@ object DefaultValueMatcher {
     def unionsArityStrategy(
       classStore: ClassStore,
       namespace: Option[String],
-      typeMatcher: TypeMatcher) =
+      typeMatcher: TypeMatcher,
+      useEither: Boolean) =
       nonNullableSchemas match {
         case Nil =>
           UNIT
         case List(schemaA) => //Option
           treeMatcher(node, schemaA)
-        case List(schemaA, schemaB) if typeMatcher.avroScalaTypes.union == OptionEitherShapelessCoproduct => //Either
+        case List(schemaA, _) if useEither => //Either
           LEFT(treeMatcher(node, schemaA))
         case firstSchema :: _ => //Coproduct
           COPRODUCT(firstSchema,
@@ -192,8 +193,8 @@ object DefaultValueMatcher {
       }
 
     def matchedTree(classStore: ClassStore, namespace: Option[String]) = typeMatcher.avroScalaTypes.union match {
-      case OptionShapelessCoproduct => unionsArityStrategy(classStore, namespace, typeMatcher)
-      case OptionEitherShapelessCoproduct => unionsArityStrategy(classStore, namespace, typeMatcher)
+      case OptionShapelessCoproduct | OptionEitherShapelessCoproduct =>
+        unionsArityStrategy(classStore, namespace, typeMatcher, typeMatcher.avroScalaTypes.union.useEitherForTwoNonNullTypes)
       case OptionalShapelessCoproduct => unionsAsOptionalShapelessCoproductStrategy
     }
 
