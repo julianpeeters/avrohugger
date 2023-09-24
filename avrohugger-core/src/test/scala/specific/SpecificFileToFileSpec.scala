@@ -36,6 +36,7 @@ class SpecificFileToFileSpec extends Specification {
 
       correctly generate union values with shapeless Coproduct $e18
       correctly generate union values with shapeless Coproduct from avsc $e19
+      correctly generate union values with shapeless Coproduct from avsc 2 $e20
 
 
       correctly generate a protocol with no ADT when asked $e21
@@ -293,8 +294,28 @@ class SpecificFileToFileSpec extends Specification {
     val classes = List("r1", "r2", "r3", "s")
     val sources = classes.map(className => util.Util.readFile(s"avrohugger-core/src/test/expected/specific/com/example/avrohugger/unions_with_coproduct_avsc/$className.scala"))
 
-    Result.foreach(classes.zip(sources)){ case (className, expect) =>
+    Result.foreach(classes.zip(sources)) { case (className, expect) =>
       util.Util.readFile(s"target/generated-sources/specific/com/example/avrohugger/unions_with_coproduct_avsc/$className.scala") === expect
+    }
+  }
+
+  def e20: Result = Result.forall(Seq(OptionalShapelessCoproduct, OptionShapelessCoproduct, OptionEitherShapelessCoproduct)) { unionType: AvroScalaUnionType =>
+    val inOrderSchema = new java.io.File("avrohugger-core/src/test/avro/unions_with_coproduct2.avsc")
+    val gen = Generator(format = SpecificRecord, avroScalaCustomTypes = Some(AvroScalaTypes.defaults.copy(union = unionType)))
+    val outDir = gen.defaultOutputDir + s"/specific/$unionType"
+    gen.fileToFile(inOrderSchema, outDir)
+
+    val classes = List(
+      "UnionOfNullWithOneNonNullType",
+      "UnionOfTwoNonNullTypes",
+      "UnionOfNullWithTwoNonNullTypes",
+      "UnionOfMoreThanTwoNonNullTypes",
+      "UnionOfNullWithMoreThanTwoNonNullTypes"
+    )
+    val sources = classes.map(className => util.Util.readFile(s"avrohugger-core/src/test/expected/specific/$unionType/com/example/avrohugger/unions_with_coproduct_avsc2/$className.scala"))
+
+    Result.forall(classes.zip(sources)) { case (className, expect) =>
+      util.Util.readFile(s"target/generated-sources/specific/$unionType/com/example/avrohugger/unions_with_coproduct_avsc2/$className.scala") === expect
     }
   }
 
