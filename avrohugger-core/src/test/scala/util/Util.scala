@@ -1,5 +1,7 @@
 package util
 
+import org.specs2.matcher.{Expectable, MatchResult, Matcher}
+
 object Util {
 
   def readFile(fileName: String, maxTries: Int = 3): String = {
@@ -26,4 +28,10 @@ object Util {
       case e: Throwable => false
     }
 
+  def containExpectedContentIn(expectPath: String): Matcher[String] = new Matcher[String] {
+    override def apply[S <: String](t: Expectable[S]): MatchResult[S] = {
+      val generatedPath = t.value
+      result(readFile(generatedPath) == readFile(expectPath), s"$generatedPath === $expectPath", s"\ndiff -ruBbE $expectPath $generatedPath", t)
+    }
+  }
 }
