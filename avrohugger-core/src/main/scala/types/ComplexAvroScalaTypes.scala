@@ -19,9 +19,13 @@ case object EnumAsScalaString extends AvroScalaEnumType
 sealed trait AvroScalaUnionType extends Product with Serializable {
   val useEitherForTwoNonNullTypes: Boolean = false
 
+  val useCoproductForLoneNonNullType: Boolean = false
+
 }
 
-case object OptionalShapelessCoproduct extends AvroScalaUnionType
+case object OptionalShapelessCoproduct extends AvroScalaUnionType {
+  override val useCoproductForLoneNonNullType: Boolean = true
+}
 case object OptionShapelessCoproduct extends AvroScalaUnionType
 case object OptionEitherShapelessCoproduct extends AvroScalaUnionType {
   override val useEitherForTwoNonNullTypes: Boolean = true
