@@ -178,6 +178,17 @@ To reassign Scala types to Avro types, use the following (e.g. for customizing `
 * `protocol` can be assigned to `ScalaADT` and `NoTypeGenerated`
 * `decimal` can be assigned to e.g. `ScalaBigDecimal(Some(BigDecimal.RoundingMode.HALF_EVEN))` and `ScalaBigDecimalWithPrecision(None)` (via Shapeless Tagged Types)
 
+Specifically for unions:
+
+| Field Type ⬇️ / Behaviour ➡️            | OptionShapelessCoproduct                      | OptionEitherShapelessCoproduct                | OptionalShapelessCoproduct                    |
+|-----------------------------------------|-----------------------------------------------|-----------------------------------------------|-----------------------------------------------| 
+| `[{"type": "map", "values": "string"}]` | `Map[String, String]`                         | `Map[String, String]`                         | `Map[String, String] :+: CNil`                |
+| `["null", "double"]`                    | `Option[Double]`                              | `Option[Double]`                              | `Option[Double :+: CNil]`                     |
+| `["int", "string"]`                     | `Int :+: String :+: CNil`                     | `Either[Int, String]`                         | `Int :+: String :+: CNil`                     |
+| `["null", "int", "string"]`             | `Option[Int :+: String :+: CNil]`             | `Option[Either[Int, String]]`                 | `Option[Int :+: String :+: CNil]`             |
+| `["boolean", "int", "string"]`          | `Boolean :+: Int :+: String :+: CNil`         | `Boolean :+: Int :+: String :+: CNil`         | `Boolean :+: Int :+: String :+: CNil`         |
+| `["null", "boolean", "int", "string"]`  | `Option[Boolean :+: Int :+: String :+: CNil]` | `Option[Boolean :+: Int :+: String :+: CNil]` | `Option[Boolean :+: Int :+: String :+: CNil]` |
+
 ##### Customizable Namespace Mapping:
 
 Namespaces can be reassigned by instantiating a `Generator` with a custom
