@@ -7,6 +7,7 @@ import avrohugger.format.SpecificRecord
 import avrohugger.types._
 import org.specs2._
 import org.specs2.execute.Result
+import util.Util.containExpectedContentIn
 
 import java.io.File
 import scala.util.Try
@@ -305,17 +306,18 @@ class SpecificFileToFileSpec extends Specification {
     val outDir = gen.defaultOutputDir + s"/specific/$unionType"
     gen.fileToFile(inOrderSchema, outDir)
 
-    val classes = List(
+    Result.forall(List(
+      "UnionOfOneNonNullType",
       "UnionOfNullWithOneNonNullType",
       "UnionOfTwoNonNullTypes",
       "UnionOfNullWithTwoNonNullTypes",
       "UnionOfMoreThanTwoNonNullTypes",
       "UnionOfNullWithMoreThanTwoNonNullTypes"
-    )
-    val sources = classes.map(className => util.Util.readFile(s"avrohugger-core/src/test/expected/specific/$unionType/com/example/avrohugger/unions_with_coproduct_avsc2/$className.scala"))
+    )) { className =>
 
-    Result.forall(classes.zip(sources)) { case (className, expect) =>
-      util.Util.readFile(s"target/generated-sources/specific/$unionType/com/example/avrohugger/unions_with_coproduct_avsc2/$className.scala") === expect
+      val generatedFile = s"target/generated-sources/specific/$unionType/com/example/avrohugger/unions_with_coproduct_avsc2/$className.scala"
+      val expectationFile = s"avrohugger-core/src/test/expected/specific/$unionType/com/example/avrohugger/unions_with_coproduct_avsc2/$className.scala"
+      generatedFile must containExpectedContentIn(expectationFile)
     }
   }
 

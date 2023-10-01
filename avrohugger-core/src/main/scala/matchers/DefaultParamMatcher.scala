@@ -68,13 +68,15 @@ object DefaultParamMatcher {
       case Schema.Type.UNION =>
         val schemas = avroSchema.getTypes.asScala.toList
         if (avroSchema.isNullable) NONE
+        else if (schemas.size == 1 && !typeMatcher.avroScalaTypes.union.useCoproductForLoneNonNullType)
+          asDefaultParam(classStore, schemas.head, typeMatcher)
         else if (schemas.size == 2 && typeMatcher.avroScalaTypes.union.useEitherForTwoNonNullTypes)
           LEFT(asDefaultParam(classStore, schemas.head, typeMatcher))
         else COPRODUCT(asDefaultParam(classStore, schemas.head, typeMatcher), schemas.map(typeMatcher.toScalaType(classStore, None, _).safeToString))
       case Schema.Type.ARRAY   =>
         CustomDefaultParamMatcher.checkCustomArrayType(typeMatcher.avroScalaTypes.array) DOT "empty"
       case Schema.Type.MAP     =>
-        MAKE_MAP(LIT("") ANY_-> asDefaultParam(classStore, avroSchema.getValueType, typeMatcher))
+        ID("Map") DOT "empty"
     }
   }
 

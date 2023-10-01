@@ -1,6 +1,22 @@
 [
   {
     "namespace": "com.example.avrohugger.unions_with_coproduct_avsc2",
+    "name": "UnionOfOneNonNullType",
+    "type": "record",
+    "fields": [
+      {
+        "name": "f3",
+        "type": [
+          {
+            "type": "map",
+            "values": "string"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "namespace": "com.example.avrohugger.unions_with_coproduct_avsc2",
     "name": "UnionOfNullWithOneNonNullType",
     "type": "record",
     "fields": [
