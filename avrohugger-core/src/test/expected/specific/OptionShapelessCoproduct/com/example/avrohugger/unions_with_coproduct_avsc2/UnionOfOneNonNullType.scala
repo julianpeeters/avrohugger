@@ -4,7 +4,7 @@ package com.example.avrohugger.unions_with_coproduct_avsc2
 import scala.annotation.switch
 
 final case class UnionOfOneNonNullType(var f3: Map[String, String]) extends org.apache.avro.specific.SpecificRecordBase {
-  def this() = this(Map("" -> ""))
+  def this() = this(Map.empty)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {

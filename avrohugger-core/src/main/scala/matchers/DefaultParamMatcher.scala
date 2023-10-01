@@ -76,7 +76,7 @@ object DefaultParamMatcher {
       case Schema.Type.ARRAY   =>
         CustomDefaultParamMatcher.checkCustomArrayType(typeMatcher.avroScalaTypes.array) DOT "empty"
       case Schema.Type.MAP     =>
-        MAKE_MAP(LIT("") ANY_-> asDefaultParam(classStore, avroSchema.getValueType, typeMatcher))
+        ID("Map") DOT "empty"
     }
   }
 
