@@ -197,9 +197,17 @@ object ScalaConverter {
         }
       }
       case Schema.Type.LONG => {
+        val caseLWithTypeLong = CASE(ID("l") withType (LongClass))
         Option(schema.getLogicalType()) match {
           case Some(logicalType) => {
-            if (logicalType.getName == "timestamp-millis") {
+            if (logicalType.getName == "time-micros") {
+              (typeMatcher.avroScalaTypes.timeMicros match {
+                case JavaTimeLocalTime =>
+                  val LocalTimeClass = RootClass.newClass("java.time.LocalTime")
+                  val resultExpr = BLOCK(LocalTimeClass.DOT("ofNanoOfDay").APPLY(REF("l").INFIX("*", LIT(1000L))))
+                  tree MATCH caseLWithTypeLong ==> resultExpr
+              }) withComment "avro time-micros long stores the number of microseconds after midnight, 00:00:00.000000"
+            } else if (logicalType.getName == "timestamp-millis") {
               typeMatcher.avroScalaTypes.timestampMillis match {
                 case JavaSqlTimestamp => {
                   val TimestampClass = RootClass.newClass("java.sql.Timestamp")
@@ -214,6 +222,44 @@ object ScalaConverter {
                   tree MATCH longConversion
                 }
               }
+            } else if (logicalType.getName == "timestamp-micros") {
+              (typeMatcher.avroScalaTypes.timestampMicros match {
+                case JavaTimeZonedDateTime =>
+                  val ZonedDateTime = RootClass.newClass("java.time.ZonedDateTime")
+                  val LocalDateTime = RootClass.newClass("java.time.LocalDateTime")
+                  val ZoneOffset = RootClass.newClass("java.time.ZoneOffset")
+                  val ZoneId = RootClass.newClass("java.time.ZoneId")
+                  val resultExpr = BLOCK(ZonedDateTime.DOT("of").APPLY(LocalDateTime DOT "ofEpochSecond" APPLY(
+                    REF("l").INFIX("/", LIT(1000000L)),
+                    PAREN(REF("l").INFIX("%", LIT(1000000L))) DOT "toInt" INFIX("*", LIT(1000)),
+                    ZoneOffset DOT "UTC"
+                  ), ZoneId DOT "of" APPLY LIT("UTC")))
+                  tree MATCH CASE(ID("l") withType (LongClass)) ==> resultExpr
+              }) withComment "avro timestamp-micros long stores the number of microseconds from the unix epoch, 1 January 1970 00:00:00.000000 UTC"
+            } else if (logicalType.getName == "local-timestamp-millis") {
+              (typeMatcher.avroScalaTypes.localTimestampMillis match {
+                case JavaTimeLocalDateTime =>
+                  val LocalDateTime = RootClass.newClass("java.time.LocalDateTime")
+                  val ZoneOffset = RootClass.newClass("java.time.ZoneOffset")
+                  val resultExpr = BLOCK(LocalDateTime DOT "ofEpochSecond" APPLY(
+                    REF("l").INFIX("/", LIT(1000L)),
+                    PAREN(REF("l").INFIX("%", LIT(1000L))) DOT "toInt" INFIX("*", LIT(1000000)),
+                    ZoneOffset DOT "UTC"
+                  ))
+                  tree MATCH CASE(ID("l") withType (LongClass)) ==> resultExpr
+              }) withComment "avro local-timestamp-millis long stores the number of millis, from 1 January 1970 00:00:00.000000"
+            } else if (logicalType.getName == "local-timestamp-micros") {
+              (typeMatcher.avroScalaTypes.localTimestampMicros match {
+                case JavaTimeLocalDateTime =>
+                  val LocalDateTime = RootClass.newClass("java.time.LocalDateTime")
+                  val ZoneOffset = RootClass.newClass("java.time.ZoneOffset")
+                  val resultExpr = BLOCK(LocalDateTime DOT "ofEpochSecond" APPLY(
+                    REF("l").INFIX("/", LIT(1000000L)),
+                    PAREN(REF("l").INFIX("%", LIT(1000000L))) DOT "toInt" INFIX("*", LIT(1000)),
+                    ZoneOffset DOT "UTC"
+                  ))
+                  tree MATCH CASE(ID("l") withType (LongClass)) ==> resultExpr
+              }) withComment "avro local-timestamp-micros long stores the number of microseconds, from 1 January 1970 00:00:00.000000"
             }
             else tree
           }

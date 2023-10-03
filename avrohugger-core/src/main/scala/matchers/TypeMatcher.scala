@@ -49,6 +49,10 @@ class TypeMatcher(
             schema = schema,
             default = CustomTypeMatcher.checkCustomNumberType(avroScalaTypes.long)) {
             case TimestampMillis => CustomTypeMatcher.checkCustomTimestampMillisType(avroScalaTypes.timestampMillis)
+            case TimestampMicros => CustomTypeMatcher.checkCustomTimestampMicrosType(avroScalaTypes.timestampMicros)
+            case LocalTimestampMicros => CustomTypeMatcher.checkCustomLocalTimestampMicrosType(avroScalaTypes.localTimestampMicros)
+            case LocalTimestampMillis => CustomTypeMatcher.checkCustomLocalTimestampMillisType(avroScalaTypes.localTimestampMillis)
+            case TimeMicros => CustomTypeMatcher.checkCustomTimeMicrosType(avroScalaTypes.timeMicros)
           }
         case Schema.Type.INT      =>
           LogicalType.foldLogicalTypes(

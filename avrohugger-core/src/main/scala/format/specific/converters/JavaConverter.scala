@@ -155,6 +155,18 @@ object JavaConverter {
         case JavaSqlTimestamp => BLOCK(tree.DOT("getTime").APPLY())
         case JavaTimeInstant  => BLOCK(tree.DOT("toEpochMilli"))
       }
+      case _: LogicalTypes.TimestampMicros => (typeMatcher.avroScalaTypes.timestampMicros match {
+        case JavaTimeZonedDateTime => BLOCK(tree.DOT("toEpochSecond").INFIX("*", LIT(1000000L)).INFIX("+", tree.DOT("getNano").INFIX("/", LIT(1000L))))
+      }) withComment "avro timestamp-micros long stores the number of microseconds from the unix epoch, 1 January 1970 00:00:00.000000 UTC"
+      case _: LogicalTypes.LocalTimestampMillis => (typeMatcher.avroScalaTypes.localTimestampMillis match {
+        case JavaTimeLocalDateTime => BLOCK(tree.DOT("toEpochSecond").APPLY(RootClass.newClass("java.time.ZoneOffset").DOT("UTC")).INFIX("*", LIT(1000L)).INFIX("+", tree.DOT("getNano").INFIX("/", LIT(1000000L))))
+      }) withComment "avro local-timestamp-millis long stores the number of millis, from 1 January 1970 00:00:00.000000"
+      case _: LogicalTypes.LocalTimestampMicros => (typeMatcher.avroScalaTypes.localTimestampMicros match {
+        case JavaTimeLocalDateTime => BLOCK(tree.DOT("toEpochSecond").APPLY(RootClass.newClass("java.time.ZoneOffset").DOT("UTC")).INFIX("*", LIT(1000000L)).INFIX("+", tree.DOT("getNano").INFIX("/", LIT(1000L))))
+      }) withComment "avro local-timestamp-micros long stores the number of microseconds, from 1 January 1970 00:00:00.000000"
+      case _: LogicalTypes.TimeMicros => (typeMatcher.avroScalaTypes.timeMicros match {
+        case JavaTimeLocalTime => BLOCK(tree.DOT("toNanoOfDay").INFIX("/", LIT(1000L)))
+      }) withComment "avro time-micros long stores the number of microseconds after midnight, 00:00:00.000000"
       case _ => tree
     }
     case Schema.Type.INT => schema.getLogicalType match {

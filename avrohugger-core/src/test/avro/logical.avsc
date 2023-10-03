@@ -59,6 +59,34 @@
         "type": "int",
         "logicalType": "time-millis"
       }
+    },
+    {
+      "name": "timeMicros",
+      "type": {
+        "type": "long",
+        "logicalType": "time-micros"
+      }
+    },
+    {
+      "name": "timestampMicros",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-micros"
+      }
+    },
+    {
+      "name": "localTimestampMicros",
+      "type": {
+        "type": "long",
+        "logicalType": "local-timestamp-micros"
+      }
+    },
+    {
+      "name": "localTimestampMillis",
+      "type": {
+        "type": "long",
+        "logicalType": "local-timestamp-millis"
+      }
     }
   ]
 }
