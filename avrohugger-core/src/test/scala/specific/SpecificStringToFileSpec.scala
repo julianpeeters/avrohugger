@@ -9,7 +9,6 @@ import org.specs2._
 
 import java.io.File
 import scala.io.Source
-import scala.language.postfixOps
 
 class SpecificStringToFileSpec extends Specification {
   
@@ -264,7 +263,7 @@ class SpecificStringToFileSpec extends Specification {
     val schema = {
       val primitives = List("null", "boolean", "int", "long", "float", "double", "bytes", "string")
       val fields = primitives.map(n => s"""{"name":"${n}Field","type":"$n"}""").mkString(",")
-      LazyList.from(1).scanLeft(s"""{"type":"record","name":"massive._0","fields":[$fields]}""") { case (field, i) =>
+      Stream.from(1).scanLeft(s"""{"type":"record","name":"massive._0","fields":[$fields]}""") { case (field, i) =>
         val fields = primitives.map(n => s"""{"name":"${n}Field","type":${field.replace("_", s"_$n")}}""")
         s"""{"type":"record","name":"massive._$i","fields":[${fields.mkString(",")}]}"""
       }.filter(_.length > min).map(new Schema.Parser().parse(_)).find(_.toString().length > min).get
@@ -289,6 +288,6 @@ class SpecificStringToFileSpec extends Specification {
       }
     }.toMap
 
-    sources.collect { case f -> source if source.contains("mkString") => f } must not beEmpty
+    sources.collect { case (f, source) if source.contains("mkString") => f } must not beEmpty
   }
 }
