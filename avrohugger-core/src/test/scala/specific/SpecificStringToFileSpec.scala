@@ -4,7 +4,11 @@ package specific
 
 import avrohugger._
 import avrohugger.format.SpecificRecord
+import org.apache.avro.Schema
 import org.specs2._
+
+import java.io.File
+import scala.io.Source
 
 class SpecificStringToFileSpec extends Specification {
   
@@ -31,6 +35,8 @@ class SpecificStringToFileSpec extends Specification {
 
 
     correctly generate a protocol with no ADT when asked $e21
+    correctly generate large string of embedded schema $e23
+
   """
   //   correctly generate logical types from IDL $e22
   // """
@@ -249,4 +255,39 @@ class SpecificStringToFileSpec extends Specification {
   //   source === util.Util.readFile("avrohugger-core/src/test/expected/specific/example/idl/LogicalIdl.scala")
   // }
 
+
+  def e23 = {
+
+    val min = 70000 * 2
+
+    val schema = {
+      val primitives = List("null", "boolean", "int", "long", "float", "double", "bytes", "string")
+      val fields = primitives.map(n => s"""{"name":"${n}Field","type":"$n"}""").mkString(",")
+      Stream.from(1).scanLeft(s"""{"type":"record","name":"massive._0","fields":[$fields]}""") { case (field, i) =>
+        val fields = primitives.map(n => s"""{"name":"${n}Field","type":${field.replace("_", s"_$n")}}""")
+        s"""{"type":"record","name":"massive._$i","fields":[${fields.mkString(",")}]}"""
+      }.filter(_.length > min).map(new Schema.Parser().parse(_)).find(_.toString().length > min).get
+    }
+
+    val schemaString = schema.toString()
+    val gen = Generator(format = SpecificRecord)
+    val outDir = gen.defaultOutputDir + "/specific/"
+    val outDirF = new File(outDir, "massive")
+    outDirF.mkdirs()
+    outDirF.list().foreach(new File(outDirF, _).delete())
+    gen.stringToFile(schemaString, outDir)
+
+    val sources = outDirF.list().map(f => new File(outDirF, f)).map { f =>
+      f -> {
+        val src = Source.fromFile(f)
+        try {
+          src.mkString("")
+        } finally {
+          src.close()
+        }
+      }
+    }.toMap
+
+    sources.collect { case (f, source) if source.contains("mkString") => f } must not beEmpty
+  }
 }
