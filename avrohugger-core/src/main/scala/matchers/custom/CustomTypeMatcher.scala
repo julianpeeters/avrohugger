@@ -62,4 +62,20 @@ object CustomTypeMatcher {
             case ScalaBigDecimalWithPrecision(_) => decimalTaggedType(precision, scale)
           }
         }
+
+  def checkCustomTimeMicrosType(timeType: AvroScalaTimeType) = timeType match {
+    case JavaTimeLocalTime => RootClass.newClass(nme.createNameType("java.time.LocalTime"))
+  }
+
+  def checkCustomTimestampMicrosType(timeType: AvroScalaTimestampType) = timeType match {
+    case JavaTimeZonedDateTime => RootClass.newClass(nme.createNameType("java.time.ZonedDateTime"))
+  }
+
+  def checkCustomLocalTimestampMicrosType(timeType: AvroScalaLocalTimestampType) = timeType match {
+    case JavaTimeLocalDateTime => RootClass.newClass(nme.createNameType("java.time.LocalDateTime"))
+  }
+
+  def checkCustomLocalTimestampMillisType(timeType: AvroScalaLocalTimestampType) = timeType match {
+    case JavaTimeLocalDateTime => RootClass.newClass(nme.createNameType("java.time.LocalDateTime"))
+  }
 }
