@@ -42,6 +42,18 @@ object DefaultParamMatcher {
           case TimestampMillis =>
             CustomDefaultParamMatcher.checkCustomTimestampMillisType(
               typeMatcher.avroScalaTypes.timestampMillis)
+          case TimestampMicros =>
+            CustomDefaultParamMatcher.checkCustomTimestampMicrosType(
+              typeMatcher.avroScalaTypes.timestampMicros)
+          case LocalTimestampMillis =>
+            CustomDefaultParamMatcher.checkCustomLocalTimestampMillisType(
+              typeMatcher.avroScalaTypes.localTimestampMillis)
+          case LocalTimestampMicros =>
+            CustomDefaultParamMatcher.checkCustomLocalTimestampMicrosType(
+              typeMatcher.avroScalaTypes.localTimestampMicros)
+          case TimeMicros =>
+            CustomDefaultParamMatcher.checkCustomTimeMicrosType(
+              typeMatcher.avroScalaTypes.timeMicros)
         }
       case Schema.Type.FLOAT   => LIT(0F)
       case Schema.Type.DOUBLE  => LIT(0D)

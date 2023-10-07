@@ -24,6 +24,10 @@ case class AvroScalaTypes(
   date:     AvroScalaDateType     = JavaTimeLocalDate,
   timestampMillis: AvroScalaTimestampMillisType = JavaTimeInstant,
   timeMillis: AvroScalaTimeMillisType = JavaTimeLocalTime,
+  timeMicros: AvroScalaTimeType = JavaTimeLocalTime,
+  timestampMicros: AvroScalaTimestampType = JavaTimeZonedDateTime,
+  localTimestampMillis: AvroScalaLocalTimestampType = JavaTimeLocalDateTime,
+  localTimestampMicros: AvroScalaLocalTimestampType = JavaTimeLocalDateTime,
   uuid:     AvroUuidType          = JavaUuid
 )
 

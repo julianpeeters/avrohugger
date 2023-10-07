@@ -18,14 +18,25 @@ case object JavaTimeInstant extends AvroScalaTimestampMillisType
 sealed trait AvroUuidType extends Product with Serializable
 case object JavaUuid extends AvroUuidType
 
+sealed trait AvroScalaTimeType extends Serializable
 sealed trait AvroScalaTimeMillisType extends Product with Serializable
 case object JavaSqlTime extends AvroScalaTimeMillisType
-case object JavaTimeLocalTime extends AvroScalaTimeMillisType
+case object JavaTimeLocalTime extends AvroScalaTimeType with AvroScalaTimeMillisType
+
+sealed trait AvroScalaTimestampType extends Serializable
+case object JavaTimeZonedDateTime extends AvroScalaTimestampType
+
+sealed trait AvroScalaLocalTimestampType extends Serializable
+case object JavaTimeLocalDateTime extends AvroScalaLocalTimestampType
 
 sealed abstract class LogicalType(name: String)
 case class Decimal(precision: Int, scale: Int) extends LogicalType("decimal")
 case object Date extends LogicalType("date")
 case object TimestampMillis extends LogicalType("timestamp-millis")
+case object TimestampMicros extends LogicalType("timestamp-micros")
+case object LocalTimestampMicros extends LogicalType("local-timestamp-micros")
+case object LocalTimestampMillis extends LogicalType("local-timestamp-millis")
+case object TimeMicros extends LogicalType("timestamp-millis")
 case object TimeMillis extends LogicalType("time-millis")
 case object UUID extends LogicalType("uuid")
 
@@ -35,6 +46,10 @@ object LogicalType {
     case d: org.apache.avro.LogicalTypes.Decimal => Some(Decimal(d.getPrecision, d.getScale))
     case _: org.apache.avro.LogicalTypes.Date => Some(Date)
     case _: org.apache.avro.LogicalTypes.TimestampMillis => Some(TimestampMillis)
+    case _: org.apache.avro.LogicalTypes.TimestampMicros => Some(TimestampMicros)
+    case _: org.apache.avro.LogicalTypes.LocalTimestampMillis => Some(LocalTimestampMillis)
+    case _: org.apache.avro.LogicalTypes.LocalTimestampMicros => Some(LocalTimestampMicros)
+    case _: org.apache.avro.LogicalTypes.TimeMicros => Some(TimeMicros)
     case _: org.apache.avro.LogicalTypes.TimeMillis => Some(TimeMillis)
     case _ if logicalType.getName == "uuid" => Some(UUID)
     case _ => None

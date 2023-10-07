@@ -58,4 +58,24 @@ object CustomDefaultParamMatcher {
       case JavaSqlTime => NEW(REF("java.sql.Time"), LIT(0L))
       case JavaTimeLocalTime  => REF("java.time.LocalTime.now")
     }
+
+  def checkCustomTimeMicrosType(timeMillisType: AvroScalaTimeType): Tree =
+    timeMillisType match {
+      case JavaTimeLocalTime => REF("java.time.LocalTime.MIDNIGHT")
+    }
+
+  def checkCustomTimestampMicrosType(timeMillisType: AvroScalaTimestampType): Tree =
+    timeMillisType match {
+      case JavaTimeZonedDateTime => REF("java.time.ZonedDateTime.of").APPLY(REF("java.time.LocalDateTime") DOT "MIN", REF("java.time.ZoneId") DOT "of" APPLY LIT("UTC"))
+    }
+
+  def checkCustomLocalTimestampMillisType(timeMillisType: AvroScalaLocalTimestampType): Tree =
+    timeMillisType match {
+      case JavaTimeLocalDateTime => REF("java.time.LocalDateTime") DOT "MIN"
+    }
+
+  def checkCustomLocalTimestampMicrosType(timeMillisType: AvroScalaLocalTimestampType): Tree =
+    timeMillisType match {
+      case JavaTimeLocalDateTime => REF("java.time.LocalDateTime") DOT "MIN"
+    }
 }
