@@ -12,6 +12,7 @@ import treehugger.forest._
 import definitions._
 import treehuggerDSL._
 
+import java.nio.charset.StandardCharsets
 import scala.jdk.CollectionConverters._
 
 // only companions, so no doc generation is required here
@@ -52,7 +53,10 @@ object SpecificObjectTree {
       case None => OBJECTDEF(schema.getName)
     }
     val schemaDef = VAL(REF("SCHEMA$")) := {
-      (NEW(ParserClass)) APPLY(Nil) DOT "parse" APPLY(LIT(schema.toString))
+      NEW(ParserClass) APPLY (Nil) DOT "parse" APPLY (schema.toString match {
+        case schemaString if schemaString.getBytes(StandardCharsets.UTF_8).length > 65535 => LIST(schemaString.split("},\\{\"").map(LIT)) DOT "mkString" APPLY (LIT("},{\""))
+        case schemaString => LIT(schemaString)
+      })
     }
     val externalReader = VAL("READER$") := NEW("org.apache.avro.specific.SpecificDatumReader").APPLYTYPE(TYPE_REF(schema.getName)).APPLY(
       REF(s"${schema.getFullName()}.SCHEMA$$")
