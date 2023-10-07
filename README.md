@@ -71,7 +71,12 @@ runtime, Java classes provided separately (see [Scavro Plugin](https://github.co
 |RECORD|case class<br>case class + schema|case class extending `SpecificRecordBase`| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 |PROTOCOL|_No Type_<br>Scala ADT|RPC trait<br>Scala ADT| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 |Date|java.time.LocalDate<br>java.sql.Date|java.time.LocalDate<br>java.sql.Date| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
+|TimeMillis|java.time.LocalTime|java.time.LocalTime| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
+|TimeMicros|java.time.LocalTime|java.time.LocalTime| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 |TimestampMillis|java.time.Instant<br>java.sql.Timestamp|java.time.Instant<br>java.sql.Timestamp| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
+|TimestampMicros|java.time.Instant<br>java.sql.Timestamp|java.time.Instant<br>java.sql.Timestamp| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
+|LocalTimestampMillis|java.time.LocalDateTime|java.time.LocalDateTime| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
+|LocalTimestampMicros|java.time.LocalDateTime|java.time.LocalDateTime| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 |UUID|java.util.UUID|java.util.UUID| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 |Decimal|BigDecimal|BigDecimal| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 
