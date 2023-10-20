@@ -76,7 +76,7 @@ object ScalaConverter {
       case Schema.Type.ARRAY => {
         val elementSchema = schema.getElementType
         val elementType = typeMatcher.toScalaType(classStore, namespace, elementSchema)
-        val JavaList = RootClass.newClass("java.util.List[_]")
+        val JavaList = javaListConvertor(targetScalaPartialVersion)
         val applyParam = REF("array") DOT("iterator")
         val elementConversion = convertFromJava(
           classStore,
@@ -314,4 +314,9 @@ object ScalaConverter {
     }
   }
 
+  def javaListConvertor(targetScalaPartialVersion: String) =
+    if (targetScalaPartialVersion.startsWith("3."))
+      RootClass.newClass("java.util.List[?]")
+    else
+      RootClass.newClass("java.util.List[_]")
 }
