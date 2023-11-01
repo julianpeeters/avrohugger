@@ -44,44 +44,45 @@ class GeneratorTool(sourceFormat: SourceFormat,
           .println(" outputdir - directory to write generated scala");
       System.err.println(" -string - use java.lang.String instead of Utf8");
       1;
-    }
+    } else {
 
-    var stringType: StringType = StringType.CharSequence;
+      var stringType: StringType = StringType.CharSequence;
 
-    var arg = 0;
-    if ("-string".equals(args.get(arg))) {
-      stringType = StringType.String;
-      arg+=1;
-    }
-
-    val method: String = args.get(arg);
-    var inputs: List[File] = new ArrayList[File]();
-
-    for (i <- (arg + 1) until (args.size() - 1)) {
-      Try {
-         inputs.add(new File(args.get(i)));
+      var arg = 0;
+      if ("-string".equals(args.get(arg))) {
+        stringType = StringType.String;
+        arg+=1;
       }
-    }
 
-    if ("datafile".equals(method)) {
-      for (src: File <- determineInputs(inputs, DATAFILE_FILTER)) {
-        generator.fileToFile(src, args.asScala.last)
+      val method: String = args.get(arg);
+      var inputs: List[File] = new ArrayList[File]();
+
+      for (i <- (arg + 1) until (args.size() - 1)) {
+        Try {
+          inputs.add(new File(args.get(i)));
+        }
       }
-    } else if ("schema".equals(method)) {
-      for (src: File <- AvscFileSorter.sortSchemaFiles(determineInputs(inputs, SCHEMA_FILTER))) {
-        generator.fileToFile(src, args.asScala.last)
+
+      if ("datafile".equals(method)) {
+        for (src: File <- determineInputs(inputs, DATAFILE_FILTER)) {
+          generator.fileToFile(src, args.asScala.last)
+        }
+      } else if ("schema".equals(method)) {
+        for (src: File <- AvscFileSorter.sortSchemaFiles(determineInputs(inputs, SCHEMA_FILTER))) {
+          generator.fileToFile(src, args.asScala.last)
+        }
       }
-    }
-    else if ("protocol".equals(method)) {
-      for (src: File <- determineInputs(inputs, PROTOCOL_FILTER)) {
-        generator.fileToFile(src, args.asScala.last)
+      else if ("protocol".equals(method)) {
+        for (src: File <- determineInputs(inputs, PROTOCOL_FILTER)) {
+          generator.fileToFile(src, args.asScala.last)
+        }
       }
+      else {
+        sys.error("Expected \"datafile\", \"schema\" or \"protocol\".");
+        1;
+      }
+      0;
     }
-    else {
-      sys.error("Expected \"datafile\", \"schema\" or \"protocol\".");
-      1;
-    }
-    0;
   }
 
   @Override

@@ -88,7 +88,6 @@ class TypeMatcher(
           val unionSchemas = schema.getTypes().asScala.toList
           unionTypeImpl(unionSchemas, matchType)
         }
-        case x => sys.error( s"$x is not supported or not a valid Avro type")
       }
     }
 
@@ -157,7 +156,6 @@ class TypeMatcher(
 
   //Scavro requires Java types be generated for mapping Java classes to Scala
 
-  // in the future, scavro may allow this to be set
   val avroStringType = TYPE_REF("CharSequence")
 
   def toJavaType(
@@ -207,7 +205,6 @@ class TypeMatcher(
           }
           else sys.error("unions not yet supported beyond nullable fields")
         }
-        case x => sys.error( s"$x is not supported or not a valid Avro type")
       }
     }
 

@@ -101,7 +101,7 @@ object ScalaConverter {
         val errorExpr = NEW("org.apache.avro.AvroRuntimeException", errorMessage)
         val conversionCases = List(arrayConversion)
         val arrayMatchError = CASE(WILDCARD) ==> errorExpr
-        tree MATCH(conversionCases:_*)
+        tree MATCH(conversionCases)
       }
       case Schema.Type.STRING =>
         LogicalType.foldLogicalTypes(
@@ -185,13 +185,13 @@ object ScalaConverter {
           val nullConversion = CASE(NULL) ==> NONE
           val someConversion = CASE(WILDCARD) ==> SOME(expr)
           val conversionCases = List(nullConversion, someConversion)
-          tree MATCH (conversionCases: _*)
+          tree MATCH (conversionCases)
         } else {
           tree
         }
       }
       case Schema.Type.ENUM => {
-        typeMatcher.avroScalaTypes.enum match {
+        typeMatcher.avroScalaTypes.`enum` match {
           case EnumAsScalaString => tree TOSTRING
           case JavaEnum | ScalaEnumeration | ScalaCaseObjectEnum => tree
         }

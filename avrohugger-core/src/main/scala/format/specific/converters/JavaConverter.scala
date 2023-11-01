@@ -59,7 +59,7 @@ object JavaConverter {
             NULL
           }
         )
-        tree MATCH (conversionCases: _*)
+        tree MATCH (conversionCases)
       } else {
         tree
       }
@@ -187,7 +187,7 @@ object JavaConverter {
         tree
       }
     case Schema.Type.ENUM => {
-      typeMatcher.avroScalaTypes.enum match {
+      typeMatcher.avroScalaTypes.`enum` match {
         case EnumAsScalaString =>
           val defaultTree: Tree = REF("getSchema").DOT("getFields").DOT("get").APPLY(REF("field$")).DOT("schema")
           val schemaTree: Tree =

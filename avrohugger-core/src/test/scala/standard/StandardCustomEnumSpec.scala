@@ -21,7 +21,7 @@ class StandardCustomEnumSpec extends Specification {
     val infile = new java.io.File("avrohugger-core/src/test/avro/import.avdl")
     val gen = new Generator(
       Standard,
-      Some(Standard.defaultTypes.copy(enum = JavaEnum, protocol = ScalaADT)),
+      Some(Standard.defaultTypes.copy(`enum` = JavaEnum, protocol = ScalaADT)),
       Map(
         ("example.idl" -> "example.idl.java"),
         ("other.ns" -> "other.ns.java")))
@@ -45,7 +45,7 @@ class StandardCustomEnumSpec extends Specification {
     val infile = new java.io.File("avrohugger-core/src/test/avro/import.avdl")
     val gen = new Generator(
       Standard,
-      Some(Standard.defaultTypes.copy(enum = JavaEnum, protocol = ScalaADT)),
+      Some(Standard.defaultTypes.copy(`enum` = JavaEnum, protocol = ScalaADT)),
       Map(
         ("example.idl" -> "example.idl.java"),
         ("other.ns" -> "other.ns.java")))
@@ -75,7 +75,7 @@ class StandardCustomEnumSpec extends Specification {
     val infile = new java.io.File("avrohugger-core/src/test/avro/import.avdl")
     val gen = new Generator(
       Standard,
-      Some(Standard.defaultTypes.copy(enum = ScalaCaseObjectEnum, protocol = ScalaADT)),
+      Some(Standard.defaultTypes.copy(`enum` = ScalaCaseObjectEnum, protocol = ScalaADT)),
       Map(
         ("example.idl" -> "example.idl.case"),
         ("other.ns" -> "other.ns.case")))
@@ -97,7 +97,7 @@ class StandardCustomEnumSpec extends Specification {
     val infile = new java.io.File("avrohugger-core/src/test/avro/import.avdl")
     val gen = new Generator(
       Standard,
-      Some(Standard.defaultTypes.copy(enum = ScalaCaseObjectEnum, protocol = ScalaADT)),
+      Some(Standard.defaultTypes.copy(`enum` = ScalaCaseObjectEnum, protocol = ScalaADT)),
       Map(
         ("example.idl" -> "example.idl.case"),
         ("other.ns" -> "other.ns.case")))
@@ -125,7 +125,7 @@ class StandardCustomEnumSpec extends Specification {
     val infile = new java.io.File("avrohugger-core/src/test/avro/import.avdl")
     val gen = new Generator(
       Standard,
-      Some(Standard.defaultTypes.copy(enum = EnumAsScalaString, protocol = ScalaADT)),
+      Some(Standard.defaultTypes.copy(`enum` = EnumAsScalaString, protocol = ScalaADT)),
       Map(
         ("example.idl" -> "example.idl.string"),
         ("other.ns" -> "other.ns.string")))
@@ -145,7 +145,7 @@ class StandardCustomEnumSpec extends Specification {
     val infile = new java.io.File("avrohugger-core/src/test/avro/import.avdl")
     val gen = new Generator(
       Standard,
-      Some(Standard.defaultTypes.copy(enum = EnumAsScalaString, protocol = ScalaADT)),
+      Some(Standard.defaultTypes.copy(`enum` = EnumAsScalaString, protocol = ScalaADT)),
       Map(
         ("example.idl" -> "example.idl.string"),
         ("other.ns" -> "other.ns.string")))

@@ -19,13 +19,14 @@ object StandardScalaTreehugger extends ScalaTreehugger {
   val importer = StandardImporter
 
   def asScalaCodeString(
-		classStore: ClassStore,
+    classStore: ClassStore,
     namespace: Option[String],
     schemaOrProtocol: Either[Schema, Protocol],
     typeMatcher: TypeMatcher,
     schemaStore: SchemaStore,
     restrictedFields: Boolean,
-    targetScalaPartialVersion: String): String = {
+    targetScalaPartialVersion: String,
+  ): String = {
 
     val imports = importer.getImports(
       schemaOrProtocol, namespace, schemaStore, typeMatcher)

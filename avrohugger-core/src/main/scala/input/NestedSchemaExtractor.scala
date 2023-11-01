@@ -51,7 +51,7 @@ object NestedSchemaExtractor {
           }
           val flatSchemas = fieldSchemas.flatMap(fieldSchema => flattenSchema(fieldSchema))
           def topLevelTypes(schema: Schema) = {
-            if (typeMatcher.avroScalaTypes.enum == EnumAsScalaString) (schema.getType == RECORD | schema.getType == FIXED)
+            if (typeMatcher.avroScalaTypes.`enum` == EnumAsScalaString) (schema.getType == RECORD | schema.getType == FIXED)
             else (schema.getType == RECORD | schema.getType == ENUM | schema.getType == FIXED)
           }
           val nestedTopLevelSchemas = flatSchemas.filter(topLevelTypes)

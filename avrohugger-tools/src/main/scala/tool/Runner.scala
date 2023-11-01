@@ -2,7 +2,7 @@ package avrohugger
 package tool
 
 import format.abstractions.SourceFormat
-import format.{Scavro, SpecificRecord, Standard}
+import format.{SpecificRecord, Standard}
 import java.util.Arrays
 import java.util.Map
 import java.util.TreeMap
@@ -23,7 +23,7 @@ class Runner(in: InputStream, out: PrintStream, err: PrintStream) {
    * Available tools, initialized in constructor.
    */
   val toolsMap: Map[String, Tool] = new TreeMap[String, Tool]();
-  val formats = Array[SourceFormat](Standard, SpecificRecord, Scavro)
+  val formats = Array[SourceFormat](Standard, SpecificRecord)
   val tools = formats.map(format => new GeneratorTool(format))
   for (tool <- tools.toArray[Tool]) {
     var prev: Tool = toolsMap.put(tool.getName(), tool);

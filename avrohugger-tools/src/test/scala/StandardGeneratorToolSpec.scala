@@ -18,7 +18,7 @@ class StandardGeneratorToolSpec extends mutable.Specification {
   private def doCompile(args: List[String])  = {
     val tool = new GeneratorTool(Standard)
     Try{
-      tool.run(null, null, null, Seq(args:_*).asJava)
+      tool.run(null, null, null, args.asJava)
     }
   }
     

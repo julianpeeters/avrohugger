@@ -2,12 +2,12 @@ lazy val avroVersion = "1.11.3"
 
 lazy val commonSettings = Seq(
   organization := "com.julianpeeters",
-  version := "1.7.0",
+  version := "2.8.0",
   ThisBuild / versionScheme := Some("semver-spec"),
   scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature"),
   Test / scalacOptions ++= Seq("-Yrangepos"),
-  scalaVersion := "2.13.12",
-  crossScalaVersions := Seq("2.12.18", scalaVersion.value),
+  scalaVersion := "3.3.1",
+  crossScalaVersions := Seq("2.12.18", "2.13.12", scalaVersion.value),
   libraryDependencies += "org.apache.avro" % "avro" % avroVersion,
   libraryDependencies += "org.apache.avro" % "avro-compiler" % avroVersion,
   libraryDependencies := { CrossVersion.partialVersion(scalaVersion.value) match {
@@ -24,8 +24,6 @@ lazy val commonSettings = Seq(
     case _ =>
       libraryDependencies.value
   }},
-  libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value,
-  libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value,
   // for testing
   libraryDependencies += "org.specs2" %% "specs2-core" % "4.20.2" % "test",
   publishMavenStyle := true,
@@ -62,7 +60,7 @@ lazy val avrohugger = (project in file("."))
 lazy val `avrohugger-core` = (project in file("avrohugger-core"))
   .settings(
     commonSettings,
-    libraryDependencies += "com.eed3si9n" %% "treehugger" % "0.4.4",
+    libraryDependencies += ("com.eed3si9n" %% "treehugger" % "0.4.4").cross(CrossVersion.for3Use2_13),
     Compile / sourceGenerators += addScalaVersionFile.taskValue
   )
 

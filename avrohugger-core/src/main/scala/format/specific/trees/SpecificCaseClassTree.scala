@@ -57,7 +57,7 @@ object SpecificCaseClassTree {
         defaultValue
     })
     val defThis = DEFTHIS.withParams(PARAM("")).tree := {
-      THIS APPLY(defaultParams:_*)
+      THIS APPLY(defaultParams)
     }
 
     // methods - first add an index the the schema's fields

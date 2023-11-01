@@ -27,7 +27,7 @@ object SpecificRecord extends SourceFormat{
   val javaTreehugger = SpecificJavaTreehugger
   val scalaTreehugger = SpecificScalaTreehugger
   
-  val defaultTypes: AvroScalaTypes = AvroScalaTypes.defaults.copy(enum = JavaEnum)
+  val defaultTypes: AvroScalaTypes = AvroScalaTypes.defaults.copy(`enum` = JavaEnum)
 
   def asCompilationUnits(
     classStore: ClassStore,
@@ -40,7 +40,7 @@ object SpecificRecord extends SourceFormat{
     targetScalaPartialVersion: String): List[CompilationUnit] = {
 
     registerTypes(schemaOrProtocol, classStore, typeMatcher)
-    val enumType = typeMatcher.avroScalaTypes.enum
+    val enumType = typeMatcher.avroScalaTypes.`enum`
 
     val namespace = 
       CustomNamespaceMatcher.checkCustomNamespace(

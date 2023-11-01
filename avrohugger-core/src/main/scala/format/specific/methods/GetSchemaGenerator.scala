@@ -9,7 +9,7 @@ import treehuggerDSL._
 
 case class GetSchemaGenerator(companionObjectName: Symbol) {
     def toDef = {
-    	val SchemaClass = RootClass.newClass("org.apache.avro.Schema")
-        DEF("getSchema", SchemaClass) := REF(companionObjectName) DOT "SCHEMA$"
+      val SchemaClass = RootClass.newClass("org.apache.avro.Schema")
+      DEF("getSchema", SchemaClass) := REF(companionObjectName) DOT "SCHEMA$"
     }
 }

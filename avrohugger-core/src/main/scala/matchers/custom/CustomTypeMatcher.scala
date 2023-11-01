@@ -53,7 +53,7 @@ object CustomTypeMatcher {
     case JavaTimeLocalTime => RootClass.newClass(nme.createNameType("java.time.LocalTime"))
   }
 
-  def checkCustomDecimalType(decimalType: AvroScalaDecimalType, schema: Schema) =
+  def checkCustomDecimalType(decimalType: AvroScalaDecimalType, schema: Schema): Type =
       LogicalType.foldLogicalTypes(
         schema = schema,
         default = TYPE_ARRAY(ByteClass)) {

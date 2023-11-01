@@ -82,7 +82,7 @@ object DefaultValueMatcher {
           )
         case Schema.Type.ENUM => {
           val refName = if (useFullName) schema.getFullName else schema.getName
-          typeMatcher.avroScalaTypes.enum match {
+          typeMatcher.avroScalaTypes.`enum` match {
             case JavaEnum => (REF(refName) DOT node.textValue())
             case ScalaEnumeration => (REF(refName) DOT node.textValue())
             case ScalaCaseObjectEnum => (REF(refName) DOT node.textValue())
@@ -133,7 +133,6 @@ object DefaultValueMatcher {
             )
           )
         }
-        case x => throw new Exception(s"Can't extract a default field, type not yet supported: $x")
       }
     }
     val defaultValue = org.apache.avro.util.internal.Accessor.defaultValue(field)

@@ -170,7 +170,7 @@ class SpecificFileToStringsSpec extends Specification {
   def e14 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/import.avdl")
     val gen = new Generator(SpecificRecord)
-    val List(dep3, dep2, dep1, enum, adt) = gen.fileToStrings(infile)
+    val List(dep3, dep2, dep1, enm, adt) = gen.fileToStrings(infile)
     
     val expectedADT = util.Util.readFile("avrohugger-core/src/test/expected/specific/example/idl/ImportProtocol.scala")
     val expectedDep1 = util.Util.readFile("avrohugger-core/src/test/expected/specific/example/idl/Defaults.scala")
@@ -180,7 +180,7 @@ class SpecificFileToStringsSpec extends Specification {
     
     adt === expectedADT
     dep1 === expectedDep1
-    enum === expectedEnum
+    enm === expectedEnum
     dep2 === expectedDep2
     dep3 === expectedDep3
   }

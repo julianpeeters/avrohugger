@@ -38,7 +38,7 @@ object Standard extends SourceFormat {
         typeMatcher,
         maybeDefaultNamespace = ns)
 
-    val enumType = typeMatcher.avroScalaTypes.enum
+    val enumType = typeMatcher.avroScalaTypes.`enum`
 
     schemaOrProtocol match {
       case Left(schema) => {
@@ -179,7 +179,7 @@ object Standard extends SourceFormat {
     schemaOrProtocol match {
       case Left(schema) => schema.getName
       case Right(protocol) => {
-        val localSubTypes = typeMatcher.avroScalaTypes.enum match {
+        val localSubTypes = typeMatcher.avroScalaTypes.`enum` match {
           case JavaEnum => getLocalSubtypes(protocol).filterNot(isEnum)
           case ScalaCaseObjectEnum => getLocalSubtypes(protocol)
           case ScalaEnumeration => getLocalSubtypes(protocol)

@@ -4,7 +4,7 @@ package generators
 import avrohugger.format.abstractions.SourceFormat
 import avrohugger.input.DependencyInspector
 import avrohugger.input.NestedSchemaExtractor
-import avrohugger.input.reflectivecompilation.schemagen._
+// import avrohugger.input.reflectivecompilation.schemagen._
 import avrohugger.input.parsers.{ FileInputParser, StringInputParser}
 import avrohugger.matchers.TypeMatcher
 import avrohugger.stores.{ ClassStore, SchemaStore }

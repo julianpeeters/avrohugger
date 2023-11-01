@@ -47,10 +47,6 @@ API](https://avro.apache.org/docs/1.11.1/getting-started-java/#serializing-and-d
 therefore have mutable `var` fields (for use with the Avro Specific API -
 Scalding, Spark, Avro, etc.).
 
-* `Scavro` (`@deprecated` since avrohugger v1.5.0) Case classes with immutable fields, intended to wrap Java generated
-Avro classes (for use with the [Scavro](https://github.com/oedura/scavro#scavro-reader-and-writer)
-runtime, Java classes provided separately (see [Scavro Plugin](https://github.com/oedura/scavro#scavro-plugin) or [sbt-avro](https://github.com/sbt/sbt-avro))).
-
 ##### Supports generating case classes with arbitrary fields of the following datatypes:
 
 |Avro|`Standard`|`SpecificRecord`|Notes|
@@ -115,7 +111,7 @@ _Note:_ Currently [Treehugger](http://eed3si9n.com/treehugger/comments.html#Scal
 
 * **Library For Scala 2.12, and 2.13**
 * **Parses Schemas and IDLs with Avro version 1.11**
-* **Generates Code Compatible with Scala 2.12, 2.13**
+* **Generates Code Compatible with Scala 2.12, 2.13, 3**
 
 
 
@@ -123,13 +119,13 @@ _Note:_ Currently [Treehugger](http://eed3si9n.com/treehugger/comments.html#Scal
 
 ##### Get the dependency with:
 
-    "com.julianpeeters" %% "avrohugger-core" % "1.7.0"
+    "com.julianpeeters" %% "avrohugger-core" % "2.8.0"
 
 
 ##### Description:
 
-Instantiate a `Generator` with `Standard`, `Scavro`, or `SpecificRecord` source
-formats. Then use
+Instantiate a `Generator` with `Standard` or `SpecificRecord` source formats.
+Then use
 
 
 `tToFile(input: T, outputDir: String): Unit`
@@ -214,7 +210,7 @@ namespace rewritten. Multiple conflicting wildcards are not permitted.
 
 ##### Get the dependency with:
 
-    "com.julianpeeters" %% "avrohugger-filesorter" % "1.7.0"
+    "com.julianpeeters" %% "avrohugger-filesorter" % "2.8.0"
     
 
 ##### Description:
@@ -234,22 +230,17 @@ To ensure dependent schemas are compiled in the proper order (thus avoiding `org
 #### `avrohugger-tools`
 
 
-  Download the avrohugger-tools jar for Scala [2.12](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.12/1.7.0/avrohugger-tools_2.12-1.7.0-assembly.jar), or Scala [2.13](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.13/1.7.0/avrohugger-tools_2.13-1.7.0-assembly.jar) (>30MB!) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
+  Download the avrohugger-tools jar for Scala [2.12](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.12/2.8.0/avrohugger-tools_2.12-2.8.0-assembly.jar), or Scala [2.13](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.13/2.8.0/avrohugger-tools_2.13-2.8.0-assembly.jar) (>30MB!) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
 
 
 * `generate` generates Scala case class definitions:
 
-`java -jar /path/to/avrohugger-tools_2.12-1.7.0-assembly.jar generate schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.12-2.8.0-assembly.jar generate schema user.avsc . `
 
 
 * `generate-specific` generates definitions that extend Avro's `SpecificRecordBase`:
 
-`java -jar /path/to/avrohugger-tools_2.12-1.7.0-assembly.jar generate-specific schema user.avsc . `
-
-
-* `generate-scavro` (`@deprecated` since avrohugger v1.5.0) generates definitions that extend Scavro's `AvroSerializable`:
-
-`java -jar /path/to/avrohugger-tools_2.12-1.7.0-assembly.jar generate-scavro schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.12-2.8.0-assembly.jar generate-specific schema user.avsc . `
 
 
 ## Warnings

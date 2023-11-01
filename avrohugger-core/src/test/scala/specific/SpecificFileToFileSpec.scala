@@ -300,7 +300,7 @@ class SpecificFileToFileSpec extends Specification {
     }
   }
 
-  def e20: Result = Result.forall(Seq(OptionalShapelessCoproduct, OptionShapelessCoproduct, OptionEitherShapelessCoproduct)) { unionType: AvroScalaUnionType =>
+  def e20: Result = Result.forall(Seq(OptionalShapelessCoproduct, OptionShapelessCoproduct, OptionEitherShapelessCoproduct))( unionType => {
     val inOrderSchema = new java.io.File("avrohugger-core/src/test/avro/unions_with_coproduct2.avsc")
     val gen = Generator(format = SpecificRecord, avroScalaCustomTypes = Some(AvroScalaTypes.defaults.copy(union = unionType)))
     val outDir = gen.defaultOutputDir + s"/specific/$unionType"
@@ -313,13 +313,13 @@ class SpecificFileToFileSpec extends Specification {
       "UnionOfNullWithTwoNonNullTypes",
       "UnionOfMoreThanTwoNonNullTypes",
       "UnionOfNullWithMoreThanTwoNonNullTypes"
-    )) { className =>
+    )) ( className => {
 
       val generatedFile = s"target/generated-sources/specific/$unionType/com/example/avrohugger/unions_with_coproduct_avsc2/$className.scala"
       val expectationFile = s"avrohugger-core/src/test/expected/specific/$unionType/com/example/avrohugger/unions_with_coproduct_avsc2/$className.scala"
       generatedFile must containExpectedContentIn(expectationFile)
-    }
-  }
+    })
+  })
 
   def e21 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/AvroTypeProviderTestProtocol.avdl")

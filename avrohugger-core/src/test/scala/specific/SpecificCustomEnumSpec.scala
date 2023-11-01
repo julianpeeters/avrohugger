@@ -18,7 +18,7 @@ class SpecificCustomEnumSpec extends Specification {
     val infile = new java.io.File("avrohugger-core/src/test/avro/import.avdl")
     val gen = new Generator(
       SpecificRecord,
-      Some(SpecificRecord.defaultTypes.copy(enum = JavaEnum, protocol = ScalaADT)),
+      Some(SpecificRecord.defaultTypes.copy(`enum` = JavaEnum, protocol = ScalaADT)),
       Map(
         ("example.idl" -> "example.idl.java"),
         ("other.ns" -> "other.ns.java")))
@@ -42,7 +42,7 @@ class SpecificCustomEnumSpec extends Specification {
     val infile = new java.io.File("avrohugger-core/src/test/avro/import.avdl")
     val gen = new Generator(
       SpecificRecord,
-      Some(SpecificRecord.defaultTypes.copy(enum = JavaEnum, protocol = ScalaADT)),
+      Some(SpecificRecord.defaultTypes.copy(`enum` = JavaEnum, protocol = ScalaADT)),
       Map(
         ("example.idl" -> "example.idl.java"),
         ("other.ns" -> "other.ns.java")))
@@ -74,7 +74,7 @@ class SpecificCustomEnumSpec extends Specification {
     val infile = new java.io.File("avrohugger-core/src/test/avro/import.avdl")
     val gen = new Generator(
       SpecificRecord,
-      Some(SpecificRecord.defaultTypes.copy(enum = EnumAsScalaString, protocol = ScalaADT)),
+      Some(SpecificRecord.defaultTypes.copy(`enum` = EnumAsScalaString, protocol = ScalaADT)),
       Map(
         ("example.idl" -> "example.idl.string"),
         ("other.ns" -> "other.ns.string")))
@@ -94,7 +94,7 @@ class SpecificCustomEnumSpec extends Specification {
     val infile = new java.io.File("avrohugger-core/src/test/avro/import.avdl")
     val gen = new Generator(
       SpecificRecord,
-      Some(SpecificRecord.defaultTypes.copy(enum = EnumAsScalaString, protocol = ScalaADT)),
+      Some(SpecificRecord.defaultTypes.copy(`enum` = EnumAsScalaString, protocol = ScalaADT)),
       Map(
         ("example.idl" -> "example.idl.string"),
         ("other.ns" -> "other.ns.string")))

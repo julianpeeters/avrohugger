@@ -80,7 +80,7 @@ trait SourceFormat {
   def fileExt(
     schemaOrProtocol: Either[Schema, Protocol],
     typeMatcher: TypeMatcher): String = {
-    val enumType = typeMatcher.avroScalaTypes.enum
+    val enumType = typeMatcher.avroScalaTypes.`enum`
     def enumExt: String = enumType match {
       case JavaEnum => ".java"
       case ScalaCaseObjectEnum => ".scala"
@@ -177,7 +177,7 @@ trait SourceFormat {
     classStore: ClassStore,
     typeMatcher: TypeMatcher): Unit = {
     def registerSchema(schema: Schema): Unit = {
-      val typeName = typeMatcher.avroScalaTypes.enum match {
+      val typeName = typeMatcher.avroScalaTypes.`enum` match {
         case JavaEnum => schema.getName
         case ScalaCaseObjectEnum => schema.getName
         case ScalaEnumeration => renameEnum(schema, "Value")

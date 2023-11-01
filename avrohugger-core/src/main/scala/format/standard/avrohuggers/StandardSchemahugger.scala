@@ -42,7 +42,7 @@ object StandardSchemahugger extends Schemahugger {
           case ScalaCaseClass => List(classDef)
           case ScalaCaseClassWithSchema => List(classDef, companionDef)
         }
-      case ENUM => typeMatcher.avroScalaTypes.enum match {
+      case ENUM => typeMatcher.avroScalaTypes.`enum` match {
         case JavaEnum =>
           List.empty
         case ScalaCaseObjectEnum =>

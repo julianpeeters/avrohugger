@@ -37,7 +37,7 @@ object GetGenerator {
     val casesGet = indexedFields.map(field => asGetCase(field, classSymbol, typeMatcher, targetScalaPartialVersion)):+errorCase
 
     DEF("get", AnyRefClass) withParams(PARAM("field$", IntClass)) := BLOCK(
-      REF("field$") withAnnots(ANNOT("switch")) MATCH(casesGet:_*)
+      REF("field$") withAnnots(ANNOT("switch")) MATCH(casesGet)
     )  
   }
 }

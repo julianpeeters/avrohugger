@@ -272,22 +272,23 @@ class SpecificStringToFileSpec extends Specification {
     val schemaString = schema.toString()
     val gen = Generator(format = SpecificRecord)
     val outDir = gen.defaultOutputDir + "/specific/"
-    val outDirF = new File(outDir, "massive")
+    val outDirF: File = new File(outDir, "massive")
     outDirF.mkdirs()
     outDirF.list().foreach(new File(outDirF, _).delete())
     gen.stringToFile(schemaString, outDir)
 
-    val sources = outDirF.list().map(f => new File(outDirF, f)).map { f =>
-      f -> {
-        val src = Source.fromFile(f)
-        try {
-          src.mkString("")
-        } finally {
-          src.close()
+    val sources: Map[File, String] =
+      outDirF.list().toList.map(f => new File(outDirF, f)).map { f =>
+        f -> {
+          val src = Source.fromFile(f)
+          try {
+            src.mkString("")
+          } finally {
+            src.close()
+          }
         }
-      }
-    }.toMap
+      }.toMap
 
-    sources.collect { case (f, source) if source.contains("mkString") => f } must not beEmpty
+    sources.collect { case (f, source) if source.contains("mkString") => f } must not(beEmpty)
   }
 }

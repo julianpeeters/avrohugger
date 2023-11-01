@@ -24,7 +24,6 @@ class AvrohuggerSpec(
   val sourceFormatName = sourceFormat match {
     case SpecificRecord => "specific"
     case Standard => "standard"
-    case Scavro => "scavro"
   }
 
   val gen = new Generator(sourceFormat)
@@ -43,17 +42,8 @@ class AvrohuggerSpec(
   val expectedBase = FileSystems.getDefault.getPath("avrohugger-core", "src", "test", "expected", sourceFormatName)
   val generatedBase = FileSystems.getDefault.getPath("target", "generated-sources", sourceFormatName)
 
-  private def prefixedFileString(prefixPath: Path, p: Path) = {
-    val fullPath = sourceFormat match {
-      case Scavro => {
-        Option(p.getParent) match {
-          case Some(parent) => parent ++ "model" ++ p.getFileName
-          case None => FileSystems.getDefault.getPath("model") ++ p
-        }
-      }
-      case _ => p
-    }
-    readFile((prefixPath ++ fullPath).toFile)
+  private def prefixedFileString(prefixPath: Path, path: Path) = {
+    readFile((prefixPath ++ path).toFile)
   }
 
   def generatedString(p: Path) = prefixedFileString(generatedBase, p)
