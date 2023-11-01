@@ -109,7 +109,7 @@ _Note:_ Currently [Treehugger](http://eed3si9n.com/treehugger/comments.html#Scal
 
 ## Usage
 
-* **Library For Scala 2.12, and 2.13**
+* **Library For Scala 2.12, 2.13, and 3**
 * **Parses Schemas and IDLs with Avro version 1.11**
 * **Generates Code Compatible with Scala 2.12, 2.13, 3**
 
