@@ -105,7 +105,7 @@ object JavaConverter {
     case Schema.Type.FIXED => schema.getLogicalType match {
       case decimal: LogicalTypes.Decimal => {
         val Decimal = RootClass.newClass("org.apache.avro.LogicalTypes.Decimal")
-        val scale = tree.DOT("bytes").DOT("setScale").APPLY(REF("scale"))
+        val scale = tree.DOT("bigDecimal").DOT("setScale").APPLY(REF("scale"))
         def scaleAndRound(roundingMode: BigDecimal.RoundingMode.Value) =
           tree.DOT("bigDecimal").DOT("setScale").APPLY(REF("scale"), REF("BigDecimal.RoundingMode."+ roundingMode.toString))
         Block(

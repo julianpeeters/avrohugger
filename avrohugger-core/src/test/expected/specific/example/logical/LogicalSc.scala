@@ -19,7 +19,7 @@ final case class LogicalSc(var data: BigDecimal, var fxField: fxType, var ts: ja
         val schema = getSchema.getFields().get(field$).schema()
         val decimalType = schema.getLogicalType().asInstanceOf[org.apache.avro.LogicalTypes.Decimal]
         val scale = decimalType.getScale()
-        val scaledValue = fxField.bytes.setScale(scale)
+        val scaledValue = fxField.bigDecimal.setScale(scale)
         val bigDecimal = scaledValue.bigDecimal
         LogicalSc.decimalConversion.toFixed(bigDecimal, schema, decimalType)
       }.asInstanceOf[AnyRef]
