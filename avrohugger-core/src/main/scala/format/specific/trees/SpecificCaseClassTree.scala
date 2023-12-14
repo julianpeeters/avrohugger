@@ -10,6 +10,7 @@ import avrohugger.stores._
 import treehugger.forest._
 import definitions._
 import org.apache.avro.{LogicalTypes, Schema}
+import treehugger.forest
 import treehuggerDSL._
 
 import scala.jdk.CollectionConverters._
@@ -83,15 +84,22 @@ object SpecificCaseClassTree {
         else flags :+ Flags.FINAL.toLong
       }
 
+    val tooManyParams = params.length > 254
+    val (constructorParams, fields) =  if(params.length > 254) (Nil, params) else(params, Nil)
 
     // define the class def with the members previously defined
     // There could be base traits, flags, or both, and could have no fields
     val caseClassDef = (maybeBaseTrait, maybeFlagsWithCaseClassFinal) match {
       case (Some(baseTrait), Some(flags)) =>
-        if (shouldGenerateSimpleClass) {
+        if (tooManyParams) {
+          CLASSDEF(classSymbol)
+            .withFlags(flags: _*)
+            .withParents(baseClass)
+            .withParents(baseTrait)
+        } else if (shouldGenerateSimpleClass) {
           CLASSDEF(classSymbol)
             .withFlags(flags:_*)
-            .withParams(params)
+            .withParams(constructorParams)
             .withParents(baseClass)
             .withParents(baseTrait)
         }
@@ -125,7 +133,11 @@ object SpecificCaseClassTree {
             .withParents(baseTrait)
         }
       case (None, Some(flags)) =>
-        if (shouldGenerateSimpleClass) {
+        if (tooManyParams) {
+          CLASSDEF(classSymbol)
+            .withFlags(flags: _*)
+            .withParents(baseClass)
+        } else if (shouldGenerateSimpleClass) {
           CLASSDEF(classSymbol)
             .withFlags(flags:_*)
             .withParams(params)
@@ -145,7 +157,11 @@ object SpecificCaseClassTree {
             .withParents(baseClass)
         }
       case (None, None) =>
-        if (shouldGenerateSimpleClass) {
+        if (tooManyParams) {
+          CLASSDEF(classSymbol)
+            .withParents(baseClass)
+            .withParents("Serializable")
+        } else  if (shouldGenerateSimpleClass) {
           CLASSDEF(classSymbol)
             .withParams(params)
             .withParents(baseClass)
