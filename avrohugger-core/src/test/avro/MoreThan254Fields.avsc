@@ -1,0 +1,347 @@
+{
+  "protocol" : "MoreThan254FieldsProtocol",
+  "namespace" : "test.avsc",
+  "type" : "record",
+  "name" : "MoreThan254Fields",
+  "doc" : "Used to test Scala 2.10 support",
+  "fields" : [ {
+    "name" : "field01",
+    "type" : "string"
+    }, {
+    "name":"field02",
+    "type":[
+      "null",
+      {
+        "type":"fixed",
+        "name":"field02_fixed",
+        "size":16,
+        "logicalType":"decimal",
+        "precision":38,
+        "scale":0
+      }
+    ],
+    "default":null
+  }, {
+      "name" : "field03",
+      "type" : "double"
+    }, {
+      "name" : "field04",
+      "type" : [ "null", "string" ]
+    }, {
+      "name" : "field05",
+      "type" : [ "null", "int" ]
+    }, {
+      "name" : "field06",
+      "type" : [ "null", "double" ]
+    }, {
+      "name" : "field07",
+      "type" : "long"
+    }, {
+      "name" : "field08",
+      "type":[
+      "null",
+      "string"
+    ],
+    "doc":"",
+    "default":null
+    }, {
+      "name" : "field09",
+      "type" : {
+        "type" : "enum",
+        "name" : "SomeEnum",
+        "symbols" : [ "yes", "no", "maybe" ]
+       }
+    }, {
+      "name" : "field10",
+      "type" : "string"
+    }, {
+      "name" : "field11",
+      "type" : "string"
+    }, {
+      "name" : "field12",
+      "type" : "string"
+    }, {
+      "name" : "field13",
+      "type" : "string"
+    }, {
+      "name" : "field14",
+      "type" : "string"
+    }, {
+      "name" : "field15",
+      "type" : "int"
+    }, {
+      "name" : "field16",
+      "type" : "double"
+    }, {
+      "name" : "field17",
+      "type" : "string"
+    }, {
+      "name" : "field18",
+      "type" : "int"
+    }, {
+      "name" : "field19",
+      "type" : "double"
+    }, {
+      "name" : "fiel20",
+      "type" : "string"
+    }, {
+      "name" : "field21",
+      "type" : "int"
+    }, {
+      "name" : "field22",
+      "type" : "string"
+    }, {
+      "name" : "field23",
+      "type" : "string"
+    }, {
+      "name" : "field24",
+      "type" : "double"
+    }, {
+      "name" : "field25",
+      "type" : "string"
+    }, {
+      "name" : "field26",
+      "type" : "double"
+    }, {
+      "name" : "field27",
+      "type" : "string"
+    }, {
+      "name" : "field28",
+      "type" : "double"
+    }, {
+      "name" : "field29",
+      "type" : "string"
+  },
+  {"name" : "field30", "type" : "int" },
+  {"name" : "field31", "type" : "int" },
+  {"name" : "field32", "type" : "int" },
+  {"name" : "field33", "type" : "int" },
+  {"name" : "field34", "type" : "int" },
+  {"name" : "field35", "type" : "int" },
+  {"name" : "field36", "type" : "int" },
+  {"name" : "field37", "type" : "int" },
+  {"name" : "field38", "type" : "int" },
+  {"name" : "field39", "type" : "int" },
+  {"name" : "field40", "type" : "int" },
+  {"name" : "field41", "type" : "int" },
+  {"name" : "field42", "type" : "int" },
+  {"name" : "field43", "type" : "int" },
+  {"name" : "field44", "type" : "int" },
+  {"name" : "field45", "type" : "int" },
+  {"name" : "field46", "type" : "int" },
+  {"name" : "field47", "type" : "int" },
+  {"name" : "field48", "type" : "int" },
+  {"name" : "field49", "type" : "int" },
+  {"name" : "field50", "type" : "int" },
+  {"name" : "field51", "type" : "int" },
+  {"name" : "field52", "type" : "int" },
+  {"name" : "field53", "type" : "int" },
+  {"name" : "field54", "type" : "int" },
+  {"name" : "field55", "type" : "int" },
+  {"name" : "field56", "type" : "int" },
+  {"name" : "field57", "type" : "int" },
+  {"name" : "field58", "type" : "int" },
+  {"name" : "field59", "type" : "int" },
+  {"name" : "field60", "type" : "int" },
+  {"name" : "field61", "type" : "int" },
+  {"name" : "field62", "type" : "int" },
+  {"name" : "field63", "type" : "int" },
+  {"name" : "field64", "type" : "int" },
+  {"name" : "field65", "type" : "int" },
+  {"name" : "field66", "type" : "int" },
+  {"name" : "field67", "type" : "int" },
+  {"name" : "field68", "type" : "int" },
+  {"name" : "field69", "type" : "int" },
+  {"name" : "field70", "type" : "int" },
+  {"name" : "field71", "type" : "int" },
+  {"name" : "field72", "type" : "int" },
+  {"name" : "field73", "type" : "int" },
+  {"name" : "field74", "type" : "int" },
+  {"name" : "field75", "type" : "int" },
+  {"name" : "field76", "type" : "int" },
+  {"name" : "field77", "type" : "int" },
+  {"name" : "field78", "type" : "int" },
+  {"name" : "field79", "type" : "int" },
+  {"name" : "field80", "type" : "int" },
+  {"name" : "field81", "type" : "int" },
+  {"name" : "field82", "type" : "int" },
+  {"name" : "field83", "type" : "int" },
+  {"name" : "field84", "type" : "int" },
+  {"name" : "field85", "type" : "int" },
+  {"name" : "field86", "type" : "int" },
+  {"name" : "field87", "type" : "int" },
+  {"name" : "field88", "type" : "int" },
+  {"name" : "field89", "type" : "int" },
+  {"name" : "field90", "type" : "int" },
+  {"name" : "field91", "type" : "int" },
+  {"name" : "field92", "type" : "int" },
+  {"name" : "field93", "type" : "int" },
+  {"name" : "field94", "type" : "int" },
+  {"name" : "field95", "type" : "int" },
+  {"name" : "field96", "type" : "int" },
+  {"name" : "field97", "type" : "int" },
+  {"name" : "field98", "type" : "int" },
+  {"name" : "field99", "type" : "int" },
+  {"name" : "field100", "type" : "int" },
+  {"name" : "field101", "type" : "int" },
+  {"name" : "field102", "type" : "int" },
+  {"name" : "field103", "type" : "int" },
+  {"name" : "field104", "type" : "int" },
+  {"name" : "field105", "type" : "int" },
+  {"name" : "field106", "type" : "int" },
+  {"name" : "field107", "type" : "int" },
+  {"name" : "field108", "type" : "int" },
+  {"name" : "field109", "type" : "int" },
+  {"name" : "field110", "type" : "int" },
+  {"name" : "field111", "type" : "int" },
+  {"name" : "field112", "type" : "int" },
+  {"name" : "field113", "type" : "int" },
+  {"name" : "field114", "type" : "int" },
+  {"name" : "field115", "type" : "int" },
+  {"name" : "field116", "type" : "int" },
+  {"name" : "field117", "type" : "int" },
+  {"name" : "field118", "type" : "int" },
+  {"name" : "field119", "type" : "int" },
+  {"name" : "field120", "type" : "int" },
+  {"name" : "field121", "type" : "int" },
+  {"name" : "field122", "type" : "int" },
+  {"name" : "field123", "type" : "int" },
+  {"name" : "field124", "type" : "int" },
+  {"name" : "field125", "type" : "int" },
+  {"name" : "field126", "type" : "int" },
+  {"name" : "field127", "type" : "int" },
+  {"name" : "field128", "type" : "int" },
+  {"name" : "field129", "type" : "int" },
+  {"name" : "field130", "type" : "int" },
+  {"name" : "field131", "type" : "int" },
+  {"name" : "field132", "type" : "int" },
+  {"name" : "field133", "type" : "int" },
+  {"name" : "field134", "type" : "int" },
+  {"name" : "field135", "type" : "int" },
+  {"name" : "field136", "type" : "int" },
+  {"name" : "field137", "type" : "int" },
+  {"name" : "field138", "type" : "int" },
+  {"name" : "field139", "type" : "int" },
+  {"name" : "field140", "type" : "int" },
+  {"name" : "field141", "type" : "int" },
+  {"name" : "field142", "type" : "int" },
+  {"name" : "field143", "type" : "int" },
+  {"name" : "field144", "type" : "int" },
+  {"name" : "field145", "type" : "int" },
+  {"name" : "field146", "type" : "int" },
+  {"name" : "field147", "type" : "int" },
+  {"name" : "field148", "type" : "int" },
+  {"name" : "field149", "type" : "int" },
+  {"name" : "field150", "type" : "int" },
+  {"name" : "field151", "type" : "int" },
+  {"name" : "field152", "type" : "int" },
+  {"name" : "field153", "type" : "int" },
+  {"name" : "field154", "type" : "int" },
+  {"name" : "field155", "type" : "int" },
+  {"name" : "field156", "type" : "int" },
+  {"name" : "field157", "type" : "int" },
+  {"name" : "field158", "type" : "int" },
+  {"name" : "field159", "type" : "int" },
+  {"name" : "field160", "type" : "int" },
+  {"name" : "field161", "type" : "int" },
+  {"name" : "field162", "type" : "int" },
+  {"name" : "field163", "type" : "int" },
+  {"name" : "field164", "type" : "int" },
+  {"name" : "field165", "type" : "int" },
+  {"name" : "field166", "type" : "int" },
+  {"name" : "field167", "type" : "int" },
+  {"name" : "field168", "type" : "int" },
+  {"name" : "field169", "type" : "int" },
+  {"name" : "field170", "type" : "int" },
+  {"name" : "field171", "type" : "int" },
+  {"name" : "field172", "type" : "int" },
+  {"name" : "field173", "type" : "int" },
+  {"name" : "field174", "type" : "int" },
+  {"name" : "field175", "type" : "int" },
+  {"name" : "field176", "type" : "int" },
+  {"name" : "field177", "type" : "int" },
+  {"name" : "field178", "type" : "int" },
+  {"name" : "field179", "type" : "int" },
+  {"name" : "field180", "type" : "int" },
+  {"name" : "field181", "type" : "int" },
+  {"name" : "field182", "type" : "int" },
+  {"name" : "field183", "type" : "int" },
+  {"name" : "field184", "type" : "int" },
+  {"name" : "field185", "type" : "int" },
+  {"name" : "field186", "type" : "int" },
+  {"name" : "field187", "type" : "int" },
+  {"name" : "field188", "type" : "int" },
+  {"name" : "field189", "type" : "int" },
+  {"name" : "field190", "type" : "int" },
+  {"name" : "field191", "type" : "int" },
+  {"name" : "field192", "type" : "int" },
+  {"name" : "field193", "type" : "int" },
+  {"name" : "field194", "type" : "int" },
+  {"name" : "field195", "type" : "int" },
+  {"name" : "field196", "type" : "int" },
+  {"name" : "field197", "type" : "int" },
+  {"name" : "field198", "type" : "int" },
+  {"name" : "field199", "type" : "int" },
+  {"name" : "field200", "type" : "int" },
+  {"name" : "field201", "type" : "int" },
+  {"name" : "field202", "type" : "int" },
+  {"name" : "field203", "type" : "int" },
+  {"name" : "field204", "type" : "int" },
+  {"name" : "field205", "type" : "int" },
+  {"name" : "field206", "type" : "int" },
+  {"name" : "field207", "type" : "int" },
+  {"name" : "field208", "type" : "int" },
+  {"name" : "field209", "type" : "int" },
+  {"name" : "field210", "type" : "int" },
+  {"name" : "field211", "type" : "int" },
+  {"name" : "field212", "type" : "int" },
+  {"name" : "field213", "type" : "int" },
+  {"name" : "field214", "type" : "int" },
+  {"name" : "field215", "type" : "int" },
+  {"name" : "field216", "type" : "int" },
+  {"name" : "field217", "type" : "int" },
+  {"name" : "field218", "type" : "int" },
+  {"name" : "field219", "type" : "int" },
+  {"name" : "field220", "type" : "int" },
+  {"name" : "field221", "type" : "int" },
+  {"name" : "field222", "type" : "int" },
+  {"name" : "field223", "type" : "int" },
+  {"name" : "field224", "type" : "int" },
+  {"name" : "field225", "type" : "int" },
+  {"name" : "field226", "type" : "int" },
+  {"name" : "field227", "type" : "int" },
+  {"name" : "field228", "type" : "int" },
+  {"name" : "field229", "type" : "int" },
+  {"name" : "field230", "type" : "int" },
+  {"name" : "field231", "type" : "int" },
+  {"name" : "field232", "type" : "int" },
+  {"name" : "field233", "type" : "int" },
+  {"name" : "field234", "type" : "int" },
+  {"name" : "field235", "type" : "int" },
+  {"name" : "field236", "type" : "int" },
+  {"name" : "field237", "type" : "int" },
+  {"name" : "field238", "type" : "int" },
+  {"name" : "field239", "type" : "int" },
+  {"name" : "field240", "type" : "int" },
+  {"name" : "field241", "type" : "int" },
+  {"name" : "field242", "type" : "int" },
+  {"name" : "field243", "type" : "int" },
+  {"name" : "field244", "type" : "int" },
+  {"name" : "field245", "type" : "int" },
+  {"name" : "field246", "type" : "int" },
+  {"name" : "field247", "type" : "int" },
+  {"name" : "field248", "type" : "int" },
+  {"name" : "field249", "type" : "int" },
+  {"name" : "field250", "type" : "int" },
+  {"name" : "field251", "type" : "int" },
+  {"name" : "field252", "type" : "int" },
+  {"name" : "field253", "type" : "int" },
+  {"name" : "field254", "type" : "int" },
+  {"name" : "field255", "type" : "int" },
+  {"name" : "field256", "type" : "int" },
+  {"name" : "field257", "type" : "int" },
+  {"name" : "field258", "type" : "int" },
+  {"name" : "field259", "type" : "int" }
+  ],
+  "messages" : { }
+}
