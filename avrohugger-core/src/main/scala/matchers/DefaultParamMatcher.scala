@@ -65,7 +65,8 @@ object DefaultParamMatcher {
         }
       case Schema.Type.NULL    => NULL
       case Schema.Type.FIXED   =>
-        REF(classStore.generatedClasses(avroSchema)).APPLY(CustomDefaultParamMatcher.checkCustomDecimalType(
+        val name = RootClass.newClass(s"${avroSchema.getNamespace()}.${classStore.generatedClasses(avroSchema)}")
+        REF(name).APPLY(CustomDefaultParamMatcher.checkCustomDecimalType(
           decimalType = typeMatcher.avroScalaTypes.decimal,
           schema = avroSchema,
           default = ArrayClass.APPLY()))

@@ -49,7 +49,8 @@ class SpecificFileToFileSpec extends Specification {
    
       correctly generate logical types with custom date, timestamp and time types $e27
       correctly generate a protocol with special strings $e28
-      correcty generate a simple case class with a wildcarded custom namespace $e29
+      correctly generate a simple case class with a wildcarded custom namespace $e29
+      correctly handle namespaces for complex types $e30
   """
 //    correctly generate logical types from IDL $e26
 
@@ -432,5 +433,20 @@ class SpecificFileToFileSpec extends Specification {
 
     sourceTrait === util.Util.readFile("avrohugger-core/src/test/expected/specific/example/protocol/Mail.scala")
     sourceRecord === util.Util.readFile("avrohugger-core/src/test/expected/specific/example/protocol/Message.scala")
+  }
+
+  def e30 = {
+    val infile = new java.io.File("avrohugger-core/src/test/avro/fixed_two.avsc")
+    val gen = new Generator(SpecificRecord)
+    val outDir = gen.defaultOutputDir + "/specific/"
+    gen.fileToFile(infile, outDir)
+
+    val source1 = util.Util.readFile("target/generated-sources/specific/fixedtwo/FixedTwo.scala")
+    val source2 = util.Util.readFile("target/generated-sources/specific/fixedtwo/one/fixed.scala")
+    val source3 = util.Util.readFile("target/generated-sources/specific/fixedtwo/two/fixed.scala")
+
+    source1 === util.Util.readFile("avrohugger-core/src/test/expected/specific/example/fixedtwo/FixedTwo.scala") and
+    source2 === util.Util.readFile("avrohugger-core/src/test/expected/specific/example/fixedtwo/one/fixed.scala") and
+    source3 === util.Util.readFile("avrohugger-core/src/test/expected/specific/example/fixedtwo/two/fixed.scala")
   }
 }

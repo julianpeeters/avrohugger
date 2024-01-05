@@ -68,7 +68,8 @@ class TypeMatcher(
             default = StringClass) {
             case UUID => RootClass.newClass(nme.createNameType("java.util.UUID"))
           }
-        case Schema.Type.FIXED    => classStore.generatedClasses(schema)
+        case Schema.Type.FIXED    =>
+           RootClass.newClass(s"${schema.getNamespace()}.${classStore.generatedClasses(schema)}")
         case Schema.Type.BYTES    => CustomTypeMatcher.checkCustomDecimalType(avroScalaTypes.decimal, schema)
         case Schema.Type.RECORD   =>
           {
