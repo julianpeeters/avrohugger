@@ -28,8 +28,7 @@ object SpecificImporter extends Importer {
       getTopLevelSchemas(schemaOrProtocol, schemaStore, typeMatcher)
     val recordSchemas = getRecordSchemas(topLevelSchemas)
     val enumSchemas = getEnumSchemas(topLevelSchemas)
-    val fixedSchemas = getFixedSchemas(topLevelSchemas)
-    val userDefinedDeps = getUserDefinedImports(recordSchemas ++ enumSchemas ++ fixedSchemas, currentNamespace, typeMatcher)
+    val userDefinedDeps = getUserDefinedImports(recordSchemas ++ enumSchemas, currentNamespace, typeMatcher)
     val shapelessDeps = getShapelessImports(recordSchemas, typeMatcher)
     val libraryDeps = shapelessDeps
     

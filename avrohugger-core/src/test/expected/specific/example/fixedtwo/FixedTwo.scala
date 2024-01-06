@@ -3,10 +3,6 @@ package fixedtwo
 
 import scala.annotation.switch
 
-import fixedtwo.two.fixed
-
-import fixedtwo.one.fixed
-
 final case class FixedTwo(var first: fixedtwo.one.fixed, var second: fixedtwo.two.fixed) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this(fixedtwo.one.fixed(Array()), fixedtwo.two.fixed(Array()))
   def get(field$: Int): AnyRef = {
