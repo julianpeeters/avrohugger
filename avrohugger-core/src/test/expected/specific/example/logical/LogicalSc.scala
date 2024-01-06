@@ -3,8 +3,8 @@ package example.logical
 
 import scala.annotation.switch
 
-final case class LogicalSc(var data: BigDecimal, var fxField: fxType, var ts: java.time.Instant, var dt: java.time.LocalDate, var uuid: java.util.UUID, var dataBig: BigDecimal, var tm: java.time.LocalTime, var timeMicros: java.time.LocalTime, var timestampMicros: java.time.ZonedDateTime, var localTimestampMicros: java.time.LocalDateTime, var localTimestampMillis: java.time.LocalDateTime) extends org.apache.avro.specific.SpecificRecordBase {
-  def this() = this(scala.math.BigDecimal(0), fxType(scala.math.BigDecimal(0)), java.time.Instant.now, java.time.LocalDate.now, java.util.UUID.randomUUID, scala.math.BigDecimal(0), java.time.LocalTime.now, java.time.LocalTime.MIDNIGHT, java.time.ZonedDateTime.of(java.time.LocalDateTime.MIN, java.time.ZoneId.of("UTC")), java.time.LocalDateTime.MIN, java.time.LocalDateTime.MIN)
+final case class LogicalSc(var data: BigDecimal, var fxField: example.logical.fxType, var ts: java.time.Instant, var dt: java.time.LocalDate, var uuid: java.util.UUID, var dataBig: BigDecimal, var tm: java.time.LocalTime, var timeMicros: java.time.LocalTime, var timestampMicros: java.time.ZonedDateTime, var localTimestampMicros: java.time.LocalDateTime, var localTimestampMillis: java.time.LocalDateTime) extends org.apache.avro.specific.SpecificRecordBase {
+  def this() = this(scala.math.BigDecimal(0), example.logical.fxType(scala.math.BigDecimal(0)), java.time.Instant.now, java.time.LocalDate.now, java.util.UUID.randomUUID, scala.math.BigDecimal(0), java.time.LocalTime.now, java.time.LocalTime.MIDNIGHT, java.time.ZonedDateTime.of(java.time.LocalDateTime.MIN, java.time.ZoneId.of("UTC")), java.time.LocalDateTime.MIN, java.time.LocalDateTime.MIN)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {
@@ -83,7 +83,7 @@ final case class LogicalSc(var data: BigDecimal, var fxField: fxType, var ts: ja
       }.asInstanceOf[BigDecimal]
       case 1 => this.fxField = {
         value
-      }.asInstanceOf[fxType]
+      }.asInstanceOf[example.logical.fxType]
       case 2 => this.ts = {
         value match {
           case (l: Long) => {

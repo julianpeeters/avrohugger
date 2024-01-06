@@ -1,0 +1,25 @@
+{
+  "type": "record",
+  "name": "FixedTwo",
+  "namespace": "fixedtwo",
+  "fields": [
+    {
+      "name": "first",
+      "type": {
+        "type": "fixed",
+        "name": "fixed",
+        "namespace": "fixedtwo.one",
+        "size": 16
+      }
+    },
+    {
+      "name": "second",
+      "type": {
+        "type": "fixed",
+        "name": "fixed",
+        "namespace": "fixedtwo.two",
+        "size": 16
+      }
+    }
+  ]
+}
