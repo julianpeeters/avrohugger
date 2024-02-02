@@ -28,7 +28,7 @@ case object JavaTimeZonedDateTime extends AvroScalaTimestampType
 
 sealed trait AvroScalaLocalTimestampType extends Serializable
 case object JavaTimeLocalDateTime extends AvroScalaLocalTimestampType
-
+case object UnderlyingPrimitive extends AvroScalaTimeType with AvroScalaTimeMillisType with AvroScalaTimestampMillisType with AvroScalaTimestampType with AvroScalaLocalTimestampType with AvroScalaDateType
 sealed abstract class LogicalType(name: String)
 case class Decimal(precision: Int, scale: Int) extends LogicalType("decimal")
 case object Date extends LogicalType("date")

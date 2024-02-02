@@ -41,16 +41,19 @@ object CustomTypeMatcher {
   def checkCustomDateType(dateType: AvroScalaDateType) = dateType match {
     case JavaTimeLocalDate => RootClass.newClass(nme.createNameType("java.time.LocalDate"))
     case JavaSqlDate       => RootClass.newClass(nme.createNameType("java.sql.Date"))
+    case UnderlyingPrimitive => IntClass
   } 
     
   def checkCustomTimestampMillisType(timestampType: AvroScalaTimestampMillisType) = timestampType match {
     case JavaSqlTimestamp => RootClass.newClass(nme.createNameType("java.sql.Timestamp"))
     case JavaTimeInstant  => RootClass.newClass(nme.createNameType("java.time.Instant"))
+    case UnderlyingPrimitive => LongClass
   }
 
   def checkCustomTimeMillisType(timeType: AvroScalaTimeMillisType) = timeType match {
     case JavaSqlTime => RootClass.newClass(nme.createNameType("java.sql.Time"))
     case JavaTimeLocalTime => RootClass.newClass(nme.createNameType("java.time.LocalTime"))
+    case UnderlyingPrimitive => LongClass
   }
 
   def checkCustomDecimalType(decimalType: AvroScalaDecimalType, schema: Schema): Type =
@@ -65,17 +68,21 @@ object CustomTypeMatcher {
 
   def checkCustomTimeMicrosType(timeType: AvroScalaTimeType) = timeType match {
     case JavaTimeLocalTime => RootClass.newClass(nme.createNameType("java.time.LocalTime"))
+    case UnderlyingPrimitive => LongClass
   }
 
   def checkCustomTimestampMicrosType(timeType: AvroScalaTimestampType) = timeType match {
     case JavaTimeZonedDateTime => RootClass.newClass(nme.createNameType("java.time.ZonedDateTime"))
+    case UnderlyingPrimitive => LongClass
   }
 
   def checkCustomLocalTimestampMicrosType(timeType: AvroScalaLocalTimestampType) = timeType match {
     case JavaTimeLocalDateTime => RootClass.newClass(nme.createNameType("java.time.LocalDateTime"))
+    case UnderlyingPrimitive => LongClass
   }
 
   def checkCustomLocalTimestampMillisType(timeType: AvroScalaLocalTimestampType) = timeType match {
     case JavaTimeLocalDateTime => RootClass.newClass(nme.createNameType("java.time.LocalDateTime"))
+    case UnderlyingPrimitive => LongClass
   }
 }
