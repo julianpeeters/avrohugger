@@ -154,18 +154,23 @@ object JavaConverter {
       case timestamp: LogicalTypes.TimestampMillis => typeMatcher.avroScalaTypes.timestampMillis match {
         case JavaSqlTimestamp => BLOCK(tree.DOT("getTime").APPLY())
         case JavaTimeInstant  => BLOCK(tree.DOT("toEpochMilli"))
+        case UnderlyingPrimitive => tree
       }
       case _: LogicalTypes.TimestampMicros => (typeMatcher.avroScalaTypes.timestampMicros match {
         case JavaTimeZonedDateTime => BLOCK(tree.DOT("toEpochSecond").INFIX("*", LIT(1000000L)).INFIX("+", tree.DOT("getNano").INFIX("/", LIT(1000L))))
+        case UnderlyingPrimitive => tree
       }) withComment "avro timestamp-micros long stores the number of microseconds from the unix epoch, 1 January 1970 00:00:00.000000 UTC"
       case _: LogicalTypes.LocalTimestampMillis => (typeMatcher.avroScalaTypes.localTimestampMillis match {
         case JavaTimeLocalDateTime => BLOCK(tree.DOT("toEpochSecond").APPLY(RootClass.newClass("java.time.ZoneOffset").DOT("UTC")).INFIX("*", LIT(1000L)).INFIX("+", tree.DOT("getNano").INFIX("/", LIT(1000000L))))
+        case UnderlyingPrimitive => tree
       }) withComment "avro local-timestamp-millis long stores the number of millis, from 1 January 1970 00:00:00.000000"
       case _: LogicalTypes.LocalTimestampMicros => (typeMatcher.avroScalaTypes.localTimestampMicros match {
         case JavaTimeLocalDateTime => BLOCK(tree.DOT("toEpochSecond").APPLY(RootClass.newClass("java.time.ZoneOffset").DOT("UTC")).INFIX("*", LIT(1000000L)).INFIX("+", tree.DOT("getNano").INFIX("/", LIT(1000L))))
+        case UnderlyingPrimitive => tree
       }) withComment "avro local-timestamp-micros long stores the number of microseconds, from 1 January 1970 00:00:00.000000"
       case _: LogicalTypes.TimeMicros => (typeMatcher.avroScalaTypes.timeMicros match {
         case JavaTimeLocalTime => BLOCK(tree.DOT("toNanoOfDay").INFIX("/", LIT(1000L)))
+        case UnderlyingPrimitive => tree
       }) withComment "avro time-micros long stores the number of microseconds after midnight, 00:00:00.000000"
       case _ => tree
     }
@@ -173,10 +178,12 @@ object JavaConverter {
       case date: LogicalTypes.Date => typeMatcher.avroScalaTypes.date match {
         case JavaSqlDate       => tree.DOT("getTime").APPLY().DOT("/").APPLY(LIT(86400000))
         case JavaTimeLocalDate => tree.DOT("toEpochDay").DOT("toInt")
+        case UnderlyingPrimitive => tree
       }
       case timeMillis: LogicalTypes.TimeMillis => typeMatcher.avroScalaTypes.timeMillis match {
         case JavaSqlTime       => tree.DOT("getTime").APPLY()
         case JavaTimeLocalTime => tree.DOT("get").APPLY(REF("java.time.temporal.ChronoField").DOT("MILLI_OF_DAY"))
+        case UnderlyingPrimitive => tree
       }
       case _ => tree
     }

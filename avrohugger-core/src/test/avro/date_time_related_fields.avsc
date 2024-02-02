@@ -1,0 +1,44 @@
+{
+  "type" : "record",
+  "name" : "DateTimeRelatedFields",
+  "namespace": "example.datetimerelatedfields",
+  "doc" : "Record with the fields that relate to date and time",
+  "fields" : [
+    {
+      "name" : "field01",
+      "type" : "int",
+      "logicalType": "date"
+    },
+    {
+      "name" : "field02",
+      "type" : "long",
+      "logicalType": "timestamp-millis"
+    },
+    {
+      "name" : "field03",
+      "type" : "long",
+      "logicalType": "timestamp-micros"
+    },
+    {
+      "name" : "field04",
+      "type" : "long",
+      "logicalType": "local-timestamp-micros"
+    },
+    {
+      "name" : "field05",
+      "type" : "long",
+      "logicalType": "local-timestamp-millis"
+    },
+    {
+      "name" : "field06",
+      "type" : "int",
+      "logicalType": "time-millis"
+    },
+    {
+      "name" : "field07",
+      "type" : "int",
+      "logicalType": "time-micros"
+    }
+  ],
+  "messages" : { }
+}

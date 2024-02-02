@@ -64,6 +64,7 @@ class StandardFileToFileSpec extends Specification {
     correctly generate nested fixed bytes from schema $e43
 
     correctly generate nested references with custom namespaces $e44
+    correctly handle underlyingType for date/time related fields $e45
   """
 
   // correctly generate logical types from IDL $e30
@@ -645,6 +646,17 @@ class StandardFileToFileSpec extends Specification {
     val source = util.Util.readFile("target/generated-sources/standard/aa/bb/cc/Test.scala")
 
     source === util.Util.readFile("avrohugger-core/src/test/expected/standard/aa/bb/cc/Test.scala")
+  }
+
+  def e45 = {
+    val infile = new java.io.File("avrohugger-core/src/test/avro/date_time_related_fields.avsc")
+    val avroScalaCustomTypes = Standard.defaultTypes.copy(date = UnderlyingPrimitive, timestampMillis = UnderlyingPrimitive, timestampMicros = UnderlyingPrimitive, localTimestampMicros = UnderlyingPrimitive, localTimestampMillis = UnderlyingPrimitive, timeMillis = UnderlyingPrimitive, timeMicros = UnderlyingPrimitive)
+    val gen = new Generator(Standard, avroScalaCustomTypes = Some(avroScalaCustomTypes))
+    val outDir = gen.defaultOutputDir + "/standard/"
+    gen.fileToFile(infile, outDir)
+
+    val source = util.Util.readFile("target/generated-sources/standard/example/datetimerelatedfields/DateTimeRelatedFields.scala")
+    source === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/datetimerelatedfields/DateTimeRelatedFields.scala")
   }
 
 }

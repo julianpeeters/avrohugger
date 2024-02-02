@@ -51,6 +51,7 @@ class SpecificFileToFileSpec extends Specification {
       correctly generate a protocol with special strings $e28
       correctly generate a simple case class with a wildcarded custom namespace $e29
       correctly handle namespaces for complex types $e30
+      correctly handle underlyingType for date/time related fields $e31
   """
 //    correctly generate logical types from IDL $e26
 
@@ -448,5 +449,17 @@ class SpecificFileToFileSpec extends Specification {
     source1 === util.Util.readFile("avrohugger-core/src/test/expected/specific/example/fixedtwo/FixedTwo.scala") and
     source2 === util.Util.readFile("avrohugger-core/src/test/expected/specific/example/fixedtwo/one/fixed.scala") and
     source3 === util.Util.readFile("avrohugger-core/src/test/expected/specific/example/fixedtwo/two/fixed.scala")
+  }
+
+  def e31 = {
+    val infile = new java.io.File("avrohugger-core/src/test/avro/date_time_related_fields.avsc")
+    val avroScalaCustomTypes = SpecificRecord.defaultTypes.copy(date = UnderlyingPrimitive, timestampMillis = UnderlyingPrimitive, timestampMicros = UnderlyingPrimitive, localTimestampMicros = UnderlyingPrimitive, localTimestampMillis = UnderlyingPrimitive, timeMillis = UnderlyingPrimitive, timeMicros = UnderlyingPrimitive)
+    val gen = new Generator(SpecificRecord, avroScalaCustomTypes = Some(avroScalaCustomTypes))
+    val outDir = gen.defaultOutputDir + "/specific/"
+    gen.fileToFile(infile, outDir)
+
+    val source = util.Util.readFile("target/generated-sources/specific/example/datetimerelatedfields/DateTimeRelatedFields.scala")
+
+    source === util.Util.readFile("avrohugger-core/src/test/expected/specific/example/datetimerelatedfields/DateTimeRelatedFields.scala")
   }
 }

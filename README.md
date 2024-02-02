@@ -66,13 +66,13 @@ Scalding, Spark, Avro, etc.).
 |UNION|Option<br>Either<br>Shapeless Coproduct|Option<br>Either<br>Shapeless Coproduct| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 |RECORD|case class<br>case class + schema|case class extending `SpecificRecordBase`| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 |PROTOCOL|_No Type_<br>Scala ADT|RPC trait<br>Scala ADT| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
-|Date|java.time.LocalDate<br>java.sql.Date|java.time.LocalDate<br>java.sql.Date| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
-|TimeMillis|java.time.LocalTime|java.time.LocalTime| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
-|TimeMicros|java.time.LocalTime|java.time.LocalTime| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
-|TimestampMillis|java.time.Instant<br>java.sql.Timestamp|java.time.Instant<br>java.sql.Timestamp| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
-|TimestampMicros|java.time.Instant<br>java.sql.Timestamp|java.time.Instant<br>java.sql.Timestamp| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
-|LocalTimestampMillis|java.time.LocalDateTime|java.time.LocalDateTime| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
-|LocalTimestampMicros|java.time.LocalDateTime|java.time.LocalDateTime| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
+|Date|java.time.LocalDate<br>java.sql.Date<br>Int|java.time.LocalDate<br>java.sql.Date<br>Int| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
+|TimeMillis|java.time.LocalTime<br>Int|java.time.LocalTime<br>Int| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
+|TimeMicros|java.time.LocalTime<br>Long|java.time.LocalTime<br>Long| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
+|TimestampMillis|java.time.Instant<br>java.sql.Timestamp<br>Long|java.time.Instant<br>java.sql.Timestamp<br>Long| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
+|TimestampMicros|java.time.Instant<br>java.sql.Timestamp<br>Long|java.time.Instant<br>java.sql.Timestamp<br>Long| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
+|LocalTimestampMillis|java.time.LocalDateTime<br>Long|java.time.LocalDateTime<br>Long| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
+|LocalTimestampMicros|java.time.LocalDateTime<br>Long|java.time.LocalDateTime<br>Long| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 |UUID|java.util.UUID|java.util.UUID| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 |Decimal|BigDecimal|BigDecimal| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 
@@ -82,9 +82,9 @@ _NOTE: Currently logical types are only supported for `Standard` and `SpecificRe
 
 * `date`: Annotates Avro `int` schemas to generate `java.time.LocalDate` or `java.sql.Date` (See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)). Examples: [avdl](https://github.com/julianpeeters/sbt-avrohugger/blob/master/src/sbt-test/avrohugger/GenericSerializationTests/src/main/avro/logical.avdl#L9), [avsc](https://github.com/julianpeeters/sbt-avrohugger/blob/master/src/sbt-test/avrohugger/GenericSerializationTests/src/main/avro/logical.avsc#L22-L27).
 * `decimal`: Annotates Avro `bytes` and `fixed` schemas to generate `BigDecimal`. Examples: [avdl](https://github.com/julianpeeters/sbt-avrohugger/blob/master/src/sbt-test/avrohugger/GenericSerializationTests/src/main/avro/logical.avdl#L6), [avsc](https://github.com/julianpeeters/sbt-avrohugger/blob/master/src/sbt-test/avrohugger/GenericSerializationTests/src/main/avro/logical.avsc#L6-L14).
-* `timestamp-millis`: Annotates Avro `long` schemas to genarate `java.time.Instant` or `java.sql.Timestamp` (See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)). Examples: [avdl](https://github.com/julianpeeters/sbt-avrohugger/blob/master/src/sbt-test/avrohugger/GenericSerializationTests/src/main/avro/logical.avdl#L8), [avsc](https://github.com/julianpeeters/sbt-avrohugger/blob/master/src/sbt-test/avrohugger/GenericSerializationTests/src/main/avro/logical.avsc#L15-L21).
+* `timestamp-millis`: Annotates Avro `long` schemas to genarate `java.time.Instant` or `java.sql.Timestamp` or `long` (See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)). Examples: [avdl](https://github.com/julianpeeters/sbt-avrohugger/blob/master/src/sbt-test/avrohugger/GenericSerializationTests/src/main/avro/logical.avdl#L8), [avsc](https://github.com/julianpeeters/sbt-avrohugger/blob/master/src/sbt-test/avrohugger/GenericSerializationTests/src/main/avro/logical.avsc#L15-L21).
 * `uuid`: Annotates Avro `string` schemas and idls to generate `java.util.UUID` (See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)). Example: [avsc](https://github.com/julianpeeters/sbt-avrohugger/blob/master/src/sbt-test/avrohugger/GenericSerializationTests/src/main/avro/logical.avsc#L29-L35).
-* `time-millis`: Annotates Avro `int` schemas to genarate `java.time.LocalTime` or `java.sql.Time`
+* `time-millis`: Annotates Avro `int` schemas to genarate `java.time.LocalTime` or `java.sql.Time` or `int`
 
 ##### Protocol Support:
 
@@ -119,7 +119,7 @@ _Note:_ Currently [Treehugger](http://eed3si9n.com/treehugger/comments.html#Scal
 
 ##### Get the dependency with:
 
-    "com.julianpeeters" %% "avrohugger-core" % "2.8.2"
+    "com.julianpeeters" %% "avrohugger-core" % "2.8.3"
 
 
 ##### Description:
@@ -211,7 +211,7 @@ namespace rewritten. Multiple conflicting wildcards are not permitted.
 
 ##### Get the dependency with:
 
-    "com.julianpeeters" %% "avrohugger-filesorter" % "2.8.2"
+    "com.julianpeeters" %% "avrohugger-filesorter" % "2.8.3"
     
 
 ##### Description:
@@ -231,17 +231,17 @@ To ensure dependent schemas are compiled in the proper order (thus avoiding `org
 #### `avrohugger-tools`
 
 
-  Download the avrohugger-tools jar for Scala [2.12](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.12/2.8.2/avrohugger-tools_2.12-2.8.2-assembly.jar), or Scala [2.13](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.13/2.8.2/avrohugger-tools_2.13-2.8.2-assembly.jar) (>30MB!) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
+  Download the avrohugger-tools jar for Scala [2.12](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.12/2.8.3/avrohugger-tools_2.12-2.8.3-assembly.jar), or Scala [2.13](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.13/2.8.3/avrohugger-tools_2.13-2.8.3-assembly.jar) (>30MB!) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
 
 
 * `generate` generates Scala case class definitions:
 
-`java -jar /path/to/avrohugger-tools_2.12-2.8.2-assembly.jar generate schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.12-2.8.3-assembly.jar generate schema user.avsc . `
 
 
 * `generate-specific` generates definitions that extend Avro's `SpecificRecordBase`:
 
-`java -jar /path/to/avrohugger-tools_2.12-2.8.2-assembly.jar generate-specific schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.12-2.8.3-assembly.jar generate-specific schema user.avsc . `
 
 
 ## Warnings

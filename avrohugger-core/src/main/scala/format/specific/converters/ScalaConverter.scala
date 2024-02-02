@@ -206,6 +206,7 @@ object ScalaConverter {
                   val LocalTimeClass = RootClass.newClass("java.time.LocalTime")
                   val resultExpr = BLOCK(LocalTimeClass.DOT("ofNanoOfDay").APPLY(REF("l").INFIX("*", LIT(1000L))))
                   tree MATCH caseLWithTypeLong ==> resultExpr
+                case UnderlyingPrimitive => tree
               }) withComment "avro time-micros long stores the number of microseconds after midnight, 00:00:00.000000"
             } else if (logicalType.getName == "timestamp-millis") {
               typeMatcher.avroScalaTypes.timestampMillis match {
@@ -221,6 +222,7 @@ object ScalaConverter {
                   val longConversion = CASE(ID("l") withType (LongClass)) ==> resultExpr
                   tree MATCH longConversion
                 }
+                case UnderlyingPrimitive => tree
               }
             } else if (logicalType.getName == "timestamp-micros") {
               (typeMatcher.avroScalaTypes.timestampMicros match {
@@ -235,6 +237,7 @@ object ScalaConverter {
                     ZoneOffset DOT "UTC"
                   ), ZoneId DOT "of" APPLY LIT("UTC")))
                   tree MATCH CASE(ID("l") withType (LongClass)) ==> resultExpr
+                case UnderlyingPrimitive => tree
               }) withComment "avro timestamp-micros long stores the number of microseconds from the unix epoch, 1 January 1970 00:00:00.000000 UTC"
             } else if (logicalType.getName == "local-timestamp-millis") {
               (typeMatcher.avroScalaTypes.localTimestampMillis match {
@@ -247,6 +250,7 @@ object ScalaConverter {
                     ZoneOffset DOT "UTC"
                   ))
                   tree MATCH CASE(ID("l") withType (LongClass)) ==> resultExpr
+                case UnderlyingPrimitive => tree
               }) withComment "avro local-timestamp-millis long stores the number of millis, from 1 January 1970 00:00:00.000000"
             } else if (logicalType.getName == "local-timestamp-micros") {
               (typeMatcher.avroScalaTypes.localTimestampMicros match {
@@ -259,6 +263,7 @@ object ScalaConverter {
                     ZoneOffset DOT "UTC"
                   ))
                   tree MATCH CASE(ID("l") withType (LongClass)) ==> resultExpr
+                case UnderlyingPrimitive => tree
               }) withComment "avro local-timestamp-micros long stores the number of microseconds, from 1 January 1970 00:00:00.000000"
             }
             else tree
@@ -285,6 +290,7 @@ object ScalaConverter {
                   val integerConversion = CASE(ID("i") withType (IntegerClass)) ==> resultExpr
                   tree MATCH integerConversion
                 }
+                case UnderlyingPrimitive => tree
               }
             }
             else if (logicalType.getName == "time-millis") {
@@ -303,6 +309,7 @@ object ScalaConverter {
                   val integerConversion = CASE(ID("i") withType (IntegerClass)) ==> resultExpr
                   tree MATCH integerConversion
                 }
+                case UnderlyingPrimitive => tree
               }
             }
             else tree
