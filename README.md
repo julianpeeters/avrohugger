@@ -225,7 +225,7 @@ To ensure dependent schemas are compiled in the proper order (thus avoiding `org
     import avrohugger.filesorter.AvscFileSorter
     import java.io.File
     
-    val sorted: List[File] = AvscFileSorter.sortSchemaFiles((srcDir ** "*.avsc")
+    val sorted: List[File] = AvscFileSorter.sortSchemaFiles((srcDir ** "*.avsc"))
 
 
 #### `avrohugger-tools`
