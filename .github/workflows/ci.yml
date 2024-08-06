@@ -16,9 +16,9 @@ jobs:
         java: [zulu@1.11, zulu@1.17, zulu@1.21]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v3.0.2
+      - uses: actions/checkout@v4
       - name: Set up Java
-        uses: olafurpg/setup-scala@v13
+        uses: olafurpg/setup-scala@v14
         with:
           java-version: ${{ matrix.java }}
       - name: Run tests
