@@ -1,15 +1,16 @@
-lazy val avroVersion = "1.11.3"
+lazy val avroVersion = "1.12.0"
 
 lazy val commonSettings = Seq(
   organization := "com.julianpeeters",
-  version := "2.8.3",
+  version := "2.9.0-SNAPSHOT",
   ThisBuild / versionScheme := Some("semver-spec"),
   scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature"),
   Test / scalacOptions ++= Seq("-Yrangepos"),
-  scalaVersion := "3.3.1",
-  crossScalaVersions := Seq("2.12.18", "2.13.12", scalaVersion.value),
+  scalaVersion := "3.3.3",
+  crossScalaVersions := Seq("2.12.19", "2.13.14", scalaVersion.value),
   libraryDependencies += "org.apache.avro" % "avro" % avroVersion,
   libraryDependencies += "org.apache.avro" % "avro-compiler" % avroVersion,
+  libraryDependencies += "org.apache.avro" % "avro-idl" % avroVersion,
   libraryDependencies := { CrossVersion.partialVersion(scalaVersion.value) match {
     case Some((2, scalaMinor)) if scalaMinor < 13 =>
       // for implementing SpecificRecord from standard case class definitions
@@ -20,7 +21,7 @@ lazy val commonSettings = Seq(
   }},
   libraryDependencies := { CrossVersion.partialVersion(scalaVersion.value) match {
     case Some((2, scalaMinor)) if scalaMinor < 13 =>
-      libraryDependencies.value ++ Seq("org.scala-lang.modules" %% "scala-collection-compat" % "2.11.0")
+      libraryDependencies.value ++ Seq("org.scala-lang.modules" %% "scala-collection-compat" % "2.12.0")
     case _ =>
       libraryDependencies.value
   }},
