@@ -7,19 +7,27 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
-    name: Build and Test
+  test:
     strategy:
+      fail-fast: false
       matrix:
-        os: [ubuntu-latest]
-        scala: [2.13.14, 2.12.19]
-        java: [zulu@1.11, zulu@1.17, zulu@1.21]
+        include:
+          - os: ubuntu-latest
+            java: 8
+          - os: ubuntu-latest
+            java: 17
+          - os: ubuntu-latest
+            java: 21
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
-      - name: Set up Java
-        uses: olafurpg/setup-scala@v14
-        with:
-          java-version: ${{ matrix.java }}
-      - name: Run tests
-        run: sbt ++${{ matrix.scala }} test
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Setup JDK
+      uses: actions/setup-java@v3
+      with:
+        distribution: temurin
+        java-version: ${{ matrix.java }}
+        cache: sbt
+    - name: Build and test
+      shell: bash
+      run: sbt -v +test
