@@ -56,15 +56,15 @@ class StandardGeneratorToolSpec extends mutable.Specification {
     Util.readFile(Directory.TEST_OUTPUT_PILOT)  === Util.readFile(Directory.TEST_EXPECTED_PILOT)
   }
   
-  // "match the expected file and directory" in {
-  //   doCompile(List[String]("schema",
-  //     Directory.TEST_INPUT_DIR + "/mascot.avsc",
-  //     Directory.TEST_INPUT_DIR,
-  //     Directory.TEST_OUTPUT_BASE_DIR
-  //   ))
-  //   Util.readFile(Directory.TEST_OUTPUT_MASCOT) === Util.readFile(Directory.TEST_EXPECTED_MASCOT)
-  //   Util.readFile(Directory.TEST_OUTPUT_WRESTLER)  === Util.readFile(Directory.TEST_EXPECTED_WRESTLER)
-  // }
+  "match the expected file and directory" in {
+    doCompile(List[String]("schema",
+      Directory.TEST_INPUT_DIR + "/mascot.avsc",
+      Directory.TEST_INPUT_DIR,
+      Directory.TEST_OUTPUT_BASE_DIR
+    ))
+    Util.readFile(Directory.TEST_OUTPUT_MASCOT) === Util.readFile(Directory.TEST_EXPECTED_MASCOT)
+    Util.readFile(Directory.TEST_OUTPUT_WRESTLER)  === Util.readFile(Directory.TEST_EXPECTED_WRESTLER)
+  }
 /* currently -string makes no difference, all case classes use String
   "match the expected using the -string option" in {
     doCompile(List[String]("-string", "schema",
