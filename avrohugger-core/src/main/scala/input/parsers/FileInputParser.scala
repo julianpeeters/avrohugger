@@ -99,14 +99,14 @@ class FileInputParser {
         case "avdl" =>
           val idl = new IdlReader().parse(infile.toPath())
           val protocol = idl.getProtocol()
-          // /**
-          //  * IDLs may refer to types imported from another file. When converted 
-          //  * to protocols, the imported types that share the IDL's namespace 
-          //  * cannot be distinguished from types defined within the IDL, yet 
-          //  * should not be generated as subtypes of the IDL's ADT and should 
-          //  * instead be generated in its own namespace. So, strip the protocol 
-          //  * of all imported types and generate them separately.
-          //  */
+          /**
+           * IDLs may refer to types imported from another file. When converted 
+           * to protocols, the imported types that share the IDL's namespace 
+           * cannot be distinguished from types defined within the IDL, yet 
+           * should not be generated as subtypes of the IDL's ADT and should 
+           * instead be generated in its own namespace. So, strip the protocol 
+           * of all imported types and generate them separately.
+           */
           val importedFiles = IdlImportParser.getImportedFiles(infile, classLoader)
           val importedSchemaOrProtocols = importedFiles.flatMap(file => {
             val importParser = new Parser() // else attempts to redefine schemas

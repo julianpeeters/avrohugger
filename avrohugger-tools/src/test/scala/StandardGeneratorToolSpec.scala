@@ -22,29 +22,29 @@ class StandardGeneratorToolSpec extends mutable.Specification {
     }
   }
     
-  // "match the expected single protocol file" in {
-  //   doCompile(List[String] ("protocol",
-  //     Directory.TEST_INPUT_DIR + "/mail.avpr",
-  //     Directory.TEST_OUTPUT_BASE_DIR
-  //   ))
-  //   Util.readFile(Directory.TEST_OUTPUT_MESSAGE) === Util.readFile(Directory.TEST_EXPECTED_MESSAGE)
-  // }
+  "match the expected single protocol file" in {
+    doCompile(List[String] ("protocol",
+      Directory.TEST_INPUT_DIR + "/mail.avpr",
+      Directory.TEST_OUTPUT_BASE_DIR
+    ))
+    Util.readFile(Directory.TEST_OUTPUT_MESSAGE) === Util.readFile(Directory.TEST_EXPECTED_MESSAGE)
+  }
   
-  // "match the expected single datafile file" in {
-  //   doCompile(List[String] ("datafile",
-  //     Directory.TEST_INPUT_DIR + "/twitter.avro",
-  //     Directory.TEST_OUTPUT_BASE_DIR
-  //   ))
-  //   Util.readFile(Directory.TEST_OUTPUT_TWITTER) === Util.readFile(Directory.TEST_EXPECTED_TWITTER)
-  // }
+  "match the expected single datafile file" in {
+    doCompile(List[String] ("datafile",
+      Directory.TEST_INPUT_DIR + "/twitter.avro",
+      Directory.TEST_OUTPUT_BASE_DIR
+    ))
+    Util.readFile(Directory.TEST_OUTPUT_TWITTER) === Util.readFile(Directory.TEST_EXPECTED_TWITTER)
+  }
   
-  // "match the expected single schema file" in {
-  //   doCompile(List[String] ("schema",
-  //     Directory.TEST_INPUT_DIR + "/handle.avsc",
-  //     Directory.TEST_OUTPUT_BASE_DIR
-  //   ))
-  //   Util.readFile(Directory.TEST_OUTPUT_HANDLE) === Util.readFile(Directory.TEST_EXPECTED_HANDLE)
-  // }
+  "match the expected single schema file" in {
+    doCompile(List[String] ("schema",
+      Directory.TEST_INPUT_DIR + "/handle.avsc",
+      Directory.TEST_OUTPUT_BASE_DIR
+    ))
+    Util.readFile(Directory.TEST_OUTPUT_HANDLE) === Util.readFile(Directory.TEST_EXPECTED_HANDLE)
+  }
   
   "match the expected dependent files" in {
     doCompile(List[String]("schema",
@@ -52,7 +52,7 @@ class StandardGeneratorToolSpec extends mutable.Specification {
       Directory.TEST_INPUT_DIR + "/pilot.avsc",
       Directory.TEST_OUTPUT_BASE_DIR
     ))
-    // Util.readFile(Directory.TEST_OUTPUT_HANDLE) === Util.readFile(Directory.TEST_EXPECTED_HANDLE)
+    Util.readFile(Directory.TEST_OUTPUT_HANDLE) === Util.readFile(Directory.TEST_EXPECTED_HANDLE)
     Util.readFile(Directory.TEST_OUTPUT_PILOT)  === Util.readFile(Directory.TEST_EXPECTED_PILOT)
   }
   

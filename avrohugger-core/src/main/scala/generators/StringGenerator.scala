@@ -65,7 +65,7 @@ private[avrohugger] object StringGenerator {
       typeMatcher,
       restrictedFields,
       targetScalaPartialVersion)
-    compilationUnits.map(compUnit => removeExtraWarning(compUnit.codeString)).distinct
+    compilationUnits.map(compUnit => removeExtraWarning(compUnit.codeString))
   }
 
   def stringToStrings(
@@ -113,7 +113,7 @@ private[avrohugger] object StringGenerator {
         case Right(protocol) => {
           protocolToStrings(protocol, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
         }
-      }).distinct
+      })
     }
     catch {
       case ex: FileNotFoundException => sys.error("File not found:" + ex)
