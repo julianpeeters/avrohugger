@@ -7,10 +7,10 @@ import stores.ClassStore
 import org.apache.avro.{Protocol, Schema}
 import org.apache.avro.Schema.Parser
 import org.apache.avro.Schema.Type.{ENUM, FIXED, RECORD, UNION}
-import org.apache.avro.compiler.idl.Idl
-import org.apache.avro.generic.{GenericDatumReader, GenericRecord}
 import org.apache.avro.file.DataFileReader
-import org.apache.avro.SchemaParseException
+import org.apache.avro.generic.{GenericDatumReader, GenericRecord}
+import org.apache.avro.idl.IdlReader
+import org.apache.avro.{AvroTypeException, SchemaParseException}
 
 import java.io.File
 import scala.jdk.CollectionConverters._
@@ -48,19 +48,24 @@ class FileInputParser {
         sys.error(s"Can't redefine:  ${nonEqualElements.mkString(",")} in $infile")
       } else {
         if (commonElements.isEmpty) {
-          val _ = parser.addTypes(tempParser.getTypes)
+          val _ = parser.addTypes(tempParser.getTypes.values)
         } else {
           val missingTypes = tempParser.getTypes().keySet().asScala.diff(parser.getTypes().keySet().asScala)
           val _ = parser.addTypes(missingTypes.map { t =>
             t -> tempParser.getTypes().get(t)
-          }.toMap.asJava)
+          }.toMap.asJava.values)
         }
       }
     }
     
     def mightBeRecoverable(e: SchemaParseException): Boolean = {
       val msg = e.getMessage
-      msg.contains("Undefined name:") || msg.contains("is not a defined name") 
+      msg.contains("Undefined name:") || msg.contains("is not a defined name")
+    }
+
+    def mightBeRecoverableType(e: AvroTypeException): Boolean = {
+      val msg = e.getMessage
+      msg.contains("Undefined schema:")
     }
 
     def tryParse(inFile: File, parser: Schema.Parser): List[Schema] = {
@@ -68,8 +73,11 @@ class FileInputParser {
       val parsed = Try(tempParser.parse(inFile)).map(schema => {
         copySchemas(tempParser, parser)
         schema
-      }).recoverWith { case e: SchemaParseException if mightBeRecoverable(e) => 
-        Try(parser.parse(inFile))
+      }).recoverWith {
+        case e: AvroTypeException if mightBeRecoverableType(e) => 
+          Try(parser.parse(inFile))
+        case e: SchemaParseException if mightBeRecoverable(e) => 
+          Try(parser.parse(inFile))
       }
       unUnion(parsed.get)// throw the avro parse exception if Failure
     }
@@ -89,16 +97,16 @@ class FileInputParser {
           val protocol = Protocol.parse(infile)
           List(Right(protocol))
         case "avdl" =>
-          val idlParser = new Idl(infile, classLoader)
-          val protocol = idlParser.CompilationUnit()
-          /**
-           * IDLs may refer to types imported from another file. When converted 
-           * to protocols, the imported types that share the IDL's namespace 
-           * cannot be distinguished from types defined within the IDL, yet 
-           * should not be generated as subtypes of the IDL's ADT and should 
-           * instead be generated in its own namespace. So, strip the protocol 
-           * of all imported types and generate them separately.
-           */
+          val idl = new IdlReader().parse(infile.toPath())
+          val protocol = idl.getProtocol()
+          // /**
+          //  * IDLs may refer to types imported from another file. When converted 
+          //  * to protocols, the imported types that share the IDL's namespace 
+          //  * cannot be distinguished from types defined within the IDL, yet 
+          //  * should not be generated as subtypes of the IDL's ADT and should 
+          //  * instead be generated in its own namespace. So, strip the protocol 
+          //  * of all imported types and generate them separately.
+          //  */
           val importedFiles = IdlImportParser.getImportedFiles(infile, classLoader)
           val importedSchemaOrProtocols = importedFiles.flatMap(file => {
             val importParser = new Parser() // else attempts to redefine schemas
