@@ -1,13 +1,13 @@
-lazy val avroVersion = "1.11.3"
+lazy val avroVersion = "1.11.4"
 
 lazy val commonSettings = Seq(
   organization := "com.julianpeeters",
-  version := "2.8.3",
+  version := "2.8.4",
   ThisBuild / versionScheme := Some("semver-spec"),
   scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature"),
   Test / scalacOptions ++= Seq("-Yrangepos"),
-  scalaVersion := "3.3.1",
-  crossScalaVersions := Seq("2.12.18", "2.13.12", scalaVersion.value),
+  scalaVersion := "3.3.4",
+  crossScalaVersions := Seq("2.12.20", "2.13.15", scalaVersion.value),
   libraryDependencies += "org.apache.avro" % "avro" % avroVersion,
   libraryDependencies += "org.apache.avro" % "avro-compiler" % avroVersion,
   libraryDependencies := { CrossVersion.partialVersion(scalaVersion.value) match {
@@ -73,7 +73,10 @@ lazy val `avrohugger-filesorter` = (project in file("avrohugger-filesorter"))
 lazy val `avrohugger-tools` = (project in file("avrohugger-tools"))
   .settings(
     commonSettings,
-    libraryDependencies += "org.apache.avro" % "avro-tools" % avroVersion exclude("org.slf4j", "*"),
+    libraryDependencies += "org.apache.avro" % "avro-tools" % avroVersion
+      exclude("org.slf4j", "*")
+      exclude ("org.apache.avro", "trevni-avro")
+      exclude ("org.apache.avro", "trevni-core"),
     Compile / assembly / artifact := {
       val art: Artifact = (Compile / assembly / artifact).value
       art.withClassifier(Some("assembly"))
