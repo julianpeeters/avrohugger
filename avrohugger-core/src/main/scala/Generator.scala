@@ -26,19 +26,20 @@ case class Generator(format: SourceFormat,
   val classStore = new ClassStore
   val schemaStore = new SchemaStore
   val typeMatcher = new TypeMatcher(avroScalaTypes, avroScalaCustomNamespace)
+  val fileGenerator = new FileGenerator()
 
   //////////////// methods for writing definitions out to file /////////////////
   def schemaToFile(
     schema: Schema,
     outDir: String = defaultOutputDir): Unit = {
-    FileGenerator.schemaToFile(
+    fileGenerator.schemaToFile(
       schema, outDir, format, classStore, schemaStore, typeMatcher, restrictedFieldNumber, targetScalaPartialVersion)
   }
 
   def protocolToFile(
     protocol: Protocol,
     outDir: String = defaultOutputDir): Unit = {
-    FileGenerator.protocolToFile(
+    fileGenerator.protocolToFile(
       protocol,
       outDir,
       format,
@@ -52,7 +53,7 @@ case class Generator(format: SourceFormat,
   def stringToFile(
     schemaStr: String,
     outDir: String = defaultOutputDir): Unit = {
-    FileGenerator.stringToFile(
+    fileGenerator.stringToFile(
       schemaStr,
       outDir,
       format,
@@ -67,7 +68,7 @@ case class Generator(format: SourceFormat,
   def fileToFile(
     inFile: File,
     outDir: String = defaultOutputDir): Unit = {
-    FileGenerator.fileToFile(
+    fileGenerator.fileToFile(
       inFile,
       outDir,
       format,
@@ -89,6 +90,10 @@ case class Generator(format: SourceFormat,
   def protocolToStrings(protocol: Protocol): List[String] = {
     StringGenerator.protocolToStrings(
       protocol, format, classStore, schemaStore, typeMatcher, restrictedFieldNumber, targetScalaPartialVersion)
+  }
+
+  def clear() = {
+    fileGenerator.clear()
   }
 
   def stringToStrings(schemaStr: String): List[String] = {

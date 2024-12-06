@@ -15,7 +15,8 @@ import org.apache.avro.{ Protocol, Schema }
 import org.apache.avro.Schema.Type.ENUM
 
 // Unable to overload this class' methods because outDir uses a default value
-private[avrohugger] object FileGenerator {
+private[avrohugger] class FileGenerator() {
+
 
   def schemaToFile(
     schema: Schema,
@@ -26,6 +27,7 @@ private[avrohugger] object FileGenerator {
     typeMatcher: TypeMatcher,
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): Unit = {
+    println(s"schemaToFile ${schema.getNamespace}.${schema.getName}")
     val topNS: Option[String] = DependencyInspector.getReferredNamespace(schema)
     val topLevelSchemas: List[Schema] =
       NestedSchemaExtractor.getNestedSchemas(schema, schemaStore, typeMatcher)
@@ -46,6 +48,7 @@ private[avrohugger] object FileGenerator {
     typeMatcher: TypeMatcher,
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): Unit = {
+    println(s"protocolToFile ${protocol.getNamespace}.${protocol.getName}")
     val ns = Option(protocol.getNamespace)
     format.compile(classStore, ns, Right(protocol), outDir, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
   }
@@ -60,17 +63,22 @@ private[avrohugger] object FileGenerator {
     typeMatcher: TypeMatcher,
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): Unit = {
+    println(s"stringToFile ${str}")
     val schemaOrProtocols = stringParser.getSchemaOrProtocols(str, schemaStore)
-    schemaOrProtocols.foreach(schemaOrProtocol => {
-      schemaOrProtocol match {
-        case Left(schema) => {
-          schemaToFile(schema, outDir, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
-        }
-        case Right(protocol) => {
-          protocolToFile(protocol, outDir, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
-        }
-      }
-    })
+    schemaOrProtocols.foreach{
+      case Left(schema) =>
+        schemaToFile(schema, outDir, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
+      case Right(protocol) =>
+        protocolToFile(protocol, outDir, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
+    }
+  }
+
+  var processedSchemas: Set[String] = Set.empty
+  var processedProtocols: Set[String] = Set.empty
+
+  def clear() = {
+    processedSchemas = Set.empty
+    processedProtocols = Set.empty
   }
 
   def fileToFile(
@@ -84,16 +92,22 @@ private[avrohugger] object FileGenerator {
     classLoader: ClassLoader,
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): Unit = {
-    val schemaOrProtocols: List[Either[Schema, Protocol]] =
-      fileParser.getSchemaOrProtocols(inFile, format, classStore, classLoader)
-    schemaOrProtocols.foreach(schemaOrProtocol => schemaOrProtocol match {
-      case Left(schema) => {
-        schemaToFile(schema, outDir, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
+    println(s"fileToFile3 ${inFile.getAbsolutePath}")
+    fileParser.getSchemaOrProtocols(inFile, format, classStore, classLoader) // this is slow
+      .foreach{
+        case Left(schema) =>
+          val name = schema.getNamespace + "." + schema.getName
+          if (!processedSchemas.contains(name)) {
+            schemaToFile(schema, outDir, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
+            processedSchemas += name
+          }
+        case Right(protocol) =>
+          val name = protocol.getNamespace + "." + protocol.getName
+          if (!processedProtocols.contains(name)) {
+            protocolToFile(protocol, outDir, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
+            processedProtocols += name
+          }
       }
-      case Right(protocol) => {
-        protocolToFile(protocol, outDir, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
-      }
-    })
   }
 
 }
