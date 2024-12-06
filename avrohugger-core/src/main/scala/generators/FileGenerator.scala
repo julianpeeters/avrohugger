@@ -29,10 +29,10 @@ private[avrohugger] class FileGenerator() {
     targetScalaPartialVersion: String): Unit = {
     println(s"schemaToFile ${schema.getNamespace}.${schema.getName}")
     val topNS: Option[String] = DependencyInspector.getReferredNamespace(schema)
-    val topLevelSchemas: List[Schema] =
+    val topLevelSchemas: Set[Schema] =
       NestedSchemaExtractor.getNestedSchemas(schema, schemaStore, typeMatcher)
     // most-nested classes processed first
-    topLevelSchemas.reverse.distinct.foreach(schema => {
+    topLevelSchemas.foreach(schema => {
       // pass in the top-level schema's namespace if the nested schema has none
       val ns = DependencyInspector.getReferredNamespace(schema) orElse topNS
       format.compile(classStore, ns, Left(schema), outDir, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
@@ -97,13 +97,15 @@ private[avrohugger] class FileGenerator() {
       .foreach{
         case Left(schema) =>
           val name = schema.getNamespace + "." + schema.getName
-          if (!processedSchemas.contains(name)) {
+          if (!processedProtocols.contains(name)) {
+            println(s"schema ${schema.getNamespace}.${schema.getName}")
             schemaToFile(schema, outDir, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
-            processedSchemas += name
+            processedProtocols += name
           }
         case Right(protocol) =>
           val name = protocol.getNamespace + "." + protocol.getName
           if (!processedProtocols.contains(name)) {
+            println(s"protocol ${protocol.getNamespace}.${protocol.getName}")
             protocolToFile(protocol, outDir, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
             processedProtocols += name
           }

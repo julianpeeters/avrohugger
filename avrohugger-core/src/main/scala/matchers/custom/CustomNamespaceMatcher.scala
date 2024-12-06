@@ -27,16 +27,9 @@ object CustomNamespaceMatcher {
               }
           }
         })
-      maybeCustomNamespace match {
-        case Some(customNamespace) => Some(customNamespace)
-        case None => Some(schemaNamespace)
-      }
+      maybeCustomNamespace.orElse(Some(schemaNamespace))
     }
-    maybeDefaultNamespace match {
-      case Some(ns) => queryNamespaceMap(ns)
-      case None => None
-    }
-    
+    maybeDefaultNamespace.flatMap(queryNamespaceMap)
   }
 
 }

@@ -82,7 +82,7 @@ case class Generator(format: SourceFormat,
   }
 
   //////// methods for writing to a list of definitions in String format ///////
-  def schemaToStrings(schema: Schema): List[String] = {
+  def schemaToStrings(schema: Schema): Set[String] = {
     StringGenerator.schemaToStrings(
       schema, format, classStore, schemaStore, typeMatcher, restrictedFieldNumber, targetScalaPartialVersion)
   }

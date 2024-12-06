@@ -20,6 +20,8 @@ class FileInputParser {
 
   val schemaParser = new Parser()
 
+  var processedFiles: Set[String] = Set.empty
+
   def getSchemaOrProtocols(
                             infile: File,
                             format: SourceFormat,
@@ -99,13 +101,17 @@ class FileInputParser {
          * instead be generated in its own namespace. So, strip the protocol
          * of all imported types and generate them separately.
          */
-        println(1)
         val importedFiles = IdlImportParser.getImportedFiles(infile, classLoader)
-        println(2)
-        val importedSchemaOrProtocols = importedFiles.flatMap(file => {
-          val importParser = new Parser() // else attempts to redefine schemas
-          getSchemaOrProtocols(file, format, classStore, classLoader, importParser)
-        })
+        val importedSchemaOrProtocols = importedFiles.flatMap { file =>
+          if(!processedFiles.contains(file.getCanonicalPath)) {
+            processedFiles += file.getCanonicalPath
+            println(s"Processing imported file: ${processedFiles.size} ${file.getCanonicalPath}")
+            val importParser = new Parser() // else attempts to redefine schemas
+            getSchemaOrProtocols(file, format, classStore, classLoader, importParser)
+          } else {
+            List()
+          }
+        }
 
         def stripImports(
                           protocol: Protocol,
@@ -116,22 +122,16 @@ class FileInputParser {
               case Right(importedProtocol) => importedProtocol.getTypes().asScala
             }
           })
-          println(3)
           val types = protocol.getTypes().asScala.toList
-          println(4)
           val localTypes = imported.foldLeft(types)((remaining, imported) => {
             remaining.filterNot(remainingType => remainingType == imported)
           })
-          println(4)
           protocol.setTypes(localTypes.asJava)
-          println(6)
           protocol
         }
 
-        println(7)
         val localProtocol = stripImports(protocol, importedSchemaOrProtocols)
         // reverse to dependent classes are generated first
-        println(8)
         (Right(localProtocol) +: importedSchemaOrProtocols).reverse
       case _ =>
         throw new Exception(

@@ -6,47 +6,42 @@ import format.specific.{SpecificJavaTreehugger, SpecificScalaTreehugger}
 import matchers.TypeMatcher
 import matchers.custom.CustomNamespaceMatcher
 import models.CompilationUnit
-import stores.{ ClassStore, SchemaStore }
+import stores.{ClassStore, SchemaStore}
 import types._
+import org.apache.avro.{Protocol, Schema}
+import org.apache.avro.Schema.Type.{ENUM, FIXED, RECORD}
 
 
-import treehugger.forest._
-import definitions.RootClass
-
-import org.apache.avro.{ Protocol, Schema }
-import org.apache.avro.Schema.Type.{ ENUM, FIXED, RECORD }
-
-import java.nio.file.Path
-
-object SpecificRecord extends SourceFormat{
+object SpecificRecord extends SourceFormat {
 
   val toolName = "generate-specific"
 
   val toolShortDescription = "Generates Scala code extending SpecificRecordBase."
-  
+
   val javaTreehugger = SpecificJavaTreehugger
   val scalaTreehugger = SpecificScalaTreehugger
-  
+
   val defaultTypes: AvroScalaTypes = AvroScalaTypes.defaults.copy(`enum` = JavaEnum)
 
   def asCompilationUnits(
-    classStore: ClassStore,
-    ns: Option[String],
-    schemaOrProtocol: Either[Schema, Protocol],
-    schemaStore: SchemaStore,
-    maybeOutDir: Option[String],
-    typeMatcher: TypeMatcher,
-    restrictedFields: Boolean,
-    targetScalaPartialVersion: String): List[CompilationUnit] = {
+                          classStore: ClassStore,
+                          ns: Option[String],
+                          schemaOrProtocol: Either[Schema, Protocol],
+                          schemaStore: SchemaStore,
+                          maybeOutDir: Option[String],
+                          typeMatcher: TypeMatcher,
+                          restrictedFields: Boolean,
+                          targetScalaPartialVersion: String): List[CompilationUnit] = {
 
     registerTypes(schemaOrProtocol, classStore, typeMatcher)
     val enumType = typeMatcher.avroScalaTypes.`enum`
 
-    val namespace = 
+    val namespace =
       CustomNamespaceMatcher.checkCustomNamespace(
         ns,
         typeMatcher,
         maybeDefaultNamespace = ns)
+
 
     // generate as RPC trait and separate class/enum strings
     def protocolToRPC(protocol: Protocol): List[CompilationUnit] = {
@@ -81,11 +76,11 @@ object SpecificRecord extends SourceFormat{
       })
       val javaCompUnits = localEnums.map(schema => {
         getJavaEnumCompilationUnit(
-        classStore,
-        namespace,
-        schema,
-        maybeOutDir,
-        typeMatcher)
+          classStore,
+          namespace,
+          schema,
+          maybeOutDir,
+          typeMatcher)
       })
       val rpcTypeCompUnits = scalaCompUnits ::: javaCompUnits
       rpcTraitCompUnit +: rpcTypeCompUnits
@@ -181,12 +176,13 @@ object SpecificRecord extends SourceFormat{
   }
 
   def getName(
-    schemaOrProtocol: Either[Schema, Protocol],
-    typeMatcher: TypeMatcher): String = {
+               schemaOrProtocol: Either[Schema, Protocol],
+               typeMatcher: TypeMatcher): String = {
     schemaOrProtocol match {
       case Left(schema) => schema.getName
       case Right(protocol) => {
         def isEnum(schema: Schema) = schema.getType == Schema.Type.ENUM
+
         val messages = protocol.getMessages
         if (!messages.isEmpty) protocol.getName // for RPC trait
         else {
@@ -194,7 +190,7 @@ object SpecificRecord extends SourceFormat{
           if (localRecords.length > 1) protocol.getName // for ADT
           else localRecords.headOption match {
             case Some(schema) => schema.getName // for solo records make a class
-            case None => protocol.getName       // default to protocol name
+            case None => protocol.getName // default to protocol name
           }
         }
       }
@@ -202,15 +198,15 @@ object SpecificRecord extends SourceFormat{
   }
 
   def compile(
-    classStore: ClassStore,
-    ns: Option[String],
-    schemaOrProtocol: Either[Schema, Protocol],
-    outDir: String,
-    schemaStore: SchemaStore,
-    typeMatcher: TypeMatcher,
-    restrictedFields: Boolean,
-    targetScalaPartialVersion: String): Unit = {
-    val compilationUnits: List[CompilationUnit] = asCompilationUnits(
+               classStore: ClassStore,
+               ns: Option[String],
+               schemaOrProtocol: Either[Schema, Protocol],
+               outDir: String,
+               schemaStore: SchemaStore,
+               typeMatcher: TypeMatcher,
+               restrictedFields: Boolean,
+               targetScalaPartialVersion: String): Unit = {
+    asCompilationUnits(
       classStore,
       ns,
       schemaOrProtocol,
@@ -219,7 +215,7 @@ object SpecificRecord extends SourceFormat{
       typeMatcher,
       restrictedFields,
       targetScalaPartialVersion)
-    compilationUnits.foreach(writeToFile)
+      .foreach(writeToFile)
   }
 
 }
