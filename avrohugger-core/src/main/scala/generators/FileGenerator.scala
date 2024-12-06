@@ -27,7 +27,6 @@ private[avrohugger] class FileGenerator() {
     typeMatcher: TypeMatcher,
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): Unit = {
-    println(s"schemaToFile ${schema.getNamespace}.${schema.getName}")
     val topNS: Option[String] = DependencyInspector.getReferredNamespace(schema)
     val topLevelSchemas: Set[Schema] =
       NestedSchemaExtractor.getNestedSchemas(schema, schemaStore, typeMatcher)
@@ -48,7 +47,6 @@ private[avrohugger] class FileGenerator() {
     typeMatcher: TypeMatcher,
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): Unit = {
-    println(s"protocolToFile ${protocol.getNamespace}.${protocol.getName}")
     val ns = Option(protocol.getNamespace)
     format.compile(classStore, ns, Right(protocol), outDir, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
   }
@@ -63,7 +61,6 @@ private[avrohugger] class FileGenerator() {
     typeMatcher: TypeMatcher,
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): Unit = {
-    println(s"stringToFile ${str}")
     val schemaOrProtocols = stringParser.getSchemaOrProtocols(str, schemaStore)
     schemaOrProtocols.foreach{
       case Left(schema) =>
@@ -92,20 +89,17 @@ private[avrohugger] class FileGenerator() {
     classLoader: ClassLoader,
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): Unit = {
-    println(s"fileToFile3 ${inFile.getAbsolutePath}")
     fileParser.getSchemaOrProtocols(inFile, format, classStore, classLoader) // this is slow
       .foreach{
         case Left(schema) =>
           val name = schema.getNamespace + "." + schema.getName
           if (!processedProtocols.contains(name)) {
-            println(s"schema ${schema.getNamespace}.${schema.getName}")
             schemaToFile(schema, outDir, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
             processedProtocols += name
           }
         case Right(protocol) =>
           val name = protocol.getNamespace + "." + protocol.getName
           if (!processedProtocols.contains(name)) {
-            println(s"protocol ${protocol.getNamespace}.${protocol.getName}")
             protocolToFile(protocol, outDir, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
             processedProtocols += name
           }

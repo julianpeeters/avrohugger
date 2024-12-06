@@ -58,7 +58,7 @@ object StandardScalaTreehugger extends ScalaTreehugger {
 
     // wrap the imports and class definition in a block with comment and package
     val tree = {
-      val blockContent = imports ++ topLevelDefs
+      val blockContent = imports.toList ::: topLevelDefs
       if (namespace.isDefined) BLOCK(blockContent).inPackage(namespace.get)
       else BLOCK(blockContent:_*).withoutPackage
     }.withDoc("MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY")

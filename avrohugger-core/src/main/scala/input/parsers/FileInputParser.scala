@@ -21,6 +21,7 @@ class FileInputParser {
   val schemaParser = new Parser()
 
   var processedFiles: Set[String] = Set.empty
+  var processedSchemas: Set[Either[Schema, Protocol]] = Set.empty
 
   def getSchemaOrProtocols(
                             infile: File,
@@ -77,7 +78,7 @@ class FileInputParser {
       unUnion(parsed.get) // throw the avro parse exception if Failure
     }
 
-    infile.getName.split("\\.").last match {
+    val res = infile.getName.split("\\.").last match {
       case "avro" =>
         val gdr = new GenericDatumReader[GenericRecord]
         val dfr = new DataFileReader(infile, gdr)
@@ -105,7 +106,6 @@ class FileInputParser {
         val importedSchemaOrProtocols = importedFiles.flatMap { file =>
           if(!processedFiles.contains(file.getCanonicalPath)) {
             processedFiles += file.getCanonicalPath
-            println(s"Processing imported file: ${processedFiles.size} ${file.getCanonicalPath}")
             val importParser = new Parser() // else attempts to redefine schemas
             getSchemaOrProtocols(file, format, classStore, classLoader, importParser)
           } else {
@@ -115,7 +115,7 @@ class FileInputParser {
 
         def stripImports(
                           protocol: Protocol,
-                          importedSchemaOrProtocols: List[Either[Schema, Protocol]]) = {
+                          importedSchemaOrProtocols: Set[Either[Schema, Protocol]]) = {
           val imported = importedSchemaOrProtocols.flatMap(avroDef => {
             avroDef match {
               case Left(importedSchema) => List(importedSchema)
@@ -130,7 +130,7 @@ class FileInputParser {
           protocol
         }
 
-        val localProtocol = stripImports(protocol, importedSchemaOrProtocols)
+        val localProtocol = stripImports(protocol, processedSchemas)
         // reverse to dependent classes are generated first
         (Right(localProtocol) +: importedSchemaOrProtocols).reverse
       case _ =>
@@ -139,5 +139,7 @@ class FileInputParser {
             |".avsc" for plain text json files, ".avdl" for IDL files, or .avro
             |for binary.""".trim.stripMargin)
     }
+    res.foreach(processedSchemas += _)
+    res
   }
 }

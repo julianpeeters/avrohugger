@@ -141,27 +141,27 @@ trait Importer {
       .flatMap(schema => {
         schema.getType match {
           case RECORD =>
-            val fieldSchemasWithChildSchemas = getFieldSchemas(schema).toSeq
+            val fieldSchemasWithChildSchemas = getFieldSchemas(schema)
               .filter(s => alreadyImported.contains(s))
               .flatMap(s => nextSchemas(s, alreadyImported + s))
-            Seq(schema) ++ fieldSchemasWithChildSchemas
+            Set(schema) ++ fieldSchemasWithChildSchemas
           case ENUM =>
             Seq(schema)
           case UNION =>
             schema.getTypes().asScala
-              .find(s => s.getType != NULL).toSeq
+              .find(s => s.getType != NULL).toSet
               .filter(s => alreadyImported.contains(s))
               .flatMap(s => nextSchemas(schema, alreadyImported + s))
           case MAP =>
-            Seq(schema.getValueType)
+            Set(schema.getValueType)
               .filter(s => alreadyImported.contains(s))
               .flatMap(s => nextSchemas(schema, alreadyImported + s))
           case ARRAY =>
-            Seq(schema.getElementType)
+            Set(schema.getElementType)
               .filter(s => alreadyImported.contains(s))
               .flatMap(s => nextSchemas(schema, alreadyImported + s))
           case _ =>
-            Seq.empty[Schema]
+            Set.empty[Schema]
         }
       })
       .filter(isRecord)

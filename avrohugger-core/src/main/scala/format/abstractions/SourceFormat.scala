@@ -218,7 +218,6 @@ trait SourceFormat {
     }
     val contents = compilationUnit.codeString.getBytes()
     try { // delete old and/or create new
-      println("deleting old file: " + path)
       Files.deleteIfExists(path) // delete file if exists
       Files.createDirectories(path.getParent) // create all parent folders
       Files.write(path, contents, StandardOpenOption.CREATE)

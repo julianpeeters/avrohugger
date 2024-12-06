@@ -132,6 +132,8 @@ object StandardImporter extends Importer {
                   currentNamespace: Option[String],
                   schemaStore: SchemaStore,
                   typeMatcher: TypeMatcher): Set[Import] = {
+    val switchAnnotSymbol = RootClass.newClass("scala.annotation.switch")
+    val switchImport = Set(IMPORT(switchAnnotSymbol))
     val topLevelSchemas = getTopLevelSchemas(schemaOrProtocol, schemaStore, typeMatcher)
     val recordSchemas = getRecordSchemas(topLevelSchemas)
     val fixedSchemas = getFixedSchemas(topLevelSchemas)
@@ -139,7 +141,7 @@ object StandardImporter extends Importer {
     val userDefinedDeps = getUserDefinedImports(recordSchemas ++ fixedSchemas ++ enumSchemas, currentNamespace, typeMatcher)
     val shapelessDeps = getShapelessImports(recordSchemas, typeMatcher)
     val libraryDeps = shapelessDeps
-    libraryDeps ++ userDefinedDeps
+    libraryDeps ++ userDefinedDeps ++ switchImport
   }
 
 }
