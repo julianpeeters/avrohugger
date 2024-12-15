@@ -63,7 +63,7 @@ Scalding, Spark, Avro, etc.).
 |BYTES|Array[Byte]<br>BigDecimal|Array[Byte]<br>BigDecimal| See [Logical Types: `decimal`](https://github.com/julianpeeters/avrohugger#logical-types-support)|
 |FIXED|case class<br>case class + schema|case class extending `SpecificFixed`| See [Logical Types: `decimal`](https://github.com/julianpeeters/avrohugger#logical-types-support)|
 |ARRAY|Seq<br>List<br>Array<br>Vector|Seq<br>List<br>Array<br>Vector| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
-|UNION|Option<br>Either<br>Shapeless Coproduct|Option<br>Either<br>Shapeless Coproduct| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
+|UNION|Option<br>Either<br>Shapeless Coproduct<br>Scala 3 Union Types|Option<br>Either<br>Shapeless Coproduct<br>Scala 3 Union Types| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 |RECORD|case class<br>case class + schema|case class extending `SpecificRecordBase`| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 |PROTOCOL|_No Type_<br>Scala ADT|RPC trait<br>Scala ADT| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 |Date|java.time.LocalDate<br>java.sql.Date<br>Int|java.time.LocalDate<br>java.sql.Date<br>Int| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
@@ -174,21 +174,21 @@ To reassign Scala types to Avro types, use the following (e.g. for customizing `
 * `array` can be assigned to `ScalaSeq`, `ScalaArray`, `ScalaList`, and `ScalaVector`
 * `enum` can be assigned to `JavaEnum`, `ScalaCaseObjectEnum`, `EnumAsScalaString`, and `ScalaEnumeration`
 * `fixed` can be assigned to `ScalaCaseClassWrapper` and `ScalaCaseClassWrapperWithSchema`(with schema in a companion object)
-* `union` can be assigned to `OptionShapelessCoproduct`, `OptionEitherShapelessCoproduct`, or `OptionalShapelessCoproduct`
+* `union` can be assigned to `OptionShapelessCoproduct`, `OptionEitherShapelessCoproduct`, `OptionalShapelessCoproduct` or `OptionScala3UnionType`
 * `int`, `long`, `float`, `double` can be assigned to `ScalaInt`, `ScalaLong`, `ScalaFloat`, `ScalaDouble`
 * `protocol` can be assigned to `ScalaADT` and `NoTypeGenerated`
 * `decimal` can be assigned to e.g. `ScalaBigDecimal(Some(BigDecimal.RoundingMode.HALF_EVEN))` and `ScalaBigDecimalWithPrecision(None)` (via Shapeless Tagged Types)
 
 Specifically for unions:
 
-| Field Type ⬇️ / Behaviour ➡️            | OptionShapelessCoproduct                      | OptionEitherShapelessCoproduct                | OptionalShapelessCoproduct                    |
-|-----------------------------------------|-----------------------------------------------|-----------------------------------------------|-----------------------------------------------| 
-| `[{"type": "map", "values": "string"}]` | `Map[String, String]`                         | `Map[String, String]`                         | `Map[String, String] :+: CNil`                |
-| `["null", "double"]`                    | `Option[Double]`                              | `Option[Double]`                              | `Option[Double :+: CNil]`                     |
-| `["int", "string"]`                     | `Int :+: String :+: CNil`                     | `Either[Int, String]`                         | `Int :+: String :+: CNil`                     |
-| `["null", "int", "string"]`             | `Option[Int :+: String :+: CNil]`             | `Option[Either[Int, String]]`                 | `Option[Int :+: String :+: CNil]`             |
-| `["boolean", "int", "string"]`          | `Boolean :+: Int :+: String :+: CNil`         | `Boolean :+: Int :+: String :+: CNil`         | `Boolean :+: Int :+: String :+: CNil`         |
-| `["null", "boolean", "int", "string"]`  | `Option[Boolean :+: Int :+: String :+: CNil]` | `Option[Boolean :+: Int :+: String :+: CNil]` | `Option[Boolean :+: Int :+: String :+: CNil]` |
+| Field Type ⬇️ / Behaviour ➡️            | OptionShapelessCoproduct                      | OptionEitherShapelessCoproduct                | OptionalShapelessCoproduct                    | OptionScala3UnionType      |
+|-----------------------------------------|-----------------------------------------------|-----------------------------------------------|-----------------------------------------------|----------------------------|
+| `[{"type": "map", "values": "string"}]` | `Map[String, String]`                         | `Map[String, String]`                         | `Map[String, String] :+: CNil`                | `Map[String, String]`      
+| `["null", "double"]`                    | `Option[Double]`                              | `Option[Double]`                              | `Option[Double :+: CNil]`                     | `Option[Double]`           
+| `["int", "string"]`                     | `Int :+: String :+: CNil`                     | `Either[Int, String]`                         | `Int :+: String :+: CNil`                     | `Int \| String`            
+| `["null", "int", "string"]`             | `Option[Int :+: String :+: CNil]`             | `Option[Either[Int, String]]`                 | `Option[Int :+: String :+: CNil]`             | `Option[Int \| String]`    
+| `["boolean", "int", "string"]`          | `Boolean :+: Int :+: String :+: CNil`         | `Boolean :+: Int :+: String :+: CNil`         | `Boolean :+: Int :+: String :+: CNil`         | `Boolean \| Int \| String` 
+| `["null", "boolean", "int", "string"]`  | `Option[Boolean :+: Int :+: String :+: CNil]` | `Option[Boolean :+: Int :+: String :+: CNil]` | `Option[Boolean :+: Int :+: String :+: CNil]` | `Option[Boolean \| Int \| String]`
 
 ##### Customizable Namespace Mapping:
 
