@@ -104,6 +104,8 @@ class TypeMatcher(
     * union:null,L,R => Option[Either[L, R]]
     * union:null,A,B,C => Option[A :+: B :+: C :+: CNil]
     *
+    * In case of [OptionScala3UnionType] shapeless is replaced with native Scala 3 union types
+    *
     * If a null is found at any position in the union the entire type is wrapped in Option and null removed from the
     * types. Per the avro spec which is ambiguous about this:
     *
@@ -115,9 +117,15 @@ class TypeMatcher(
     */
   private[this] def unionTypeImpl(unionSchemas: List[Schema], typeMatcher: (Schema) => Type) : Type = {
 
-    def shapelessCoproductType(tp: Type*): forest.Type =  {
+    def shapelessCoproductType(tp: Type*): forest.Type = {
       val copTypes = tp.toList :+ typeRef(RootClass.newClass(newTypeName("CNil")))
       val chain: forest.Tree = INFIX_CHAIN(":+:", copTypes.map(t => Ident(t.safeToString)))
+      val chainedS = treeToString(chain)
+      typeRef(RootClass.newClass(newTypeName(chainedS)))
+    }
+
+    def scala3NativeType(tp: Type*): forest.Type = {
+      val chain = Alternative(tp.toList.map(t => Ident(t.safeToString)))
       val chainedS = treeToString(chain)
       typeRef(RootClass.newClass(newTypeName(chainedS)))
     }
@@ -128,6 +136,9 @@ class TypeMatcher(
 
     def unionsAsShapelessCoproductStrategy =
       shapelessCoproductType(nonNullableSchemas.map(typeMatcher): _*)
+
+    def unionsAsScala3UnionTypeStrategy =
+      scala3NativeType(nonNullableSchemas.map(typeMatcher): _*)
 
     def unionsAsOptionShapelessCoproductStrategy = nonNullableSchemas match {
       case List(schemaA) =>
@@ -145,10 +156,17 @@ class TypeMatcher(
         unionsAsShapelessCoproductStrategy
     }
 
+    def scala3NativeUnions = nonNullableSchemas match {
+      case List(schemaA) =>
+        typeMatcher(schemaA)
+      case _ => unionsAsScala3UnionTypeStrategy
+    }
+
     val matchedType = avroScalaTypes.union match {
       case OptionShapelessCoproduct => unionsAsOptionShapelessCoproductStrategy
       case OptionEitherShapelessCoproduct => unionsArityStrategy
       case OptionalShapelessCoproduct => unionsAsShapelessCoproductStrategy
+      case OptionScala3UnionType => scala3NativeUnions
     }
 
     if (includesNull) optionType(matchedType) else matchedType
