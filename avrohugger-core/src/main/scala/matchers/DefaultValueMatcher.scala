@@ -191,10 +191,18 @@ object DefaultValueMatcher {
               .map(typeMatcher.toScalaType(classStore, namespace, _)))
       }
 
+    def unionsScala3Strategy = nonNullableSchemas match {
+      case Nil =>
+        UNIT
+      case schemaA :: _ =>
+        treeMatcher(node, schemaA)
+    }
+
     def matchedTree(classStore: ClassStore, namespace: Option[String]) = typeMatcher.avroScalaTypes.union match {
       case OptionShapelessCoproduct | OptionEitherShapelessCoproduct =>
         unionsArityStrategy(classStore, namespace, typeMatcher, typeMatcher.avroScalaTypes.union.useEitherForTwoNonNullTypes)
       case OptionalShapelessCoproduct => unionsAsOptionalShapelessCoproductStrategy
+      case OptionScala3UnionType => unionsScala3Strategy
     }
 
     node match {

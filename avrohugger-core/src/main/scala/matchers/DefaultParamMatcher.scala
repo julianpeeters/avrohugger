@@ -81,11 +81,18 @@ object DefaultParamMatcher {
       case Schema.Type.UNION =>
         val schemas = avroSchema.getTypes.asScala.toList
         if (avroSchema.isNullable) NONE
-        else if (schemas.size == 1 && !typeMatcher.avroScalaTypes.union.useCoproductForLoneNonNullType)
-          asDefaultParam(classStore, schemas.head, typeMatcher)
-        else if (schemas.size == 2 && typeMatcher.avroScalaTypes.union.useEitherForTwoNonNullTypes)
-          LEFT(asDefaultParam(classStore, schemas.head, typeMatcher))
-        else COPRODUCT(asDefaultParam(classStore, schemas.head, typeMatcher), schemas.map(typeMatcher.toScalaType(classStore, None, _).safeToString))
+        else {
+          typeMatcher.avroScalaTypes.union match {
+            case _: ShapelessUnionType =>
+              if (schemas.size == 1 && !typeMatcher.avroScalaTypes.union.useCoproductForLoneNonNullType)
+                asDefaultParam(classStore, schemas.head, typeMatcher)
+              else if (schemas.size == 2 && typeMatcher.avroScalaTypes.union.useEitherForTwoNonNullTypes)
+                LEFT(asDefaultParam(classStore, schemas.head, typeMatcher))
+              else COPRODUCT(asDefaultParam(classStore, schemas.head, typeMatcher), schemas.map(typeMatcher.toScalaType(classStore, None, _).safeToString))
+            case OptionScala3UnionType =>
+              asDefaultParam(classStore, schemas.head, typeMatcher)
+          }
+        }
       case Schema.Type.ARRAY   =>
         CustomDefaultParamMatcher.checkCustomArrayType(typeMatcher.avroScalaTypes.array) DOT "empty"
       case Schema.Type.MAP     =>
