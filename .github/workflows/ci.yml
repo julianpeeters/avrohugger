@@ -12,14 +12,18 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        scala: [2.13.11, 2.12.18]
-        java: [zulu@1.8, zulu@1.11, zulu@1.17]
+        scala: [2.12.20, 3.3.4]
+        java: ['11', '17', '21']
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v3.0.2
-      - name: Set up Java
-        uses: olafurpg/setup-scala@v13
+      - uses: actions/checkout@v4
+      - name: Setup JDK
+        uses: actions/setup-java@v4
         with:
+          distribution: temurin
           java-version: ${{ matrix.java }}
+          cache: sbt
+      - uses: sbt/setup-sbt@v1
       - name: Run tests
+        shell: bash
         run: sbt ++${{ matrix.scala }} test
