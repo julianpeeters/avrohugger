@@ -194,7 +194,7 @@ object DefaultValueMatcher {
     def unionsScala3Strategy = nonNullableSchemas match {
       case Nil =>
         UNIT
-      case schemaA :: _ => //Coproduct
+      case schemaA :: _ =>
         treeMatcher(node, schemaA)
     }
 
