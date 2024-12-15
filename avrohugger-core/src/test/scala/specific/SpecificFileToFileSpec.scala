@@ -302,7 +302,7 @@ class SpecificFileToFileSpec extends Specification {
     }
   }
 
-  def e20: Result = Result.forall(Seq(OptionalShapelessCoproduct, OptionShapelessCoproduct, OptionEitherShapelessCoproduct))( unionType => {
+  def e20: Result = Result.forall(Seq(OptionalShapelessCoproduct, OptionShapelessCoproduct, OptionEitherShapelessCoproduct, OptionScala3UnionType))( unionType => {
     val inOrderSchema = new java.io.File("avrohugger-core/src/test/avro/unions_with_coproduct2.avsc")
     val gen = Generator(format = SpecificRecord, avroScalaCustomTypes = Some(AvroScalaTypes.defaults.copy(union = unionType)))
     val outDir = gen.defaultOutputDir + s"/specific/$unionType"

@@ -1,0 +1,60 @@
+@namespace("example.idl")
+protocol AllUnionsWithScala3UnionType {
+
+  record Event1 {
+  }
+
+  record Event2 {
+  }
+
+  record Event3 {
+  }
+
+  record Event4 {
+  }
+
+  record ShouldRenderAsScala3UnionType {
+    union { null, Event1 } value;
+  }
+
+  record ShouldRenderAsScala3UnionType2 {
+    union { Event1, null } value;
+  }
+
+  record ShouldRenderAsScala3UnionType3 {
+    union { null, Event1, Event2 } value;
+  }
+
+  record ShouldRenderAsScala3UnionType4 {
+    union { Event1, null, Event2 } value;
+  }
+
+  record ShouldRenderAsScala3UnionType5 {
+    union { Event1, Event2, null } value;
+  }
+
+  record ShouldRenderAsScala3UnionType6 {
+    union { null, Event1, Event2, Event3 } value;
+  }
+
+  record ShouldRenderAsScala3UnionType7 {
+    union { Event1, Event2, Event3, null } value;
+  }
+
+  record ShouldRenderAsScala3UnionType8 {
+    union { Event1, Event2, null, Event3 } value;
+  }
+
+  record ShouldRenderAsScala3UnionType9 {
+    union { Event1, Event2 } value;
+  }
+
+  record ShouldRenderAsScala3UnionType10 {
+    union { Event1, Event2, Event3, Event4 } value;
+  }
+
+  record ShouldRenderAsScala3UnionType11 {
+    union { Event1, Event2, Event3, Event4 } value;
+  }
+
+}
