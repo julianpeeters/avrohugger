@@ -15,9 +15,9 @@ class StandardManyFieldsSpec extends Specification {
   val avdlPath = "avrohugger-core/src/test/avro/ManyFields.avdl"
   val avscPath = "avrohugger-core/src/test/avro/ManyFields.avsc"
   
-  val genNonRestricted = new Generator(Standard, restrictedFieldNumber = false)
+  val genNonRestricted = Generator(Standard, restrictedFieldNumber = false)
   val outDirNonRestricted = genNonRestricted.defaultOutputDir + "/standard/non-restricted"
-  val genRestricted = new Generator(Standard, restrictedFieldNumber = true)
+  val genRestricted = Generator(Standard, restrictedFieldNumber = true)
   val outDirRestricted = genRestricted.defaultOutputDir + "/standard/restricted"
   
   def is = s2"""

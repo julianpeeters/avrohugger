@@ -44,38 +44,38 @@ trait Importer {
   // gets enum schemas which may be dependencies
   def getEnumSchemas(
     topLevelSchemas: List[Schema],
-    alreadyImported: List[Schema] = List.empty[Schema]): List[Schema] = {
-    def nextSchemas(s: Schema, us: List[Schema]) = getRecordSchemas(List(s), us)
+    alreadyImported: Set[Schema] = Set.empty[Schema]): List[Schema] = {
+    def nextSchemas(s: Schema, us: Set[Schema]) = getRecordSchemas(List(s), us)
+
     topLevelSchemas
       .flatMap(schema => {
         schema.getType match {
           case RECORD =>
-            val fieldSchemasWithChildSchemas = getFieldSchemas(schema).toSeq
-              .filter(s => alreadyImported.contains(s))
-              .flatMap(s => nextSchemas(s, alreadyImported :+ s))
+            val fieldSchemasWithChildSchemas = getFieldSchemas(schema).toSet
+              .intersect(alreadyImported)
+              .flatMap(s => nextSchemas(s, alreadyImported + s))
             Seq(schema) ++ fieldSchemasWithChildSchemas
           case ENUM =>
             Seq(schema)
           case UNION =>
             schema.getTypes().asScala
-              .find(s => s.getType != NULL).toSeq
-              .filter(s => alreadyImported.contains(s))
-              .flatMap(s => nextSchemas(schema, alreadyImported :+ s))
+              .find(s => s.getType != NULL).toSet
+              .intersect(alreadyImported)
+              .flatMap(s => nextSchemas(schema, alreadyImported + s))
           case MAP =>
-            Seq(schema.getValueType)
-              .filter(s => alreadyImported.contains(s))
-              .flatMap(s => nextSchemas(schema, alreadyImported :+ s))
+            Set(schema.getValueType)
+              .intersect(alreadyImported)
+              .flatMap(s => nextSchemas(schema, alreadyImported + s))
           case ARRAY =>
-            Seq(schema.getElementType)
-              .filter(s => alreadyImported.contains(s))
-              .flatMap(s => nextSchemas(schema, alreadyImported :+ s))
+            Set(schema.getElementType)
+              .intersect(alreadyImported)
+              .flatMap(s => nextSchemas(schema, alreadyImported + s))
           case _ =>
             Seq.empty[Schema]
         }
       })
       .filter(schema => schema.getType == ENUM)
       .distinct
-      .toList
   }
 
   def getFixedSchemas(topLevelSchemas: List[Schema]): List[Schema] =
@@ -88,8 +88,7 @@ trait Importer {
       })
       .filter(_.getType == FIXED)
       .distinct
-      .toList
-  
+
   def getFieldSchemas(schema: Schema): List[Schema] = {
     schema.getFields().asScala.toList.map(field => field.schema)
   }
@@ -126,74 +125,74 @@ trait Importer {
 
     def requiresImportDef(schema: Schema): Boolean = {
       (isRecord(schema) || isEnum(schema) || isFixed(schema)) &&
-      checkNamespace(schema).isDefined     &&
-      checkNamespace(schema) != namespace
+        checkNamespace(schema).isDefined &&
+        checkNamespace(schema) != namespace
     }
 
     recordSchemas
       .filter(schema => requiresImportDef(schema))
       .groupBy(schema => checkNamespace(schema).getOrElse(schema.getNamespace))
       .toList
-      .map(group => group match {
-        case(packageName, fields) => asImportDef(packageName, fields)
-      })
+      .map {
+        case (packageName, fields) => asImportDef(packageName, fields)
+      }
   }
 
   // gets record schemas which may be dependencies
   def getRecordSchemas(
     topLevelSchemas: List[Schema],
-    alreadyImported: List[Schema] = List.empty[Schema]): List[Schema] = {
-    def nextSchemas(s: Schema, us: List[Schema]) = getRecordSchemas(List(s), us)
+    alreadyImported: Set[Schema] = Set.empty[Schema]): List[Schema] = {
+    def nextSchemas(s: Schema, us: Set[Schema]) = getRecordSchemas(List(s), us)
+
     topLevelSchemas
       .flatMap(schema => {
         schema.getType match {
           case RECORD =>
-            val fieldSchemasWithChildSchemas = getFieldSchemas(schema).toSeq
-              .filter(s => alreadyImported.contains(s))
-              .flatMap(s => nextSchemas(s, alreadyImported :+ s))
+            val fieldSchemasWithChildSchemas = getFieldSchemas(schema).toSet
+              .intersect(alreadyImported)
+              .flatMap(s => nextSchemas(s, alreadyImported + s))
             Seq(schema) ++ fieldSchemasWithChildSchemas
           case ENUM =>
             Seq(schema)
           case UNION =>
             schema.getTypes().asScala
-              .find(s => s.getType != NULL).toSeq
-              .filter(s => alreadyImported.contains(s))
-              .flatMap(s => nextSchemas(schema, alreadyImported :+ s))
+              .find(s => s.getType != NULL).toSet
+              .intersect(alreadyImported)
+              .flatMap(s => nextSchemas(schema, alreadyImported + s))
           case MAP =>
-            Seq(schema.getValueType)
-              .filter(s => alreadyImported.contains(s))
-              .flatMap(s => nextSchemas(schema, alreadyImported :+ s))
+            Set(schema.getValueType)
+              .intersect(alreadyImported)
+              .flatMap(s => nextSchemas(schema, alreadyImported + s))
           case ARRAY =>
-            Seq(schema.getElementType)
-              .filter(s => alreadyImported.contains(s))
-              .flatMap(s => nextSchemas(schema, alreadyImported :+ s))
+            Set(schema.getElementType)
+              .intersect(alreadyImported)
+              .flatMap(s => nextSchemas(schema, alreadyImported + s))
           case _ =>
             Seq.empty[Schema]
         }
       })
       .filter(schema => isRecord(schema))
       .distinct
-      .toList
   }
 
   def getTopLevelSchemas(
-    schemaOrProtocol: Either[Schema,  Protocol],
+    schemaOrProtocol: Either[Schema, Protocol],
     schemaStore: SchemaStore,
     typeMatcher: TypeMatcher): List[Schema] = {
     schemaOrProtocol match {
       case Left(schema) =>
-        schema::(NestedSchemaExtractor.getNestedSchemas(schema, schemaStore, typeMatcher))
+        schema :: (NestedSchemaExtractor.getNestedSchemas(schema, schemaStore, typeMatcher))
       case Right(protocol) => protocol.getTypes().asScala.toList.flatMap(schema => {
-        schema::(NestedSchemaExtractor.getNestedSchemas(schema, schemaStore, typeMatcher))
+        schema :: (NestedSchemaExtractor.getNestedSchemas(schema, schemaStore, typeMatcher))
       })
     }
 
   }
 
-  def isFixed(schema: Schema): Boolean = ( schema.getType == FIXED )
+  def isFixed(schema: Schema): Boolean = (schema.getType == FIXED)
 
-  def isEnum(schema: Schema): Boolean = ( schema.getType == ENUM )
+  def isEnum(schema: Schema): Boolean = (schema.getType == ENUM)
 
-  def isRecord(schema: Schema): Boolean = ( schema.getType == RECORD )
+  def isRecord(schema: Schema): Boolean = (schema.getType == RECORD)
 
 }

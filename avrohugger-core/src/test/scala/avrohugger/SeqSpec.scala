@@ -6,6 +6,7 @@ import avrohugger.types._
 import org.specs2.Specification
 import org.specs2.matcher.MatchResult
 import org.specs2.specification.core.SpecStructure
+import util.Util.LineEndingAmbiguousMatcherString
 
 trait SeqSpec {
   self: Specification =>
@@ -43,7 +44,7 @@ trait SeqSpec {
 
     val expectedDep1 = util.Util.readFile(expectedOutput(formatType, outputArrayType)).dropRight(1)
 
-    dep1 === expectedDep1
+    dep1 ===/ expectedDep1
 
   }
 
@@ -60,7 +61,7 @@ trait SeqSpec {
 
     val expectedDep1 = util.Util.readFile(expectedOutput(formatType, outputArrayType)).dropRight(1)
 
-    dep1 === expectedDep1
+    dep1 ===/ expectedDep1
   }
 
 }
