@@ -133,9 +133,9 @@ trait Importer {
       .filter(schema => requiresImportDef(schema))
       .groupBy(schema => checkNamespace(schema).getOrElse(schema.getNamespace))
       .toList
-      .map(group => group match {
+      .map {
         case (packageName, fields) => asImportDef(packageName, fields)
-      })
+      }
   }
 
   // gets record schemas which may be dependencies
@@ -173,7 +173,6 @@ trait Importer {
       })
       .filter(schema => isRecord(schema))
       .distinct
-      .toList
   }
 
   def getTopLevelSchemas(
