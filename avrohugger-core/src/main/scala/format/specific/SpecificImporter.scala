@@ -12,6 +12,7 @@ import treehugger.forest._
 import definitions._
 import treehuggerDSL._
 
+import scala.annotation.tailrec
 import scala.jdk.CollectionConverters._
 
 object SpecificImporter extends Importer {
@@ -62,38 +63,55 @@ object SpecificImporter extends Importer {
 
     def determineShapelessCoproductImports(
       field: Schema.Field,
-      schema: Schema,
-      potentialRecursives: Set[String]): List[String] = schema.getType match {
-      case Schema.Type.UNION =>
-        coproductImportsForUnionType(schema) ++
-          schema.getTypes().asScala.toList.flatMap(s =>
-            determineShapelessCoproductImports(field, s, potentialRecursives))
-      case Schema.Type.ARRAY =>
-        determineShapelessCoproductImports(field, schema.getElementType(), potentialRecursives)
-      case Schema.Type.MAP =>
-        determineShapelessCoproductImports(field, schema.getValueType(), potentialRecursives)
-      case Schema.Type.RECORD =>
-        schema.getFields().asScala.toList.flatMap(f => {
-          if (potentialRecursives.contains(schema.getFullName)) List.empty
-          else determineShapelessCoproductImports(field, f.schema(), potentialRecursives + schema.getFullName)
-        })
-      case _ =>
-        List.empty[String]
+      schema: Schema): List[String] = {
+      var processedSchemas: Set[String] = Set()
+
+      def determineShapelessCoproductImportsRec(
+        field: Schema.Field,
+        schema: Schema): List[String] = {
+        if (processedSchemas.contains(schema.getFullName)) List.empty
+        else {
+          processedSchemas += schema.getFullName
+          schema.getType match {
+            case Schema.Type.UNION =>
+              coproductImportsForUnionType(schema) ++
+                schema.getTypes().asScala.toList.flatMap(s => determineShapelessCoproductImportsRec(field, s))
+            case Schema.Type.ARRAY =>
+              determineShapelessCoproductImportsRec(field, schema.getElementType())
+            case Schema.Type.MAP =>
+              determineShapelessCoproductImportsRec(field, schema.getValueType())
+            case Schema.Type.RECORD =>
+              schema.getFields().asScala.toList.flatMap(f => determineShapelessCoproductImportsRec(field, f.schema()))
+            case _ =>
+              List.empty[String]
+          }
+        }
+      }
+
+      determineShapelessCoproductImportsRec(field, schema)
     }
 
     def determineShapelessTagImport(
-      schema: Schema,
-      potentialRecursives: Set[String]): List[String] = schema.getType match {
-      case Schema.Type.UNION => schema.getTypes().asScala.toList.flatMap(s =>
-        determineShapelessTagImport(s, potentialRecursives))
-      case Schema.Type.ARRAY => determineShapelessTagImport(schema.getElementType(), potentialRecursives)
-      case Schema.Type.MAP => determineShapelessTagImport(schema.getValueType(), potentialRecursives)
-      case Schema.Type.RECORD => schema.getFields().asScala.toList.flatMap(f => {
-        if (potentialRecursives.contains(schema.getFullName)) List.empty
-        else determineShapelessTagImport(f.schema, potentialRecursives + schema.getFullName)
-      })
-      case Schema.Type.BYTES => importsForBigDecimalTagged(schema)
-      case _ => List.empty[String]
+      schema: Schema
+    ): List[String] = {
+      var processedSchemas: Set[String] = Set()
+
+      def determineShapelessTagImportRec(schema: Schema): List[String] = {
+        if (processedSchemas.contains(schema.getFullName)) List.empty
+        else {
+          processedSchemas += schema.getFullName
+          schema.getType match {
+            case Schema.Type.UNION => schema.getTypes().asScala.toList.flatMap(determineShapelessTagImportRec)
+            case Schema.Type.ARRAY => determineShapelessTagImportRec(schema.getElementType())
+            case Schema.Type.MAP => determineShapelessTagImportRec(schema.getValueType())
+            case Schema.Type.RECORD => schema.getFields().asScala.toList.flatMap(f => determineShapelessTagImportRec(f.schema))
+            case Schema.Type.BYTES => importsForBigDecimalTagged(schema)
+            case _ => List.empty[String]
+          }
+        }
+      }
+
+      determineShapelessTagImportRec(schema)
     }
 
     def importsForBigDecimalTagged(schemas: Schema*): List[String] =
@@ -138,13 +156,13 @@ object SpecificImporter extends Importer {
       for {
         topLevelRecordSchema <- topLevelRecordSchemas
         field <- topLevelRecordSchema.getFields().asScala
-        symbol <- determineShapelessCoproductImports(field, field.schema(), Set())
+        symbol <- determineShapelessCoproductImports(field, field.schema())
       } yield symbol
     val shapelessTag: List[String] =
       for {
         topLevelRecordSchema <- topLevelRecordSchemas
         field <- topLevelRecordSchema.getFields().asScala
-        symbol <- determineShapelessTagImport(field.schema(), Set())
+        symbol <- determineShapelessTagImport(field.schema())
       } yield symbol
 
     shapelessImport(shapelessCopSymbols.distinct) ++

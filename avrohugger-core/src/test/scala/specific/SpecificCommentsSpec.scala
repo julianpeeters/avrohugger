@@ -20,7 +20,7 @@ class SpecificCommentsSpec extends Specification {
     val gen = Generator(SpecificRecord)
     val outDir = gen.defaultOutputDir + "/specific/"
     gen.fileToFile(infile, outDir)
-    val sourceRecord = scala.io.Source.fromFile(s"$outDir/com/example/NoSpaces1.scala").mkString
+    val sourceRecord = util.Util.readFile(s"$outDir/com/example/NoSpaces1.scala")
     sourceRecord ===/ util.Util.readFile("avrohugger-core/src/test/expected/comments/specific/NoSpaces1.scala")
   }
   
@@ -29,7 +29,7 @@ class SpecificCommentsSpec extends Specification {
     val gen = Generator(SpecificRecord)
     val outDir = gen.defaultOutputDir + "/specific/"
     gen.fileToFile(infile, outDir)
-    val sourceRecord = scala.io.Source.fromFile(s"$outDir/com/example/NoSpaces2.scala").mkString
+    val sourceRecord = util.Util.readFile(s"$outDir/com/example/NoSpaces2.scala")
     sourceRecord ===/ util.Util.readFile("avrohugger-core/src/test/expected/comments/specific/NoSpaces2.scala")
   }
   
@@ -38,7 +38,7 @@ class SpecificCommentsSpec extends Specification {
     val gen = Generator(SpecificRecord)
     val outDir = gen.defaultOutputDir + "/specific/"
     gen.fileToFile(infile, outDir)
-    val sourceRecord = scala.io.Source.fromFile(s"$outDir/com/example/NoSpaces3.scala").mkString
+    val sourceRecord = util.Util.readFile(s"$outDir/com/example/NoSpaces3.scala")
     sourceRecord ===/ util.Util.readFile("avrohugger-core/src/test/expected/comments/specific/NoSpaces3.scala")
   }
   
@@ -48,7 +48,7 @@ class SpecificCommentsSpec extends Specification {
     val gen = Generator(format = SpecificRecord, avroScalaCustomTypes = Some(myAvroScalaCustomTypes))
     val outDir = gen.defaultOutputDir + "/specific/"
     gen.fileToFile(infile, outDir)
-    val sourceRecord = scala.io.Source.fromFile(s"$outDir/com/example/Example4.scala").mkString
+    val sourceRecord = util.Util.readFile(s"$outDir/com/example/Example4.scala")
     sourceRecord ===/ util.Util.readFile("avrohugger-core/src/test/expected/comments/specific/Example4.scala")
   }
   
@@ -57,7 +57,7 @@ class SpecificCommentsSpec extends Specification {
     val gen = Generator(SpecificRecord)
     val outDir = gen.defaultOutputDir + "/specific/"
     gen.fileToFile(infile, outDir)
-    val sourceRecord = scala.io.Source.fromFile(s"$outDir/com/example/Example5.scala").mkString
+    val sourceRecord = util.Util.readFile(s"$outDir/com/example/Example5.scala")
     sourceRecord ===/ util.Util.readFile("avrohugger-core/src/test/expected/comments/specific/Example5.scala")
   }
     

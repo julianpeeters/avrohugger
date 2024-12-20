@@ -12,7 +12,7 @@ class SpecificSameRecordNameSpec extends mutable.Specification {
       val gen = Generator(SpecificRecord)
       val outDir = gen.defaultOutputDir + "/specific/"
       gen.fileToFile(infile, outDir)
-      val sourceRecord = scala.io.Source.fromFile(s"$outDir/com/countries/Country.scala").mkString
+      val sourceRecord = util.Util.readFile(s"$outDir/com/countries/Country.scala")
       sourceRecord ===/ util.Util.readFile("avrohugger-core/src/test/expected/specific/com/countries/Country.scala")
     }
   }

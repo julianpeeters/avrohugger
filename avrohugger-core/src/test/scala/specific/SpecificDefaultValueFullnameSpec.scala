@@ -12,7 +12,7 @@ class SpecificDefaultValueFullnameSpec extends mutable.Specification {
       val gen = Generator(SpecificRecord)
       val outDir = gen.defaultOutputDir + "/specific/"
       gen.fileToFile(infile, outDir)
-      val sourceRecord = scala.io.Source.fromFile(s"$outDir/example/Room.scala").mkString
+      val sourceRecord = util.Util.readFile(s"$outDir/example/Room.scala")
       sourceRecord ===/ util.Util.readFile("avrohugger-core/src/test/expected/specific/example/Room.scala")
     }
   }
