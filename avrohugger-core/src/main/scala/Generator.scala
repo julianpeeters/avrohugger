@@ -82,10 +82,10 @@ case class Generator(format: SourceFormat,
       targetScalaPartialVersion)
   }
 
-  def filesToFile(
+  def filesToFiles(
     inFiles: List[File],
     outDir: String = defaultOutputDir): Unit = {
-    fileGenerator.filesToFile(
+    fileGenerator.filesToFiles(
       inFiles,
       outDir,
       format,
