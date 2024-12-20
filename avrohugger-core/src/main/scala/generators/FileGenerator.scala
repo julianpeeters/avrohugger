@@ -76,17 +76,17 @@ private[avrohugger] class FileGenerator {
     classLoader: ClassLoader,
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): Unit = {
-    val schemaOrProtocols: List[Either[Schema, Protocol]] =
-      fileParser.getSchemaOrProtocols(inFile, format, classStore, classLoader).distinct
-    schemaOrProtocols.foreach {
-      case Left(schema) =>
-        schemaToFile(schema, outDir, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
-      case Right(protocol) =>
-        protocolToFile(protocol, outDir, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
-    }
+    fileParser.getSchemaOrProtocols(inFile, format, classStore, classLoader)
+      .distinct
+      .foreach {
+        case Left(schema) =>
+          schemaToFile(schema, outDir, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
+        case Right(protocol) =>
+          protocolToFile(protocol, outDir, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
+      }
   }
 
-  def filesToFile(
+  def filesToFiles(
     inFiles: List[File],
     outDir: String,
     format: SourceFormat,
