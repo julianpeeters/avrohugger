@@ -14,7 +14,7 @@ import scala.util.Try
 
 class SpecificFileToFileSpec extends Specification {
 
-  def is = s2"""
+  def is = sequential ^ s2"""
     SpecificRecord Generator fileToFiles method should
       correctly generate a simple case class definition from AVRO $eA
       not generate copy of imported classes in the importing package $e0

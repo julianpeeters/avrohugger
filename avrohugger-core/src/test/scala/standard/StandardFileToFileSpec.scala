@@ -14,7 +14,7 @@ import scala.util.Try
 class StandardFileToFileSpec extends Specification {
 
   def is =
-    s2"""
+    sequential ^ s2"""
     Standard Generator fileToFile method should
     
     correctly generate a simple case class definition from AVRO $eA

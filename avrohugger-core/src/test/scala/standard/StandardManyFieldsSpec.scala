@@ -20,7 +20,7 @@ class StandardManyFieldsSpec extends Specification {
   val genRestricted = Generator(Standard, restrictedFieldNumber = true)
   val outDirRestricted = genRestricted.defaultOutputDir + "/standard/restricted"
   
-  def is = s2"""
+  def is = sequential ^ s2"""
     A Standard Generator should
       generate cases classes when many fields are supported with AVDLs
         with AVDLs $e1
