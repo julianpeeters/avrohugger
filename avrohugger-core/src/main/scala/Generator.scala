@@ -3,7 +3,7 @@ package avrohugger
 import avrohugger.format.abstractions.SourceFormat
 import avrohugger.format._
 import avrohugger.generators.{ FileGenerator, StringGenerator }
-import avrohugger.input.parsers.{ FileInputParser, StringInputParser }
+import avrohugger.input.parsers.StringInputParser
 import avrohugger.matchers.TypeMatcher
 import avrohugger.types.AvroScalaTypes
 import avrohugger.stores.{ ClassStore, SchemaStore }
@@ -20,7 +20,6 @@ case class Generator(format: SourceFormat,
 
   val avroScalaTypes = avroScalaCustomTypes.getOrElse(format.defaultTypes)
   val defaultOutputDir = "target/generated-sources"
-  lazy val fileParser = new FileInputParser
   lazy val stringParser = new StringInputParser
   lazy val schemaParser = new Schema.Parser
   val classStore = new ClassStore
@@ -75,7 +74,6 @@ case class Generator(format: SourceFormat,
       format,
       classStore,
       schemaStore,
-      fileParser,
       typeMatcher,
       classLoader,
       restrictedFieldNumber,
@@ -91,7 +89,6 @@ case class Generator(format: SourceFormat,
       format,
       classStore,
       schemaStore,
-      fileParser,
       typeMatcher,
       classLoader,
       restrictedFieldNumber,
@@ -127,7 +124,6 @@ case class Generator(format: SourceFormat,
       format,
       classStore,
       schemaStore,
-      fileParser,
       typeMatcher,
       classLoader,
       restrictedFieldNumber,

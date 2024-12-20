@@ -71,11 +71,11 @@ private[avrohugger] class FileGenerator {
     format: SourceFormat,
     classStore: ClassStore,
     schemaStore: SchemaStore,
-    fileParser: FileInputParser,
     typeMatcher: TypeMatcher,
     classLoader: ClassLoader,
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): Unit = {
+    val fileParser = new FileInputParser
     distinctSchemaOrProtocol(fileParser.getSchemaOrProtocols(inFile, format, classStore, classLoader))
       .foreach {
         case Left(schema) =>
@@ -91,11 +91,11 @@ private[avrohugger] class FileGenerator {
     format: SourceFormat,
     classStore: ClassStore,
     schemaStore: SchemaStore,
-    fileParser: FileInputParser,
     typeMatcher: TypeMatcher,
     classLoader: ClassLoader,
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): Unit = {
+    val fileParser = new FileInputParser
     distinctSchemaOrProtocol(inFiles.flatMap(fileParser.getSchemaOrProtocols(_, format, classStore, classLoader)))
       .foreach {
         case Left(schema) =>

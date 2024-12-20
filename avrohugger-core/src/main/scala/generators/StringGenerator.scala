@@ -90,11 +90,11 @@ private[avrohugger] class StringGenerator {
     format: SourceFormat,
     classStore: ClassStore,
     schemaStore: SchemaStore,
-    fileParser: FileInputParser,
     typeMatcher: TypeMatcher,
     classLoader: ClassLoader,
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): List[String] = {
+    val fileParser = new FileInputParser
     try {
       val schemaOrProtocols: List[Either[Schema, Protocol]] = fileParser.getSchemaOrProtocols(inFile, format, classStore, classLoader)
       schemaOrProtocols.flatMap {
