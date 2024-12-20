@@ -56,7 +56,7 @@ private[avrohugger] class FileGenerator {
     typeMatcher: TypeMatcher,
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): Unit = {
-    val schemaOrProtocols = stringParser.getSchemaOrProtocols(str, schemaStore)
+    val schemaOrProtocols = stringParser.getSchemaOrProtocols(str, schemaStore).distinct
     schemaOrProtocols.foreach {
       case Left(schema) =>
         schemaToFile(schema, outDir, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
@@ -77,13 +77,34 @@ private[avrohugger] class FileGenerator {
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): Unit = {
     val schemaOrProtocols: List[Either[Schema, Protocol]] =
-      fileParser.getSchemaOrProtocols(inFile, format, classStore, classLoader)
+      fileParser.getSchemaOrProtocols(inFile, format, classStore, classLoader).distinct
     schemaOrProtocols.foreach {
       case Left(schema) =>
         schemaToFile(schema, outDir, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
       case Right(protocol) =>
         protocolToFile(protocol, outDir, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
     }
+  }
+
+  def filesToFile(
+    inFiles: List[File],
+    outDir: String,
+    format: SourceFormat,
+    classStore: ClassStore,
+    schemaStore: SchemaStore,
+    fileParser: FileInputParser,
+    typeMatcher: TypeMatcher,
+    classLoader: ClassLoader,
+    restrictedFields: Boolean,
+    targetScalaPartialVersion: String): Unit = {
+    inFiles.flatMap(fileParser.getSchemaOrProtocols(_, format, classStore, classLoader))
+      .distinct
+      .foreach {
+        case Left(schema) =>
+          schemaToFile(schema, outDir, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
+        case Right(protocol) =>
+          protocolToFile(protocol, outDir, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
+      }
   }
 
 }

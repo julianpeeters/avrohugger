@@ -82,6 +82,22 @@ case class Generator(format: SourceFormat,
       targetScalaPartialVersion)
   }
 
+  def filesToFile(
+    inFiles: List[File],
+    outDir: String = defaultOutputDir): Unit = {
+    fileGenerator.filesToFile(
+      inFiles,
+      outDir,
+      format,
+      classStore,
+      schemaStore,
+      fileParser,
+      typeMatcher,
+      classLoader,
+      restrictedFieldNumber,
+      targetScalaPartialVersion)
+  }
+
   //////// methods for writing to a list of definitions in String format ///////
   def schemaToStrings(schema: Schema): List[String] = {
     stringGenerator.schemaToStrings(
