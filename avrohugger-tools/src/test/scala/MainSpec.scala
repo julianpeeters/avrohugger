@@ -1,6 +1,6 @@
-import java.io.{ByteArrayOutputStream, PrintStream}
+import java.io.{ ByteArrayOutputStream, PrintStream }
 
-import avrohugger.tool.{Directory, Runner}
+import avrohugger.tool.{ Directory, Runner }
 import org.specs2._
 
 import scala.jdk.CollectionConverters._
@@ -9,12 +9,11 @@ import scala.jdk.CollectionConverters._
 class MainSpec extends mutable.Specification {
   "tool descriptions fit in 80 characters" in {
     val r: Runner = new Runner(null, null, null)
-    val descResults = r.toolsMap.values().asScala.map(t => {
-      if (r.maxLen + 2 + t.getShortDescription().length() > 80) true
-      else false
-    })
+    val descResults = r.toolsMap.values().asScala.exists { t =>
+      r.maxLen + 2 + t.getShortDescription().length() > 80
+    }
     //make sure there is no tool that didn't pass the desc. length test
-    descResults.exists(x => x == true) === false
+    descResults === false
   }
 
   "successful runs yield zero exit code" in {

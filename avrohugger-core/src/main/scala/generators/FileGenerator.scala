@@ -2,20 +2,16 @@ package avrohugger
 package generators
 
 import avrohugger.format.abstractions.SourceFormat
-import avrohugger.input.DependencyInspector
-import avrohugger.input.NestedSchemaExtractor
-// import avrohugger.input.reflectivecompilation.schemagen._
-import avrohugger.input.parsers.{ FileInputParser, StringInputParser}
+import avrohugger.input.{ DependencyInspector, NestedSchemaExtractor }
+import avrohugger.input.parsers.{ FileInputParser, StringInputParser }
 import avrohugger.matchers.TypeMatcher
 import avrohugger.stores.{ ClassStore, SchemaStore }
-
-import java.io.{File, FileNotFoundException, IOException}
-
 import org.apache.avro.{ Protocol, Schema }
-import org.apache.avro.Schema.Type.ENUM
+
+import java.io.File
 
 // Unable to overload this class' methods because outDir uses a default value
-private[avrohugger] object FileGenerator {
+private[avrohugger] class FileGenerator {
 
   def schemaToFile(
     schema: Schema,
@@ -60,17 +56,13 @@ private[avrohugger] object FileGenerator {
     typeMatcher: TypeMatcher,
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): Unit = {
-    val schemaOrProtocols = stringParser.getSchemaOrProtocols(str, schemaStore)
-    schemaOrProtocols.foreach(schemaOrProtocol => {
-      schemaOrProtocol match {
-        case Left(schema) => {
-          schemaToFile(schema, outDir, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
-        }
-        case Right(protocol) => {
-          protocolToFile(protocol, outDir, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
-        }
-      }
-    })
+    val schemaOrProtocols = stringParser.getSchemaOrProtocols(str, schemaStore).distinct
+    schemaOrProtocols.foreach {
+      case Left(schema) =>
+        schemaToFile(schema, outDir, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
+      case Right(protocol) =>
+        protocolToFile(protocol, outDir, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
+    }
   }
 
   def fileToFile(
@@ -84,16 +76,35 @@ private[avrohugger] object FileGenerator {
     classLoader: ClassLoader,
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): Unit = {
-    val schemaOrProtocols: List[Either[Schema, Protocol]] =
-      fileParser.getSchemaOrProtocols(inFile, format, classStore, classLoader)
-    schemaOrProtocols.foreach(schemaOrProtocol => schemaOrProtocol match {
-      case Left(schema) => {
-        schemaToFile(schema, outDir, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
+    fileParser.getSchemaOrProtocols(inFile, format, classStore, classLoader)
+      .distinct
+      .foreach {
+        case Left(schema) =>
+          schemaToFile(schema, outDir, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
+        case Right(protocol) =>
+          protocolToFile(protocol, outDir, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
       }
-      case Right(protocol) => {
-        protocolToFile(protocol, outDir, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
+  }
+
+  def filesToFiles(
+    inFiles: List[File],
+    outDir: String,
+    format: SourceFormat,
+    classStore: ClassStore,
+    schemaStore: SchemaStore,
+    fileParser: FileInputParser,
+    typeMatcher: TypeMatcher,
+    classLoader: ClassLoader,
+    restrictedFields: Boolean,
+    targetScalaPartialVersion: String): Unit = {
+    inFiles.flatMap(fileParser.getSchemaOrProtocols(_, format, classStore, classLoader))
+      .distinct
+      .foreach {
+        case Left(schema) =>
+          schemaToFile(schema, outDir, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
+        case Right(protocol) =>
+          protocolToFile(protocol, outDir, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
       }
-    })
   }
 
 }

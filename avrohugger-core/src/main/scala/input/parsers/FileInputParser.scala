@@ -103,7 +103,7 @@ class FileInputParser {
           val importedSchemaOrProtocols = importedFiles.flatMap(file => {
             val importParser = new Parser() // else attempts to redefine schemas
             getSchemaOrProtocols(file, format, classStore, classLoader, importParser)
-          }).toList
+          })
           def stripImports(
             protocol: Protocol,
             importedSchemaOrProtocols: List[Either[Schema, Protocol]]) = {
