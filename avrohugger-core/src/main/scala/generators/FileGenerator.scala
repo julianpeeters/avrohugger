@@ -56,13 +56,13 @@ private[avrohugger] class FileGenerator {
     typeMatcher: TypeMatcher,
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): Unit = {
-    val schemaOrProtocols = stringParser.getSchemaOrProtocols(str, schemaStore).distinct
-    schemaOrProtocols.foreach {
-      case Left(schema) =>
-        schemaToFile(schema, outDir, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
-      case Right(protocol) =>
-        protocolToFile(protocol, outDir, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
-    }
+    distinctSchemaOrProtocol(stringParser.getSchemaOrProtocols(str, schemaStore))
+      .foreach {
+        case Left(schema) =>
+          schemaToFile(schema, outDir, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
+        case Right(protocol) =>
+          protocolToFile(protocol, outDir, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
+      }
   }
 
   def fileToFile(
@@ -76,8 +76,7 @@ private[avrohugger] class FileGenerator {
     classLoader: ClassLoader,
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): Unit = {
-    fileParser.getSchemaOrProtocols(inFile, format, classStore, classLoader)
-      .distinct
+    distinctSchemaOrProtocol(fileParser.getSchemaOrProtocols(inFile, format, classStore, classLoader))
       .foreach {
         case Left(schema) =>
           schemaToFile(schema, outDir, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
@@ -97,14 +96,23 @@ private[avrohugger] class FileGenerator {
     classLoader: ClassLoader,
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): Unit = {
-    inFiles.flatMap(fileParser.getSchemaOrProtocols(_, format, classStore, classLoader))
-      .distinct
+    distinctSchemaOrProtocol(inFiles.flatMap(fileParser.getSchemaOrProtocols(_, format, classStore, classLoader)))
       .foreach {
         case Left(schema) =>
           schemaToFile(schema, outDir, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
         case Right(protocol) =>
           protocolToFile(protocol, outDir, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
       }
+  }
+
+  private def distinctSchemaOrProtocol(schemaOrProtocols: List[Either[Schema, Protocol]]): List[Either[Schema, Protocol]] = {
+    schemaOrProtocols.map {
+        case Left(schema) => schema.getFullName -> Left(schema)
+        case Right(protocol) => Option(protocol.getNamespace).map(_ + ".").getOrElse("") + protocol.getName -> Right(protocol)
+      }
+      .toMap
+      .values
+      .toList
   }
 
 }
