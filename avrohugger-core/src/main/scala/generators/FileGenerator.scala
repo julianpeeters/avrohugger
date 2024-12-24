@@ -106,13 +106,25 @@ private[avrohugger] class FileGenerator {
   }
 
   private def distinctSchemaOrProtocol(schemaOrProtocols: List[Either[Schema, Protocol]]): List[Either[Schema, Protocol]] = {
-    schemaOrProtocols.map {
-        case Left(schema) => schema.getFullName -> Left(schema)
-        case Right(protocol) => Option(protocol.getNamespace).map(_ + ".").getOrElse("") + protocol.getName -> Right(protocol)
-      }
-      .toMap
-      .values
-      .toList
+    var processed = Set.empty[String]
+
+    schemaOrProtocols.flatMap {
+      case Left(schema) =>
+        if (!processed.contains(schema.getFullName)) {
+          processed += schema.getFullName
+          Some(Left(schema))
+        } else {
+          None
+        }
+      case Right(protocol) =>
+        val fullName = Option(protocol.getNamespace).map(ns => s"$ns.${protocol.getName}").getOrElse(protocol.getName)
+        if (!processed.contains(fullName)) {
+          processed += fullName
+          Some(Right(protocol))
+        } else {
+          None
+        }
+    }
   }
 
 }
