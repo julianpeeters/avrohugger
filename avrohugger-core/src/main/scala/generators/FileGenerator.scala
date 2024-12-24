@@ -6,6 +6,7 @@ import avrohugger.input.{ DependencyInspector, NestedSchemaExtractor }
 import avrohugger.input.parsers.{ FileInputParser, StringInputParser }
 import avrohugger.matchers.TypeMatcher
 import avrohugger.stores.{ ClassStore, SchemaStore }
+import org.apache.avro.Schema.Parser
 import org.apache.avro.{ Protocol, Schema }
 
 import java.io.File
@@ -71,11 +72,12 @@ private[avrohugger] class FileGenerator {
     format: SourceFormat,
     classStore: ClassStore,
     schemaStore: SchemaStore,
+    fileParser: FileInputParser,
+    schemaParser: Parser,
     typeMatcher: TypeMatcher,
     classLoader: ClassLoader,
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): Unit = {
-    val fileParser = new FileInputParser
     distinctSchemaOrProtocol(fileParser.getSchemaOrProtocols(inFile, format, classStore, classLoader))
       .foreach {
         case Left(schema) =>
@@ -91,11 +93,12 @@ private[avrohugger] class FileGenerator {
     format: SourceFormat,
     classStore: ClassStore,
     schemaStore: SchemaStore,
+    fileParser: FileInputParser,
+    schemaParser: Parser,
     typeMatcher: TypeMatcher,
     classLoader: ClassLoader,
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): Unit = {
-    val fileParser = new FileInputParser
     distinctSchemaOrProtocol(inFiles.flatMap(fileParser.getSchemaOrProtocols(_, format, classStore, classLoader)))
       .foreach {
         case Left(schema) =>

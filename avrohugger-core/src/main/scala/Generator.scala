@@ -3,11 +3,13 @@ package avrohugger
 import avrohugger.format.abstractions.SourceFormat
 import avrohugger.format._
 import avrohugger.generators.{ FileGenerator, StringGenerator }
-import avrohugger.input.parsers.StringInputParser
+import avrohugger.input.parsers.{ FileInputParser, StringInputParser }
 import avrohugger.matchers.TypeMatcher
 import avrohugger.types.AvroScalaTypes
 import avrohugger.stores.{ ClassStore, SchemaStore }
+import org.apache.avro.Schema.Parser
 import org.apache.avro.{ Protocol, Schema }
+
 import java.io.File
 
 // Unable to overload this class' methods because outDir uses a default value
@@ -20,6 +22,7 @@ case class Generator(format: SourceFormat,
 
   val avroScalaTypes = avroScalaCustomTypes.getOrElse(format.defaultTypes)
   val defaultOutputDir = "target/generated-sources"
+  lazy val fileParser = new FileInputParser
   lazy val stringParser = new StringInputParser
   lazy val schemaParser = new Schema.Parser
   val classStore = new ClassStore
@@ -74,6 +77,8 @@ case class Generator(format: SourceFormat,
       format,
       classStore,
       schemaStore,
+      fileParser,
+      schemaParser,
       typeMatcher,
       classLoader,
       restrictedFieldNumber,
@@ -89,6 +94,8 @@ case class Generator(format: SourceFormat,
       format,
       classStore,
       schemaStore,
+      fileParser,
+      schemaParser,
       typeMatcher,
       classLoader,
       restrictedFieldNumber,
@@ -124,6 +131,8 @@ case class Generator(format: SourceFormat,
       format,
       classStore,
       schemaStore,
+      fileParser,
+      schemaParser,
       typeMatcher,
       classLoader,
       restrictedFieldNumber,

@@ -19,14 +19,13 @@ import scala.util.Try
 class FileInputParser {
 
   var processedFiles: Set[String] = Set.empty
-  val schemaParser = new Parser()
 
   def getSchemaOrProtocols(
     infile: File,
     format: SourceFormat,
     classStore: ClassStore,
     classLoader: ClassLoader,
-    parser: Parser = schemaParser): List[Either[Schema, Protocol]] = {
+    parser: Parser): List[Either[Schema, Protocol]] = {
     def unUnion(schema: Schema) = {
       schema.getType match {
         case UNION => schema.getTypes().asScala.toList
@@ -105,10 +104,10 @@ class FileInputParser {
             * of all imported types and generate them separately.
             */
           val importedFiles = IdlImportParser.getImportedFiles(infile, classLoader)
-          val importedSchemaOrProtocols = importedFiles.flatMap(file => {
+          val importedSchemaOrProtocols = importedFiles.flatMap { file =>
             val importParser = new Parser() // else attempts to redefine schemas
             getSchemaOrProtocols(file, format, classStore, classLoader, importParser)
-          })
+          }
 
           def stripImports(
             protocol: Protocol,
