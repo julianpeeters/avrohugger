@@ -78,7 +78,7 @@ private[avrohugger] class FileGenerator {
     classLoader: ClassLoader,
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): Unit = {
-    distinctSchemaOrProtocol(fileParser.getSchemaOrProtocols(inFile, format, classStore, classLoader))
+    distinctSchemaOrProtocol(fileParser.getSchemaOrProtocols(inFile, format, classStore, classLoader, schemaParser))
       .foreach {
         case Left(schema) =>
           schemaToFile(schema, outDir, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
@@ -99,7 +99,7 @@ private[avrohugger] class FileGenerator {
     classLoader: ClassLoader,
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): Unit = {
-    distinctSchemaOrProtocol(inFiles.flatMap(fileParser.getSchemaOrProtocols(_, format, classStore, classLoader)))
+    distinctSchemaOrProtocol(inFiles.flatMap(fileParser.getSchemaOrProtocols(_, format, classStore, classLoader, schemaParser)))
       .foreach {
         case Left(schema) =>
           schemaToFile(schema, outDir, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
