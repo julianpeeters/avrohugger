@@ -114,11 +114,11 @@ class FileInputParser {
           protocol: Protocol,
           importedSchemaOrProtocols: Set[Either[Schema, Protocol]]) = {
           val imported = importedSchemaOrProtocols.flatMap {
-            case Left(importedSchema) => Set(importedSchema)
+            case Left(importedSchema) => List(importedSchema)
             case Right(importedProtocol) => importedProtocol.getTypes().asScala
           }
-          val types = protocol.getTypes().asScala.toSet
-          val localTypes = types -- imported
+          val types = protocol.getTypes().asScala.toList
+          val localTypes = types.filterNot(imported.contains)
           protocol.setTypes(localTypes.asJava)
           protocol
         }
