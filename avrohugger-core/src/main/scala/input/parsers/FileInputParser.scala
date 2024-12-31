@@ -19,7 +19,7 @@ import scala.util.Try
 class FileInputParser {
 
   var processedFiles: Set[String] = Set.empty
-  var processedSchemas: Set[Either[Schema, Protocol]] = Set.empty
+  var processedSchemas: Set[Schema] = Set.empty
 
   def getSchemaOrProtocols(
     infile: File,
@@ -110,13 +110,7 @@ class FileInputParser {
           }
         }
 
-        def stripImports(
-          protocol: Protocol,
-          importedSchemaOrProtocols: Set[Either[Schema, Protocol]]) = {
-          val imported = importedSchemaOrProtocols.flatMap {
-            case Left(importedSchema) => List(importedSchema)
-            case Right(importedProtocol) => importedProtocol.getTypes().asScala
-          }
+        def stripImports(protocol: Protocol, imported: Set[Schema]) = {
           val types = protocol.getTypes().asScala.toList
           val localTypes = types.filterNot(imported.contains)
           protocol.setTypes(localTypes.asJava)
@@ -132,7 +126,10 @@ class FileInputParser {
             |".avsc" for plain text json files, ".avdl" for IDL files, or .avro
             |for binary.""".trim.stripMargin)
     }
-    res.foreach(processedSchemas += _)
+    res.foreach {
+      case Left(importedSchema) => processedSchemas += importedSchema
+      case Right(importedProtocol) => processedSchemas ++= importedProtocol.getTypes().asScala
+    }
     res
   }
 }
