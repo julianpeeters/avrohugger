@@ -119,7 +119,7 @@ _Note:_ Currently [Treehugger](http://eed3si9n.com/treehugger/comments.html#Scal
 
 ##### Get the dependency with:
 
-    "com.julianpeeters" %% "avrohugger-core" % "2.9.0"
+    "com.julianpeeters" %% "avrohugger-core" % "2.10.0"
 
 
 ##### Description:
@@ -211,7 +211,7 @@ namespace rewritten. Multiple conflicting wildcards are not permitted.
 
 ##### Get the dependency with:
 
-    "com.julianpeeters" %% "avrohugger-filesorter" % "2.9.0"
+    "com.julianpeeters" %% "avrohugger-filesorter" % "2.10.0"
     
 
 ##### Description:
@@ -231,17 +231,17 @@ To ensure dependent schemas are compiled in the proper order (thus avoiding `org
 #### `avrohugger-tools`
 
 
-  Download the avrohugger-tools jar for Scala [2.12](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.12/2.9.0/avrohugger-tools_2.12-2.9.0-assembly.jar), or Scala [2.13](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.13/2.9.0/avrohugger-tools_2.13-2.9.0-assembly.jar) (>30MB!) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
+  Download the avrohugger-tools jar for Scala [2.12](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.12/2.10.0/avrohugger-tools_2.12-2.10.0-assembly.jar), or Scala [2.13](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.13/2.10.0/avrohugger-tools_2.13-2.10.0-assembly.jar) (>30MB!) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
 
 
 * `generate` generates Scala case class definitions:
 
-`java -jar /path/to/avrohugger-tools_2.12-2.9.0-assembly.jar generate schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.12-2.10.0-assembly.jar generate schema user.avsc . `
 
 
 * `generate-specific` generates definitions that extend Avro's `SpecificRecordBase`:
 
-`java -jar /path/to/avrohugger-tools_2.12-2.9.0-assembly.jar generate-specific schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_2.12-2.10.0-assembly.jar generate-specific schema user.avsc . `
 
 
 ## Warnings
