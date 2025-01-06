@@ -7,9 +7,9 @@ import avrohugger.input.NestedSchemaExtractor
 import avrohugger.input.parsers.{ FileInputParser, StringInputParser }
 import avrohugger.matchers.TypeMatcher
 import avrohugger.stores.{ ClassStore, SchemaStore }
+import org.apache.avro.Schema.Parser
 
 import java.io.{ File, FileNotFoundException, IOException }
-
 import org.apache.avro.{ Protocol, Schema }
 
 // Unable to overload this class' methods because outDir uses a default value
@@ -91,12 +91,13 @@ private[avrohugger] class StringGenerator {
     classStore: ClassStore,
     schemaStore: SchemaStore,
     fileParser: FileInputParser,
+    schemaParser: Parser,
     typeMatcher: TypeMatcher,
     classLoader: ClassLoader,
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): List[String] = {
     try {
-      val schemaOrProtocols: List[Either[Schema, Protocol]] = fileParser.getSchemaOrProtocols(inFile, format, classStore, classLoader)
+      val schemaOrProtocols: List[Either[Schema, Protocol]] = fileParser.getSchemaOrProtocols(inFile, format, classStore, classLoader, schemaParser)
       schemaOrProtocols.flatMap {
         case Left(schema) =>
           schemaToStrings(schema, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)

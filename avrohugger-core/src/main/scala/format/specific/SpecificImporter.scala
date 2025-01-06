@@ -25,8 +25,7 @@ object SpecificImporter extends Importer {
 
     val switchAnnotSymbol = RootClass.newClass("scala.annotation.switch")
     val switchImport = IMPORT(switchAnnotSymbol)
-    val topLevelSchemas =
-      getTopLevelSchemas(schemaOrProtocol, schemaStore, typeMatcher)
+    val topLevelSchemas = getTopLevelSchemas(schemaOrProtocol, schemaStore, typeMatcher)
     val recordSchemas = getRecordSchemas(topLevelSchemas)
     val enumSchemas = getEnumSchemas(topLevelSchemas)
     val userDefinedDeps = getUserDefinedImports(recordSchemas ++ enumSchemas, currentNamespace, typeMatcher)
@@ -42,7 +41,6 @@ object SpecificImporter extends Importer {
         else libraryDeps ++ userDefinedDeps
       }
       case Right(protocol) => {
-        val types = protocol.getTypes().asScala.toList
         val messages = protocol.getMessages.asScala.toMap
         if (messages.isEmpty) switchImport :: libraryDeps ::: userDefinedDeps // for ADT
         else List.empty // for RPC
