@@ -41,7 +41,6 @@ object NestedSchemaExtractor {
                 }
                 case UNION => fieldSchema.getTypes().asScala.toList.flatMap(x => flattenSchema(x))
                 case ENUM => {
-                  // if the field schema is one that has already been stored, use that one
                   if (schemaStore.schemas.contains(fieldSchema.getFullName)) List()
                   else List(fieldSchema)
                 }
@@ -54,13 +53,15 @@ object NestedSchemaExtractor {
               }
             }
 
-            fieldSchemas
+            fieldSchemas.distinct
               .flatMap(flattenSchema)
               .filter { schema =>
-                if (typeMatcher.avroScalaTypes.`enum` == EnumAsScalaString)
+                if (typeMatcher.avroScalaTypes.`enum` == EnumAsScalaString) {
                   schema.getType == RECORD | schema.getType == FIXED
-                else
+                }
+                else {
                   schema.getType == RECORD | schema.getType == ENUM | schema.getType == FIXED
+                }
               }
           case ENUM => List(schema)
           case FIXED => List(schema)

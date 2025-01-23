@@ -27,7 +27,7 @@ private[avrohugger] class StringGenerator {
     val topLevels =
       NestedSchemaExtractor.getNestedSchemas(schema, schemaStore, typeMatcher)
     //reversed to process nested classes first
-    val compilationUnits = topLevels.distinct.reverse.flatMap(schema => {
+    val compilationUnits = topLevels.reverse.distinct.flatMap(schema => {
       // pass in the top-level schema's namespace if the nested schema has none
       val maybeNS = DependencyInspector.getReferredNamespace(schema).orElse(maybeNamespace)
       format.asCompilationUnits(
