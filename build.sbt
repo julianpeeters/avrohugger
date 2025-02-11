@@ -2,11 +2,11 @@ lazy val avroVersion = "1.11.4"
 
 lazy val commonSettings = Seq(
   organization := "com.julianpeeters",
-  version := "2.11.2",
+  version := "2.11.3",
   ThisBuild / versionScheme := Some("semver-spec"),
   scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature"),
   Test / scalacOptions ++= Seq("-Yrangepos"),
-  scalaVersion := "3.3.4",
+  scalaVersion := "3.3.5",
   crossScalaVersions := Seq("2.12.20", "2.13.16", scalaVersion.value),
   libraryDependencies += "org.apache.avro" % "avro" % avroVersion,
   libraryDependencies += "org.apache.avro" % "avro-compiler" % avroVersion,

@@ -36,7 +36,7 @@ object NestedSchemaExtractor {
                   // if the field schema is one that has already been stored, use that one
                   if (schemaStore.schemas.contains(fieldSchema.getFullName)) List()
                   // if we've already seen this schema (recursive schemas) don't traverse further
-                  else fieldSchema :: extract(fieldSchema)
+                  else extract(fieldSchema):+fieldSchema
 
                 }
                 case UNION => fieldSchema.getTypes().asScala.toList.flatMap(x => flattenSchema(x))
@@ -53,7 +53,8 @@ object NestedSchemaExtractor {
               }
             }
 
-            fieldSchemas.distinct
+            // println(s"FIELDS: ${fieldSchemas.distinct.map(_.getFullName).mkString("\n\n")}")
+            fieldSchemas
               .flatMap(flattenSchema)
               .filter { schema =>
                 if (typeMatcher.avroScalaTypes.`enum` == EnumAsScalaString) {
@@ -69,8 +70,8 @@ object NestedSchemaExtractor {
         }
       }
     }
-
-    schema :: extract(schema)
+    // most-nested schemas should be compiled first 
+    extract(schema):+schema
   }
 }
 
