@@ -53,7 +53,6 @@ object NestedSchemaExtractor {
               }
             }
 
-            // println(s"FIELDS: ${fieldSchemas.distinct.map(_.getFullName).mkString("\n\n")}")
             fieldSchemas
               .flatMap(flattenSchema)
               .filter { schema =>
