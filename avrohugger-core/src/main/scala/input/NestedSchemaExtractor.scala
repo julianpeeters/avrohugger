@@ -32,23 +32,10 @@ object NestedSchemaExtractor {
               fieldSchema.getType match {
                 case ARRAY => flattenSchema(fieldSchema.getElementType)
                 case MAP => flattenSchema(fieldSchema.getValueType)
-                case RECORD => {
-                  // if the field schema is one that has already been stored, use that one
-                  if (schemaStore.schemas.contains(fieldSchema.getFullName)) List()
-                  // if we've already seen this schema (recursive schemas) don't traverse further
-                  else extract(fieldSchema):+fieldSchema
-
-                }
+                case RECORD => extract(fieldSchema) :+ fieldSchema
                 case UNION => fieldSchema.getTypes().asScala.toList.flatMap(x => flattenSchema(x))
-                case ENUM => {
-                  if (schemaStore.schemas.contains(fieldSchema.getFullName)) List()
-                  else List(fieldSchema)
-                }
-                case FIXED => {
-                  // if the field schema is one that has already been stored, use that one
-                  if (schemaStore.schemas.contains(fieldSchema.getFullName)) List()
-                  else List(fieldSchema)
-                }
+                case ENUM => List(fieldSchema)
+                case FIXED => List(fieldSchema)
                 case _ => List(fieldSchema)
               }
             }
@@ -70,7 +57,7 @@ object NestedSchemaExtractor {
       }
     }
     // most-nested schemas should be compiled first 
-    extract(schema):+schema
+    extract(schema) :+ schema
   }
 }
 
