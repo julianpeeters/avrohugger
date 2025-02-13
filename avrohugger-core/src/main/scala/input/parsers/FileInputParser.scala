@@ -75,7 +75,7 @@ class FileInputParser {
       }
       unUnion(parsed.get) // throw the avro parse exception if Failure
     }
-
+    processedFiles += infile.getCanonicalPath
     val res = infile.getName.split("\\.").last match {
       case "avro" =>
         val gdr = new GenericDatumReader[GenericRecord]
