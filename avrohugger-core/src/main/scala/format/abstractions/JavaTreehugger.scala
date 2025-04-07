@@ -7,7 +7,7 @@ import org.apache.avro.Schema
 import org.apache.avro.compiler.specific.SpecificCompiler
 
 import java.io._
-import java.nio.file.{FileSystems, Files, Path, Paths}
+import java.nio.file.{ FileSystems, Files, Path, Paths }
 import java.util.Comparator
 
 /** Parent to all ouput format treehuggers
@@ -50,15 +50,10 @@ trait JavaTreehugger {
       prefix
     ).toFile
 
-  protected def deleteTempDirOnExit(tempDir: File): Unit = {
-    val paths: java.util.stream.Stream[java.nio.file.Path] =
-      Files.walk(Paths.get(tempDir.getPath))
-    val sorted: java.util.stream.Stream[java.nio.file.Path] =
-      paths.sorted(Comparator.reverseOrder[Path]())
-    val files: java.util.stream.Stream[java.io.File] = sorted.map(_.toFile)
-    files.forEach(_.deleteOnExit())
-  }
-      
-      
+  protected def deleteTempDirOnExit(tempDir: File): Unit =
+    Files.walk(Paths.get(tempDir.getPath))
+      .sorted(Comparator.reverseOrder[Path]())
+      .map(_.toFile)
+      .forEach(_.deleteOnExit())
 
 }

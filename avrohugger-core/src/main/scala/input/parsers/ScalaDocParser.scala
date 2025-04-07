@@ -5,9 +5,10 @@ package parsers
 object ScalaDocParser {
 
   val scalaDocRegex = """/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/""".r
-  
+
   def getScalaDocs(compUnits: List[String]): List[List[Option[String]]] = {
     def extractDoc(maybeDoc: String) = scalaDocRegex.findFirstIn(maybeDoc)
+
     compUnits.map(compilationUnit => {
       compilationUnit.split("class|object").dropRight(1).toList.map(extractDoc)
     })
@@ -37,20 +38,11 @@ object ScalaDocParser {
     (doc(0), doc(1))
   }
 
-  def asParamsMap(paramEntries: List[String]) = {
-    paramEntries.map(paramEntry => asParamTuple(paramEntry)).toMap
-  }
+  def asMap(paramEntries: List[String]): Map[String, String] =
+    paramEntries.map(asParamTuple).toMap
 
-  def asMap(paramEntries: List[String]): Map[String, String] = {
-    paramEntries match {
-      case Nil => Map.empty
-      case paramEntries => asParamsMap(paramEntries)
-    }
-  }
-
-  def fieldDocsMap(maybeScalaDoc: Option[String]): Map[String, String] = {
+  def fieldDocsMap(maybeScalaDoc: Option[String]): Map[String, String] =
     asMap(paramEntries(maybeScalaDoc))
-  }
 
   // conversion from Option to String/null is for compatibility with Apache Avro
   def getTopLevelDoc(maybeScalaDoc: Option[String]) = {

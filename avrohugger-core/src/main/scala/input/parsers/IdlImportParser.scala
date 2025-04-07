@@ -15,26 +15,26 @@ object IdlImportParser {
     commentFree
   }
 
-  def getImportedFiles(infile: File, classLoader: ClassLoader): List[File] = {
-    def readFile(file: File): String = {
-      var count = 0
-      val maxTries = 3
-      try {
-        count += 1
-        val file = scala.io.Source.fromFile(infile)
-        val fileContents: String = stripComments(file.mkString)
-        file.close
-        // if file is empty, try again, it was there when we read idl
-        if (fileContents.isEmpty && (count < maxTries)) readFile(infile)
-        else fileContents
-      } catch { // if file is not found, try again, it was there when we read idl
-        case e: java.io.FileNotFoundException => {
-          if (count < maxTries) readFile(infile)
-          else sys.error("File to found: " + infile)
-        }
+  private def readFile(infile: File): String = {
+    var count = 0
+    val maxTries = 3
+    try {
+      count += 1
+      val file = scala.io.Source.fromFile(infile)
+      val fileContents: String = stripComments(file.mkString)
+      file.close
+      // if file is empty, try again, it was there when we read idl
+      if (fileContents.isEmpty && (count < maxTries)) readFile(infile)
+      else fileContents
+    } catch { // if file is not found, try again, it was there when we read idl
+      case e: java.io.FileNotFoundException => {
+        if (count < maxTries) readFile(infile)
+        else sys.error("File to found: " + infile)
       }
     }
+  }
 
+  def getImportedFiles(infile: File, classLoader: ClassLoader): List[File] = {
     val path = infile.getParent + "/"
     val contents = readFile(infile)
     val avdlPattern = """import[ \t]+idl[ \t]+"([^"]*\.avdl)"[ \t]*;""".r

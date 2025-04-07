@@ -68,8 +68,7 @@ object SpecificScalaTreehugger extends ScalaTreehugger {
       else BLOCK(blockContent).withoutPackage
     }.withDoc("MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY")
 
-    val codeString = treeToString(tree)
-    codeString
+    treeToString(tree)
   }
 
 }

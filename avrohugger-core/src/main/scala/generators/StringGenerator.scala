@@ -79,7 +79,6 @@ private[avrohugger] class StringGenerator {
         protocolToStrings(protocol, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
     }.distinct
     // reset the schema store after processing the whole submission
-    schemaStore.schemas.clear()
     codeStrings
   }
 

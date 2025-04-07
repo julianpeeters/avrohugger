@@ -21,17 +21,18 @@ object SpecificObjectTree {
   val DecimalConversion = RootClass.newClass("org.apache.avro.Conversions.DecimalConversion")
   val decimalConversionDef = VAL(REF("decimalConversion")) := NEW(DecimalConversion)
 
+  private def getNestedSchemas(s: Schema): List[Schema] = s.getType match {
+    case Schema.Type.ARRAY => getNestedSchemas(s.getElementType)
+    case Schema.Type.MAP => getNestedSchemas(s.getValueType)
+    case Schema.Type.UNION => s.getTypes().asScala.toList.flatMap(getNestedSchemas)
+    case _ => List(s)
+  }
+
   def schemaContainsDecimal(
     schema: Schema,
     schemaStore: SchemaStore,
     typeMatcher: TypeMatcher
   ): Boolean = {
-    def getNestedSchemas(s: Schema): List[Schema] = s.getType match {
-      case Schema.Type.ARRAY => getNestedSchemas(s.getElementType)
-      case Schema.Type.MAP => getNestedSchemas(s.getValueType)
-      case Schema.Type.UNION => s.getTypes().asScala.toList.flatMap(getNestedSchemas)
-      case _ => List(s)
-    }
     val topLevelSchemas = SpecificImporter.getTopLevelSchemas(Left(schema), schemaStore, typeMatcher)
     val recordSchemas = SpecificImporter.getRecordSchemas(topLevelSchemas).filter(s => s.getType == Schema.Type.RECORD)
     val fieldSchemas = recordSchemas.flatMap(_.getFields().asScala.map(_.schema()))

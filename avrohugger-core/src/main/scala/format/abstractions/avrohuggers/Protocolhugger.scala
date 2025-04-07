@@ -3,7 +3,7 @@ package format
 package abstractions
 package avrohuggers
 
-import stores.{ClassStore, SchemaStore}
+import stores.{ ClassStore, SchemaStore }
 import matchers.TypeMatcher
 
 import org.apache.avro.{ Protocol, Schema }
@@ -29,11 +29,11 @@ trait Protocolhugger {
   def getLocalSubtypes(protocol: Protocol): List[Schema] = {
     val protocolNS = protocol.getNamespace
     val types = protocol.getTypes().asScala.toList
-    def isTopLevelNamespace(schema: Schema) = schema.getNamespace == protocolNS
-    types.filter(isTopLevelNamespace)
+    types.filter(isTopLevelNamespace(_, protocolNS))
   }
 
-  def isEnum(schema: Schema) = schema.getType == Schema.Type.ENUM
+  def isEnum(schema: Schema): Boolean = schema.getType == Schema.Type.ENUM
 
+  private def isTopLevelNamespace(schema: Schema, protocolNS: String) = schema.getNamespace == protocolNS
 
 }

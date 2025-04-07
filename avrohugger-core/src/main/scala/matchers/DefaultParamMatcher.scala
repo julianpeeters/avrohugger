@@ -21,7 +21,6 @@ object DefaultParamMatcher {
     typeMatcher: TypeMatcher): Tree  = {
 
     avroSchema.getType match {
-
       case Schema.Type.BOOLEAN => FALSE
       case Schema.Type.INT     =>
         LogicalType.foldLogicalTypes[Tree](

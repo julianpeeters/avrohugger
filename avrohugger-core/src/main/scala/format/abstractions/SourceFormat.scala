@@ -76,30 +76,26 @@ trait SourceFormat {
 
   val toolShortDescription: String
 
+  private def enumExt(enumType: AvroScalaEnumType): String = enumType match {
+    case JavaEnum => ".java"
+    case ScalaCaseObjectEnum => ".scala"
+    case ScalaEnumeration => ".scala"
+    case EnumAsScalaString => sys.error("Only RECORD and ENUM can be top-level definitions")
+  }
+
   ///////////////////////////// concrete members ///////////////////////////////
   def fileExt(
     schemaOrProtocol: Either[Schema, Protocol],
-    typeMatcher: TypeMatcher): String = {
-    val enumType = typeMatcher.avroScalaTypes.`enum`
-
-    def enumExt: String = enumType match {
-      case JavaEnum => ".java"
-      case ScalaCaseObjectEnum => ".scala"
-      case ScalaEnumeration => ".scala"
-      case EnumAsScalaString => sys.error("Only RECORD and ENUM can be top-level definitions")
-    }
-
+    typeMatcher: TypeMatcher): String =
     schemaOrProtocol match {
       case Left(schema) => schema.getType match {
         case RECORD => ".scala"
-        case ENUM => enumExt // Avro's SpecificData requires enums be Java Enum
+        case ENUM => enumExt(typeMatcher.avroScalaTypes.`enum`) // Avro's SpecificData requires enums be Java Enum
         case FIXED => ".scala"
         case _ => sys.error("Only RECORD and ENUM can be top-level definitions")
       }
       case Right(protocol) => ".scala"
     }
-
-  }
 
   def getFilePath(
     namespace: Option[String],
@@ -214,10 +210,7 @@ trait SourceFormat {
     "Builder")
 
   def writeToFile(compilationUnit: CompilationUnit): Unit = {
-    val path = compilationUnit.maybeFilePath match {
-      case Some(filePath) => filePath
-      case None => sys.error("Cannot write to file without a file path")
-    }
+    val path = compilationUnit.maybeFilePath.getOrElse(sys.error("Cannot write to file without a file path"))
     val contents = compilationUnit.codeString.getBytes()
     try { // delete old and/or create new
       Files.deleteIfExists(path) // delete file if exists

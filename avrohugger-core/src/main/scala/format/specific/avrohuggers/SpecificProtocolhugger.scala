@@ -7,7 +7,7 @@ import format.abstractions.avrohuggers.Protocolhugger
 import generators.ScalaDocGenerator
 import trees.{ SpecificObjectTree, SpecificTraitTree }
 import matchers.TypeMatcher
-import stores.{ClassStore, SchemaStore}
+import stores.{ ClassStore, SchemaStore }
 import org.apache.avro.Protocol
 import treehugger.forest._
 
@@ -28,7 +28,6 @@ object SpecificProtocolhugger extends Protocolhugger {
 
     val name: String = protocol.getName
     val messages = protocol.getMessages.asScala.toMap
-    val maybeProtocolDoc = Option(protocol.getDoc)
 
     if (messages.isEmpty) {
       val localSubTypes = getLocalSubtypes(protocol)
@@ -64,7 +63,7 @@ object SpecificProtocolhugger extends Protocolhugger {
             case None => List.empty
           }
         }
-        docTrees ::: localNonEnums.flatMap(schema => {
+        docTrees ::: localNonEnums.flatMap { schema =>
           SpecificSchemahugger.toTrees(
             schemaStore,
             classStore,
@@ -75,8 +74,8 @@ object SpecificProtocolhugger extends Protocolhugger {
             maybeFlags,
             restrictedFields,
             targetScalaPartialVersion)
-          })
         }
+      }
     }
     else {
       val rpcTraitDef = SpecificTraitTree.toRPCTraitDef(
