@@ -32,5 +32,5 @@ case class AvroScalaTypes(
 )
 
 object AvroScalaTypes {
-  def defaults = new AvroScalaTypes()
+  val defaults = new AvroScalaTypes()
 }
