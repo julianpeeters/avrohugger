@@ -99,8 +99,8 @@ object ScalaConverter {
         val arrayConversion = CASE(ID("array") withType(JavaList)) ==> resultExpr
         val errorMessage = INTERP("s", LIT(s"expected array with type $JavaList, found "), LIT("array"))
         val errorExpr = NEW("org.apache.avro.AvroRuntimeException", errorMessage)
-        val conversionCases = List(arrayConversion)
         val arrayMatchError = CASE(WILDCARD) ==> errorExpr
+        val conversionCases = List(arrayConversion, arrayMatchError)
         tree MATCH(conversionCases)
       }
       case Schema.Type.STRING =>
@@ -142,7 +142,10 @@ object ScalaConverter {
           )
         }
         val mapConversion = CASE(ID("map") withType(JavaMap)) ==> resultExpr
-        tree MATCH(mapConversion)
+        val errorMessage = INTERP("s", LIT(s"expected array with type $JavaMap, found "), LIT("array"))
+        val errorExpr = NEW("org.apache.avro.AvroRuntimeException", errorMessage)
+        val arrayMatchError = CASE(WILDCARD) ==> errorExpr
+        tree MATCH(mapConversion, arrayMatchError)
       }
       case Schema.Type.FIXED => tree
       case Schema.Type.BYTES => {
