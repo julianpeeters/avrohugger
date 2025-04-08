@@ -12,6 +12,9 @@ import org.apache.avro.Schema.Parser
 import java.io.{ File, FileNotFoundException, IOException }
 import org.apache.avro.{ Protocol, Schema }
 
+import scala.concurrent.Await
+import scala.concurrent.duration.Duration
+
 // Unable to overload this class' methods because outDir uses a default value
 private[avrohugger] class StringGenerator {
 
@@ -94,7 +97,7 @@ private[avrohugger] class StringGenerator {
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): List[String] = {
     try {
-      fileParser.getSchemaOrProtocols(inFile, format, classStore, classLoader, schemaParser)
+      Await.result(fileParser.getSchemaOrProtocols(inFile, format, classStore, classLoader, schemaParser), Duration.Inf)
         .flatMap {
           case Left(schema) =>
             schemaToStrings(schema, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)

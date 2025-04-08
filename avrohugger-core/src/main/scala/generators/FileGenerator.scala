@@ -10,6 +10,8 @@ import org.apache.avro.Schema.Parser
 import org.apache.avro.{ Protocol, Schema }
 
 import java.io.File
+import scala.concurrent.Await
+import scala.concurrent.duration.Duration
 
 // Unable to overload this class' methods because outDir uses a default value
 private[avrohugger] class FileGenerator {
@@ -76,7 +78,7 @@ private[avrohugger] class FileGenerator {
     classLoader: ClassLoader,
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): Unit = {
-    distinctSchemaOrProtocol(fileParser.getSchemaOrProtocols(inFile, format, classStore, classLoader, schemaParser))
+    distinctSchemaOrProtocol(Await.result(fileParser.getSchemaOrProtocols(inFile, format, classStore, classLoader, schemaParser), Duration.Inf))
       .foreach {
         case Left(schema) =>
           schemaToFile(schema, outDir, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
@@ -97,7 +99,7 @@ private[avrohugger] class FileGenerator {
     classLoader: ClassLoader,
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): Unit = {
-    distinctSchemaOrProtocol(inFiles.flatMap(fileParser.getSchemaOrProtocols(_, format, classStore, classLoader, schemaParser)))
+    distinctSchemaOrProtocol(inFiles.flatMap(x => Await.result(fileParser.getSchemaOrProtocols(x, format, classStore, classLoader, schemaParser), Duration.Inf)))
       .foreach {
         case Left(schema) =>
           schemaToFile(schema, outDir, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)

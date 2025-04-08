@@ -15,12 +15,14 @@ import org.apache.avro.SchemaParseException
 import java.io.File
 import java.lang
 import java.util.concurrent.ConcurrentHashMap
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import scala.jdk.CollectionConverters._
 import scala.util.Try
 
 class FileInputParser {
 
-  var processedFiles: ConcurrentHashMap[String, List[Either[Schema, Protocol]]] = new ConcurrentHashMap[String, List[Either[Schema, Protocol]]]()
+  var processedFiles: ConcurrentHashMap[String, Future[List[Either[Schema, Protocol]]]] = new ConcurrentHashMap[String, Future[List[Either[Schema, Protocol]]]]()
   var processedSchemas: ConcurrentHashMap[String, Schema] = new ConcurrentHashMap[String, Schema]()
 
   private def unUnion(schema: Schema) = {
@@ -77,20 +79,20 @@ class FileInputParser {
     format: SourceFormat,
     classStore: ClassStore,
     classLoader: ClassLoader,
-    parser: Parser): List[Either[Schema, Protocol]] = {
-    val res: List[Either[Schema, Protocol]] = Option(processedFiles.computeIfAbsent(infile.getCanonicalPath, _ => {
+    parser: Parser): Future[List[Either[Schema, Protocol]]] = {
+    Option(processedFiles.computeIfAbsent(infile.getCanonicalPath, _ => {
       infile.getName.split("\\.").last match {
         case "avro" =>
           val gdr = new GenericDatumReader[GenericRecord]
           val dfr = new DataFileReader(infile, gdr)
           val schemas = unUnion(dfr.getSchema)
-          schemas.map(Left(_))
+          Future.successful(schemas.map(Left(_)))
         case "avsc" =>
           val schemas = tryParse(infile, parser)
-          schemas.map(Left(_))
+          Future.successful(schemas.map(Left(_)))
         case "avpr" =>
           val protocol = Protocol.parse(infile)
-          List(Right(protocol))
+          Future.successful(List(Right(protocol)))
         case "avdl" =>
           val idlParser = new Idl(infile, classLoader)
           val protocol = idlParser.CompilationUnit()
@@ -103,10 +105,11 @@ class FileInputParser {
             * of all imported types and generate them separately.
             */
           val importedFiles = IdlImportParser.getImportedFiles(infile, classLoader)
-          val importedSchemaOrProtocols = importedFiles.flatMap { file =>
+          val importedSchemaOrProtocols = Future.sequence(importedFiles.map { file =>
             val importParser = new Parser() // else attempts to redefine schemas
-            Option(processedFiles.computeIfAbsent(file.getCanonicalPath, _ => getSchemaOrProtocols(file, format, classStore, classLoader, importParser))).getOrElse(List())
-          }
+            Option(processedFiles.computeIfAbsent(file.getCanonicalPath, _ => getSchemaOrProtocols(file, format, classStore, classLoader, importParser)))
+              .getOrElse(Future.successful(List()))
+          }).map(_.flatten)
 
           def stripImports(protocol: Protocol, imported: ConcurrentHashMap[String, Schema]) = {
             val types = protocol.getTypes().asScala.toList
@@ -117,18 +120,19 @@ class FileInputParser {
 
           val localProtocol = stripImports(protocol, processedSchemas)
           // reverse to dependent classes are generated first
-          (Right(localProtocol) +: importedSchemaOrProtocols).reverse
+          importedSchemaOrProtocols.map(x => (Right(localProtocol) +: x).reverse)
         case _ =>
           throw new Exception(
             """File must end in ".avpr" for protocol files,
               |".avsc" for plain text json files, ".avdl" for IDL files, or .avro
               |for binary.""".trim.stripMargin)
       }
-    })).getOrElse(List())
-    res.foreach {
-      case Left(importedSchema) => processedSchemas.putIfAbsent(importedSchema.getFullName, importedSchema)
-      case Right(importedProtocol) => importedProtocol.getTypes().forEach(importedSchema => processedSchemas.putIfAbsent(importedSchema.getFullName, importedSchema))
+    })).getOrElse(Future.successful(List())).map { res =>
+      res.foreach {
+        case Left(importedSchema) => processedSchemas.putIfAbsent(importedSchema.getFullName, importedSchema)
+        case Right(importedProtocol) => importedProtocol.getTypes().forEach(importedSchema => processedSchemas.putIfAbsent(importedSchema.getFullName, importedSchema))
+      }
+      res
     }
-    res
   }
 }
