@@ -82,18 +82,19 @@ class FileInputParser {
     parser: Parser): Future[List[Either[Schema, Protocol]]] = {
     Option(processedFiles.computeIfAbsent(infile.getCanonicalPath, _ => {
       infile.getName.split("\\.").last match {
-        case "avro" =>
+        case "avro" => Future {
           val gdr = new GenericDatumReader[GenericRecord]
           val dfr = new DataFileReader(infile, gdr)
           val schemas = unUnion(dfr.getSchema)
-          Future.successful(schemas.map(Left(_)))
-        case "avsc" =>
-          val schemas = tryParse(infile, parser)
-          Future.successful(schemas.map(Left(_)))
-        case "avpr" =>
-          val protocol = Protocol.parse(infile)
-          Future.successful(List(Right(protocol)))
-        case "avdl" =>
+          schemas.map(Left(_))
+        }
+        case "avsc" => Future {
+          tryParse(infile, parser).map(Left(_))
+        }
+        case "avpr" => Future {
+          List(Right(Protocol.parse(infile)))
+        }
+        case "avdl" => Future {
           val idlParser = new Idl(infile, classLoader)
           val protocol = idlParser.CompilationUnit()
           /**
@@ -121,6 +122,7 @@ class FileInputParser {
           val localProtocol = stripImports(protocol, processedSchemas)
           // reverse to dependent classes are generated first
           importedSchemaOrProtocols.map(x => (Right(localProtocol) +: x).reverse)
+        }.flatten
         case _ =>
           throw new Exception(
             """File must end in ".avpr" for protocol files,
