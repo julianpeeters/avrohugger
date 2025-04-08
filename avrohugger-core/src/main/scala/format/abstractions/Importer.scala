@@ -7,12 +7,11 @@ import avrohugger.input.NestedSchemaExtractor
 import avrohugger.matchers.TypeMatcher
 import avrohugger.matchers.custom.CustomNamespaceMatcher
 import avrohugger.stores.SchemaStore
-
-import org.apache.avro.{ Schema, Protocol }
-import org.apache.avro.Schema.Type.{ ENUM, RECORD, UNION, MAP, ARRAY, FIXED }
-
+import org.apache.avro.{ Protocol, Schema }
+import org.apache.avro.Schema.Type.{ ARRAY, ENUM, FIXED, MAP, RECORD, UNION }
 import treehugger.forest._
 import definitions.RootClass
+import org.apache.avro.Schema.Type
 import treehuggerDSL._
 
 import scala.jdk.CollectionConverters._
@@ -60,7 +59,7 @@ trait Importer {
             Seq(schema)
           case UNION =>
             schema.getTypes().asScala
-              .find(s => s.getType != NULL).toSet
+              .find(s => s.getType != Type.NULL).toSet
               .intersect(alreadyImported)
               .flatMap(s => nextSchemas(schema, alreadyImported + s))
           case MAP =>
@@ -91,7 +90,7 @@ trait Importer {
       .distinct
 
   def getFieldSchemas(schema: Schema): List[Schema] = {
-    schema.getFields().asScala.toList.map(field => field.schema)
+    schema.getFields().asScala.toList.map(_.schema)
   }
 
   private def checkNamespace(schema: Schema, typeMatcher: TypeMatcher): Option[String] = {
@@ -153,7 +152,7 @@ trait Importer {
             Seq(schema)
           case UNION =>
             schema.getTypes().asScala
-              .find(s => s.getType != NULL).toSet
+              .find(s => s.getType != Type.NULL).toSet
               .intersect(alreadyImported)
               .flatMap(s => nextSchemas(schema, alreadyImported + s))
           case MAP =>
@@ -174,13 +173,12 @@ trait Importer {
 
   def getTopLevelSchemas(
     schemaOrProtocol: Either[Schema, Protocol],
-    schemaStore: SchemaStore,
     typeMatcher: TypeMatcher): List[Schema] = {
     schemaOrProtocol match {
       case Left(schema) =>
-        schema :: NestedSchemaExtractor.getNestedSchemas(schema, schemaStore, typeMatcher)
+        schema :: NestedSchemaExtractor.getNestedSchemas(schema, typeMatcher)
       case Right(protocol) => protocol.getTypes().asScala.toList.flatMap { schema =>
-        schema :: NestedSchemaExtractor.getNestedSchemas(schema, schemaStore, typeMatcher)
+        schema :: NestedSchemaExtractor.getNestedSchemas(schema, typeMatcher)
       }
     }
 

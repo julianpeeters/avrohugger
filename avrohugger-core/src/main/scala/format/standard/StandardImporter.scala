@@ -135,7 +135,7 @@ object StandardImporter extends Importer {
     currentNamespace: Option[String],
     schemaStore: SchemaStore,
     typeMatcher: TypeMatcher): List[Import] = {
-    val topLevelSchemas = getTopLevelSchemas(schemaOrProtocol, schemaStore, typeMatcher)
+    val topLevelSchemas = getTopLevelSchemas(schemaOrProtocol, typeMatcher)
     val recordSchemas = getRecordSchemas(topLevelSchemas)
     val fixedSchemas = getFixedSchemas(topLevelSchemas)
     val enumSchemas = getEnumSchemas(topLevelSchemas)

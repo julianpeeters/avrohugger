@@ -10,8 +10,9 @@ import org.apache.avro.Schema.Parser
 import org.apache.avro.{ Protocol, Schema }
 
 import java.io.File
-import scala.concurrent.Await
+import scala.concurrent.{ Await, Future }
 import scala.concurrent.duration.Duration
+import scala.concurrent.ExecutionContext.Implicits.global
 
 // Unable to overload this class' methods because outDir uses a default value
 private[avrohugger] class FileGenerator {
@@ -26,7 +27,7 @@ private[avrohugger] class FileGenerator {
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): Unit = {
     val topNS: Option[String] = DependencyInspector.getReferredNamespace(schema)
-    val topLevelSchemas: List[Schema] = NestedSchemaExtractor.getNestedSchemas(schema, schemaStore, typeMatcher)
+    val topLevelSchemas: List[Schema] = NestedSchemaExtractor.getNestedSchemas(schema, typeMatcher)
     topLevelSchemas.distinct.foreach(schema => {
       // pass in the top-level schema's namespace if the nested schema has none
       val ns = DependencyInspector.getReferredNamespace(schema) orElse topNS
@@ -99,13 +100,16 @@ private[avrohugger] class FileGenerator {
     classLoader: ClassLoader,
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): Unit = {
-    distinctSchemaOrProtocol(inFiles.flatMap(x => Await.result(fileParser.getSchemaOrProtocols(x, format, classStore, classLoader, schemaParser), Duration.Inf)))
-      .foreach {
+    val f = inFiles.map(fileParser.getSchemaOrProtocols(_, format, classStore, classLoader, schemaParser))
+    val res = Future.sequence(f).map(x => distinctSchemaOrProtocol(x.reduce(_ ::: _))).map(
+      _.foreach {
         case Left(schema) =>
           schemaToFile(schema, outDir, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
         case Right(protocol) =>
           protocolToFile(protocol, outDir, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
       }
+    )
+    Await.result(res, Duration.Inf)
   }
 
   private def distinctSchemaOrProtocol(schemaOrProtocols: List[Either[Schema, Protocol]]): List[Either[Schema, Protocol]] = {

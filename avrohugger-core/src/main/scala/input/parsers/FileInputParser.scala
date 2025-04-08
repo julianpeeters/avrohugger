@@ -13,7 +13,6 @@ import org.apache.avro.file.DataFileReader
 import org.apache.avro.SchemaParseException
 
 import java.io.File
-import java.lang
 import java.util.concurrent.ConcurrentHashMap
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future

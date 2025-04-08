@@ -33,7 +33,7 @@ object SpecificObjectTree {
     schemaStore: SchemaStore,
     typeMatcher: TypeMatcher
   ): Boolean = {
-    val topLevelSchemas = SpecificImporter.getTopLevelSchemas(Left(schema), schemaStore, typeMatcher)
+    val topLevelSchemas = SpecificImporter.getTopLevelSchemas(Left(schema), typeMatcher)
     val recordSchemas = SpecificImporter.getRecordSchemas(topLevelSchemas).filter(s => s.getType == Schema.Type.RECORD)
     val fieldSchemas = recordSchemas.flatMap(_.getFields().asScala.map(_.schema()))
     fieldSchemas.flatMap(getNestedSchemas).exists(s => Option(s.getLogicalType()) match {
