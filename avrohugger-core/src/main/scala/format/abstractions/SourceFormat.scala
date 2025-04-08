@@ -116,13 +116,12 @@ trait SourceFormat {
     }
   }
 
+  private def isTopLevelNamespace(schema: Schema, protocolNS: String) = schema.getNamespace == protocolNS
+
   def getLocalSubtypes(protocol: Protocol): List[Schema] = {
     val protocolNS = protocol.getNamespace
     val types = protocol.getTypes().asScala.toList
-
-    def isTopLevelNamespace(schema: Schema) = schema.getNamespace == protocolNS
-
-    types.filter(isTopLevelNamespace)
+    types.filter(isTopLevelNamespace(_, protocolNS))
   }
 
   def getJavaEnumCompilationUnit(
@@ -167,24 +166,27 @@ trait SourceFormat {
 
   def isEnum(schema: Schema): Boolean = schema.getType == Schema.Type.ENUM
 
+  private def registerSchema(schema: Schema,
+    classStore: ClassStore,
+    typeMatcher: TypeMatcher): Unit = {
+    val typeName = typeMatcher.avroScalaTypes.`enum` match {
+      case JavaEnum => schema.getName
+      case ScalaCaseObjectEnum => schema.getName
+      case ScalaEnumeration => renameEnum(schema, "Value")
+      case EnumAsScalaString => schema.getName
+    }
+    val classSymbol = RootClass.newClass(typeName)
+    classStore.accept(schema, classSymbol)
+  }
+
   def registerTypes(
     schemaOrProtocol: Either[Schema, Protocol],
     classStore: ClassStore,
     typeMatcher: TypeMatcher): Unit = {
-    def registerSchema(schema: Schema): Unit = {
-      val typeName = typeMatcher.avroScalaTypes.`enum` match {
-        case JavaEnum => schema.getName
-        case ScalaCaseObjectEnum => schema.getName
-        case ScalaEnumeration => renameEnum(schema, "Value")
-        case EnumAsScalaString => schema.getName
-      }
-      val classSymbol = RootClass.newClass(typeName)
-      classStore.accept(schema, classSymbol)
-    }
 
     schemaOrProtocol match {
-      case Left(schema) => registerSchema(schema)
-      case Right(protocol) => protocol.getTypes().asScala.foreach(registerSchema)
+      case Left(schema) => registerSchema(schema, classStore, typeMatcher)
+      case Right(protocol) => protocol.getTypes().asScala.foreach(registerSchema(_, classStore, typeMatcher))
     }
   }
 

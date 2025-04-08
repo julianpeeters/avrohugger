@@ -64,7 +64,7 @@ object DefaultParamMatcher {
         }
       case Schema.Type.NULL    => NULL
       case Schema.Type.FIXED   =>
-        val name = RootClass.newClass(s"${avroSchema.getNamespace()}.${classStore.generatedClasses(avroSchema)}")
+        val name = RootClass.newClass(s"${avroSchema.getNamespace()}.${classStore.generatedClasses.get(avroSchema.getFullName)}")
         REF(name).APPLY(CustomDefaultParamMatcher.checkCustomDecimalType(
           decimalType = typeMatcher.avroScalaTypes.decimal,
           schema = avroSchema,
@@ -76,7 +76,7 @@ object DefaultParamMatcher {
           decimalType = typeMatcher.avroScalaTypes.decimal,
           schema = avroSchema,
           default = ArrayClass.APPLY())
-      case Schema.Type.RECORD  => NEW(classStore.generatedClasses(avroSchema))
+      case Schema.Type.RECORD  => NEW(classStore.generatedClasses.get(avroSchema.getFullName))
       case Schema.Type.UNION =>
         val schemas = avroSchema.getTypes.asScala.toList
         if (avroSchema.isNullable) NONE

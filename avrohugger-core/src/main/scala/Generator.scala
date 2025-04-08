@@ -7,7 +7,6 @@ import avrohugger.input.parsers.{ FileInputParser, StringInputParser }
 import avrohugger.matchers.TypeMatcher
 import avrohugger.types.AvroScalaTypes
 import avrohugger.stores.{ ClassStore, SchemaStore }
-import org.apache.avro.Schema.Parser
 import org.apache.avro.{ Protocol, Schema }
 
 import java.io.File

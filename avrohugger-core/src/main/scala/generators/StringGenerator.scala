@@ -94,13 +94,13 @@ private[avrohugger] class StringGenerator {
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): List[String] = {
     try {
-      val schemaOrProtocols: List[Either[Schema, Protocol]] = fileParser.getSchemaOrProtocols(inFile, format, classStore, classLoader, schemaParser)
-      schemaOrProtocols.flatMap {
-        case Left(schema) =>
-          schemaToStrings(schema, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
-        case Right(protocol) =>
-          protocolToStrings(protocol, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
-      }
+      fileParser.getSchemaOrProtocols(inFile, format, classStore, classLoader, schemaParser)
+        .flatMap {
+          case Left(schema) =>
+            schemaToStrings(schema, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
+          case Right(protocol) =>
+            protocolToStrings(protocol, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
+        }
     }
     catch {
       case ex: FileNotFoundException => sys.error("File not found:" + ex)

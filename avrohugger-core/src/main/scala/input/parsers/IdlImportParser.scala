@@ -59,8 +59,7 @@ object IdlImportParser {
       })
     }.filter(_.exists)
 
-    val importedFiles = classpathImports ++ localImports
-    importedFiles
+    classpathImports ++ localImports
   }
 
 }
