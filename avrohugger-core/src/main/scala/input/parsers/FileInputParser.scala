@@ -78,7 +78,7 @@ class FileInputParser {
     classStore: ClassStore,
     classLoader: ClassLoader,
     parser: Parser): List[Either[Schema, Protocol]] = {
-    val res: List[Either[Schema, Protocol]] = Option(processedFiles.putIfAbsent(infile.getCanonicalPath, {
+    val res: List[Either[Schema, Protocol]] = Option(processedFiles.computeIfAbsent(infile.getCanonicalPath, _ => {
       infile.getName.split("\\.").last match {
         case "avro" =>
           val gdr = new GenericDatumReader[GenericRecord]
@@ -105,7 +105,7 @@ class FileInputParser {
           val importedFiles = IdlImportParser.getImportedFiles(infile, classLoader)
           val importedSchemaOrProtocols = importedFiles.flatMap { file =>
             val importParser = new Parser() // else attempts to redefine schemas
-            Option(processedFiles.putIfAbsent(file.getCanonicalPath, getSchemaOrProtocols(file, format, classStore, classLoader, importParser))).getOrElse(List())
+            Option(processedFiles.computeIfAbsent(file.getCanonicalPath, _ => getSchemaOrProtocols(file, format, classStore, classLoader, importParser))).getOrElse(List())
           }
 
           def stripImports(protocol: Protocol, imported: ConcurrentHashMap[String, Schema]) = {
