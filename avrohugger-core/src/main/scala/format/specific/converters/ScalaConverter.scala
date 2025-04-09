@@ -97,7 +97,7 @@ object ScalaConverter {
           checkCustomArrayType(arrayType, elementType, asScalaTree)
         )
         val arrayConversion = CASE(ID("array") withType(JavaList)) ==> resultExpr
-        val errorMessage = INTERP("s", LIT(s"expected array with type $JavaList, found "), LIT("array"))
+        val errorMessage = LIT(s"expected array with type java.util.List[_]")
         val errorExpr = NEW("org.apache.avro.AvroRuntimeException", errorMessage)
         val arrayMatchError = CASE(WILDCARD) ==> errorExpr
         val conversionCases = List(arrayConversion, arrayMatchError)
@@ -143,7 +143,7 @@ object ScalaConverter {
           )
         }
         val mapConversion = CASE(ID("map") withType(JavaMap)) ==> resultExpr
-        val errorMessage = INTERP("s", LIT(s"expected array with type $JavaMap, found "), LIT("array"))
+        val errorMessage = LIT(s"expected array with type java.util.List[_]")
         val errorExpr = NEW("org.apache.avro.AvroRuntimeException", errorMessage)
         val arrayMatchError = CASE(WILDCARD) ==> errorExpr
         tree MATCH(mapConversion, arrayMatchError)

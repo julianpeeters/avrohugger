@@ -44,6 +44,7 @@ final case class Player(var number: Int, var first_name: String, var last_name: 
               x
             }).toSeq
           }
+          case _ => new org.apache.avro.AvroRuntimeException("expected array with type java.util.List[_]")
         }
       }.asInstanceOf[Seq[avro.examples.baseball.Nickname]]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
