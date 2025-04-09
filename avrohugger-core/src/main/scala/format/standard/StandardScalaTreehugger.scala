@@ -28,8 +28,7 @@ object StandardScalaTreehugger extends ScalaTreehugger {
     targetScalaPartialVersion: String,
   ): String = {
 
-    val imports = importer.getImports(
-      schemaOrProtocol, namespace, schemaStore, typeMatcher)
+    val imports = importer.getImports(schemaOrProtocol, namespace, typeMatcher)
 
     val topLevelDefs: List[Tree] = schemaOrProtocol match {
       case Left(schema) => schemahugger.toTrees(

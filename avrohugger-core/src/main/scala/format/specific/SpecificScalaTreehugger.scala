@@ -30,11 +30,7 @@ object SpecificScalaTreehugger extends ScalaTreehugger {
     targetScalaPartialVersion: String): String = {
 
     // imports in case a field type is from a different namespace
-    val imports: List[Import] = importer.getImports(
-      schemaOrProtocol,
-      namespace,
-      schemaStore,
-      typeMatcher)
+    val imports: List[Import] = importer.getImports(schemaOrProtocol, namespace, typeMatcher)
 
     val topLevelDefs: List[Tree] = schemaOrProtocol match {
       case Left(schema) => schemahugger.toTrees(

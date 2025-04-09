@@ -86,8 +86,6 @@ object SpecificRecord extends SourceFormat {
     typeMatcher: TypeMatcher,
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): List[CompilationUnit] = {
-
-    registerTypes(schemaOrProtocol, classStore, typeMatcher)
     val enumType = typeMatcher.avroScalaTypes.`enum`
 
     val namespace =
@@ -177,7 +175,7 @@ object SpecificRecord extends SourceFormat {
             maybeOutDir,
             restrictedFields,
             targetScalaPartialVersion)
-          if (localRecords.length >= 1) scalaCompilationUnit +: javaCompilationUnits
+          if (localRecords.nonEmpty) scalaCompilationUnit +: javaCompilationUnits
           else javaCompilationUnits
         }
         else protocolToRPC(

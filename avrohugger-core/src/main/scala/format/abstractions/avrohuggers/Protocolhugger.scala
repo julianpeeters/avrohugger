@@ -29,11 +29,9 @@ trait Protocolhugger {
   def getLocalSubtypes(protocol: Protocol): List[Schema] = {
     val protocolNS = protocol.getNamespace
     val types = protocol.getTypes().asScala.toList
-    types.filter(isTopLevelNamespace(_, protocolNS))
+    types.filter(_.getNamespace == protocolNS)
   }
 
   def isEnum(schema: Schema): Boolean = schema.getType == Schema.Type.ENUM
-
-  private def isTopLevelNamespace(schema: Schema, protocolNS: String) = schema.getNamespace == protocolNS
 
 }

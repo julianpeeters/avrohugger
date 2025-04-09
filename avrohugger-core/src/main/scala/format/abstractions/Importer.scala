@@ -33,11 +33,7 @@ import scala.jdk.CollectionConverters._
 trait Importer {
 
   ///////////////////////////// abstract members ///////////////////////////////
-  def getImports(
-    schemaOrProtocol: Either[Schema, Protocol],
-    currentNamespace: Option[String],
-    schemaStore: SchemaStore,
-    typeMatcher: TypeMatcher): List[Import]
+  def getImports(schemaOrProtocol: Either[Schema, Protocol], currentNamespace: Option[String], typeMatcher: TypeMatcher): List[Import]
 
   private def nextSchemas(s: Schema, us: Set[Schema]) = getRecordSchemas(List(s), us)
 

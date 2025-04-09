@@ -31,7 +31,6 @@ object Standard extends SourceFormat {
     typeMatcher: TypeMatcher,
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): List[CompilationUnit] = {
-    registerTypes(schemaOrProtocol, classStore, typeMatcher)
     val namespace =
       CustomNamespaceMatcher.checkCustomNamespace(
         ns,

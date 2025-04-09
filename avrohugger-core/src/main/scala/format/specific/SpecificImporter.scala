@@ -16,11 +16,7 @@ import scala.jdk.CollectionConverters._
 
 object SpecificImporter extends Importer {
 
-  def getImports(
-    schemaOrProtocol: Either[Schema, Protocol],
-    currentNamespace: Option[String],
-    schemaStore: SchemaStore,
-    typeMatcher: TypeMatcher): List[Import] = {
+  def getImports(schemaOrProtocol: Either[Schema, Protocol], currentNamespace: Option[String], typeMatcher: TypeMatcher): List[Import] = {
 
     val switchAnnotSymbol = RootClass.newClass("scala.annotation.switch")
     val switchImport = IMPORT(switchAnnotSymbol)

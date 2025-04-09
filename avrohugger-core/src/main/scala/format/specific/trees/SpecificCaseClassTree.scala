@@ -60,7 +60,7 @@ object SpecificCaseClassTree {
       THIS APPLY (defaultParams)
     }
 
-    // methods - first add an index the the schema's fields
+    // methods - first add an index to the schema's fields
     val indexedFields = avroFields.zipWithIndex.map(p => {
       val avroField = p._1
       val index = p._2
@@ -68,13 +68,7 @@ object SpecificCaseClassTree {
     })
     val defGetSchema = namespace.fold(GetSchemaGenerator(classSymbol).toDef)(ns => GetSchemaGenerator(RootClass.newClass(s"$ns.${classSymbol}")).toDef)
     val defGet = GetGenerator.toDef(indexedFields, classSymbol, typeMatcher, targetScalaPartialVersion)
-    val defPut = PutGenerator.toDef(
-      classStore,
-      namespace,
-      indexedFields,
-      typeMatcher,
-      classSymbol,
-      targetScalaPartialVersion)
+    val defPut = PutGenerator.toDef(classStore, namespace, indexedFields, typeMatcher, classSymbol, targetScalaPartialVersion)
 
     val maybeFlagsWithCaseClassFinal =
       if (shouldGenerateSimpleClass) maybeFlags

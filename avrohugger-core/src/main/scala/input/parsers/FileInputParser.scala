@@ -85,13 +85,21 @@ class FileInputParser {
           val gdr = new GenericDatumReader[GenericRecord]
           val dfr = new DataFileReader(infile, gdr)
           val schemas = unUnion(dfr.getSchema)
-          schemas.map(Left(_))
+          schemas.map { s =>
+            processedSchemas.putIfAbsent(s.getFullName, s)
+            Left(s)
+          }
         }
         case "avsc" => Future {
-          tryParse(infile, parser).map(Left(_))
+          tryParse(infile, parser).map { s =>
+            processedSchemas.putIfAbsent(s.getFullName, s)
+            Left(s)
+          }
         }
         case "avpr" => Future {
-          List(Right(Protocol.parse(infile)))
+          val p = Protocol.parse(infile)
+          p.getTypes().forEach(importedSchema => processedSchemas.putIfAbsent(importedSchema.getFullName, importedSchema))
+          List(Right(p))
         }
         case "avdl" => Future {
           val idlParser = new Idl(infile, classLoader)
@@ -105,22 +113,14 @@ class FileInputParser {
             * of all imported types and generate them separately.
             */
           val importedFiles = IdlImportParser.getImportedFiles(infile, classLoader)
-          val importedSchemaOrProtocols = Future.sequence(importedFiles.map { file =>
+          Future.sequence(importedFiles.map { file =>
             val importParser = new Parser() // else attempts to redefine schemas
-            Option(processedFiles.computeIfAbsent(file.getCanonicalPath, _ => getSchemaOrProtocols(file, format, classStore, classLoader, importParser)))
-              .getOrElse(Future.successful(List()))
-          }).map(_.flatten)
-
-          def stripImports(protocol: Protocol, imported: ConcurrentHashMap[String, Schema]) = {
-            val types = protocol.getTypes().asScala.toList
-            val localTypes = types.filterNot(imported.values().contains)
-            protocol.setTypes(localTypes.asJava)
-            protocol
+            getSchemaOrProtocols(file, format, classStore, classLoader, importParser)
+          }).map { f =>
+            val localProtocol = stripImports(protocol, processedSchemas)
+            localProtocol.getTypes().forEach(importedSchema => processedSchemas.putIfAbsent(importedSchema.getFullName, importedSchema))
+            (Right(localProtocol) +: f.flatten).reverse
           }
-
-          val localProtocol = stripImports(protocol, processedSchemas)
-          // reverse to dependent classes are generated first
-          importedSchemaOrProtocols.map(x => (Right(localProtocol) +: x).reverse)
         }.flatten
         case _ =>
           throw new Exception(
@@ -128,12 +128,14 @@ class FileInputParser {
               |".avsc" for plain text json files, ".avdl" for IDL files, or .avro
               |for binary.""".trim.stripMargin)
       }
-    })).getOrElse(Future.successful(List())).map { res =>
-      res.foreach {
-        case Left(importedSchema) => processedSchemas.putIfAbsent(importedSchema.getFullName, importedSchema)
-        case Right(importedProtocol) => importedProtocol.getTypes().forEach(importedSchema => processedSchemas.putIfAbsent(importedSchema.getFullName, importedSchema))
-      }
-      res
-    }
+    })).getOrElse(Future.successful(List()))
   }
+
+  private def stripImports(protocol: Protocol, imported: ConcurrentHashMap[String, Schema]) = {
+    val types = protocol.getTypes().asScala.toList
+    val localTypes = types.filterNot(x => imported.containsKey(x.getFullName))
+    protocol.setTypes(localTypes.asJava)
+    protocol
+  }
+
 }

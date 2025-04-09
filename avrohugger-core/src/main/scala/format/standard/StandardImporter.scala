@@ -130,11 +130,7 @@ object StandardImporter extends Importer {
     unionImports
   }
 
-  def getImports(
-    schemaOrProtocol: Either[Schema, Protocol],
-    currentNamespace: Option[String],
-    schemaStore: SchemaStore,
-    typeMatcher: TypeMatcher): List[Import] = {
+  def getImports(schemaOrProtocol: Either[Schema, Protocol], currentNamespace: Option[String], typeMatcher: TypeMatcher): List[Import] = {
     val topLevelSchemas = getTopLevelSchemas(schemaOrProtocol, typeMatcher)
     val recordSchemas = getRecordSchemas(topLevelSchemas)
     val fixedSchemas = getFixedSchemas(topLevelSchemas)
