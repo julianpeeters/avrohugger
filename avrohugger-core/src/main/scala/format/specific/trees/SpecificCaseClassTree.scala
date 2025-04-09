@@ -180,7 +180,6 @@ object SpecificCaseClassTree {
     schema: Schema,
     namespace: Option[String],
     maybeFlags: Option[List[Long]],
-    schemaStore: SchemaStore,
     typeMatcher: TypeMatcher,
     classStore: ClassStore,
     targetScalaPartialVersion: String

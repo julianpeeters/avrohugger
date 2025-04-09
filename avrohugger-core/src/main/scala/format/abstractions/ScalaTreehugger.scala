@@ -2,10 +2,9 @@ package avrohugger
 package format
 package abstractions
 
-import matchers.TypeMatcher
-import stores.{ ClassStore, SchemaStore }
-import avrohuggers.{ Schemahugger, Protocolhugger }
-
+import avrohugger.format.abstractions.avrohuggers.{ Protocolhugger, Schemahugger }
+import avrohugger.matchers.TypeMatcher
+import avrohugger.stores.ClassStore
 import org.apache.avro.{ Protocol, Schema }
 
 /** Parent to all ouput format treehuggers
@@ -24,7 +23,6 @@ trait ScalaTreehugger {
     namespace: Option[String],
     schemaOrProtocol: Either[Schema, Protocol],
     typeMatcher: TypeMatcher,
-    schemaStore: SchemaStore,
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): String
 
@@ -33,7 +31,6 @@ trait ScalaTreehugger {
   val protocolhugger: Protocolhugger
 
   val schemahugger: Schemahugger
-
 
 
 }

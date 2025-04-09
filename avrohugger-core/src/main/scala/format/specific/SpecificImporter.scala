@@ -5,7 +5,6 @@ package specific
 import avrohugger.format.abstractions.Importer
 import avrohugger.matchers.TypeMatcher
 import avrohugger.types._
-import avrohugger.stores.SchemaStore
 import org.apache.avro.Schema.Type.RECORD
 import org.apache.avro.{ Protocol, Schema }
 import treehugger.forest._

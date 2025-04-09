@@ -2,18 +2,12 @@ package avrohugger
 package input
 package parsers
 
-import stores.SchemaStore
 
-import org.apache.avro.Protocol
-import org.apache.avro.Schema
 import org.apache.avro.Schema.Parser
-import org.apache.avro.SchemaParseException
-import org.apache.avro.compiler.idl.Idl
-import org.apache.avro.compiler.idl.ParseException
+import org.apache.avro.{ Protocol, Schema, SchemaParseException }
+import org.apache.avro.compiler.idl.{ Idl, ParseException }
 
-import scala.jdk.CollectionConverters._
 import java.nio.charset.Charset
-import java.io.FileNotFoundException
 
 // tries schema first, then protocol, then idl, then for case class defs
 class StringInputParser {
@@ -55,7 +49,7 @@ class StringInputParser {
     }
   }
 
-  def getSchemaOrProtocols(inputString: String, schemaStore: SchemaStore): List[Either[Schema, Protocol]] =
+  def getSchemaOrProtocols(inputString: String): List[Either[Schema, Protocol]] =
     trySchema(inputString)
 }
 

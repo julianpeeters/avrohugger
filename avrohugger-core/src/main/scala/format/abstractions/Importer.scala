@@ -6,7 +6,6 @@ import avrohugger.input.DependencyInspector
 import avrohugger.input.NestedSchemaExtractor
 import avrohugger.matchers.TypeMatcher
 import avrohugger.matchers.custom.CustomNamespaceMatcher
-import avrohugger.stores.SchemaStore
 import org.apache.avro.{ Protocol, Schema }
 import org.apache.avro.Schema.Type.{ ARRAY, ENUM, FIXED, MAP, RECORD, UNION }
 import treehugger.forest._

@@ -1,17 +1,15 @@
 package avrohugger
 package format
 
-import format.abstractions.SourceFormat
-import format.standard._
-import matchers.TypeMatcher
-import matchers.custom.{CustomNamespaceMatcher, CustomTypeMatcher}
-import models.CompilationUnit
-import stores.{ClassStore, SchemaStore}
-import types._
-import treehugger.forest._
-import definitions.RootClass
-import org.apache.avro.{Protocol, Schema}
-import org.apache.avro.Schema.Type.{ENUM, FIXED, RECORD}
+import avrohugger.format.abstractions.SourceFormat
+import avrohugger.format.standard._
+import avrohugger.matchers.TypeMatcher
+import avrohugger.matchers.custom.CustomNamespaceMatcher
+import avrohugger.models.CompilationUnit
+import avrohugger.stores.ClassStore
+import avrohugger.types._
+import org.apache.avro.Schema.Type.{ ENUM, FIXED, RECORD }
+import org.apache.avro.{ Protocol, Schema }
 
 object Standard extends SourceFormat {
 
@@ -26,11 +24,11 @@ object Standard extends SourceFormat {
     classStore: ClassStore,
     ns: Option[String],
     schemaOrProtocol: Either[Schema, Protocol],
-    schemaStore: SchemaStore,
     maybeOutDir: Option[String],
     typeMatcher: TypeMatcher,
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): List[CompilationUnit] = {
+    registerTypes(schemaOrProtocol, classStore, typeMatcher)
     val namespace =
       CustomNamespaceMatcher.checkCustomNamespace(
         ns,
@@ -48,7 +46,6 @@ object Standard extends SourceFormat {
               namespace,
               schemaOrProtocol,
               typeMatcher,
-              schemaStore,
               maybeOutDir,
               restrictedFields,
               targetScalaPartialVersion)
@@ -75,7 +72,6 @@ object Standard extends SourceFormat {
                   namespace,
                   schemaOrProtocol,
                   typeMatcher,
-                  schemaStore,
                   maybeOutDir,
                   restrictedFields,
                   targetScalaPartialVersion)
@@ -87,7 +83,6 @@ object Standard extends SourceFormat {
                   namespace,
                   schemaOrProtocol,
                   typeMatcher,
-                  schemaStore,
                   maybeOutDir,
                   restrictedFields,
                   targetScalaPartialVersion)
@@ -104,7 +99,6 @@ object Standard extends SourceFormat {
               namespace,
               schemaOrProtocol,
               typeMatcher,
-              schemaStore,
               maybeOutDir,
               restrictedFields,
               targetScalaPartialVersion)
@@ -118,7 +112,6 @@ object Standard extends SourceFormat {
           namespace,
           Right(protocol),
           typeMatcher,
-          schemaStore,
           maybeOutDir,
           restrictedFields,
           targetScalaPartialVersion)
@@ -138,7 +131,7 @@ object Standard extends SourceFormat {
                 maybeOutDir,
                 typeMatcher)
             })
-            if (localRecords.length >= 1) scalaCompilationUnit +: javaCompilationUnits
+            if (localRecords.nonEmpty) scalaCompilationUnit +: javaCompilationUnits
             else javaCompilationUnits
           }
           case ScalaCaseObjectEnum => List(scalaCompilationUnit)
@@ -154,7 +147,6 @@ object Standard extends SourceFormat {
     ns: Option[String],
     schemaOrProtocol: Either[Schema, Protocol],
     outDir: String,
-    schemaStore: SchemaStore,
     typeMatcher: TypeMatcher,
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): Unit = {
@@ -162,7 +154,6 @@ object Standard extends SourceFormat {
       classStore,
       ns,
       schemaOrProtocol,
-      schemaStore,
       Some(outDir),
       typeMatcher,
       restrictedFields,

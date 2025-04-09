@@ -2,7 +2,6 @@ package avrohugger
 package input
 
 import avrohugger.matchers.TypeMatcher
-import stores.SchemaStore
 import types.EnumAsScalaString
 
 import org.apache.avro.Schema

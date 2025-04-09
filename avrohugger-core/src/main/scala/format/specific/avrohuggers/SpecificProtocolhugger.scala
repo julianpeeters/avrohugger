@@ -3,11 +3,11 @@ package format
 package specific
 package avrohuggers
 
-import format.abstractions.avrohuggers.Protocolhugger
-import generators.ScalaDocGenerator
-import trees.{ SpecificObjectTree, SpecificTraitTree }
-import matchers.TypeMatcher
-import stores.{ ClassStore, SchemaStore }
+import avrohugger.format.abstractions.avrohuggers.Protocolhugger
+import avrohugger.format.specific.trees.{ SpecificObjectTree, SpecificTraitTree }
+import avrohugger.generators.ScalaDocGenerator
+import avrohugger.matchers.TypeMatcher
+import avrohugger.stores.ClassStore
 import org.apache.avro.Protocol
 import treehugger.forest._
 
@@ -15,16 +15,7 @@ import scala.jdk.CollectionConverters._
 
 object SpecificProtocolhugger extends Protocolhugger {
 
-  def toTrees(
-    schemaStore: SchemaStore,
-    classStore: ClassStore,
-    namespace: Option[String],
-    protocol: Protocol,
-    typeMatcher: TypeMatcher,
-    maybeBaseTrait: Option[String],
-    maybeFlags: Option[List[Long]],
-    restrictedFields: Boolean,
-    targetScalaPartialVersion: String): List[Tree] = {
+  def toTrees(classStore: ClassStore, namespace: Option[String], protocol: Protocol, typeMatcher: TypeMatcher, maybeBaseTrait: Option[String], maybeFlags: Option[List[Long]], restrictedFields: Boolean, targetScalaPartialVersion: String): List[Tree] = {
 
     val name: String = protocol.getName
     val messages = protocol.getMessages.asScala.toMap
@@ -40,16 +31,7 @@ object SpecificProtocolhugger extends Protocolhugger {
         val maybeNewFlags = Some(List(Flags.FINAL.toLong))
         val sealedTraitDef = SpecificTraitTree.toADTRootDef(protocol)
         val subTypeDefs = localNonEnums.flatMap(schema => {
-          SpecificSchemahugger.toTrees(
-            schemaStore,
-            classStore,
-            namespace,
-            schema,
-            typeMatcher,
-            maybeNewBaseTrait,
-            maybeNewFlags,
-            restrictedFields,
-            targetScalaPartialVersion)
+          SpecificSchemahugger.toTrees(classStore, namespace, schema, typeMatcher, maybeNewBaseTrait, maybeNewFlags, restrictedFields, targetScalaPartialVersion)
         })
         sealedTraitDef +: subTypeDefs
       }
@@ -64,16 +46,7 @@ object SpecificProtocolhugger extends Protocolhugger {
           }
         }
         docTrees ::: localNonEnums.flatMap { schema =>
-          SpecificSchemahugger.toTrees(
-            schemaStore,
-            classStore,
-            namespace,
-            schema,
-            typeMatcher,
-            maybeBaseTrait,
-            maybeFlags,
-            restrictedFields,
-            targetScalaPartialVersion)
+          SpecificSchemahugger.toTrees(classStore, namespace, schema, typeMatcher, maybeBaseTrait, maybeFlags, restrictedFields, targetScalaPartialVersion)
         }
       }
     }

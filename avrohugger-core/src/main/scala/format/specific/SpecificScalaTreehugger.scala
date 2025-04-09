@@ -2,11 +2,10 @@ package avrohugger
 package format
 package specific
 
-import format.abstractions.ScalaTreehugger
-import avrohuggers.{ SpecificProtocolhugger, SpecificSchemahugger }
-import matchers.TypeMatcher
-import stores.{ ClassStore, SchemaStore }
-
+import avrohugger.format.abstractions.ScalaTreehugger
+import avrohugger.format.specific.avrohuggers.{ SpecificProtocolhugger, SpecificSchemahugger }
+import avrohugger.matchers.TypeMatcher
+import avrohugger.stores.ClassStore
 import org.apache.avro.{ Protocol, Schema }
 import treehugger.forest._
 import treehuggerDSL._
@@ -25,7 +24,6 @@ object SpecificScalaTreehugger extends ScalaTreehugger {
     namespace: Option[String],
     schemaOrProtocol: Either[Schema, Protocol],
     typeMatcher: TypeMatcher,
-    schemaStore: SchemaStore,
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): String = {
 
@@ -33,28 +31,8 @@ object SpecificScalaTreehugger extends ScalaTreehugger {
     val imports: List[Import] = importer.getImports(schemaOrProtocol, namespace, typeMatcher)
 
     val topLevelDefs: List[Tree] = schemaOrProtocol match {
-      case Left(schema) => schemahugger.toTrees(
-        schemaStore,
-        classStore,
-        namespace,
-        schema,
-        typeMatcher,
-        None,
-        None,
-        restrictedFields,
-        targetScalaPartialVersion
-      )
-      case Right(protocol) => protocolhugger.toTrees(
-        schemaStore,
-        classStore,
-        namespace,
-        protocol,
-        typeMatcher,
-        None,
-        None,
-        restrictedFields,
-        targetScalaPartialVersion
-      )
+      case Left(schema) => schemahugger.toTrees(classStore, namespace, schema, typeMatcher, None, None, restrictedFields, targetScalaPartialVersion)
+      case Right(protocol) => protocolhugger.toTrees(classStore, namespace, protocol, typeMatcher, None, None, restrictedFields, targetScalaPartialVersion)
     }
 
     // wrap the definitions in a block with a comment and a package

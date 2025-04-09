@@ -2,16 +2,14 @@ package avrohugger
 package generators
 
 import avrohugger.format.abstractions.SourceFormat
-import avrohugger.input.DependencyInspector
-import avrohugger.input.NestedSchemaExtractor
+import avrohugger.input.{ DependencyInspector, NestedSchemaExtractor }
 import avrohugger.input.parsers.{ FileInputParser, StringInputParser }
 import avrohugger.matchers.TypeMatcher
-import avrohugger.stores.{ ClassStore, SchemaStore }
+import avrohugger.stores.ClassStore
 import org.apache.avro.Schema.Parser
-
-import java.io.{ File, FileNotFoundException, IOException }
 import org.apache.avro.{ Protocol, Schema }
 
+import java.io.{ File, FileNotFoundException, IOException }
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 
@@ -22,7 +20,6 @@ private[avrohugger] class StringGenerator {
     schema: Schema,
     format: SourceFormat,
     classStore: ClassStore,
-    schemaStore: SchemaStore,
     typeMatcher: TypeMatcher,
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): List[String] = {
@@ -35,7 +32,6 @@ private[avrohugger] class StringGenerator {
         classStore,
         maybeNS,
         Left(schema),
-        schemaStore,
         None,
         typeMatcher,
         restrictedFields,
@@ -48,7 +44,6 @@ private[avrohugger] class StringGenerator {
     protocol: Protocol,
     format: SourceFormat,
     classStore: ClassStore,
-    schemaStore: SchemaStore,
     typeMatcher: TypeMatcher,
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): List[String] = {
@@ -57,7 +52,6 @@ private[avrohugger] class StringGenerator {
       classStore,
       namespace,
       Right(protocol),
-      schemaStore,
       None,
       typeMatcher,
       restrictedFields,
@@ -69,17 +63,16 @@ private[avrohugger] class StringGenerator {
     str: String,
     format: SourceFormat,
     classStore: ClassStore,
-    schemaStore: SchemaStore,
     stringParser: StringInputParser,
     typeMatcher: TypeMatcher,
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): List[String] = {
-    val schemaOrProtocols = stringParser.getSchemaOrProtocols(str, schemaStore)
+    val schemaOrProtocols = stringParser.getSchemaOrProtocols(str)
     val codeStrings = schemaOrProtocols.flatMap {
       case Left(schema) =>
-        schemaToStrings(schema, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
+        schemaToStrings(schema, format, classStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
       case Right(protocol) =>
-        protocolToStrings(protocol, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
+        protocolToStrings(protocol, format, classStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
     }.distinct
     // reset the schema store after processing the whole submission
     codeStrings
@@ -89,7 +82,6 @@ private[avrohugger] class StringGenerator {
     inFile: File,
     format: SourceFormat,
     classStore: ClassStore,
-    schemaStore: SchemaStore,
     fileParser: FileInputParser,
     schemaParser: Parser,
     typeMatcher: TypeMatcher,
@@ -100,9 +92,9 @@ private[avrohugger] class StringGenerator {
       Await.result(fileParser.getSchemaOrProtocols(inFile, format, classStore, classLoader, schemaParser), Duration.Inf)
         .flatMap {
           case Left(schema) =>
-            schemaToStrings(schema, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
+            schemaToStrings(schema, format, classStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
           case Right(protocol) =>
-            protocolToStrings(protocol, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
+            protocolToStrings(protocol, format, classStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
         }
     }
     catch {

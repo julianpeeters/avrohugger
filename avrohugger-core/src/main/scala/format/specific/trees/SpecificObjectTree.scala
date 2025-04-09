@@ -5,7 +5,6 @@ package trees
 
 import avrohugger.matchers.TypeMatcher
 import avrohugger.matchers.custom.CustomTypeMatcher
-import avrohugger.stores.SchemaStore
 import avrohugger.types._
 import org.apache.avro.{LogicalTypes, Protocol, Schema}
 import treehugger.forest._
@@ -30,7 +29,6 @@ object SpecificObjectTree {
 
   def schemaContainsDecimal(
     schema: Schema,
-    schemaStore: SchemaStore,
     typeMatcher: TypeMatcher
   ): Boolean = {
     val topLevelSchemas = SpecificImporter.getTopLevelSchemas(Left(schema), typeMatcher)
@@ -46,7 +44,6 @@ object SpecificObjectTree {
   def toCaseCompanionDef(
     schema: Schema,
     maybeFlags: Option[List[Long]],
-    schemaStore: SchemaStore,
     typeMatcher: TypeMatcher) = {
     val ParserClass = RootClass.newClass("org.apache.avro.Schema.Parser")
     val objectDef = maybeFlags match {
@@ -106,7 +103,7 @@ object SpecificObjectTree {
         case None => objectDef := BLOCK(schemaDef, externalReader, externalWriter, defCtorDefault)
       }
       case Schema.Type.RECORD =>
-        if (schemaContainsDecimal(schema, schemaStore, typeMatcher)) objectDef := BLOCK(schemaDef, decimalConversionDef)
+        if (schemaContainsDecimal(schema, typeMatcher)) objectDef := BLOCK(schemaDef, decimalConversionDef)
         else objectDef := BLOCK(schemaDef)
       case _ => sys.error("Only FIXED and RECORD types can generate companion objects")
     }

@@ -4,7 +4,7 @@ package abstractions
 
 import avrohugger.matchers.TypeMatcher
 import avrohugger.models.CompilationUnit
-import avrohugger.stores.{ ClassStore, SchemaStore }
+import avrohugger.stores.ClassStore
 import avrohugger.types._
 import org.apache.avro.Schema.Type.{ ENUM, FIXED, RECORD }
 import org.apache.avro.{ Protocol, Schema }
@@ -46,7 +46,6 @@ trait SourceFormat {
     classStore: ClassStore,
     namespace: Option[String],
     schemaOrProtocol: Either[Schema, Protocol],
-    schemaStore: SchemaStore,
     maybeOutDir: Option[String],
     typeMatcher: TypeMatcher,
     restrictedFields: Boolean,
@@ -57,7 +56,6 @@ trait SourceFormat {
     namespace: Option[String],
     schemaOrProtocol: Either[Schema, Protocol],
     outDir: String,
-    schemaStore: SchemaStore,
     typeMatcher: TypeMatcher,
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): Unit
@@ -147,7 +145,6 @@ trait SourceFormat {
     namespace: Option[String],
     schemaOrProtocol: Either[Schema, Protocol],
     typeMatcher: TypeMatcher,
-    schemaStore: SchemaStore,
     maybeOutDir: Option[String],
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): CompilationUnit = {
@@ -158,7 +155,6 @@ trait SourceFormat {
       namespace,
       schemaOrProtocol,
       typeMatcher,
-      schemaStore,
       restrictedFields,
       targetScalaPartialVersion)
     CompilationUnit(scalaFilePath, scalaString)

@@ -1,19 +1,15 @@
 package avrohugger
 package format
 
-import abstractions.SourceFormat
-import format.specific.{ SpecificJavaTreehugger, SpecificScalaTreehugger }
-import matchers.TypeMatcher
-import matchers.custom.CustomNamespaceMatcher
-import models.CompilationUnit
-import stores.{ ClassStore, SchemaStore }
-import types._
-
-
-import treehugger.forest._
-
-import org.apache.avro.{ Protocol, Schema }
+import avrohugger.format.abstractions.SourceFormat
+import avrohugger.format.specific.{ SpecificJavaTreehugger, SpecificScalaTreehugger }
+import avrohugger.matchers.TypeMatcher
+import avrohugger.matchers.custom.CustomNamespaceMatcher
+import avrohugger.models.CompilationUnit
+import avrohugger.stores.ClassStore
+import avrohugger.types._
 import org.apache.avro.Schema.Type.{ ENUM, FIXED, RECORD }
+import org.apache.avro.{ Protocol, Schema }
 
 object SpecificRecord extends SourceFormat {
 
@@ -30,7 +26,6 @@ object SpecificRecord extends SourceFormat {
   private def protocolToRPC(classStore: ClassStore,
     namespace: Option[String],
     protocol: Protocol,
-    schemaStore: SchemaStore,
     maybeOutDir: Option[String],
     typeMatcher: TypeMatcher,
     restrictedFields: Boolean,
@@ -49,7 +44,6 @@ object SpecificRecord extends SourceFormat {
       namespace,
       Right(protocol),
       typeMatcher,
-      schemaStore,
       restrictedFields,
       targetScalaPartialVersion)
     val rpcTraitCompUnit = CompilationUnit(maybePath, rpcTraitString)
@@ -59,7 +53,6 @@ object SpecificRecord extends SourceFormat {
         namespace,
         Left(schema),
         typeMatcher,
-        schemaStore,
         maybeOutDir,
         restrictedFields,
         targetScalaPartialVersion)
@@ -81,11 +74,11 @@ object SpecificRecord extends SourceFormat {
     classStore: ClassStore,
     ns: Option[String],
     schemaOrProtocol: Either[Schema, Protocol],
-    schemaStore: SchemaStore,
     maybeOutDir: Option[String],
     typeMatcher: TypeMatcher,
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): List[CompilationUnit] = {
+    registerTypes(schemaOrProtocol, classStore, typeMatcher)
     val enumType = typeMatcher.avroScalaTypes.`enum`
 
     val namespace =
@@ -103,7 +96,6 @@ object SpecificRecord extends SourceFormat {
               namespace,
               schemaOrProtocol,
               typeMatcher,
-              schemaStore,
               maybeOutDir,
               restrictedFields,
               targetScalaPartialVersion)
@@ -132,7 +124,6 @@ object SpecificRecord extends SourceFormat {
               namespace,
               schemaOrProtocol,
               typeMatcher,
-              schemaStore,
               maybeOutDir,
               restrictedFields,
               targetScalaPartialVersion)
@@ -171,7 +162,6 @@ object SpecificRecord extends SourceFormat {
             namespace,
             Right(protocol),
             typeMatcher,
-            schemaStore,
             maybeOutDir,
             restrictedFields,
             targetScalaPartialVersion)
@@ -182,7 +172,6 @@ object SpecificRecord extends SourceFormat {
           classStore,
           namespace,
           protocol,
-          schemaStore,
           maybeOutDir,
           typeMatcher,
           restrictedFields,
@@ -217,7 +206,6 @@ object SpecificRecord extends SourceFormat {
     ns: Option[String],
     schemaOrProtocol: Either[Schema, Protocol],
     outDir: String,
-    schemaStore: SchemaStore,
     typeMatcher: TypeMatcher,
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): Unit = {
@@ -225,7 +213,6 @@ object SpecificRecord extends SourceFormat {
       classStore,
       ns,
       schemaOrProtocol,
-      schemaStore,
       Some(outDir),
       typeMatcher,
       restrictedFields,
