@@ -90,7 +90,7 @@ class FileInputParser {
             Left(s)
           }
         }
-        case "avsc" => Future {
+        case "avsc" => Future.successful {
           tryParse(infile, parser).map { s =>
             processedSchemas.putIfAbsent(s.getFullName, s)
             Left(s)
