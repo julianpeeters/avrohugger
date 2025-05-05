@@ -2,12 +2,12 @@ lazy val avroVersion = "1.11.4"
 
 lazy val commonSettings = Seq(
   organization := "com.julianpeeters",
-  version := "2.13.0-SNAPSHOT",
+  version := "2.13.0",
   ThisBuild / versionScheme := Some("semver-spec"),
   scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature"),
   Test / scalacOptions ++= Seq("-Yrangepos"),
-  scalaVersion := "3.3.5",
-  crossScalaVersions := Seq("2.12.20", "2.13.16", scalaVersion.value),
+  scalaVersion := "2.13.16",
+  crossScalaVersions := Seq("2.12.20", scalaVersion.value),
   libraryDependencies += "org.apache.avro" % "avro" % avroVersion,
   libraryDependencies += "org.apache.avro" % "avro-compiler" % avroVersion,
   libraryDependencies := {
@@ -32,12 +32,12 @@ lazy val commonSettings = Seq(
   libraryDependencies += "org.specs2" %% "specs2-core" % "4.20.2" % "test",
   publishMavenStyle := true,
   Test / publishArtifact := false,
-  publishTo := {
-    if (isSnapshot.value)
-      Opts.resolver.sonatypeOssSnapshots.headOption
-    else
-      Some(Opts.resolver.sonatypeStaging)
-  },
+  sonatypeCredentialHost := xerial.sbt.Sonatype.sonatypeCentralHost,
+  publishTo := sonatypePublishToBundle.value,
+  // publishTo := {
+  //   val nexus = "https://central.sonatype.com/"
+  //   Some("releases" at nexus + "api/v1/publisher/upload")
+  // },
   pomIncludeRepository := { _ => false },
   licenses := Seq("Apache 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
   homepage := Some(url("https://github.com/julianpeeters/avrohugger")),
