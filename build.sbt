@@ -6,8 +6,8 @@ lazy val commonSettings = Seq(
   ThisBuild / versionScheme := Some("semver-spec"),
   scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature"),
   Test / scalacOptions ++= Seq("-Yrangepos"),
-  scalaVersion := "2.13.16",
-  crossScalaVersions := Seq("2.12.20", scalaVersion.value),
+  scalaVersion := "3.3.5",
+  crossScalaVersions := Seq("2.12.20", "2.13.16", scalaVersion.value),
   libraryDependencies += "org.apache.avro" % "avro" % avroVersion,
   libraryDependencies += "org.apache.avro" % "avro-compiler" % avroVersion,
   libraryDependencies := {
@@ -34,10 +34,6 @@ lazy val commonSettings = Seq(
   Test / publishArtifact := false,
   sonatypeCredentialHost := xerial.sbt.Sonatype.sonatypeCentralHost,
   publishTo := sonatypePublishToBundle.value,
-  // publishTo := {
-  //   val nexus = "https://central.sonatype.com/"
-  //   Some("releases" at nexus + "api/v1/publisher/upload")
-  // },
   pomIncludeRepository := { _ => false },
   licenses := Seq("Apache 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
   homepage := Some(url("https://github.com/julianpeeters/avrohugger")),
