@@ -6,8 +6,8 @@ package trees
 import generators.ScalaDocGenerator
 import matchers.TypeMatcher
 import types._
-import org.apache.avro.Schema.Type.{ENUM, RECORD}
-import org.apache.avro.{Protocol, Schema}
+import org.apache.avro.Schema.Type.{ ENUM, RECORD }
+import org.apache.avro.{ Protocol, Schema }
 import treehugger.forest._
 import treehuggerDSL._
 
@@ -17,6 +17,7 @@ object StandardTraitTree {
 
   def toADTRootDef(protocol: Protocol, typeMatcher: TypeMatcher) = {
     def isEnum(schema: Schema) = schema.getType == ENUM
+
     val sealedTraitTree = TRAITDEF(protocol.getName).withFlags(Flags.SEALED)
     val adtRootTree = {
       val adtSubTypes = typeMatcher.avroScalaTypes.`enum` match {
@@ -31,14 +32,12 @@ object StandardTraitTree {
           .withParents("Serializable")
       }
       else sealedTraitTree
-    } 
-    val treeWithScalaDoc = ScalaDocGenerator.docToScalaDoc(
+    }
+    ScalaDocGenerator.docToScalaDoc(
       Right(protocol),
       adtRootTree)
-      
-    treeWithScalaDoc
   }
-  
+
   def toCaseObjectEnumDef(schema: Schema,
     maybeBaseTrait: Option[String]): List[Tree] = {
     val adtRootTree: Tree = maybeBaseTrait match {
@@ -52,7 +51,7 @@ object StandardTraitTree {
       .map(enumSymbolString => {
         (CASEOBJECTDEF(enumSymbolString).withParents(schema.getName): Tree)
       }).toList
-    val objectTree = OBJECTDEF(schema.getName) := Block(adtSubTypes:_*)
+    val objectTree = OBJECTDEF(schema.getName) := Block(adtSubTypes: _*)
     val adtRootTreeWithScalaDoc: Tree = ScalaDocGenerator.docToScalaDoc(
       Left(schema),
       adtRootTree)

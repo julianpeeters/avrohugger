@@ -6,13 +6,11 @@ import avrohugger.input.DependencyInspector
 import avrohugger.input.NestedSchemaExtractor
 import avrohugger.matchers.TypeMatcher
 import avrohugger.matchers.custom.CustomNamespaceMatcher
-import avrohugger.stores.SchemaStore
-
-import org.apache.avro.{ Schema, Protocol }
-import org.apache.avro.Schema.Type.{ ENUM, RECORD, UNION, MAP, ARRAY, FIXED }
-
+import org.apache.avro.{ Protocol, Schema }
+import org.apache.avro.Schema.Type.{ ARRAY, ENUM, FIXED, MAP, RECORD, UNION }
 import treehugger.forest._
 import definitions.RootClass
+import org.apache.avro.Schema.Type
 import treehuggerDSL._
 
 import scala.jdk.CollectionConverters._
@@ -34,18 +32,15 @@ import scala.jdk.CollectionConverters._
 trait Importer {
 
   ///////////////////////////// abstract members ///////////////////////////////
-  def getImports(
-    schemaOrProtocol: Either[Schema, Protocol],
-    currentNamespace: Option[String],
-    schemaStore: SchemaStore,
-    typeMatcher: TypeMatcher): List[Import]
+  def getImports(schemaOrProtocol: Either[Schema, Protocol], currentNamespace: Option[String], typeMatcher: TypeMatcher): List[Import]
+
+  private def nextSchemas(s: Schema, us: Set[Schema]) = getRecordSchemas(List(s), us)
 
   ////////////////////////////// concrete members //////////////////////////////
   // gets enum schemas which may be dependencies
   def getEnumSchemas(
     topLevelSchemas: List[Schema],
     alreadyImported: Set[Schema] = Set.empty[Schema]): List[Schema] = {
-    def nextSchemas(s: Schema, us: Set[Schema]) = getRecordSchemas(List(s), us)
 
     topLevelSchemas
       .flatMap(schema => {
@@ -59,7 +54,7 @@ trait Importer {
             Seq(schema)
           case UNION =>
             schema.getTypes().asScala
-              .find(s => s.getType != NULL).toSet
+              .find(s => s.getType != Type.NULL).toSet
               .intersect(alreadyImported)
               .flatMap(s => nextSchemas(schema, alreadyImported + s))
           case MAP =>
@@ -90,11 +85,34 @@ trait Importer {
       .distinct
 
   def getFieldSchemas(schema: Schema): List[Schema] = {
-    schema.getFields().asScala.toList.map(field => field.schema)
+    schema.getFields().asScala.toList.map(_.schema)
   }
 
-  def getTypeSchemas(schema: Schema): List[Schema] = {
-    schema.getTypes().asScala.toList
+  private def checkNamespace(schema: Schema, typeMatcher: TypeMatcher): Option[String] = {
+    val maybeReferredNamespace =
+      DependencyInspector.getReferredNamespace(schema)
+    CustomNamespaceMatcher.checkCustomNamespace(
+      maybeReferredNamespace,
+      typeMatcher,
+      maybeDefaultNamespace = maybeReferredNamespace)
+  }
+
+  private def asImportDef(packageName: String, fields: List[Schema], typeMatcher: TypeMatcher): Import = {
+    val maybeUpdatedPackageName = CustomNamespaceMatcher.checkCustomNamespace(
+      Some(packageName),
+      typeMatcher,
+      maybeDefaultNamespace = Some(packageName))
+    val updatedPkg = maybeUpdatedPackageName.getOrElse(packageName)
+    val importedPackageSym = RootClass.newClass(updatedPkg)
+    val importedTypes =
+      fields.map(field => DependencyInspector.getReferredTypeName(field))
+    IMPORT(importedPackageSym, importedTypes)
+  }
+
+  private def requiresImportDef(schema: Schema, namespace: Option[String], typeMatcher: TypeMatcher): Boolean = {
+    (isRecord(schema) || isEnum(schema) || isFixed(schema)) &&
+      checkNamespace(schema, typeMatcher).isDefined &&
+      checkNamespace(schema, typeMatcher) != namespace
   }
 
   def getUserDefinedImports(
@@ -102,39 +120,12 @@ trait Importer {
     namespace: Option[String],
     typeMatcher: TypeMatcher): List[Import] = {
 
-    def checkNamespace(schema: Schema): Option[String] = {
-      val maybeReferredNamespace =
-        DependencyInspector.getReferredNamespace(schema)
-      CustomNamespaceMatcher.checkCustomNamespace(
-        maybeReferredNamespace,
-        typeMatcher,
-        maybeDefaultNamespace = maybeReferredNamespace)
-    }
-
-    def asImportDef(packageName: String, fields: List[Schema]): Import = {
-      val maybeUpdatedPackageName = CustomNamespaceMatcher.checkCustomNamespace(
-        Some(packageName),
-        typeMatcher,
-        maybeDefaultNamespace = Some(packageName))
-      val updatedPkg = maybeUpdatedPackageName.getOrElse(packageName)
-      val importedPackageSym = RootClass.newClass(updatedPkg)
-      val importedTypes =
-        fields.map(field => DependencyInspector.getReferredTypeName(field))
-      IMPORT(importedPackageSym, importedTypes)
-    }
-
-    def requiresImportDef(schema: Schema): Boolean = {
-      (isRecord(schema) || isEnum(schema) || isFixed(schema)) &&
-        checkNamespace(schema).isDefined &&
-        checkNamespace(schema) != namespace
-    }
-
     recordSchemas
-      .filter(schema => requiresImportDef(schema))
-      .groupBy(schema => checkNamespace(schema).getOrElse(schema.getNamespace))
+      .filter(schema => requiresImportDef(schema, namespace, typeMatcher))
+      .groupBy(schema => checkNamespace(schema, typeMatcher).getOrElse(schema.getNamespace))
       .toList
       .map {
-        case (packageName, fields) => asImportDef(packageName, fields)
+        case (packageName, fields) => asImportDef(packageName, fields, typeMatcher)
       }
   }
 
@@ -156,7 +147,7 @@ trait Importer {
             Seq(schema)
           case UNION =>
             schema.getTypes().asScala
-              .find(s => s.getType != NULL).toSet
+              .find(s => s.getType != Type.NULL).toSet
               .intersect(alreadyImported)
               .flatMap(s => nextSchemas(schema, alreadyImported + s))
           case MAP =>
@@ -171,28 +162,27 @@ trait Importer {
             Seq.empty[Schema]
         }
       })
-      .filter(schema => isRecord(schema))
+      .filter(isRecord)
       .distinct
   }
 
   def getTopLevelSchemas(
     schemaOrProtocol: Either[Schema, Protocol],
-    schemaStore: SchemaStore,
     typeMatcher: TypeMatcher): List[Schema] = {
     schemaOrProtocol match {
       case Left(schema) =>
-        schema :: (NestedSchemaExtractor.getNestedSchemas(schema, schemaStore, typeMatcher))
-      case Right(protocol) => protocol.getTypes().asScala.toList.flatMap(schema => {
-        schema :: (NestedSchemaExtractor.getNestedSchemas(schema, schemaStore, typeMatcher))
-      })
+        schema :: NestedSchemaExtractor.getNestedSchemas(schema, typeMatcher)
+      case Right(protocol) => protocol.getTypes().asScala.toList.flatMap { schema =>
+        schema :: NestedSchemaExtractor.getNestedSchemas(schema, typeMatcher)
+      }
     }
 
   }
 
-  def isFixed(schema: Schema): Boolean = (schema.getType == FIXED)
+  def isFixed(schema: Schema): Boolean = schema.getType == FIXED
 
-  def isEnum(schema: Schema): Boolean = (schema.getType == ENUM)
+  def isEnum(schema: Schema): Boolean = schema.getType == ENUM
 
-  def isRecord(schema: Schema): Boolean = (schema.getType == RECORD)
+  def isRecord(schema: Schema): Boolean = schema.getType == RECORD
 
 }

@@ -4,7 +4,7 @@ package abstractions
 
 import avrohugger.matchers.TypeMatcher
 import avrohugger.models.CompilationUnit
-import avrohugger.stores.{ ClassStore, SchemaStore }
+import avrohugger.stores.ClassStore
 import avrohugger.types._
 import org.apache.avro.Schema.Type.{ ENUM, FIXED, RECORD }
 import org.apache.avro.{ Protocol, Schema }
@@ -46,7 +46,6 @@ trait SourceFormat {
     classStore: ClassStore,
     namespace: Option[String],
     schemaOrProtocol: Either[Schema, Protocol],
-    schemaStore: SchemaStore,
     maybeOutDir: Option[String],
     typeMatcher: TypeMatcher,
     restrictedFields: Boolean,
@@ -57,7 +56,6 @@ trait SourceFormat {
     namespace: Option[String],
     schemaOrProtocol: Either[Schema, Protocol],
     outDir: String,
-    schemaStore: SchemaStore,
     typeMatcher: TypeMatcher,
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): Unit
@@ -76,30 +74,26 @@ trait SourceFormat {
 
   val toolShortDescription: String
 
+  private def enumExt(enumType: AvroScalaEnumType): String = enumType match {
+    case JavaEnum => ".java"
+    case ScalaCaseObjectEnum => ".scala"
+    case ScalaEnumeration => ".scala"
+    case EnumAsScalaString => sys.error("Only RECORD and ENUM can be top-level definitions")
+  }
+
   ///////////////////////////// concrete members ///////////////////////////////
   def fileExt(
     schemaOrProtocol: Either[Schema, Protocol],
-    typeMatcher: TypeMatcher): String = {
-    val enumType = typeMatcher.avroScalaTypes.`enum`
-
-    def enumExt: String = enumType match {
-      case JavaEnum => ".java"
-      case ScalaCaseObjectEnum => ".scala"
-      case ScalaEnumeration => ".scala"
-      case EnumAsScalaString => sys.error("Only RECORD and ENUM can be top-level definitions")
-    }
-
+    typeMatcher: TypeMatcher): String =
     schemaOrProtocol match {
       case Left(schema) => schema.getType match {
         case RECORD => ".scala"
-        case ENUM => enumExt // Avro's SpecificData requires enums be Java Enum
+        case ENUM => enumExt(typeMatcher.avroScalaTypes.`enum`) // Avro's SpecificData requires enums be Java Enum
         case FIXED => ".scala"
         case _ => sys.error("Only RECORD and ENUM can be top-level definitions")
       }
       case Right(protocol) => ".scala"
     }
-
-  }
 
   def getFilePath(
     namespace: Option[String],
@@ -120,13 +114,12 @@ trait SourceFormat {
     }
   }
 
+  private def isTopLevelNamespace(schema: Schema, protocolNS: String) = schema.getNamespace == protocolNS
+
   def getLocalSubtypes(protocol: Protocol): List[Schema] = {
     val protocolNS = protocol.getNamespace
     val types = protocol.getTypes().asScala.toList
-
-    def isTopLevelNamespace(schema: Schema) = schema.getNamespace == protocolNS
-
-    types.filter(isTopLevelNamespace)
+    types.filter(isTopLevelNamespace(_, protocolNS))
   }
 
   def getJavaEnumCompilationUnit(
@@ -152,7 +145,6 @@ trait SourceFormat {
     namespace: Option[String],
     schemaOrProtocol: Either[Schema, Protocol],
     typeMatcher: TypeMatcher,
-    schemaStore: SchemaStore,
     maybeOutDir: Option[String],
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): CompilationUnit = {
@@ -163,7 +155,6 @@ trait SourceFormat {
       namespace,
       schemaOrProtocol,
       typeMatcher,
-      schemaStore,
       restrictedFields,
       targetScalaPartialVersion)
     CompilationUnit(scalaFilePath, scalaString)
@@ -171,24 +162,27 @@ trait SourceFormat {
 
   def isEnum(schema: Schema): Boolean = schema.getType == Schema.Type.ENUM
 
+  private def registerSchema(schema: Schema,
+    classStore: ClassStore,
+    typeMatcher: TypeMatcher): Unit = {
+    val typeName = typeMatcher.avroScalaTypes.`enum` match {
+      case JavaEnum => schema.getName
+      case ScalaCaseObjectEnum => schema.getName
+      case ScalaEnumeration => renameEnum(schema, "Value")
+      case EnumAsScalaString => schema.getName
+    }
+    val classSymbol = RootClass.newClass(typeName)
+    classStore.accept(schema, classSymbol)
+  }
+
   def registerTypes(
     schemaOrProtocol: Either[Schema, Protocol],
     classStore: ClassStore,
     typeMatcher: TypeMatcher): Unit = {
-    def registerSchema(schema: Schema): Unit = {
-      val typeName = typeMatcher.avroScalaTypes.`enum` match {
-        case JavaEnum => schema.getName
-        case ScalaCaseObjectEnum => schema.getName
-        case ScalaEnumeration => renameEnum(schema, "Value")
-        case EnumAsScalaString => schema.getName
-      }
-      val classSymbol = RootClass.newClass(typeName)
-      classStore.accept(schema, classSymbol)
-    }
 
     schemaOrProtocol match {
-      case Left(schema) => registerSchema(schema)
-      case Right(protocol) => protocol.getTypes().asScala.foreach(registerSchema)
+      case Left(schema) => registerSchema(schema, classStore, typeMatcher)
+      case Right(protocol) => protocol.getTypes().asScala.foreach(registerSchema(_, classStore, typeMatcher))
     }
   }
 
@@ -214,10 +208,7 @@ trait SourceFormat {
     "Builder")
 
   def writeToFile(compilationUnit: CompilationUnit): Unit = {
-    val path = compilationUnit.maybeFilePath match {
-      case Some(filePath) => filePath
-      case None => sys.error("Cannot write to file without a file path")
-    }
+    val path = compilationUnit.maybeFilePath.getOrElse(sys.error("Cannot write to file without a file path"))
     val contents = compilationUnit.codeString.getBytes()
     try { // delete old and/or create new
       Files.deleteIfExists(path) // delete file if exists

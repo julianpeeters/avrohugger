@@ -27,7 +27,7 @@ object Util {
       val rightValue: String = right.value
       val rightAsList = if (rightValue.contains("\r\n")) rightValue.split("\r\n") else rightValue.split("\n")
 
-      val res = leftAsList === rightAsList
+      val res = leftAsList.mkString === rightAsList.mkString
       result(res.isSuccess, res.message, res.message, right)
     }
   }

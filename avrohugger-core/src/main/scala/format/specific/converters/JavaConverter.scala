@@ -38,7 +38,7 @@ object JavaConverter {
     classSymbol: ClassSymbol,
     typeMatcher: TypeMatcher,
     targetScalaPartialVersion: String): Tree = schema.getType match {
-    case Schema.Type.UNION => {
+    case Schema.Type.UNION =>
       val types = schema.getTypes().asScala
       val hasNull = types.exists(_.getType == Schema.Type.NULL)
       val typeParamSchemas = types.filterNot(_.getType == Schema.Type.NULL)
@@ -63,7 +63,6 @@ object JavaConverter {
       } else {
         tree
       }
-    }
     case Schema.Type.ARRAY => {
       val applyParam = {
         BLOCK(tree MAP(LAMBDA(PARAM("x")) ==> BLOCK(

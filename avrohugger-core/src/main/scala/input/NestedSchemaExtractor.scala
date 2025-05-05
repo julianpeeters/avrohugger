@@ -2,7 +2,6 @@ package avrohugger
 package input
 
 import avrohugger.matchers.TypeMatcher
-import stores.SchemaStore
 import types.EnumAsScalaString
 
 import org.apache.avro.Schema
@@ -14,7 +13,6 @@ object NestedSchemaExtractor {
   // if a record is found, extract nested RECORDs and ENUMS (i.e. top-level types) 
   def getNestedSchemas(
     schema: Schema,
-    schemaStore: SchemaStore,
     typeMatcher: TypeMatcher): List[Schema] = {
     var visitedSchemas = Set.empty[String]
 
@@ -33,7 +31,7 @@ object NestedSchemaExtractor {
                 case ARRAY => flattenSchema(fieldSchema.getElementType)
                 case MAP => flattenSchema(fieldSchema.getValueType)
                 case RECORD => extract(fieldSchema) :+ fieldSchema
-                case UNION => fieldSchema.getTypes().asScala.toList.flatMap(x => flattenSchema(x))
+                case UNION => fieldSchema.getTypes().asScala.toList.flatMap(flattenSchema)
                 case ENUM => List(fieldSchema)
                 case FIXED => List(fieldSchema)
                 case _ => List(fieldSchema)

@@ -1,95 +1,91 @@
 package avrohugger
 package format
 
-import abstractions.SourceFormat
-import format.specific.{SpecificJavaTreehugger, SpecificScalaTreehugger}
-import matchers.TypeMatcher
-import matchers.custom.CustomNamespaceMatcher
-import models.CompilationUnit
-import stores.{ ClassStore, SchemaStore }
-import types._
-
-
-import treehugger.forest._
-import definitions.RootClass
-
-import org.apache.avro.{ Protocol, Schema }
+import avrohugger.format.abstractions.SourceFormat
+import avrohugger.format.specific.{ SpecificJavaTreehugger, SpecificScalaTreehugger }
+import avrohugger.matchers.TypeMatcher
+import avrohugger.matchers.custom.CustomNamespaceMatcher
+import avrohugger.models.CompilationUnit
+import avrohugger.stores.ClassStore
+import avrohugger.types._
 import org.apache.avro.Schema.Type.{ ENUM, FIXED, RECORD }
+import org.apache.avro.{ Protocol, Schema }
 
-import java.nio.file.Path
-
-object SpecificRecord extends SourceFormat{
+object SpecificRecord extends SourceFormat {
 
   val toolName = "generate-specific"
 
   val toolShortDescription = "Generates Scala code extending SpecificRecordBase."
-  
+
   val javaTreehugger = SpecificJavaTreehugger
   val scalaTreehugger = SpecificScalaTreehugger
-  
+
   val defaultTypes: AvroScalaTypes = AvroScalaTypes.defaults.copy(`enum` = JavaEnum)
 
-  def asCompilationUnits(
-    classStore: ClassStore,
-    ns: Option[String],
-    schemaOrProtocol: Either[Schema, Protocol],
-    schemaStore: SchemaStore,
+  // generate as RPC trait and separate class/enum strings
+  private def protocolToRPC(classStore: ClassStore,
+    namespace: Option[String],
+    protocol: Protocol,
     maybeOutDir: Option[String],
     typeMatcher: TypeMatcher,
     restrictedFields: Boolean,
-    targetScalaPartialVersion: String): List[CompilationUnit] = {
-
-    registerTypes(schemaOrProtocol, classStore, typeMatcher)
-    val enumType = typeMatcher.avroScalaTypes.`enum`
-
-    val namespace = 
-      CustomNamespaceMatcher.checkCustomNamespace(
-        ns,
-        typeMatcher,
-        maybeDefaultNamespace = ns)
-
-    // generate as RPC trait and separate class/enum strings
-    def protocolToRPC(protocol: Protocol): List[CompilationUnit] = {
-      val localSubtypes = getLocalSubtypes(protocol)
-      val localEnums = localSubtypes.filter(isEnum)
-      val localNonEnums = localSubtypes.filterNot(isEnum)
-      val maybePath = getFilePath(
-        namespace,
-        Right(protocol),
-        maybeOutDir,
-        typeMatcher)
-      val rpcTraitString = scalaTreehugger.asScalaCodeString(
+    targetScalaPartialVersion: String
+  ): List[CompilationUnit] = {
+    val localSubtypes = getLocalSubtypes(protocol)
+    val localEnums = localSubtypes.filter(isEnum)
+    val localNonEnums = localSubtypes.filterNot(isEnum)
+    val maybePath = getFilePath(
+      namespace,
+      Right(protocol),
+      maybeOutDir,
+      typeMatcher)
+    val rpcTraitString = scalaTreehugger.asScalaCodeString(
+      classStore,
+      namespace,
+      Right(protocol),
+      typeMatcher,
+      restrictedFields,
+      targetScalaPartialVersion)
+    val rpcTraitCompUnit = CompilationUnit(maybePath, rpcTraitString)
+    val scalaCompUnits = localNonEnums.map(schema => {
+      val scalaCompilationUnit = getScalaCompilationUnit(
         classStore,
         namespace,
-        Right(protocol),
+        Left(schema),
         typeMatcher,
-        schemaStore,
+        maybeOutDir,
         restrictedFields,
         targetScalaPartialVersion)
-      val rpcTraitCompUnit = CompilationUnit(maybePath, rpcTraitString)
-      val scalaCompUnits = localNonEnums.map(schema => {
-        val scalaCompilationUnit = getScalaCompilationUnit(
-          classStore,
-          namespace,
-          Left(schema),
-          typeMatcher,
-          schemaStore,
-          maybeOutDir,
-          restrictedFields,
-          targetScalaPartialVersion)
-        scalaCompilationUnit
-      })
-      val javaCompUnits = localEnums.map(schema => {
-        getJavaEnumCompilationUnit(
+      scalaCompilationUnit
+    })
+    val javaCompUnits = localEnums.map(schema => {
+      getJavaEnumCompilationUnit(
         classStore,
         namespace,
         schema,
         maybeOutDir,
         typeMatcher)
-      })
-      val rpcTypeCompUnits = scalaCompUnits ::: javaCompUnits
-      rpcTraitCompUnit +: rpcTypeCompUnits
-    }
+    })
+    val rpcTypeCompUnits = scalaCompUnits ::: javaCompUnits
+    rpcTraitCompUnit +: rpcTypeCompUnits
+  }
+
+  def asCompilationUnits(
+    classStore: ClassStore,
+    ns: Option[String],
+    schemaOrProtocol: Either[Schema, Protocol],
+    maybeOutDir: Option[String],
+    typeMatcher: TypeMatcher,
+    restrictedFields: Boolean,
+    targetScalaPartialVersion: String): List[CompilationUnit] = {
+    registerTypes(schemaOrProtocol, classStore, typeMatcher)
+    val enumType = typeMatcher.avroScalaTypes.`enum`
+
+    val namespace =
+      CustomNamespaceMatcher.checkCustomNamespace(
+        ns,
+        typeMatcher,
+        maybeDefaultNamespace = ns)
 
     schemaOrProtocol match {
       case Left(schema) => {
@@ -100,7 +96,6 @@ object SpecificRecord extends SourceFormat{
               namespace,
               schemaOrProtocol,
               typeMatcher,
-              schemaStore,
               maybeOutDir,
               restrictedFields,
               targetScalaPartialVersion)
@@ -129,7 +124,6 @@ object SpecificRecord extends SourceFormat{
               namespace,
               schemaOrProtocol,
               typeMatcher,
-              schemaStore,
               maybeOutDir,
               restrictedFields,
               targetScalaPartialVersion)
@@ -168,14 +162,21 @@ object SpecificRecord extends SourceFormat{
             namespace,
             Right(protocol),
             typeMatcher,
-            schemaStore,
             maybeOutDir,
             restrictedFields,
             targetScalaPartialVersion)
-          if (localRecords.length >= 1) scalaCompilationUnit +: javaCompilationUnits
+          if (localRecords.nonEmpty) scalaCompilationUnit +: javaCompilationUnits
           else javaCompilationUnits
         }
-        else protocolToRPC(protocol)
+        else protocolToRPC(
+          classStore,
+          namespace,
+          protocol,
+          maybeOutDir,
+          typeMatcher,
+          restrictedFields,
+          targetScalaPartialVersion
+        )
       }
     }
   }
@@ -186,7 +187,6 @@ object SpecificRecord extends SourceFormat{
     schemaOrProtocol match {
       case Left(schema) => schema.getName
       case Right(protocol) => {
-        def isEnum(schema: Schema) = schema.getType == Schema.Type.ENUM
         val messages = protocol.getMessages
         if (!messages.isEmpty) protocol.getName // for RPC trait
         else {
@@ -194,7 +194,7 @@ object SpecificRecord extends SourceFormat{
           if (localRecords.length > 1) protocol.getName // for ADT
           else localRecords.headOption match {
             case Some(schema) => schema.getName // for solo records make a class
-            case None => protocol.getName       // default to protocol name
+            case None => protocol.getName // default to protocol name
           }
         }
       }
@@ -206,7 +206,6 @@ object SpecificRecord extends SourceFormat{
     ns: Option[String],
     schemaOrProtocol: Either[Schema, Protocol],
     outDir: String,
-    schemaStore: SchemaStore,
     typeMatcher: TypeMatcher,
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): Unit = {
@@ -214,7 +213,6 @@ object SpecificRecord extends SourceFormat{
       classStore,
       ns,
       schemaOrProtocol,
-      schemaStore,
       Some(outDir),
       typeMatcher,
       restrictedFields,

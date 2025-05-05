@@ -27,7 +27,7 @@ object StandardCaseClassTree {
     typeMatcher: TypeMatcher,
     maybeBaseTrait: Option[String],
     maybeFlags: Option[List[Long]],
-    restrictedFields: Boolean) = {
+    restrictedFields: Boolean): Tree = {
 
     // register new type
 
@@ -61,19 +61,19 @@ object StandardCaseClassTree {
       case (Some(baseTrait), Some(flags)) => {
         if (shouldGenerateSimpleClass) {
           CLASSDEF(classSymbol)
-            .withFlags(flags:_*)
+            .withFlags(flags: _*)
             .withParams(params)
             .withParents(baseTrait)
         }
         else if (!avroFields.isEmpty) {
           CASECLASSDEF(classSymbol)
-            .withFlags(flags:_*)
+            .withFlags(flags: _*)
             .withParams(params)
             .withParents(baseTrait)
         }
         else { // in case of empty record
           CASECLASSDEF(classSymbol)
-            .withFlags(flags:_*)
+            .withFlags(flags: _*)
             .withParams(PARAM(""))
             .withParents(baseTrait)
         }
@@ -100,18 +100,18 @@ object StandardCaseClassTree {
       case (None, Some(flags)) => {
         if (shouldGenerateSimpleClass) {
           CLASSDEF(classSymbol)
-            .withFlags(flags:_*)
+            .withFlags(flags: _*)
             .withParams(params)
             .withParents("Serializable")
         }
         else if (!avroFields.isEmpty) {
           CASECLASSDEF(classSymbol)
-            .withFlags(flags:_*)
+            .withFlags(flags: _*)
             .withParams(params)
         }
         else { // in case of empty record
           CASECLASSDEF(classSymbol)
-            .withFlags(flags:_*)
+            .withFlags(flags: _*)
             .withParams(PARAM(""))
         }
       }
@@ -136,11 +136,9 @@ object StandardCaseClassTree {
 
     val classTree = caseClassDef.tree
 
-    val treeWithScalaDoc = ScalaDocGenerator.docToScalaDoc(
+    ScalaDocGenerator.docToScalaDoc(
       Left(schema),
       classTree)
-
-    treeWithScalaDoc
   }
 
 
@@ -155,7 +153,7 @@ object StandardCaseClassTree {
 
     val params: List[ValDef] = {
       val fieldName = schema.getLogicalType() match {
-        case _ : LogicalTypes.Decimal => "bigDecimal"
+        case _: LogicalTypes.Decimal => "bigDecimal"
         case _ => "bytes"
       }
       val fieldType = CustomTypeMatcher.checkCustomDecimalType(typeMatcher.avroScalaTypes.decimal, schema)
@@ -170,11 +168,9 @@ object StandardCaseClassTree {
 
     val classTree = caseClassDef.tree
 
-    val treeWithScalaDoc = ScalaDocGenerator.docToScalaDoc(
+    ScalaDocGenerator.docToScalaDoc(
       Left(schema),
       classTree)
-
-    treeWithScalaDoc
   }
 
 
