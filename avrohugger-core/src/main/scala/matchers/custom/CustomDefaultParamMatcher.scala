@@ -26,6 +26,7 @@ object CustomDefaultParamMatcher {
       case JavaEnum            => NULL // TODO Take first enum value?
       case ScalaEnumeration    => NULL // TODO Take first enum value?
       case ScalaCaseObjectEnum => NULL // TODO Take first enum value?
+      case Scala3Enum          => NULL
       case EnumAsScalaString   => LIT("")
     }
   }

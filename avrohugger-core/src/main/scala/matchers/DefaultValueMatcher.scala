@@ -80,6 +80,7 @@ object DefaultValueMatcher {
           case JavaEnum => (REF(refName) DOT node.textValue())
           case ScalaEnumeration => (REF(refName) DOT node.textValue())
           case ScalaCaseObjectEnum => (REF(refName) DOT node.textValue())
+          case Scala3Enum => (REF(refName) DOT node.textValue())
           case EnumAsScalaString => LIT(node.textValue())
         }
       }

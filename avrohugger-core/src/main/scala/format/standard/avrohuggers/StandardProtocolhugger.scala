@@ -32,6 +32,7 @@ object StandardProtocolhugger extends Protocolhugger {
     val adtSubTypes = typeMatcher.avroScalaTypes.`enum` match {
       case JavaEnum => localSubTypes.filterNot(isEnum)
       case ScalaCaseObjectEnum => localSubTypes
+      case Scala3Enum => localSubTypes
       case ScalaEnumeration => localSubTypes
       case EnumAsScalaString => localSubTypes.filterNot(isEnum)
     }

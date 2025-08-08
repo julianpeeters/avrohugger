@@ -32,6 +32,7 @@ object CustomTypeMatcher {
       else
         classStore.generatedClasses.get(schema.getFullName)
     case ScalaCaseObjectEnum => classStore.generatedClasses.get(schema.getFullName)
+    case Scala3Enum => classStore.generatedClasses.get(schema.getFullName)
     case EnumAsScalaString => StringClass
   }
 
