@@ -59,7 +59,7 @@ Scalding, Spark, Avro, etc.).
 |BOOLEAN|Boolean|Boolean||
 |NULL|Null|Null||
 |MAP|Map|Map||
-|ENUM|scala.Enumeration<br>Scala case object<br>Java Enum<br>EnumAsScalaString|Java Enum<br>EnumAsScalaString| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
+|ENUM|scala.Enumeration<br>Scala case object<br>Java Enum<br>EnumAsScalaString<br>Scala 3 Enum|Java Enum<br>EnumAsScalaString| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 |BYTES|Array[Byte]<br>BigDecimal|Array[Byte]<br>BigDecimal| See [Logical Types: `decimal`](https://github.com/julianpeeters/avrohugger#logical-types-support)|
 |FIXED|case class<br>case class + schema|case class extending `SpecificFixed`| See [Logical Types: `decimal`](https://github.com/julianpeeters/avrohugger#logical-types-support)|
 |ARRAY|Seq<br>List<br>Array<br>Vector|Seq<br>List<br>Array<br>Vector| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
@@ -172,7 +172,7 @@ To reassign Scala types to Avro types, use the following (e.g. for customizing `
 
 * `record` can be assigned to `ScalaCaseClass` and `ScalaCaseClassWithSchema`(with schema in a companion object)
 * `array` can be assigned to `ScalaSeq`, `ScalaArray`, `ScalaList`, and `ScalaVector`
-* `enum` can be assigned to `JavaEnum`, `ScalaCaseObjectEnum`, `EnumAsScalaString`, and `ScalaEnumeration`
+* `enum` can be assigned to `JavaEnum`, `ScalaCaseObjectEnum`, `EnumAsScalaString`, `ScalaEnumeration`, and `Scala3Enum`
 * `fixed` can be assigned to `ScalaCaseClassWrapper` and `ScalaCaseClassWrapperWithSchema`(with schema in a companion object)
 * `union` can be assigned to `OptionShapelessCoproduct`, `OptionEitherShapelessCoproduct`, `OptionalShapelessCoproduct` or `OptionScala3UnionType`
 * `int`, `long`, `float`, `double` can be assigned to `ScalaInt`, `ScalaLong`, `ScalaFloat`, `ScalaDouble`

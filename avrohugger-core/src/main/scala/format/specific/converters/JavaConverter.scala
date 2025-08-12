@@ -201,7 +201,7 @@ object JavaConverter {
             else defaultTree
           NEW(
             REF("org.apache.avro.generic.GenericData.EnumSymbol").APPLY(schemaTree, tree))
-        case JavaEnum | ScalaEnumeration | ScalaCaseObjectEnum => tree
+        case JavaEnum | ScalaEnumeration | ScalaCaseObjectEnum | Scala3Enum => tree
       }
     }
     case _ => tree

@@ -78,6 +78,7 @@ trait SourceFormat {
     case JavaEnum => ".java"
     case ScalaCaseObjectEnum => ".scala"
     case ScalaEnumeration => ".scala"
+    case Scala3Enum => ".scala"
     case EnumAsScalaString => sys.error("Only RECORD and ENUM can be top-level definitions")
   }
 
@@ -168,6 +169,7 @@ trait SourceFormat {
     val typeName = typeMatcher.avroScalaTypes.`enum` match {
       case JavaEnum => schema.getName
       case ScalaCaseObjectEnum => schema.getName
+      case Scala3Enum => schema.getName
       case ScalaEnumeration => renameEnum(schema, "Value")
       case EnumAsScalaString => schema.getName
     }

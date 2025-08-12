@@ -15,6 +15,7 @@ case object ScalaEnumeration extends AvroScalaEnumType
 case object JavaEnum extends AvroScalaEnumType
 case object ScalaCaseObjectEnum extends AvroScalaEnumType
 case object EnumAsScalaString extends AvroScalaEnumType
+case object Scala3Enum extends AvroScalaEnumType
 // union
 sealed trait AvroScalaUnionType extends Product with Serializable {
   val useEitherForTwoNonNullTypes: Boolean = false

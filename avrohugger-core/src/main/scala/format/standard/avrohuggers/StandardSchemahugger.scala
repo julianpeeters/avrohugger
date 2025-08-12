@@ -47,6 +47,8 @@ object StandardSchemahugger extends Schemahugger {
           List.empty
         case ScalaCaseObjectEnum =>
           StandardTraitTree.toCaseObjectEnumDef(schema, maybeBaseTrait)
+        case Scala3Enum =>
+          StandardTraitTree.toScala3EnumDef(schema)
         case ScalaEnumeration =>
           val objectDef = StandardObjectTree.toScalaEnumDef(
             classStore,

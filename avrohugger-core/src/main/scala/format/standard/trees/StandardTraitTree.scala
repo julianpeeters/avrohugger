@@ -13,7 +13,17 @@ import treehuggerDSL._
 
 import scala.jdk.CollectionConverters._
 
+
+import avrohugger.format.standard.trees.Scala3EnumSourceCode
+
 object StandardTraitTree {
+
+  def toScala3EnumDef(schema: Schema): List[Tree] = {
+    val enumName = schema.getName
+    val enumCases = schema.getEnumSymbols.asScala.map(_.toString).mkString(", ")
+    val enumSource = s"enum $enumName { case $enumCases }"
+    List(Scala3EnumSourceCode(enumSource))
+  }
 
   def toADTRootDef(protocol: Protocol, typeMatcher: TypeMatcher) = {
     def isEnum(schema: Schema) = schema.getType == ENUM
@@ -23,6 +33,7 @@ object StandardTraitTree {
       val adtSubTypes = typeMatcher.avroScalaTypes.`enum` match {
         case JavaEnum => protocol.getTypes().asScala.toList.filterNot(isEnum)
         case ScalaCaseObjectEnum => protocol.getTypes().asScala.toList
+        case Scala3Enum => protocol.getTypes().asScala.toList
         case ScalaEnumeration => protocol.getTypes().asScala.toList
         case EnumAsScalaString => protocol.getTypes().asScala.filterNot(isEnum)
       }

@@ -54,7 +54,7 @@ object Standard extends SourceFormat {
           case ENUM => {
             enumType match {
               // java enums can't be represented as trees so they can't be
-              // handled by treehugger. Their compilation unit must de generated
+              // handled by treehugger. Their compilation unit must be generated
               // separately, and they will be excluded from scala compilation
               // units.
               case JavaEnum => {
@@ -67,6 +67,17 @@ object Standard extends SourceFormat {
                 List(javaCompilationUnit)
               }
               case ScalaCaseObjectEnum => {
+                val scalaCompilationUnit = getScalaCompilationUnit(
+                  classStore,
+                  namespace,
+                  schemaOrProtocol,
+                  typeMatcher,
+                  maybeOutDir,
+                  restrictedFields,
+                  targetScalaPartialVersion)
+                List(scalaCompilationUnit)
+              }
+              case Scala3Enum => {
                 val scalaCompilationUnit = getScalaCompilationUnit(
                   classStore,
                   namespace,
@@ -117,7 +128,7 @@ object Standard extends SourceFormat {
           targetScalaPartialVersion)
         enumType match {
           // java enums can't be represented as trees so they can't be handled
-          // by treehugger. Their compilation unit must de generated
+          // by treehugger. Their compilation unit must be generated
           // separately, and they will be excluded from scala compilation units.
           case JavaEnum => {
             val localSubtypes = getLocalSubtypes(protocol)
@@ -135,6 +146,7 @@ object Standard extends SourceFormat {
             else javaCompilationUnits
           }
           case ScalaCaseObjectEnum => List(scalaCompilationUnit)
+          case Scala3Enum => List(scalaCompilationUnit)
           case ScalaEnumeration => List(scalaCompilationUnit)
           case EnumAsScalaString => List(scalaCompilationUnit)
         }
@@ -172,6 +184,7 @@ object Standard extends SourceFormat {
         val localSubTypes = typeMatcher.avroScalaTypes.`enum` match {
           case JavaEnum => getLocalSubtypes(protocol).filterNot(isEnum)
           case ScalaCaseObjectEnum => getLocalSubtypes(protocol)
+          case Scala3Enum => getLocalSubtypes(protocol)
           case ScalaEnumeration => getLocalSubtypes(protocol)
           case EnumAsScalaString => getLocalSubtypes(protocol).filterNot(isEnum)
         }
