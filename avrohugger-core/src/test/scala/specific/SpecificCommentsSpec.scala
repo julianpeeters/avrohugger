@@ -2,7 +2,7 @@ package avrohugger
 
 import avrohugger.format.SpecificRecord
 import org.specs2._
-import util.Util.LineEndingAmbiguousMatcherString
+
 
 class SpecificCommentsSpec extends Specification {
   
@@ -21,7 +21,7 @@ class SpecificCommentsSpec extends Specification {
     val outDir = gen.defaultOutputDir + "/specific/"
     gen.fileToFile(infile, outDir)
     val sourceRecord = util.Util.readFile(s"$outDir/com/example/NoSpaces1.scala")
-    sourceRecord ===/ util.Util.readFile("avrohugger-core/src/test/expected/comments/specific/NoSpaces1.scala")
+    sourceRecord === util.Util.readFile("avrohugger-core/src/test/expected/comments/specific/NoSpaces1.scala")
   }
   
   def e2 = {
@@ -30,7 +30,7 @@ class SpecificCommentsSpec extends Specification {
     val outDir = gen.defaultOutputDir + "/specific/"
     gen.fileToFile(infile, outDir)
     val sourceRecord = util.Util.readFile(s"$outDir/com/example/NoSpaces2.scala")
-    sourceRecord ===/ util.Util.readFile("avrohugger-core/src/test/expected/comments/specific/NoSpaces2.scala")
+    sourceRecord === util.Util.readFile("avrohugger-core/src/test/expected/comments/specific/NoSpaces2.scala")
   }
   
   def e3 = {
@@ -39,7 +39,7 @@ class SpecificCommentsSpec extends Specification {
     val outDir = gen.defaultOutputDir + "/specific/"
     gen.fileToFile(infile, outDir)
     val sourceRecord = util.Util.readFile(s"$outDir/com/example/NoSpaces3.scala")
-    sourceRecord ===/ util.Util.readFile("avrohugger-core/src/test/expected/comments/specific/NoSpaces3.scala")
+    sourceRecord === util.Util.readFile("avrohugger-core/src/test/expected/comments/specific/NoSpaces3.scala")
   }
   
   def e4 = {
@@ -49,7 +49,7 @@ class SpecificCommentsSpec extends Specification {
     val outDir = gen.defaultOutputDir + "/specific/"
     gen.fileToFile(infile, outDir)
     val sourceRecord = util.Util.readFile(s"$outDir/com/example/Example4.scala")
-    sourceRecord ===/ util.Util.readFile("avrohugger-core/src/test/expected/comments/specific/Example4.scala")
+    sourceRecord === util.Util.readFile("avrohugger-core/src/test/expected/comments/specific/Example4.scala")
   }
   
   def e5 = {
@@ -58,7 +58,7 @@ class SpecificCommentsSpec extends Specification {
     val outDir = gen.defaultOutputDir + "/specific/"
     gen.fileToFile(infile, outDir)
     val sourceRecord = util.Util.readFile(s"$outDir/com/example/Example5.scala")
-    sourceRecord ===/ util.Util.readFile("avrohugger-core/src/test/expected/comments/specific/Example5.scala")
+    sourceRecord === util.Util.readFile("avrohugger-core/src/test/expected/comments/specific/Example5.scala")
   }
     
 }

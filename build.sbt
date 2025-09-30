@@ -2,10 +2,13 @@ lazy val avroVersion = "1.11.4"
 
 lazy val commonSettings = Seq(
   organization := "com.julianpeeters",
-  version := "2.14.0",
+  version := "2.15.0-SNAPSHOT",
   ThisBuild / versionScheme := Some("semver-spec"),
-  scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature"),
-  Test / scalacOptions ++= Seq("-Yrangepos"),
+  scalacOptions ++= Seq(
+    "-unchecked", 
+    "-deprecation",
+    "-feature",
+  ),
   scalaVersion := "3.3.6",
   crossScalaVersions := Seq("2.12.20", "2.13.16", scalaVersion.value),
   libraryDependencies += "org.apache.avro" % "avro" % avroVersion,
@@ -13,27 +16,19 @@ lazy val commonSettings = Seq(
   libraryDependencies := {
     CrossVersion.partialVersion(scalaVersion.value) match {
       case Some((2, scalaMinor)) if scalaMinor < 13 =>
-        // for implementing SpecificRecord from standard case class definitions
-        libraryDependencies.value ++ Seq(compilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full))
+        libraryDependencies.value ++ Seq(
+          "org.scala-lang.modules" %% "scala-collection-compat" % "2.12.0",
+          "org.specs2"             %% "specs2-core"             % "4.20.2" % "test")
+      case Some((2, scalaMinor)) =>
+        libraryDependencies.value ++ Seq(
+          "org.specs2"             %% "specs2-core"             % "4.20.2" % "test")
       case _ =>
-        // Scala 2.13 has it built-in
-        libraryDependencies.value
+        libraryDependencies.value ++ Seq(
+          "org.specs2"             %% "specs2-core"             % "5.6.4" % "test")
     }
   },
-  libraryDependencies := {
-    CrossVersion.partialVersion(scalaVersion.value) match {
-      case Some((2, scalaMinor)) if scalaMinor < 13 =>
-        libraryDependencies.value ++ Seq("org.scala-lang.modules" %% "scala-collection-compat" % "2.12.0")
-      case _ =>
-        libraryDependencies.value
-    }
-  },
-  // for testing
-  libraryDependencies += "org.specs2" %% "specs2-core" % "4.20.2" % "test",
   publishMavenStyle := true,
-  Test / publishArtifact := false,
-  sonatypeCredentialHost := xerial.sbt.Sonatype.sonatypeCentralHost,
-  publishTo := sonatypePublishToBundle.value,
+  publishTo := localStaging.value,
   pomIncludeRepository := { _ => false },
   licenses := Seq("Apache 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
   homepage := Some(url("https://github.com/julianpeeters/avrohugger")),
@@ -73,10 +68,10 @@ lazy val `avrohugger-filesorter` = (project in file("avrohugger-filesorter"))
 lazy val `avrohugger-tools` = (project in file("avrohugger-tools"))
   .settings(
     commonSettings,
-    libraryDependencies += "org.apache.avro" % "avro-tools" % avroVersion
-      exclude("org.slf4j", "*")
-      exclude("org.apache.avro", "trevni-avro")
-      exclude("org.apache.avro", "trevni-core"),
+    libraryDependencies += ("org.apache.avro" % "avro-tools" % avroVersion)
+      .exclude("org.slf4j", "*")
+      .exclude("org.apache.avro", "trevni-avro")
+      .exclude("org.apache.avro", "trevni-core"),
     Compile / assembly / artifact := {
       val art: Artifact = (Compile / assembly / artifact).value
       art.withClassifier(Some("assembly"))
@@ -96,7 +91,7 @@ lazy val `avrohugger-tools` = (project in file("avrohugger-tools"))
 lazy val addScalaVersionFile = Def.task {
   val partialScalaVersion =
     CrossVersion.partialVersion(scalaVersion.value)
-      .map(v => v._1 + "." + v._2)
+      .map(v => s"${v._1}.${v._2}")
 
   val pv = partialScalaVersion.get
   val content =

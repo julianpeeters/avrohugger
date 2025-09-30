@@ -3,7 +3,7 @@ package specific
 import avrohugger._
 import avrohugger.format.SpecificRecord
 import org.specs2._
-import util.Util.LineEndingAmbiguousMatcherString
+
 
 class SpecificDefaultValueFullnameSpec extends mutable.Specification {
   "a Generator" should {
@@ -13,7 +13,7 @@ class SpecificDefaultValueFullnameSpec extends mutable.Specification {
       val outDir = gen.defaultOutputDir + "/specific/"
       gen.fileToFile(infile, outDir)
       val sourceRecord = util.Util.readFile(s"$outDir/example/Room.scala")
-      sourceRecord ===/ util.Util.readFile("avrohugger-core/src/test/expected/specific/example/Room.scala")
+      sourceRecord === util.Util.readFile("avrohugger-core/src/test/expected/specific/example/Room.scala")
     }
   }
 }
