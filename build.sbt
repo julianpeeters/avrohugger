@@ -9,7 +9,7 @@ lazy val commonSettings = Seq(
     "-deprecation",
     "-feature",
   ),
-  scalaVersion := "3.3.6",
+  scalaVersion := "3.3.7",
   crossScalaVersions := Seq("2.12.20", "2.13.17", scalaVersion.value),
   libraryDependencies += "org.apache.avro" % "avro" % avroVersion,
   libraryDependencies += "org.apache.avro" % "avro-compiler" % avroVersion,
