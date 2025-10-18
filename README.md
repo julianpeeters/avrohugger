@@ -231,17 +231,17 @@ To ensure dependent schemas are compiled in the proper order (thus avoiding `org
 #### `avrohugger-tools`
 
 
-  Download the avrohugger-tools jar for Scala [2.12](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.12/2.15.0/avrohugger-tools_2.12-2.15.0-assembly.jar), or Scala [2.13](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.13/2.15.0/avrohugger-tools_2.13-2.15.0-assembly.jar) (>30MB!) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
+  Download the avrohugger-tools jar for Scala [2.12](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.12/2.15.0/avrohugger-tools_2.12-2.15.0-assembly.jar), Scala [2.13](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.13/2.15.0/avrohugger-tools_2.13-2.15.0-assembly.jar) (>30MB!), or Scala [3](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_3/2.15.0/avrohugger-tools_3-2.15.0-assembly.jar) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
 
 
 * `generate` generates Scala case class definitions:
 
-`java -jar /path/to/avrohugger-tools_2.12-2.15.0-assembly.jar generate schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_3-2.15.0-assembly.jar generate schema user.avsc . `
 
 
 * `generate-specific` generates definitions that extend Avro's `SpecificRecordBase`:
 
-`java -jar /path/to/avrohugger-tools_2.12-2.15.0-assembly.jar generate-specific schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_3-2.15.0-assembly.jar generate-specific schema user.avsc . `
 
 
 ## Warnings
