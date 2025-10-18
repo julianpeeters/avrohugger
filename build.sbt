@@ -1,8 +1,8 @@
-lazy val avroVersion = "1.11.4"
+lazy val avroVersion = "1.11.5"
 
 lazy val commonSettings = Seq(
   organization := "com.julianpeeters",
-  version := "2.15.0-SNAPSHOT",
+  version := "2.15.0",
   ThisBuild / versionScheme := Some("semver-spec"),
   scalacOptions ++= Seq(
     "-unchecked", 
@@ -48,7 +48,8 @@ lazy val commonSettings = Seq(
 
 lazy val avrohugger = (project in file("."))
   .settings(
-    commonSettings
+    commonSettings,
+    publish / skip := true
   ).aggregate(`avrohugger-core`, `avrohugger-filesorter`, `avrohugger-tools`)
 
 
