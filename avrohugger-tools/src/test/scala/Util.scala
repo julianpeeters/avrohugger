@@ -1,6 +1,5 @@
 
-import org.specs2.matcher.{ Expectable, ExpectationsCreation, MatchResult, Matcher }
-import org.specs2.matcher.Matchers.typedEqualExpectation
+import org.specs2.matcher.{ Expectable, ExpectationsCreation, Matcher }
 
 object Util {
   
@@ -19,21 +18,6 @@ object Util {
       }
     }
     readFile0(0)
-  }
-
-  class LineEndingAmbiguousMatcher(left: String) extends Matcher[String] {
-    def apply[S <: String](right: Expectable[S]): MatchResult[S] = {
-      val leftAsList = if (left.contains("\r\n")) left.split("\r\n") else left.split("\n")
-      val rightValue: String = right.value
-      val rightAsList = if (rightValue.contains("\r\n")) rightValue.split("\r\n") else rightValue.split("\n")
-
-      val res = leftAsList.mkString === rightAsList.mkString
-      result(res.isSuccess, res.message, res.message, right)
-    }
-  }
-
-  implicit class LineEndingAmbiguousMatcherString(s: String) extends ExpectationsCreation{
-    def ===/(other: String): MatchResult[String] = createExpectable(s).applyMatcher(new LineEndingAmbiguousMatcher(other))
   }
   
 }

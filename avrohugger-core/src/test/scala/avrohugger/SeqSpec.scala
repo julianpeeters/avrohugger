@@ -4,9 +4,9 @@ package avrohugger
 import avrohugger.format.abstractions.SourceFormat
 import avrohugger.types._
 import org.specs2.Specification
-import org.specs2.matcher.MatchResult
 import org.specs2.specification.core.SpecStructure
-import util.Util.LineEndingAmbiguousMatcherString
+import org.specs2.execute.Result
+
 
 trait SeqSpec {
   self: Specification =>
@@ -35,7 +35,7 @@ trait SeqSpec {
   def actualOutput = "example/idl/array/ArrayIdl.scala"
 
 
-  final def strings(types: AvroScalaTypes = defaultTypes, input: java.io.File = protocolFile): MatchResult[String] = {
+  final def strings(types: AvroScalaTypes = defaultTypes, input: java.io.File = protocolFile): Result = {
     val gen = generator.copy(avroScalaCustomTypes = Some(types))
 
     val outputArrayType = types.array.toString
@@ -44,13 +44,13 @@ trait SeqSpec {
 
     val expectedDep1 = util.Util.readFile(expectedOutput(formatType, outputArrayType)).dropRight(1)
 
-    dep1 ===/ expectedDep1
+    dep1 === expectedDep1
 
   }
 
   final def files(types: AvroScalaTypes = defaultTypes,
                   input: java.io.File = protocolFile,
-                  actualOutput: String = actualOutput): MatchResult[String] = {
+                  actualOutput: String = actualOutput): Result = {
     val gen = generator.copy(avroScalaCustomTypes = Some(types))
     val outputArrayType = types.array.toString
 
@@ -61,7 +61,7 @@ trait SeqSpec {
 
     val expectedDep1 = util.Util.readFile(expectedOutput(formatType, outputArrayType)).dropRight(1)
 
-    dep1 ===/ expectedDep1
+    dep1 === expectedDep1
   }
 
 }

@@ -2,7 +2,6 @@
 import avrohugger.format.Standard
 import avrohugger.tool.{ Directory, GeneratorTool }
 import org.specs2._
-import Util.LineEndingAmbiguousMatcherString
 
 import scala.jdk.CollectionConverters._
 import scala.util.Try
@@ -26,7 +25,7 @@ class StandardGeneratorToolSpec extends mutable.Specification {
       Directory.TEST_INPUT_DIR + "/mail.avpr",
       Directory.TEST_OUTPUT_BASE_DIR
     ))
-    Util.readFile(Directory.TEST_OUTPUT_MESSAGE) ===/ Util.readFile(Directory.TEST_EXPECTED_MESSAGE)
+    Util.readFile(Directory.TEST_OUTPUT_MESSAGE) === Util.readFile(Directory.TEST_EXPECTED_MESSAGE)
   }
 
   "match the expected single datafile file" in {
@@ -34,7 +33,7 @@ class StandardGeneratorToolSpec extends mutable.Specification {
       Directory.TEST_INPUT_DIR + "/twitter.avro",
       Directory.TEST_OUTPUT_BASE_DIR
     ))
-    Util.readFile(Directory.TEST_OUTPUT_TWITTER) ===/ Util.readFile(Directory.TEST_EXPECTED_TWITTER)
+    Util.readFile(Directory.TEST_OUTPUT_TWITTER) === Util.readFile(Directory.TEST_EXPECTED_TWITTER)
   }
 
   "match the expected single schema file" in {
@@ -42,7 +41,7 @@ class StandardGeneratorToolSpec extends mutable.Specification {
       Directory.TEST_INPUT_DIR + "/handle.avsc",
       Directory.TEST_OUTPUT_BASE_DIR
     ))
-    Util.readFile(Directory.TEST_OUTPUT_HANDLE) ===/ Util.readFile(Directory.TEST_EXPECTED_HANDLE)
+    Util.readFile(Directory.TEST_OUTPUT_HANDLE) === Util.readFile(Directory.TEST_EXPECTED_HANDLE)
   }
 
   "match the expected dependent files" in {
@@ -51,8 +50,8 @@ class StandardGeneratorToolSpec extends mutable.Specification {
       Directory.TEST_INPUT_DIR + "/pilot.avsc",
       Directory.TEST_OUTPUT_BASE_DIR
     ))
-    Util.readFile(Directory.TEST_OUTPUT_HANDLE) ===/ Util.readFile(Directory.TEST_EXPECTED_HANDLE)
-    Util.readFile(Directory.TEST_OUTPUT_PILOT) ===/ Util.readFile(Directory.TEST_EXPECTED_PILOT)
+    Util.readFile(Directory.TEST_OUTPUT_HANDLE) === Util.readFile(Directory.TEST_EXPECTED_HANDLE)
+    Util.readFile(Directory.TEST_OUTPUT_PILOT) === Util.readFile(Directory.TEST_EXPECTED_PILOT)
   }
 
   "match the expected file and directory" in {
@@ -61,8 +60,8 @@ class StandardGeneratorToolSpec extends mutable.Specification {
       Directory.TEST_INPUT_DIR,
       Directory.TEST_OUTPUT_BASE_DIR
     ))
-    Util.readFile(Directory.TEST_OUTPUT_MASCOT) ===/ Util.readFile(Directory.TEST_EXPECTED_MASCOT)
-    Util.readFile(Directory.TEST_OUTPUT_WRESTLER) ===/ Util.readFile(Directory.TEST_EXPECTED_WRESTLER)
+    Util.readFile(Directory.TEST_OUTPUT_MASCOT) === Util.readFile(Directory.TEST_EXPECTED_MASCOT)
+    Util.readFile(Directory.TEST_OUTPUT_WRESTLER) === Util.readFile(Directory.TEST_EXPECTED_WRESTLER)
   }
   /* currently -string makes no difference, all case classes use String
     "match the expected using the -string option" in {
@@ -72,7 +71,7 @@ class StandardGeneratorToolSpec extends mutable.Specification {
         Directory.TEST_INPUT_DIR + "/twitter_schema.avro",
         Directory.TEST_OUTPUT_STRING_BASE_DIR
       ))
-      Util.readFile(Directory.TEST_OUTPUT_STRING_PLAYER) ===/ Util.readFile(Directory.TEST_EXPECTED_STRING_PLAYER)
+      Util.readFile(Directory.TEST_OUTPUT_STRING_PLAYER) === Util.readFile(Directory.TEST_EXPECTED_STRING_PLAYER)
     }
   */
 }

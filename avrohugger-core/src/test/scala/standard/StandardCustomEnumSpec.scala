@@ -3,7 +3,7 @@ package avrohugger
 import avrohugger.format.Standard
 import avrohugger.types._
 import org.specs2._
-import util.Util.LineEndingAmbiguousMatcherString
+
 
 class StandardCustomEnumSpec extends Specification {
   
@@ -36,11 +36,11 @@ class StandardCustomEnumSpec extends Specification {
     val expectedDep2 = util.Util.readFile("avrohugger-core/src/test/expected/standard/other/ns/java/ExternalDependency.scala")
     val expectedDep3 = util.Util.readFile("avrohugger-core/src/test/expected/standard/other/ns/java/Suit.java")
   
-    adt ===/ expectedADT
-    dep1a ===/ expectedDep1a
-    dep1 ===/ expectedDep1
-    dep2 ===/ expectedDep2
-    dep3 ===/ expectedDep3
+    adt === expectedADT
+    dep1a === expectedDep1a
+    dep1 === expectedDep1
+    dep2 === expectedDep2
+    dep3 === expectedDep3
     
   }
   
@@ -67,11 +67,11 @@ class StandardCustomEnumSpec extends Specification {
     val expectedDep2 = util.Util.readFile("avrohugger-core/src/test/expected/standard/other/ns/java/ExternalDependency.scala")
     val expectedDep3 = util.Util.readFile("avrohugger-core/src/test/expected/standard/other/ns/java/Suit.java")
   
-    adt ===/ expectedADT
-    dep1a ===/ expectedDep1a
-    dep1 ===/ expectedDep1
-    dep2 ===/ expectedDep2
-    dep3 ===/ expectedDep3
+    adt === expectedADT
+    dep1a === expectedDep1a
+    dep1 === expectedDep1
+    dep2 === expectedDep2
+    dep3 === expectedDep3
   }
   
   def e3 = {
@@ -89,10 +89,10 @@ class StandardCustomEnumSpec extends Specification {
     val expectedDep2 = util.Util.readFile("avrohugger-core/src/test/expected/standard/other/ns/case/ExternalDependency.scala")
     val expectedDep3 = util.Util.readFile("avrohugger-core/src/test/expected/standard/other/ns/case/Suit.scala")
   
-    adt ===/ expectedADT
-    dep1 ===/ expectedDep1
-    dep2 ===/ expectedDep2
-    dep3 ===/ expectedDep3
+    adt === expectedADT
+    dep1 === expectedDep1
+    dep2 === expectedDep2
+    dep3 === expectedDep3
     
   }
   
@@ -117,10 +117,10 @@ class StandardCustomEnumSpec extends Specification {
     val expectedDep2 = util.Util.readFile("avrohugger-core/src/test/expected/standard/other/ns/case/ExternalDependency.scala")
     val expectedDep3 = util.Util.readFile("avrohugger-core/src/test/expected/standard/other/ns/case/Suit.scala")
   
-    adt  ===/ expectedADT
-    dep1 ===/ expectedDep1
-    dep2 ===/ expectedDep2
-    dep3 ===/ expectedDep3
+    adt  === expectedADT
+    dep1 === expectedDep1
+    dep2 === expectedDep2
+    dep3 === expectedDep3
   }
   
   
@@ -138,9 +138,9 @@ class StandardCustomEnumSpec extends Specification {
     val expectedDep1 = util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/string/Defaults.scala")
     val expectedDep2 = util.Util.readFile("avrohugger-core/src/test/expected/standard/other/ns/string/ExternalDependency.scala")
     
-    adt ===/ expectedADT
-    dep1 ===/ expectedDep1
-    dep2 ===/ expectedDep2
+    adt === expectedADT
+    dep1 === expectedDep1
+    dep2 === expectedDep2
     
   }
   
@@ -163,9 +163,9 @@ class StandardCustomEnumSpec extends Specification {
     val expectedDep1 = util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/string/Defaults.scala")
     val expectedDep2 = util.Util.readFile("avrohugger-core/src/test/expected/standard/other/ns/string/ExternalDependency.scala")
   
-    adt ===/ expectedADT
-    dep1 ===/ expectedDep1
-    dep2 ===/ expectedDep2
+    adt === expectedADT
+    dep1 === expectedDep1
+    dep2 === expectedDep2
   }
 
   def e7 = {
@@ -181,10 +181,10 @@ class StandardCustomEnumSpec extends Specification {
     val expectedDep1 = util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/scala3enum/Defaults.scala")
     val expectedDep2 = util.Util.readFile("avrohugger-core/src/test/expected/standard/other/ns/scala3enum/ExternalDependency.scala")
     val expectedDep3 = util.Util.readFile("avrohugger-core/src/test/expected/standard/other/ns/scala3enum/Suit.scala")
-    adt ===/ expectedADT
-    dep1 ===/ expectedDep1
-    dep2 ===/ expectedDep2
-    dep3 ===/ expectedDep3
+    adt === expectedADT
+    dep1 === expectedDep1
+    dep2 === expectedDep2
+    dep3 === expectedDep3
   }
 
   def e8 = {
@@ -207,10 +207,10 @@ class StandardCustomEnumSpec extends Specification {
     val expectedDep1 = util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/scala3enum/Defaults.scala")
     val expectedDep2 = util.Util.readFile("avrohugger-core/src/test/expected/standard/other/ns/scala3enum/ExternalDependency.scala")
     val expectedDep3 = util.Util.readFile("avrohugger-core/src/test/expected/standard/other/ns/scala3enum/Suit.scala")
-    adt ===/ expectedADT
-    dep1 ===/ expectedDep1
-    dep2 ===/ expectedDep2
-    dep3 ===/ expectedDep3
+    adt === expectedADT
+    dep1 === expectedDep1
+    dep2 === expectedDep2
+    dep3 === expectedDep3
   }
 
 }

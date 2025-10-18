@@ -7,7 +7,7 @@ import avrohugger._
 import avrohugger.format.Standard
 import avrohugger.types._
 import org.specs2._
-import util.Util.{ LineEndingAmbiguousMatcherString, checkFileExist }
+import util.Util.checkFileExist
 
 import scala.util.Try
 
@@ -83,7 +83,7 @@ class StandardFileToFileSpec extends Specification {
 
     val source = util.Util.readFile("target/generated-sources/standard/com/miguno/avro/twitter_schema.scala")
 
-    source ===/ util.Util.readFile("avrohugger-core/src/test/expected/standard/com/miguno/avro/twitter_schema.scala")
+    source === util.Util.readFile("avrohugger-core/src/test/expected/standard/com/miguno/avro/twitter_schema.scala")
   }
 
   def eB = {
@@ -94,7 +94,7 @@ class StandardFileToFileSpec extends Specification {
 
     val source = util.Util.readFile("target/generated-sources/standard/example/Relative.scala")
 
-    source ===/ util.Util.readFile("avrohugger-core/src/test/expected/standard/example/Relative.scala")
+    source === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/Relative.scala")
   }
 
   // tests standard to fileToFile
@@ -116,7 +116,7 @@ class StandardFileToFileSpec extends Specification {
 
     val source = util.Util.readFile(s"$outDir/example/proto/Message.scala")
 
-    source ===/ util.Util.readFile("avrohugger-core/src/test/expected/standard/example/proto/Message.scala")
+    source === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/proto/Message.scala")
   }
 
   def e2 = {
@@ -127,7 +127,7 @@ class StandardFileToFileSpec extends Specification {
 
     val source = util.Util.readFile("target/generated-sources/standard/example/User.scala")
 
-    source ===/ util.Util.readFile("avrohugger-core/src/test/expected/standard/example/User.scala")
+    source === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/User.scala")
   }
 
   def e3 = {
@@ -138,7 +138,7 @@ class StandardFileToFileSpec extends Specification {
 
     val source = util.Util.readFile("target/generated-sources/standard/AvroTypeProviderTestNoNamespace.scala")
 
-    source ===/ util.Util.readFile("avrohugger-core/src/test/expected/standard/AvroTypeProviderTestNoNamespace.scala")
+    source === util.Util.readFile("avrohugger-core/src/test/expected/standard/AvroTypeProviderTestNoNamespace.scala")
   }
 
   def e4 = {
@@ -151,9 +151,9 @@ class StandardFileToFileSpec extends Specification {
     val source1 = util.Util.readFile("target/generated-sources/standard/example/Level1.scala")
     val source2 = util.Util.readFile("target/generated-sources/standard/example/Level2.scala")
 
-    source0 ===/ util.Util.readFile("avrohugger-core/src/test/expected/standard/example/Level0.scala")
-    source1 ===/ util.Util.readFile("avrohugger-core/src/test/expected/standard/example/Level1.scala")
-    source2 ===/ util.Util.readFile("avrohugger-core/src/test/expected/standard/example/Level2.scala")
+    source0 === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/Level0.scala")
+    source1 === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/Level1.scala")
+    source2 === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/Level2.scala")
   }
 
   def e5 = {
@@ -165,7 +165,7 @@ class StandardFileToFileSpec extends Specification {
 
     val source = util.Util.readFile("target/generated-sources/standard/example/idl/NestedProtocol.scala")
 
-    source ===/ util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/NestedProtocol.scala")
+    source === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/NestedProtocol.scala")
   }
 
   def e6 = {
@@ -176,7 +176,7 @@ class StandardFileToFileSpec extends Specification {
 
     val source = util.Util.readFile("target/generated-sources/standard/example/idl/Recursive.scala")
 
-    source ===/ util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/Recursive.scala")
+    source === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/Recursive.scala")
   }
 
   def e7 = {
@@ -187,7 +187,7 @@ class StandardFileToFileSpec extends Specification {
 
     val source = util.Util.readFile("target/generated-sources/standard/example/Suit.scala")
 
-    source ===/ util.Util.readFile("avrohugger-core/src/test/expected/standard/example/Suit.scala")
+    source === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/Suit.scala")
   }
 
   def e8 = {
@@ -199,7 +199,7 @@ class StandardFileToFileSpec extends Specification {
 
     val source = util.Util.readFile("target/generated-sources/standard/example/proto/EnumProtocol.scala")
 
-    source ===/ util.Util.readFile("avrohugger-core/src/test/expected/standard/example/proto/EnumProtocol.scala")
+    source === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/proto/EnumProtocol.scala")
   }
 
   def e9 = {
@@ -211,7 +211,7 @@ class StandardFileToFileSpec extends Specification {
 
     val source = util.Util.readFile("target/generated-sources/standard/example/idl/EnumProtocol.scala")
 
-    source ===/ util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/EnumProtocol.scala")
+    source === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/EnumProtocol.scala")
   }
 
   def e10 = {
@@ -223,8 +223,8 @@ class StandardFileToFileSpec extends Specification {
     val sourceEnum = util.Util.readFile("target/generated-sources/standard/example/Direction.scala")
     val sourceRecord = util.Util.readFile("target/generated-sources/standard/example/Compass.scala")
 
-    sourceEnum ===/ util.Util.readFile("avrohugger-core/src/test/expected/standard/example/Direction.scala")
-    sourceRecord ===/ util.Util.readFile("avrohugger-core/src/test/expected/standard/example/Compass.scala")
+    sourceEnum === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/Direction.scala")
+    sourceRecord === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/Compass.scala")
   }
 
   def e11 = {
@@ -235,7 +235,7 @@ class StandardFileToFileSpec extends Specification {
 
     val source = util.Util.readFile("target/generated-sources/standard/example/BinarySc.scala")
 
-    source ===/ util.Util.readFile("avrohugger-core/src/test/expected/standard/example/BinarySc.scala")
+    source === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/BinarySc.scala")
   }
 
   def e12 = {
@@ -246,7 +246,7 @@ class StandardFileToFileSpec extends Specification {
 
     val source = util.Util.readFile("target/generated-sources/standard/example/proto/BinaryPr.scala")
 
-    source ===/ util.Util.readFile("avrohugger-core/src/test/expected/standard/example/proto/BinaryPr.scala")
+    source === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/proto/BinaryPr.scala")
   }
 
   def e13 = {
@@ -257,7 +257,7 @@ class StandardFileToFileSpec extends Specification {
 
     val source = util.Util.readFile("target/generated-sources/standard/example/idl/BinaryIdl.scala")
 
-    source ===/ util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/BinaryIdl.scala")
+    source === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/BinaryIdl.scala")
   }
 
   def e14 = {
@@ -271,10 +271,10 @@ class StandardFileToFileSpec extends Specification {
     val sourceDep2 = util.Util.readFile("target/generated-sources/standard/other/ns/ExternalDependency.scala")
     val sourceDep3 = util.Util.readFile("target/generated-sources/standard/other/ns/Suit.scala")
 
-    sourceADT ===/ util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/ImportProtocol.scala")
-    sourceDep1 ===/ util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/Defaults.scala")
-    sourceDep2 ===/ util.Util.readFile("avrohugger-core/src/test/expected/standard/other/ns/ExternalDependency.scala")
-    sourceDep3 ===/ util.Util.readFile("avrohugger-core/src/test/expected/standard/other/ns/Suit.scala")
+    sourceADT === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/ImportProtocol.scala")
+    sourceDep1 === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/Defaults.scala")
+    sourceDep2 === util.Util.readFile("avrohugger-core/src/test/expected/standard/other/ns/ExternalDependency.scala")
+    sourceDep3 === util.Util.readFile("avrohugger-core/src/test/expected/standard/other/ns/Suit.scala")
   }
 
   def e15 = {
@@ -286,7 +286,7 @@ class StandardFileToFileSpec extends Specification {
 
     val source = util.Util.readFile("target/generated-sources/standard/test/Calculator.scala")
 
-    source ===/ util.Util.readFile("avrohugger-core/src/test/expected/standard/test/Calculator.scala")
+    source === util.Util.readFile("avrohugger-core/src/test/expected/standard/test/Calculator.scala")
   }
 
   def e16 = {
@@ -298,7 +298,7 @@ class StandardFileToFileSpec extends Specification {
 
     val adt = util.Util.readFile("target/generated-sources/standard/example/idl/Defaults.scala")
 
-    adt ===/ util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/Defaults.scala")
+    adt === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/Defaults.scala")
   }
 
   def e17 = {
@@ -309,7 +309,7 @@ class StandardFileToFileSpec extends Specification {
 
     val adt = util.Util.readFile("target/generated-sources/standard/example/idl/WithoutShapelessCoproduct.scala")
 
-    adt ===/ util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/WithoutShapelessCoproduct.scala")
+    adt === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/WithoutShapelessCoproduct.scala")
   }
 
   def e18 = {
@@ -320,7 +320,7 @@ class StandardFileToFileSpec extends Specification {
 
     val adt = util.Util.readFile("target/generated-sources/standard/example/idl/WithShapelessCoproduct.scala")
 
-    adt ===/ util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/WithShapelessCoproduct.scala")
+    adt === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/WithShapelessCoproduct.scala")
   }
 
   def e19 = {
@@ -332,7 +332,7 @@ class StandardFileToFileSpec extends Specification {
 
     val adt = util.Util.readFile("target/generated-sources/standard/example/idl/AllUnionsWithOptionalShapelessCoproduct.scala")
 
-    adt ===/ util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/AllUnionsWithOptionalShapelessCoproduct.scala")
+    adt === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/AllUnionsWithOptionalShapelessCoproduct.scala")
   }
 
   def e20 = {
@@ -344,7 +344,7 @@ class StandardFileToFileSpec extends Specification {
 
     val adt = util.Util.readFile("target/generated-sources/standard/example/idl/AllUnionsWithOptionShapelessCoproduct.scala")
 
-    adt ===/ util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/AllUnionsWithOptionShapelessCoproduct.scala")
+    adt === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/AllUnionsWithOptionShapelessCoproduct.scala")
   }
 
   def e21 = {
@@ -356,7 +356,7 @@ class StandardFileToFileSpec extends Specification {
 
     val adt = util.Util.readFile("target/generated-sources/standard/example/idl/AllUnionsWithScala3UnionType.scala")
 
-    adt ===/ util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/AllUnionsWithScala3UnionType.scala")
+    adt === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/AllUnionsWithScala3UnionType.scala")
   }
 
   def e22 = {
@@ -367,7 +367,7 @@ class StandardFileToFileSpec extends Specification {
 
     val adt = util.Util.readFile("target/generated-sources/standard/example/idl/UnionsOptionEitherDefaultParamsValues.scala")
 
-    adt ===/ util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/UnionsOptionEitherDefaultParamsValues.scala")
+    adt === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/UnionsOptionEitherDefaultParamsValues.scala")
   }
 
   def e23 = {
@@ -380,7 +380,7 @@ class StandardFileToFileSpec extends Specification {
 
     val adt = util.Util.readFile("target/generated-sources/standard/example/idl/UnionsOptionDefaultParamsValues.scala")
 
-    adt ===/ util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/UnionsOptionDefaultParamsValues.scala")
+    adt === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/UnionsOptionDefaultParamsValues.scala")
   }
 
   def e24 = {
@@ -392,7 +392,7 @@ class StandardFileToFileSpec extends Specification {
 
     val adt = util.Util.readFile("target/generated-sources/standard/example/idl/UnionsOptionalDefaultParamsValues.scala")
 
-    adt ===/ util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/UnionsOptionalDefaultParamsValues.scala")
+    adt === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/UnionsOptionalDefaultParamsValues.scala")
   }
 
   def e25 = {
@@ -404,7 +404,7 @@ class StandardFileToFileSpec extends Specification {
 
     val adt = util.Util.readFile("target/generated-sources/standard/example/idl/UnionsOptionScala3UnionTypes.scala")
 
-    adt ===/ util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/UnionsOptionScala3UnionTypes.scala")
+    adt === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/UnionsOptionScala3UnionTypes.scala")
   }
 
   def e26 = {
@@ -415,7 +415,7 @@ class StandardFileToFileSpec extends Specification {
 
     val source = util.Util.readFile("target/generated-sources/standard/test/Joystick.scala")
 
-    source ===/ util.Util.readFile("avrohugger-core/src/test/expected/standard/test/Joystick.scala")
+    source === util.Util.readFile("avrohugger-core/src/test/expected/standard/test/Joystick.scala")
   }
 
   def e27 = {
@@ -456,7 +456,7 @@ class StandardFileToFileSpec extends Specification {
 
     val source = util.Util.readFile("target/generated-sources/standard/example/logical/LogicalSc.scala")
 
-    source ===/ util.Util.readFile("avrohugger-core/src/test/expected/standard/example/logical/LogicalSc.scala")
+    source === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/logical/LogicalSc.scala")
   }
 
   def e30 = {
@@ -467,7 +467,7 @@ class StandardFileToFileSpec extends Specification {
 
     val source = util.Util.readFile("target/generated-sources/standard/example/logical/proto/Logical.scala")
 
-    source ===/ util.Util.readFile("avrohugger-core/src/test/expected/standard/example/logical/proto/Logical.scala")
+    source === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/logical/proto/Logical.scala")
   }
 
   // def e31 = {
@@ -478,7 +478,7 @@ class StandardFileToFileSpec extends Specification {
 
   //   val source = util.Util.readFile("target/generated-sources/standard/example/idl/LogicalIdl.scala")
 
-  //   source ===/ util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/LogicalIdl.scala")
+  //   source === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/LogicalIdl.scala")
   // }
 
   def e32 = {
@@ -490,7 +490,7 @@ class StandardFileToFileSpec extends Specification {
 
     val source = util.Util.readFile("target/generated-sources/standard/example/logical/LogicalSql.scala")
 
-    source ===/ util.Util.readFile("avrohugger-core/src/test/expected/standard/example/logical/LogicalSql.scala")
+    source === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/logical/LogicalSql.scala")
   }
 
   def e33 = {
@@ -502,7 +502,7 @@ class StandardFileToFileSpec extends Specification {
 
     val source = util.Util.readFile("target/generated-sources/standard-tagged/example/logical/LogicalSc.scala")
 
-    source ===/ util.Util.readFile("avrohugger-core/src/test/expected/standard-tagged/example/logical/LogicalSc.scala")
+    source === util.Util.readFile("avrohugger-core/src/test/expected/standard-tagged/example/logical/LogicalSc.scala")
   }
 
   def e34 = {
@@ -514,7 +514,7 @@ class StandardFileToFileSpec extends Specification {
 
     val source = util.Util.readFile("target/generated-sources/standard-tagged/example/logical/proto/Logical.scala")
 
-    source ===/ util.Util.readFile("avrohugger-core/src/test/expected/standard-tagged/example/logical/proto/Logical.scala")
+    source === util.Util.readFile("avrohugger-core/src/test/expected/standard-tagged/example/logical/proto/Logical.scala")
   }
 
   // def e35 = {
@@ -526,7 +526,7 @@ class StandardFileToFileSpec extends Specification {
 
   //   val source = util.Util.readFile("target/generated-sources/standard-tagged/example/idl/LogicalIdl.scala")
 
-  //   source ===/ util.Util.readFile("avrohugger-core/src/test/expected/standard-tagged/example/idl/LogicalIdl.scala")
+  //   source === util.Util.readFile("avrohugger-core/src/test/expected/standard-tagged/example/idl/LogicalIdl.scala")
   // }
 
   def e36 = {
@@ -539,7 +539,7 @@ class StandardFileToFileSpec extends Specification {
 
     val source = util.Util.readFile("target/generated-sources/standard-tagged/example/logical/LogicalSql.scala")
 
-    source ===/ util.Util.readFile("avrohugger-core/src/test/expected/standard-tagged/example/logical/LogicalSql.scala")
+    source === util.Util.readFile("avrohugger-core/src/test/expected/standard-tagged/example/logical/LogicalSql.scala")
   }
 
   def e37 = {
@@ -551,7 +551,7 @@ class StandardFileToFileSpec extends Specification {
 
     val source = util.Util.readFile("target/generated-sources/standard-tagged/example/idl/LogicalOptionalIdl.scala")
 
-    source ===/ util.Util.readFile("avrohugger-core/src/test/expected/standard-tagged/example/idl/LogicalOptionalIdl.scala")
+    source === util.Util.readFile("avrohugger-core/src/test/expected/standard-tagged/example/idl/LogicalOptionalIdl.scala")
   }
 
   def e38 = {
@@ -563,7 +563,7 @@ class StandardFileToFileSpec extends Specification {
 
     val source = util.Util.readFile("target/generated-sources/standard-tagged/example/idl/LogicalEitherIdl.scala")
 
-    source ===/ util.Util.readFile("avrohugger-core/src/test/expected/standard-tagged/example/idl/LogicalEitherIdl.scala")
+    source === util.Util.readFile("avrohugger-core/src/test/expected/standard-tagged/example/idl/LogicalEitherIdl.scala")
   }
 
   def e39 = {
@@ -575,7 +575,7 @@ class StandardFileToFileSpec extends Specification {
 
     val source = util.Util.readFile("target/generated-sources/standard-tagged/example/idl/LogicalCoproductIdl.scala")
 
-    source ===/ util.Util.readFile("avrohugger-core/src/test/expected/standard-tagged/example/idl/LogicalCoproductIdl.scala")
+    source === util.Util.readFile("avrohugger-core/src/test/expected/standard-tagged/example/idl/LogicalCoproductIdl.scala")
   }
 
   def e40 = {
@@ -586,7 +586,7 @@ class StandardFileToFileSpec extends Specification {
 
     val source = util.Util.readFile("target/generated-sources/standard/example/idl/Names.scala")
 
-    source ===/ util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/Names.scala")
+    source === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/Names.scala")
   }
 
   def e41 = {
@@ -607,7 +607,7 @@ class StandardFileToFileSpec extends Specification {
     val expected = util.Util.readFile("avrohugger-core/src/test/expected/standard/example/shasimple/Sha256.scala")
     val generated = util.Util.readFile("target/generated-sources/standard/example/shasimple/Sha256.scala")
 
-    expected ===/ generated
+    expected === generated
   }
 
   def e43 = {
@@ -616,8 +616,8 @@ class StandardFileToFileSpec extends Specification {
     val outDir = gen.defaultOutputDir + "/standard/"
     gen.fileToFile(infile, outDir)
 
-    util.Util.readFile("avrohugger-core/src/test/expected/standard/example/sharecord/Sha256.scala") ===/ util.Util.readFile("target/generated-sources/standard/example/sharecord/Sha256.scala")
-    util.Util.readFile("avrohugger-core/src/test/expected/standard/example/sharecord/HashRecord.scala") ===/ util.Util.readFile("target/generated-sources/standard/example/sharecord/HashRecord.scala")
+    util.Util.readFile("avrohugger-core/src/test/expected/standard/example/sharecord/Sha256.scala") === util.Util.readFile("target/generated-sources/standard/example/sharecord/Sha256.scala")
+    util.Util.readFile("avrohugger-core/src/test/expected/standard/example/sharecord/HashRecord.scala") === util.Util.readFile("target/generated-sources/standard/example/sharecord/HashRecord.scala")
   }
 
   def e44 = {
@@ -626,9 +626,9 @@ class StandardFileToFileSpec extends Specification {
     val outDir = gen.defaultOutputDir + "/standard/"
     gen.fileToFile(infile, outDir)
 
-    util.Util.readFile("avrohugger-core/src/test/expected/standard/example/shanested/foo/HashRecord.scala") ===/ util.Util.readFile("target/generated-sources/standard/example/shanested/foo/HashRecord.scala")
-    util.Util.readFile("avrohugger-core/src/test/expected/standard/example/shanested/Prop.scala") ===/ util.Util.readFile("target/generated-sources/standard/example/shanested/Prop.scala")
-    util.Util.readFile("avrohugger-core/src/test/expected/standard/example/shanested/Sha256.scala") ===/ util.Util.readFile("target/generated-sources/standard/example/shanested/Sha256.scala")
+    util.Util.readFile("avrohugger-core/src/test/expected/standard/example/shanested/foo/HashRecord.scala") === util.Util.readFile("target/generated-sources/standard/example/shanested/foo/HashRecord.scala")
+    util.Util.readFile("avrohugger-core/src/test/expected/standard/example/shanested/Prop.scala") === util.Util.readFile("target/generated-sources/standard/example/shanested/Prop.scala")
+    util.Util.readFile("avrohugger-core/src/test/expected/standard/example/shanested/Sha256.scala") === util.Util.readFile("target/generated-sources/standard/example/shanested/Sha256.scala")
   }
 
   def e45 = {
@@ -639,7 +639,7 @@ class StandardFileToFileSpec extends Specification {
     gen.fileToFile(infile, outDir)
 
     val source = util.Util.readFile("target/generated-sources/standard/aa/bb/cc/Test.scala")
-    source ===/ util.Util.readFile("avrohugger-core/src/test/expected/standard/aa/bb/cc/Test.scala")
+    source === util.Util.readFile("avrohugger-core/src/test/expected/standard/aa/bb/cc/Test.scala")
   }
 
   def e46 = {
@@ -650,7 +650,7 @@ class StandardFileToFileSpec extends Specification {
     gen.fileToFile(infile, outDir)
 
     val source = util.Util.readFile("target/generated-sources/standard/example/datetimerelatedfields/DateTimeRelatedFields.scala")
-    source ===/ util.Util.readFile("avrohugger-core/src/test/expected/standard/example/datetimerelatedfields/DateTimeRelatedFields.scala")
+    source === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/datetimerelatedfields/DateTimeRelatedFields.scala")
   }
 
 }

@@ -2,7 +2,6 @@
 import avrohugger.format.SpecificRecord
 import avrohugger.tool.{ Directory, GeneratorTool }
 import org.specs2._
-import Util.LineEndingAmbiguousMatcherString
 
 import scala.jdk.CollectionConverters._
 import scala.util.Try
@@ -26,8 +25,8 @@ class SpecificGeneratorToolSpec extends mutable.Specification {
       Directory.TEST_INPUT_DIR + "mail.avpr",
       Directory.TEST_OUTPUT_SPECIFIC_BASE_DIR
     ))
-    Util.readFile(Directory.TEST_OUTPUT_SPECIFIC_MAIL) ===/ Util.readFile(Directory.TEST_EXPECTED_SPECIFIC_MAIL)
-    Util.readFile(Directory.TEST_OUTPUT_SPECIFIC_MESSAGE) ===/ Util.readFile(Directory.TEST_EXPECTED_SPECIFIC_MESSAGE)
+    Util.readFile(Directory.TEST_OUTPUT_SPECIFIC_MAIL) === Util.readFile(Directory.TEST_EXPECTED_SPECIFIC_MAIL)
+    Util.readFile(Directory.TEST_OUTPUT_SPECIFIC_MESSAGE) === Util.readFile(Directory.TEST_EXPECTED_SPECIFIC_MESSAGE)
   }
   
   "match the expected single datafile file" in {
@@ -35,7 +34,7 @@ class SpecificGeneratorToolSpec extends mutable.Specification {
       Directory.TEST_INPUT_DIR + "twitter.avro",
       Directory.TEST_OUTPUT_SPECIFIC_BASE_DIR
     ))
-    Util.readFile(Directory.TEST_OUTPUT_SPECIFIC_TWITTER) ===/ Util.readFile(Directory.TEST_EXPECTED_SPECIFIC_TWITTER)
+    Util.readFile(Directory.TEST_OUTPUT_SPECIFIC_TWITTER) === Util.readFile(Directory.TEST_EXPECTED_SPECIFIC_TWITTER)
   }
   
   "match the expected single schema file" in {
@@ -43,7 +42,7 @@ class SpecificGeneratorToolSpec extends mutable.Specification {
       Directory.TEST_INPUT_DIR + "mascot.avsc",
       Directory.TEST_OUTPUT_SPECIFIC_BASE_DIR
     ))
-    Util.readFile(Directory.TEST_OUTPUT_SPECIFIC_MASCOT) ===/ Util.readFile(Directory.TEST_EXPECTED_SPECIFIC_MASCOT)
+    Util.readFile(Directory.TEST_OUTPUT_SPECIFIC_MASCOT) === Util.readFile(Directory.TEST_EXPECTED_SPECIFIC_MASCOT)
   }
   
   "match the expected dependent files" in {
@@ -58,8 +57,8 @@ class SpecificGeneratorToolSpec extends mutable.Specification {
       else if (avrohugger.internal.ScalaVersion.version == "3.3") Directory.TEST_EXPECTED_SPECIFIC_PLAYER_3
       else Directory.TEST_EXPECTED_SPECIFIC_PLAYER
 
-    Util.readFile(Directory.TEST_OUTPUT_SPECIFIC_NICKNAME) ===/ Util.readFile(Directory.TEST_EXPECTED_SPECIFIC_NICKNAME)
-    Util.readFile(Directory.TEST_OUTPUT_SPECIFIC_PLAYER) ===/ Util.readFile(testPlayerFile)
+    Util.readFile(Directory.TEST_OUTPUT_SPECIFIC_NICKNAME) === Util.readFile(Directory.TEST_EXPECTED_SPECIFIC_NICKNAME)
+    Util.readFile(Directory.TEST_OUTPUT_SPECIFIC_PLAYER) === Util.readFile(testPlayerFile)
   }
   
   "match the expected file and directory" in {
@@ -75,8 +74,8 @@ class SpecificGeneratorToolSpec extends mutable.Specification {
       else Directory.TEST_EXPECTED_SPECIFIC_WRESTLER
     }
 
-    Util.readFile(Directory.TEST_OUTPUT_SPECIFIC_MASCOT) ===/ Util.readFile(Directory.TEST_EXPECTED_SPECIFIC_MASCOT)
-    Util.readFile(Directory.TEST_OUTPUT_SPECIFIC_WRESTLER) ===/ Util.readFile(testWrestlerFile)
+    Util.readFile(Directory.TEST_OUTPUT_SPECIFIC_MASCOT) === Util.readFile(Directory.TEST_EXPECTED_SPECIFIC_MASCOT)
+    Util.readFile(Directory.TEST_OUTPUT_SPECIFIC_WRESTLER) === Util.readFile(testWrestlerFile)
   }
 
 }

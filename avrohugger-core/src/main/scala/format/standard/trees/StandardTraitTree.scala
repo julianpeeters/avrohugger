@@ -13,15 +13,12 @@ import treehuggerDSL._
 
 import scala.jdk.CollectionConverters._
 
-
-import avrohugger.format.standard.trees.Scala3EnumSourceCode
-
 object StandardTraitTree {
 
   def toScala3EnumDef(schema: Schema): List[Tree] = {
     val enumName = schema.getName
     val enumCases = schema.getEnumSymbols.asScala.map(_.toString).mkString(", ")
-    val enumSource = s"enum $enumName { case $enumCases }"
+    val enumSource = s"enum $enumName { case $enumCases }\n"
     List(Scala3EnumSourceCode(enumSource))
   }
 
