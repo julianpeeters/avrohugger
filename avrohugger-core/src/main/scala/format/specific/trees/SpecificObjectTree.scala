@@ -5,7 +5,6 @@ package trees
 
 import avrohugger.matchers.TypeMatcher
 import avrohugger.matchers.custom.CustomTypeMatcher
-import avrohugger.stores.SchemaStore
 import avrohugger.types._
 import org.apache.avro.{LogicalTypes, Protocol, Schema}
 import treehugger.forest._
@@ -21,18 +20,18 @@ object SpecificObjectTree {
   val DecimalConversion = RootClass.newClass("org.apache.avro.Conversions.DecimalConversion")
   val decimalConversionDef = VAL(REF("decimalConversion")) := NEW(DecimalConversion)
 
+  private def getNestedSchemas(s: Schema): List[Schema] = s.getType match {
+    case Schema.Type.ARRAY => getNestedSchemas(s.getElementType)
+    case Schema.Type.MAP => getNestedSchemas(s.getValueType)
+    case Schema.Type.UNION => s.getTypes().asScala.toList.flatMap(getNestedSchemas)
+    case _ => List(s)
+  }
+
   def schemaContainsDecimal(
     schema: Schema,
-    schemaStore: SchemaStore,
     typeMatcher: TypeMatcher
   ): Boolean = {
-    def getNestedSchemas(s: Schema): List[Schema] = s.getType match {
-      case Schema.Type.ARRAY => getNestedSchemas(s.getElementType)
-      case Schema.Type.MAP => getNestedSchemas(s.getValueType)
-      case Schema.Type.UNION => s.getTypes().asScala.toList.flatMap(getNestedSchemas)
-      case _ => List(s)
-    }
-    val topLevelSchemas = SpecificImporter.getTopLevelSchemas(Left(schema), schemaStore, typeMatcher)
+    val topLevelSchemas = SpecificImporter.getTopLevelSchemas(Left(schema), typeMatcher)
     val recordSchemas = SpecificImporter.getRecordSchemas(topLevelSchemas).filter(s => s.getType == Schema.Type.RECORD)
     val fieldSchemas = recordSchemas.flatMap(_.getFields().asScala.map(_.schema()))
     fieldSchemas.flatMap(getNestedSchemas).exists(s => Option(s.getLogicalType()) match {
@@ -45,7 +44,6 @@ object SpecificObjectTree {
   def toCaseCompanionDef(
     schema: Schema,
     maybeFlags: Option[List[Long]],
-    schemaStore: SchemaStore,
     typeMatcher: TypeMatcher) = {
     val ParserClass = RootClass.newClass("org.apache.avro.Schema.Parser")
     val objectDef = maybeFlags match {
@@ -105,7 +103,7 @@ object SpecificObjectTree {
         case None => objectDef := BLOCK(schemaDef, externalReader, externalWriter, defCtorDefault)
       }
       case Schema.Type.RECORD =>
-        if (schemaContainsDecimal(schema, schemaStore, typeMatcher)) objectDef := BLOCK(schemaDef, decimalConversionDef)
+        if (schemaContainsDecimal(schema, typeMatcher)) objectDef := BLOCK(schemaDef, decimalConversionDef)
         else objectDef := BLOCK(schemaDef)
       case _ => sys.error("Only FIXED and RECORD types can generate companion objects")
     }

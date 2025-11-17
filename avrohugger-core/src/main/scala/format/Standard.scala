@@ -1,17 +1,15 @@
 package avrohugger
 package format
 
-import format.abstractions.SourceFormat
-import format.standard._
-import matchers.TypeMatcher
-import matchers.custom.{CustomNamespaceMatcher, CustomTypeMatcher}
-import models.CompilationUnit
-import stores.{ClassStore, SchemaStore}
-import types._
-import treehugger.forest._
-import definitions.RootClass
-import org.apache.avro.{Protocol, Schema}
-import org.apache.avro.Schema.Type.{ENUM, FIXED, RECORD}
+import avrohugger.format.abstractions.SourceFormat
+import avrohugger.format.standard._
+import avrohugger.matchers.TypeMatcher
+import avrohugger.matchers.custom.CustomNamespaceMatcher
+import avrohugger.models.CompilationUnit
+import avrohugger.stores.ClassStore
+import avrohugger.types._
+import org.apache.avro.Schema.Type.{ ENUM, FIXED, RECORD }
+import org.apache.avro.{ Protocol, Schema }
 
 object Standard extends SourceFormat {
 
@@ -26,7 +24,6 @@ object Standard extends SourceFormat {
     classStore: ClassStore,
     ns: Option[String],
     schemaOrProtocol: Either[Schema, Protocol],
-    schemaStore: SchemaStore,
     maybeOutDir: Option[String],
     typeMatcher: TypeMatcher,
     restrictedFields: Boolean,
@@ -49,7 +46,6 @@ object Standard extends SourceFormat {
               namespace,
               schemaOrProtocol,
               typeMatcher,
-              schemaStore,
               maybeOutDir,
               restrictedFields,
               targetScalaPartialVersion)
@@ -58,7 +54,7 @@ object Standard extends SourceFormat {
           case ENUM => {
             enumType match {
               // java enums can't be represented as trees so they can't be
-              // handled by treehugger. Their compilation unit must de generated
+              // handled by treehugger. Their compilation unit must be generated
               // separately, and they will be excluded from scala compilation
               // units.
               case JavaEnum => {
@@ -76,7 +72,17 @@ object Standard extends SourceFormat {
                   namespace,
                   schemaOrProtocol,
                   typeMatcher,
-                  schemaStore,
+                  maybeOutDir,
+                  restrictedFields,
+                  targetScalaPartialVersion)
+                List(scalaCompilationUnit)
+              }
+              case Scala3Enum => {
+                val scalaCompilationUnit = getScalaCompilationUnit(
+                  classStore,
+                  namespace,
+                  schemaOrProtocol,
+                  typeMatcher,
                   maybeOutDir,
                   restrictedFields,
                   targetScalaPartialVersion)
@@ -88,7 +94,6 @@ object Standard extends SourceFormat {
                   namespace,
                   schemaOrProtocol,
                   typeMatcher,
-                  schemaStore,
                   maybeOutDir,
                   restrictedFields,
                   targetScalaPartialVersion)
@@ -105,7 +110,6 @@ object Standard extends SourceFormat {
               namespace,
               schemaOrProtocol,
               typeMatcher,
-              schemaStore,
               maybeOutDir,
               restrictedFields,
               targetScalaPartialVersion)
@@ -119,13 +123,12 @@ object Standard extends SourceFormat {
           namespace,
           Right(protocol),
           typeMatcher,
-          schemaStore,
           maybeOutDir,
           restrictedFields,
           targetScalaPartialVersion)
         enumType match {
           // java enums can't be represented as trees so they can't be handled
-          // by treehugger. Their compilation unit must de generated
+          // by treehugger. Their compilation unit must be generated
           // separately, and they will be excluded from scala compilation units.
           case JavaEnum => {
             val localSubtypes = getLocalSubtypes(protocol)
@@ -139,10 +142,11 @@ object Standard extends SourceFormat {
                 maybeOutDir,
                 typeMatcher)
             })
-            if (localRecords.length >= 1) scalaCompilationUnit +: javaCompilationUnits
+            if (localRecords.nonEmpty) scalaCompilationUnit +: javaCompilationUnits
             else javaCompilationUnits
           }
           case ScalaCaseObjectEnum => List(scalaCompilationUnit)
+          case Scala3Enum => List(scalaCompilationUnit)
           case ScalaEnumeration => List(scalaCompilationUnit)
           case EnumAsScalaString => List(scalaCompilationUnit)
         }
@@ -155,7 +159,6 @@ object Standard extends SourceFormat {
     ns: Option[String],
     schemaOrProtocol: Either[Schema, Protocol],
     outDir: String,
-    schemaStore: SchemaStore,
     typeMatcher: TypeMatcher,
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): Unit = {
@@ -163,7 +166,6 @@ object Standard extends SourceFormat {
       classStore,
       ns,
       schemaOrProtocol,
-      schemaStore,
       Some(outDir),
       typeMatcher,
       restrictedFields,
@@ -182,6 +184,7 @@ object Standard extends SourceFormat {
         val localSubTypes = typeMatcher.avroScalaTypes.`enum` match {
           case JavaEnum => getLocalSubtypes(protocol).filterNot(isEnum)
           case ScalaCaseObjectEnum => getLocalSubtypes(protocol)
+          case Scala3Enum => getLocalSubtypes(protocol)
           case ScalaEnumeration => getLocalSubtypes(protocol)
           case EnumAsScalaString => getLocalSubtypes(protocol).filterNot(isEnum)
         }

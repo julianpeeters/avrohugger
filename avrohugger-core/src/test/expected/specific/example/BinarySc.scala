@@ -23,6 +23,7 @@ final case class BinarySc(var data: Array[Byte]) extends org.apache.avro.specifi
             dup.get(array)
             array
           }
+          case _ => new org.apache.avro.AvroRuntimeException("expected type java.nio.ByteBuffer")
         }
       }.asInstanceOf[Array[Byte]]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")

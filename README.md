@@ -59,11 +59,11 @@ Scalding, Spark, Avro, etc.).
 |BOOLEAN|Boolean|Boolean||
 |NULL|Null|Null||
 |MAP|Map|Map||
-|ENUM|scala.Enumeration<br>Scala case object<br>Java Enum<br>EnumAsScalaString|Java Enum<br>EnumAsScalaString| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
+|ENUM|scala.Enumeration<br>Scala case object<br>Java Enum<br>EnumAsScalaString<br>Scala 3 Enum|Java Enum<br>EnumAsScalaString| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 |BYTES|Array[Byte]<br>BigDecimal|Array[Byte]<br>BigDecimal| See [Logical Types: `decimal`](https://github.com/julianpeeters/avrohugger#logical-types-support)|
 |FIXED|case class<br>case class + schema|case class extending `SpecificFixed`| See [Logical Types: `decimal`](https://github.com/julianpeeters/avrohugger#logical-types-support)|
 |ARRAY|Seq<br>List<br>Array<br>Vector|Seq<br>List<br>Array<br>Vector| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
-|UNION|Option<br>Either<br>Shapeless Coproduct|Option<br>Either<br>Shapeless Coproduct| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
+|UNION|Option<br>Either<br>Shapeless Coproduct<br>Scala 3 Union Types|Option<br>Either<br>Shapeless Coproduct<br>Scala 3 Union Types| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 |RECORD|case class<br>case class + schema|case class extending `SpecificRecordBase`| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 |PROTOCOL|_No Type_<br>Scala ADT|RPC trait<br>Scala ADT| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 |Date|java.time.LocalDate<br>java.sql.Date<br>Int|java.time.LocalDate<br>java.sql.Date<br>Int| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
@@ -119,7 +119,7 @@ _Note:_ Currently [Treehugger](http://eed3si9n.com/treehugger/comments.html#Scal
 
 ##### Get the dependency with:
 
-    "com.julianpeeters" %% "avrohugger-core" % "2.8.3"
+    "com.julianpeeters" %% "avrohugger-core" % "2.15.0"
 
 
 ##### Description:
@@ -172,23 +172,23 @@ To reassign Scala types to Avro types, use the following (e.g. for customizing `
 
 * `record` can be assigned to `ScalaCaseClass` and `ScalaCaseClassWithSchema`(with schema in a companion object)
 * `array` can be assigned to `ScalaSeq`, `ScalaArray`, `ScalaList`, and `ScalaVector`
-* `enum` can be assigned to `JavaEnum`, `ScalaCaseObjectEnum`, `EnumAsScalaString`, and `ScalaEnumeration`
+* `enum` can be assigned to `JavaEnum`, `ScalaCaseObjectEnum`, `EnumAsScalaString`, `ScalaEnumeration`, and `Scala3Enum`
 * `fixed` can be assigned to `ScalaCaseClassWrapper` and `ScalaCaseClassWrapperWithSchema`(with schema in a companion object)
-* `union` can be assigned to `OptionShapelessCoproduct`, `OptionEitherShapelessCoproduct`, or `OptionalShapelessCoproduct`
+* `union` can be assigned to `OptionShapelessCoproduct`, `OptionEitherShapelessCoproduct`, `OptionalShapelessCoproduct` or `OptionScala3UnionType`
 * `int`, `long`, `float`, `double` can be assigned to `ScalaInt`, `ScalaLong`, `ScalaFloat`, `ScalaDouble`
 * `protocol` can be assigned to `ScalaADT` and `NoTypeGenerated`
 * `decimal` can be assigned to e.g. `ScalaBigDecimal(Some(BigDecimal.RoundingMode.HALF_EVEN))` and `ScalaBigDecimalWithPrecision(None)` (via Shapeless Tagged Types)
 
 Specifically for unions:
 
-| Field Type ⬇️ / Behaviour ➡️            | OptionShapelessCoproduct                      | OptionEitherShapelessCoproduct                | OptionalShapelessCoproduct                    |
-|-----------------------------------------|-----------------------------------------------|-----------------------------------------------|-----------------------------------------------| 
-| `[{"type": "map", "values": "string"}]` | `Map[String, String]`                         | `Map[String, String]`                         | `Map[String, String] :+: CNil`                |
-| `["null", "double"]`                    | `Option[Double]`                              | `Option[Double]`                              | `Option[Double :+: CNil]`                     |
-| `["int", "string"]`                     | `Int :+: String :+: CNil`                     | `Either[Int, String]`                         | `Int :+: String :+: CNil`                     |
-| `["null", "int", "string"]`             | `Option[Int :+: String :+: CNil]`             | `Option[Either[Int, String]]`                 | `Option[Int :+: String :+: CNil]`             |
-| `["boolean", "int", "string"]`          | `Boolean :+: Int :+: String :+: CNil`         | `Boolean :+: Int :+: String :+: CNil`         | `Boolean :+: Int :+: String :+: CNil`         |
-| `["null", "boolean", "int", "string"]`  | `Option[Boolean :+: Int :+: String :+: CNil]` | `Option[Boolean :+: Int :+: String :+: CNil]` | `Option[Boolean :+: Int :+: String :+: CNil]` |
+| Field Type ⬇️ / Behaviour ➡️            | OptionShapelessCoproduct                      | OptionEitherShapelessCoproduct                | OptionalShapelessCoproduct                    | OptionScala3UnionType      |
+|-----------------------------------------|-----------------------------------------------|-----------------------------------------------|-----------------------------------------------|----------------------------|
+| `[{"type": "map", "values": "string"}]` | `Map[String, String]`                         | `Map[String, String]`                         | `Map[String, String] :+: CNil`                | `Map[String, String]`      
+| `["null", "double"]`                    | `Option[Double]`                              | `Option[Double]`                              | `Option[Double :+: CNil]`                     | `Option[Double]`           
+| `["int", "string"]`                     | `Int :+: String :+: CNil`                     | `Either[Int, String]`                         | `Int :+: String :+: CNil`                     | `Int \| String`            
+| `["null", "int", "string"]`             | `Option[Int :+: String :+: CNil]`             | `Option[Either[Int, String]]`                 | `Option[Int :+: String :+: CNil]`             | `Option[Int \| String]`    
+| `["boolean", "int", "string"]`          | `Boolean :+: Int :+: String :+: CNil`         | `Boolean :+: Int :+: String :+: CNil`         | `Boolean :+: Int :+: String :+: CNil`         | `Boolean \| Int \| String` 
+| `["null", "boolean", "int", "string"]`  | `Option[Boolean :+: Int :+: String :+: CNil]` | `Option[Boolean :+: Int :+: String :+: CNil]` | `Option[Boolean :+: Int :+: String :+: CNil]` | `Option[Boolean \| Int \| String]`
 
 ##### Customizable Namespace Mapping:
 
@@ -211,7 +211,7 @@ namespace rewritten. Multiple conflicting wildcards are not permitted.
 
 ##### Get the dependency with:
 
-    "com.julianpeeters" %% "avrohugger-filesorter" % "2.8.3"
+    "com.julianpeeters" %% "avrohugger-filesorter" % "2.15.0"
     
 
 ##### Description:
@@ -231,17 +231,17 @@ To ensure dependent schemas are compiled in the proper order (thus avoiding `org
 #### `avrohugger-tools`
 
 
-  Download the avrohugger-tools jar for Scala [2.12](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.12/2.8.3/avrohugger-tools_2.12-2.8.3-assembly.jar), or Scala [2.13](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.13/2.8.3/avrohugger-tools_2.13-2.8.3-assembly.jar) (>30MB!) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
+  Download the avrohugger-tools jar for Scala [2.12](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.12/2.15.0/avrohugger-tools_2.12-2.15.0-assembly.jar), Scala [2.13](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.13/2.15.0/avrohugger-tools_2.13-2.15.0-assembly.jar) (>30MB!), or Scala [3](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_3/2.15.0/avrohugger-tools_3-2.15.0-assembly.jar) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
 
 
 * `generate` generates Scala case class definitions:
 
-`java -jar /path/to/avrohugger-tools_2.12-2.8.3-assembly.jar generate schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_3-2.15.0-assembly.jar generate schema user.avsc . `
 
 
 * `generate-specific` generates definitions that extend Avro's `SpecificRecordBase`:
 
-`java -jar /path/to/avrohugger-tools_2.12-2.8.3-assembly.jar generate-specific schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_3-2.15.0-assembly.jar generate-specific schema user.avsc . `
 
 
 ## Warnings
@@ -277,7 +277,7 @@ Contributors:
 
 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | | | |
 |:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|     :---      | :---      |          :--- |
-| [Marius Soutier](https://github.com/mariussoutier) </br> [Brian London](https://github.com/BrianLondon) </br> [alancnet](https://github.com/alancnet) </br> [Matt Coffin](https://github.com/mcoffin) </br> [Ryan Koval](http://github.ryankoval.com) </br> [Simonas Gelazevicius](https://github.com/simsasg) </br> [Paul Snively](https://github.com/PaulAtBanno) </br> [Marco Stefani](https://github.com/inafets) </br> [Andrew Gustafson](https://github.com/agustafson) </br> [Kostya Golikov](https://github.com/lazyval) </br> [Plínio Pantaleão](https://github.com/plinioj) </br> [Sietse de Kaper](https://github.com/targeter) </br> [Martin Mauch](https://github.com/nightscape) </br> [Leon Poon](https://github.com/LeonPoon) | [Paul Pearcy](https://github.com/ppearcy) </br> [Matt Allen](https://github.com/Matt343) </br> [C-zito](https://github.com/C-Zito) </br> [Tim Chan](https://github.com/timchan-lumoslabs) </br> [Saket](https://github.com/skate056) </br> [Daniel Davis](https://github.com/wabu) </br> [Zach Cox](https://github.com/zcox) </br> [Diego E. Alonso Blas](https://github.com/diesalbla) </br> [Fede Fernández](https://github.com/fedefernandez) </br> [Rob Landers](https://github.com/withinboredom) </br> [Simon Petty](https://github.com/simonpetty) </br> [Andreas Drobisch](https://github.com/adrobisch) </br> [Timo Schmid](https://github.com/timo-schmid) </br> [Dmytro Orlov](https://github.com/DmytroOrlov) | [Stefano Galarraga](https://github.com/galarragas) </br> [Lars Albertsson](https://github.com/lallea) </br> [Eugene Platonov](https://github.com/jozic) </br> [Jerome Wacongne](https://github.com/ch4mpy) </br> [Jon Morra](https://github.com/jon-morra-zefr) </br> [Raúl Raja Martínez](https://github.com/raulraja) </br> [Kaur Matas](https://github.com/kmatasflp) </br> [Chris Albright](https://github.com/chrisalbright) </br> [Francisco Díaz](https://github.com/franciscodr) </br> [Bobby Rauchenberg](https://github.com/bobbyrauchenberg) </br> [Leonard Ehrenfried](https://github.com/leonardehrenfried) </br> [François Sarradin](https://github.com/fsarradin) </br> [niqdev](https://github.com/niqdev) </br> [rsitze-mmai](https://github.com/rsitze-mmai) | [Julien BENOIT](https://github.com/jbenoit2011)  </br> [Adam Drakeford](https://github.com/dr4ke616) </br> [Carlos Silva](https://github.com/alchimystic) </br> [ismail Benammar](https://github.com/ismailBenammar) </br> [mcenkar](https://github.com/mcenkar) </br> [Luca Tronchin](https://github.com/ltronky) </br> [LydiaSkuse](https://github.com/LydiaSkuse) </br> [Algimantas Milašius](https://github.com/AlgMi) </br> [Leonard Ehrenfried](https://github.com/leonardehrenfried) </br> [Massimo Siani](https://github.com/massimosiani)  </br> [Konstantin](https://github.com/tyger) </br> [natefitzgerald](https://github.com/natefitzgerald) </br>  [Victor](https://github.com/gafiatulin) </br> [steve-e](https://github.com/steve-e) |
+| [Marius Soutier](https://github.com/mariussoutier) </br> [Brian London](https://github.com/BrianLondon) </br> [alancnet](https://github.com/alancnet) </br> [Matt Coffin](https://github.com/mcoffin) </br> [Ryan Koval](http://github.ryankoval.com) </br> [Simonas Gelazevicius](https://github.com/simsasg) </br> [Paul Snively](https://github.com/PaulAtBanno) </br> [Marco Stefani](https://github.com/inafets) </br> [Andrew Gustafson](https://github.com/agustafson) </br> [Kostya Golikov](https://github.com/lazyval) </br> [Plínio Pantaleão](https://github.com/plinioj) </br> [Sietse de Kaper](https://github.com/targeter) </br> [Martin Mauch](https://github.com/nightscape) </br> [Leon Poon](https://github.com/LeonPoon) </br> [Andrzej Ressel](https://github.com/andrzejressel) | [Paul Pearcy](https://github.com/ppearcy) </br> [Matt Allen](https://github.com/Matt343) </br> [C-zito](https://github.com/C-Zito) </br> [Tim Chan](https://github.com/timchan-lumoslabs) </br> [Saket](https://github.com/skate056) </br> [Daniel Davis](https://github.com/wabu) </br> [Zach Cox](https://github.com/zcox) </br> [Diego E. Alonso Blas](https://github.com/diesalbla) </br> [Fede Fernández](https://github.com/fedefernandez) </br> [Rob Landers](https://github.com/withinboredom) </br> [Simon Petty](https://github.com/simonpetty) </br> [Andreas Drobisch](https://github.com/adrobisch) </br> [Timo Schmid](https://github.com/timo-schmid) </br> [Dmytro Orlov](https://github.com/DmytroOrlov)  </br> [Mikołaj Jakubowski](https://github.com/mkljakubowski) | [Stefano Galarraga](https://github.com/galarragas) </br> [Lars Albertsson](https://github.com/lallea) </br> [Eugene Platonov](https://github.com/jozic) </br> [Jerome Wacongne](https://github.com/ch4mpy) </br> [Jon Morra](https://github.com/jon-morra-zefr) </br> [Raúl Raja Martínez](https://github.com/raulraja) </br> [Kaur Matas](https://github.com/kmatasflp) </br> [Chris Albright](https://github.com/chrisalbright) </br> [Francisco Díaz](https://github.com/franciscodr) </br> [Bobby Rauchenberg](https://github.com/bobbyrauchenberg) </br> [Leonard Ehrenfried](https://github.com/leonardehrenfried) </br> [François Sarradin](https://github.com/fsarradin) </br> [niqdev](https://github.com/niqdev) </br> [rsitze-mmai](https://github.com/rsitze-mmai) </br> [Wessel W. Bakker](https://github.com/wwbakker)| [Julien BENOIT](https://github.com/jbenoit2011)  </br> [Adam Drakeford](https://github.com/dr4ke616) </br> [Carlos Silva](https://github.com/alchimystic) </br> [ismail Benammar](https://github.com/ismailBenammar) </br> [mcenkar](https://github.com/mcenkar) </br> [Luca Tronchin](https://github.com/ltronky) </br> [LydiaSkuse](https://github.com/LydiaSkuse) </br> [Algimantas Milašius](https://github.com/AlgMi) </br> [Leonard Ehrenfried](https://github.com/leonardehrenfried) </br> [Massimo Siani](https://github.com/massimosiani)  </br> [Konstantin](https://github.com/tyger) </br> [natefitzgerald](https://github.com/natefitzgerald) </br>  [Victor](https://github.com/gafiatulin) </br> [steve-e](https://github.com/steve-e) </br> [Ayoub Benali](https://github.com/ayoub-benali) |
 
 
 ##### Criticism is appreciated.

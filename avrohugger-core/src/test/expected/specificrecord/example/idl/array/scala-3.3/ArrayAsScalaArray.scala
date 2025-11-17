@@ -26,6 +26,7 @@ final case class ArrayIdl(var data: Array[Int]) extends org.apache.avro.specific
               x
             }).toArray(scala.reflect.ClassTag(classOf[Int])).asInstanceOf[Array[Int]]
           }
+          case _ => new org.apache.avro.AvroRuntimeException("expected array with type java.util.List[_]")
         }
       }.asInstanceOf[Array[Int]]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")

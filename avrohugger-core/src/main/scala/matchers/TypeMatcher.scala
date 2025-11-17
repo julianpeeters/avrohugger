@@ -1,7 +1,7 @@
 package avrohugger
 package matchers
 
-import avrohugger.matchers.custom.{CustomNamespaceMatcher, CustomTypeMatcher}
+import avrohugger.matchers.custom.{ CustomNamespaceMatcher, CustomTypeMatcher }
 import avrohugger.stores.ClassStore
 import avrohugger.types._
 import treehugger.forest._
@@ -24,71 +24,74 @@ class TypeMatcher(
     schema: Schema,
     useFullName: Boolean = false
   ): Type = {
+    var typeMap = Map[String, Type]()
+
     // May contain nested schemas that will use the same namespace as the
     // top-level schema. Thus, when a field is parsed, the namespace is passed.
     def matchType(schema: Schema): Type = {
-
-      schema.getType match {
-        case Schema.Type.ARRAY    => {
-          val avroElement = schema.getElementType
-          val scalaElementType = toScalaType(classStore, namespace, avroElement)
-          val collectionType = CustomTypeMatcher.checkCustomArrayType(avroScalaTypes.array)
-          collectionType(scalaElementType)
-        }
-        case Schema.Type.MAP      => {
-          val keyType = StringClass
-          val avroValueType = schema.getValueType
-          val scalaValueType = toScalaType(classStore, namespace, avroValueType)
-          TYPE_MAP(keyType, scalaValueType)
-        }
-        case Schema.Type.BOOLEAN  => BooleanClass
-        case Schema.Type.DOUBLE   => CustomTypeMatcher.checkCustomNumberType(avroScalaTypes.double)
-        case Schema.Type.FLOAT    => CustomTypeMatcher.checkCustomNumberType(avroScalaTypes.float)
-        case Schema.Type.LONG     =>
-          LogicalType.foldLogicalTypes(
-            schema = schema,
-            default = CustomTypeMatcher.checkCustomNumberType(avroScalaTypes.long)) {
-            case TimestampMillis => CustomTypeMatcher.checkCustomTimestampMillisType(avroScalaTypes.timestampMillis)
-            case TimestampMicros => CustomTypeMatcher.checkCustomTimestampMicrosType(avroScalaTypes.timestampMicros)
-            case LocalTimestampMicros => CustomTypeMatcher.checkCustomLocalTimestampMicrosType(avroScalaTypes.localTimestampMicros)
-            case LocalTimestampMillis => CustomTypeMatcher.checkCustomLocalTimestampMillisType(avroScalaTypes.localTimestampMillis)
-            case TimeMicros => CustomTypeMatcher.checkCustomTimeMicrosType(avroScalaTypes.timeMicros)
-          }
-        case Schema.Type.INT      =>
-          LogicalType.foldLogicalTypes(
-            schema = schema,
-            default = CustomTypeMatcher.checkCustomNumberType(avroScalaTypes.int)) {
-            case Date => CustomTypeMatcher.checkCustomDateType(avroScalaTypes.date)
-            case TimeMillis => CustomTypeMatcher.checkCustomTimeMillisType(avroScalaTypes.timeMillis)
-          }
-        case Schema.Type.NULL     => NullClass
-        case Schema.Type.STRING   =>
-          LogicalType.foldLogicalTypes(
-            schema = schema,
-            default = StringClass) {
-            case UUID => RootClass.newClass(nme.createNameType("java.util.UUID"))
-          }
-        case Schema.Type.FIXED    =>
-           RootClass.newClass(s"${schema.getNamespace()}.${classStore.generatedClasses(schema)}")
-        case Schema.Type.BYTES    => CustomTypeMatcher.checkCustomDecimalType(avroScalaTypes.decimal, schema)
-        case Schema.Type.RECORD   =>
-          {
-          val maybeNamespace = CustomNamespaceMatcher.checkCustomNamespace(
-            Option(schema.getNamespace()),
-            this,
-            maybeDefaultNamespace = Option(schema.getNamespace())
-          )
-          maybeNamespace match {
+      if (typeMap.contains(schema.getFullName)) {
+        typeMap(schema.getFullName)
+      }
+      else {
+        val tp: Type = schema.getType match {
+          case Schema.Type.ARRAY =>
+            val avroElement = schema.getElementType
+            val scalaElementType = toScalaType(classStore, namespace, avroElement)
+            val collectionType = CustomTypeMatcher.checkCustomArrayType(avroScalaTypes.array)
+            collectionType(scalaElementType)
+          case Schema.Type.MAP =>
+            val keyType = StringClass
+            val avroValueType = schema.getValueType
+            val scalaValueType = toScalaType(classStore, namespace, avroValueType)
+            TYPE_MAP(keyType, scalaValueType)
+          case Schema.Type.BOOLEAN => BooleanClass
+          case Schema.Type.DOUBLE => CustomTypeMatcher.checkCustomNumberType(avroScalaTypes.double)
+          case Schema.Type.FLOAT => CustomTypeMatcher.checkCustomNumberType(avroScalaTypes.float)
+          case Schema.Type.LONG =>
+            LogicalType.foldLogicalTypes(
+              schema = schema,
+              default = CustomTypeMatcher.checkCustomNumberType(avroScalaTypes.long)) {
+              case TimestampMillis => CustomTypeMatcher.checkCustomTimestampMillisType(avroScalaTypes.timestampMillis)
+              case TimestampMicros => CustomTypeMatcher.checkCustomTimestampMicrosType(avroScalaTypes.timestampMicros)
+              case LocalTimestampMicros => CustomTypeMatcher.checkCustomLocalTimestampMicrosType(avroScalaTypes.localTimestampMicros)
+              case LocalTimestampMillis => CustomTypeMatcher.checkCustomLocalTimestampMillisType(avroScalaTypes.localTimestampMillis)
+              case TimeMicros => CustomTypeMatcher.checkCustomTimeMicrosType(avroScalaTypes.timeMicros)
+            }
+          case Schema.Type.INT =>
+            LogicalType.foldLogicalTypes(
+              schema = schema,
+              default = CustomTypeMatcher.checkCustomNumberType(avroScalaTypes.int)) {
+              case Date => CustomTypeMatcher.checkCustomDateType(avroScalaTypes.date)
+              case TimeMillis => CustomTypeMatcher.checkCustomTimeMillisType(avroScalaTypes.timeMillis)
+            }
+          case Schema.Type.NULL => NullClass
+          case Schema.Type.STRING =>
+            LogicalType.foldLogicalTypes(
+              schema = schema,
+              default = StringClass) {
+              case UUID => RootClass.newClass(nme.createNameType("java.util.UUID"))
+            }
+          case Schema.Type.FIXED =>
+            RootClass.newClass(s"${schema.getNamespace()}.${classStore.generatedClasses.get(schema.getFullName)}")
+          case Schema.Type.BYTES => CustomTypeMatcher.checkCustomDecimalType(avroScalaTypes.decimal, schema)
+          case Schema.Type.RECORD =>
+            val maybeNamespace = CustomNamespaceMatcher.checkCustomNamespace(
+              Option(schema.getNamespace()),
+              this,
+              maybeDefaultNamespace = Option(schema.getNamespace())
+            )
+            maybeNamespace match {
               case Some(ns) => s"${ns}.${schema.getName()}"
               case None => schema.getName()
-          }
+            }
+          case Schema.Type.ENUM => CustomTypeMatcher.checkCustomEnumType(avroScalaTypes.`enum`, classStore, schema, useFullName)
+          case Schema.Type.UNION =>
+            //unions are represented as shapeless.Coproduct
+            val unionSchemas = schema.getTypes().asScala.toList
+            unionTypeImpl(unionSchemas, matchType)
         }
-        case Schema.Type.ENUM     => CustomTypeMatcher.checkCustomEnumType(avroScalaTypes.`enum`, classStore, schema, useFullName)
-        case Schema.Type.UNION    => {
-          //unions are represented as shapeless.Coproduct
-          val unionSchemas = schema.getTypes().asScala.toList
-          unionTypeImpl(unionSchemas, matchType)
-        }
+        typeMap += (schema.getFullName -> tp)
+        tp
       }
     }
 
@@ -104,6 +107,8 @@ class TypeMatcher(
     * union:null,L,R => Option[Either[L, R]]
     * union:null,A,B,C => Option[A :+: B :+: C :+: CNil]
     *
+    * In case of [OptionScala3UnionType] shapeless is replaced with native Scala 3 union types
+    *
     * If a null is found at any position in the union the entire type is wrapped in Option and null removed from the
     * types. Per the avro spec which is ambiguous about this:
     *
@@ -113,11 +118,17 @@ class TypeMatcher(
     * value must match the first element of the union. Thus, for unions containing "null", the "null" is usually listed
     * first, since the default value of such unions is typically null.)
     */
-  private[this] def unionTypeImpl(unionSchemas: List[Schema], typeMatcher: (Schema) => Type) : Type = {
+  private[this] def unionTypeImpl(unionSchemas: List[Schema], typeMatcher: (Schema) => Type): Type = {
 
-    def shapelessCoproductType(tp: Type*): forest.Type =  {
+    def shapelessCoproductType(tp: Type*): forest.Type = {
       val copTypes = tp.toList :+ typeRef(RootClass.newClass(newTypeName("CNil")))
       val chain: forest.Tree = INFIX_CHAIN(":+:", copTypes.map(t => Ident(t.safeToString)))
+      val chainedS = treeToString(chain)
+      typeRef(RootClass.newClass(newTypeName(chainedS)))
+    }
+
+    def scala3NativeType(tp: Type*): forest.Type = {
+      val chain = Alternative(tp.toList.map(t => Ident(t.safeToString)))
       val chainedS = treeToString(chain)
       typeRef(RootClass.newClass(newTypeName(chainedS)))
     }
@@ -128,6 +139,9 @@ class TypeMatcher(
 
     def unionsAsShapelessCoproductStrategy =
       shapelessCoproductType(nonNullableSchemas.map(typeMatcher): _*)
+
+    def unionsAsScala3UnionTypeStrategy =
+      scala3NativeType(nonNullableSchemas.map(typeMatcher): _*)
 
     def unionsAsOptionShapelessCoproductStrategy = nonNullableSchemas match {
       case List(schemaA) =>
@@ -145,70 +159,20 @@ class TypeMatcher(
         unionsAsShapelessCoproductStrategy
     }
 
+    def scala3NativeUnions = nonNullableSchemas match {
+      case List(schemaA) =>
+        typeMatcher(schemaA)
+      case _ => unionsAsScala3UnionTypeStrategy
+    }
+
     val matchedType = avroScalaTypes.union match {
       case OptionShapelessCoproduct => unionsAsOptionShapelessCoproductStrategy
       case OptionEitherShapelessCoproduct => unionsArityStrategy
       case OptionalShapelessCoproduct => unionsAsShapelessCoproductStrategy
+      case OptionScala3UnionType => scala3NativeUnions
     }
 
     if (includesNull) optionType(matchedType) else matchedType
   }
 
-
-  //Scavro requires Java types be generated for mapping Java classes to Scala
-
-  val avroStringType = TYPE_REF("CharSequence")
-
-  def toJavaType(
-    classStore: ClassStore,
-    namespace: Option[String],
-    schema: Schema): Type = {
-    // The schema may contain nested schemas that will use the same namespace
-    // as the top-level schema.  Thus, when a field is parsed, the namespace is
-    // passed in once
-    def matchType(schema: Schema): Type = {
-      def javaRename(schema: Schema) = {
-        "J" + classStore.generatedClasses(schema)
-      }
-
-      schema.getType match {
-        case Schema.Type.INT => TYPE_REF("java.lang.Integer")
-        case Schema.Type.DOUBLE => TYPE_REF("java.lang.Double")
-        case Schema.Type.FLOAT => TYPE_REF("java.lang.Float")
-        case Schema.Type.LONG => TYPE_REF("java.lang.Long")
-        case Schema.Type.BOOLEAN => TYPE_REF("java.lang.Boolean")
-        case Schema.Type.STRING => avroStringType
-        case Schema.Type.ARRAY => {
-          val avroElement = schema.getElementType
-          val elementType = toJavaType(classStore, namespace, avroElement)
-          TYPE_REF(REF("java.util.List") APPLYTYPE(elementType))
-        }
-        case Schema.Type.MAP      => {
-          val keyType = avroStringType
-          val valueType = toJavaType(classStore, namespace, schema.getValueType)
-          TYPE_REF(REF("java.util.Map") APPLYTYPE(keyType, valueType))
-        }
-        case Schema.Type.NULL     => TYPE_REF("java.lang.Void")
-        case Schema.Type.FIXED    => sys.error("FIXED datatype not supported")
-        case Schema.Type.BYTES    => TYPE_REF("java.nio.ByteBuffer")
-        case Schema.Type.RECORD   => TYPE_REF(javaRename(schema))
-        case Schema.Type.ENUM     => TYPE_REF(javaRename(schema))
-        case Schema.Type.UNION    => {
-          val unionSchemas = schema.getTypes().asScala.toList
-          // unions are represented as Scala Option[T], and thus unions must be
-          // of two types, one of them NULL
-          val isTwoTypes = unionSchemas.length == 2
-          val oneTypeIsNull = unionSchemas.exists(_.getType == Schema.Type.NULL)
-          if (isTwoTypes && oneTypeIsNull) {
-            val maybeSchema = unionSchemas.find(_.getType != Schema.Type.NULL)
-            if (maybeSchema.isDefined ) matchType(maybeSchema.get)
-            else sys.error("no avro type found in this union")
-          }
-          else sys.error("unions not yet supported beyond nullable fields")
-        }
-      }
-    }
-
-    matchType(schema)
-  }
 }

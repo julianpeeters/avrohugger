@@ -5,11 +5,11 @@ package trees
 
 import avrohugger.format.specific.methods._
 import avrohugger.generators.ScalaDocGenerator
-import avrohugger.matchers.{DefaultParamMatcher, DefaultValueMatcher, TypeMatcher}
+import avrohugger.matchers.{ DefaultParamMatcher, DefaultValueMatcher, TypeMatcher }
 import avrohugger.stores._
 import treehugger.forest._
 import definitions._
-import org.apache.avro.{LogicalTypes, Schema}
+import org.apache.avro.{ LogicalTypes, Schema }
 import treehuggerDSL._
 
 import scala.jdk.CollectionConverters._
@@ -57,10 +57,10 @@ object SpecificCaseClassTree {
         defaultValue
     })
     val defThis = DEFTHIS.withParams(PARAM("")).tree := {
-      THIS APPLY(defaultParams)
+      THIS APPLY (defaultParams)
     }
 
-    // methods - first add an index the the schema's fields
+    // methods - first add an index to the schema's fields
     val indexedFields = avroFields.zipWithIndex.map(p => {
       val avroField = p._1
       val index = p._2
@@ -68,13 +68,7 @@ object SpecificCaseClassTree {
     })
     val defGetSchema = namespace.fold(GetSchemaGenerator(classSymbol).toDef)(ns => GetSchemaGenerator(RootClass.newClass(s"$ns.${classSymbol}")).toDef)
     val defGet = GetGenerator.toDef(indexedFields, classSymbol, typeMatcher, targetScalaPartialVersion)
-    val defPut = PutGenerator.toDef(
-      classStore,
-      namespace,
-      indexedFields,
-      typeMatcher,
-      classSymbol,
-      targetScalaPartialVersion)
+    val defPut = PutGenerator.toDef(classStore, namespace, indexedFields, typeMatcher, classSymbol, targetScalaPartialVersion)
 
     val maybeFlagsWithCaseClassFinal =
       if (shouldGenerateSimpleClass) maybeFlags
@@ -90,21 +84,21 @@ object SpecificCaseClassTree {
       case (Some(baseTrait), Some(flags)) =>
         if (shouldGenerateSimpleClass) {
           CLASSDEF(classSymbol)
-            .withFlags(flags:_*)
+            .withFlags(flags: _*)
             .withParams(params)
             .withParents(baseClass)
             .withParents(baseTrait)
         }
         else if (avroFields.nonEmpty) {
           CASECLASSDEF(classSymbol)
-            .withFlags(flags:_*)
+            .withFlags(flags: _*)
             .withParams(params)
             .withParents(baseClass)
             .withParents(baseTrait)
         }
         else { // for "empty" records: empty params and no no-arg ctor
           CASECLASSDEF(classSymbol)
-            .withFlags(flags:_*)
+            .withFlags(flags: _*)
             .withParams(PARAM(""))
             .withParents(baseClass)
             .withParents(baseTrait)
@@ -127,20 +121,20 @@ object SpecificCaseClassTree {
       case (None, Some(flags)) =>
         if (shouldGenerateSimpleClass) {
           CLASSDEF(classSymbol)
-            .withFlags(flags:_*)
+            .withFlags(flags: _*)
             .withParams(params)
             .withParents(baseClass)
             .withParents("Serializable")
         }
         else if (avroFields.nonEmpty) {
           CASECLASSDEF(classSymbol)
-            .withFlags(flags:_*)
+            .withFlags(flags: _*)
             .withParams(params)
             .withParents(baseClass)
         }
         else { // for "empty" records: empty params and no no-arg ctor
           CASECLASSDEF(classSymbol)
-            .withFlags(flags:_*)
+            .withFlags(flags: _*)
             .withParams(PARAM(""))
             .withParents(baseClass)
         }
@@ -171,18 +165,14 @@ object SpecificCaseClassTree {
         defGet,
         defPut,
         defGetSchema)
-     else caseClassDef := BLOCK(
+      else caseClassDef := BLOCK(
         defGet,
         defPut,
         defGetSchema)
     }
-
-    val treeWithScalaDoc = ScalaDocGenerator.docToScalaDoc(
+    ScalaDocGenerator.docToScalaDoc(
       Left(schema),
       caseClassTree)
-
-    treeWithScalaDoc
-
   }
 
 
@@ -190,7 +180,6 @@ object SpecificCaseClassTree {
     schema: Schema,
     namespace: Option[String],
     maybeFlags: Option[List[Long]],
-    schemaStore: SchemaStore,
     typeMatcher: TypeMatcher,
     classStore: ClassStore,
     targetScalaPartialVersion: String
@@ -212,13 +201,13 @@ object SpecificCaseClassTree {
           Block(
             VAL("schema") := REF("getSchema"),
             VAL("decimalType") := REF("schema").DOT("getLogicalType").APPLY().AS(Decimal),
-            REF("BigDecimal").APPLY(classSymbol.DOT("decimalConversion").DOT("fromBytes").APPLY(REF("buffer"),REF("schema"),REF("decimalType")))
+            REF("BigDecimal").APPLY(classSymbol.DOT("decimalConversion").DOT("fromBytes").APPLY(REF("buffer"), REF("schema"), REF("decimalType")))
           )
         }
         case _ => Block(
           VAL("dup") := REF("buffer").DOT("duplicate").APPLY(),
           VAL("array") := NEW("Array[Byte]", REF("dup").DOT("remaining")),
-          REF("dup") DOT "get" APPLY(REF("array")),
+          REF("dup") DOT "get" APPLY (REF("array")),
           REF(schema.getFullName()).APPLY(REF("array"))
         )
       }
@@ -234,27 +223,27 @@ object SpecificCaseClassTree {
           .withFlags(Flags.FINAL)
           .withParams()
           .withParents(baseClass) := BLOCK(
-            // defCtor,
-            // defNoArgCtor,
-            defGetSchema,
-            defBigDecimal,
-            defReadExternal,
-            defWriteExternal
-          )
+          // defCtor,
+          // defNoArgCtor,
+          defGetSchema,
+          defBigDecimal,
+          defReadExternal,
+          defWriteExternal
+        )
       case _ =>
         CASECLASSDEF(schema.getName)
           .withFlags(Flags.FINAL)
           .withParams()
           .withParents(baseClass) := BLOCK(
-            // defCtorDefault,
-            // defNoArgCtor,
-            defGetSchema,
-            defReadExternal,
-            defWriteExternal
-          )
+          // defCtorDefault,
+          // defNoArgCtor,
+          defGetSchema,
+          defReadExternal,
+          defWriteExternal
+        )
     }
 
-  
+
   }
 
 }

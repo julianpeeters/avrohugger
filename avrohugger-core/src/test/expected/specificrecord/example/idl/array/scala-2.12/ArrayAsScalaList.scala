@@ -26,6 +26,7 @@ final case class ArrayIdl(var data: List[Int]) extends org.apache.avro.specific.
               x
             }).toList
           }
+          case _ => new org.apache.avro.AvroRuntimeException("expected array with type java.util.List[_]")
         }
       }.asInstanceOf[List[Int]]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")

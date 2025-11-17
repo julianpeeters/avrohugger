@@ -4,6 +4,7 @@ import avrohugger.format.SpecificRecord
 import avrohugger.types._
 import org.specs2._
 
+
 class SpecificCustomEnumSpec extends Specification {
   
   def is = s2"""
@@ -16,7 +17,7 @@ class SpecificCustomEnumSpec extends Specification {
   
   def e1 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/import.avdl")
-    val gen = new Generator(
+    val gen = Generator(
       SpecificRecord,
       Some(SpecificRecord.defaultTypes.copy(`enum` = JavaEnum, protocol = ScalaADT)),
       Map(
@@ -40,7 +41,7 @@ class SpecificCustomEnumSpec extends Specification {
   
   def e2 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/import.avdl")
-    val gen = new Generator(
+    val gen = Generator(
       SpecificRecord,
       Some(SpecificRecord.defaultTypes.copy(`enum` = JavaEnum, protocol = ScalaADT)),
       Map(
@@ -65,14 +66,14 @@ class SpecificCustomEnumSpec extends Specification {
     dep1a === expectedDep1a
     dep1 === expectedDep1
     dep2 === expectedDep2
-    dep3 === expectedDep3      
+    dep3 === expectedDep3
   }
   
   
   
   def e5 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/import.avdl")
-    val gen = new Generator(
+    val gen = Generator(
       SpecificRecord,
       Some(SpecificRecord.defaultTypes.copy(`enum` = EnumAsScalaString, protocol = ScalaADT)),
       Map(
@@ -92,7 +93,7 @@ class SpecificCustomEnumSpec extends Specification {
   
   def e6 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/import.avdl")
-    val gen = new Generator(
+    val gen = Generator(
       SpecificRecord,
       Some(SpecificRecord.defaultTypes.copy(`enum` = EnumAsScalaString, protocol = ScalaADT)),
       Map(

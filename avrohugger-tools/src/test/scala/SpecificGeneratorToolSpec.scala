@@ -1,9 +1,8 @@
 
 import avrohugger.format.SpecificRecord
-import avrohugger.tool.{Main, Directory, GeneratorTool}
-import org.apache.avro.tool.Tool
-
+import avrohugger.tool.{ Directory, GeneratorTool }
 import org.specs2._
+
 import scala.jdk.CollectionConverters._
 import scala.util.Try
 

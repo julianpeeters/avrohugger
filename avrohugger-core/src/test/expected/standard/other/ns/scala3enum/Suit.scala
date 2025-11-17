@@ -1,0 +1,5 @@
+/* MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
+package other.ns.scala3enum
+
+enum Suit { case SPADES, DIAMONDS, CLUBS, HEARTS }
+

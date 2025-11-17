@@ -97,10 +97,10 @@ object ScalaConverter {
           checkCustomArrayType(arrayType, elementType, asScalaTree)
         )
         val arrayConversion = CASE(ID("array") withType(JavaList)) ==> resultExpr
-        val errorMessage = INTERP("s", LIT(s"expected array with type $JavaList, found "), LIT("array"))
+        val errorMessage = LIT(s"expected array with type java.util.List[_]")
         val errorExpr = NEW("org.apache.avro.AvroRuntimeException", errorMessage)
-        val conversionCases = List(arrayConversion)
         val arrayMatchError = CASE(WILDCARD) ==> errorExpr
+        val conversionCases = List(arrayConversion, arrayMatchError)
         tree MATCH(conversionCases)
       }
       case Schema.Type.STRING =>
@@ -113,7 +113,8 @@ object ScalaConverter {
                 val UuidClass = RootClass.newClass("java.util.UUID")
                 val resultExpr = BLOCK(UuidClass.DOT("fromString").APPLY(REF("chars").TOSTRING))
                 val charSequenceConversion = CASE(ID("chars") withType CharSequenceClass) ==> resultExpr
-                tree MATCH charSequenceConversion
+                val matchError = CASE(WILDCARD) ==> NEW("org.apache.avro.AvroRuntimeException", LIT(s"expected type $CharSequenceClass"))
+                tree MATCH(charSequenceConversion, matchError)
               }
             }
         }
@@ -142,7 +143,10 @@ object ScalaConverter {
           )
         }
         val mapConversion = CASE(ID("map") withType(JavaMap)) ==> resultExpr
-        tree MATCH(mapConversion)
+        val errorMessage = LIT(s"expected array with type java.util.List[_]")
+        val errorExpr = NEW("org.apache.avro.AvroRuntimeException", errorMessage)
+        val arrayMatchError = CASE(WILDCARD) ==> errorExpr
+        tree MATCH(mapConversion, arrayMatchError)
       }
       case Schema.Type.FIXED => tree
       case Schema.Type.BYTES => {
@@ -164,7 +168,8 @@ object ScalaConverter {
           )
         }
         val bufferConversion = CASE(ID("buffer") withType (JavaBuffer)) ==> resultExpr
-        tree MATCH bufferConversion
+        val matchError = CASE(WILDCARD) ==> NEW("org.apache.avro.AvroRuntimeException", LIT(s"expected type $JavaBuffer"))
+        tree MATCH(bufferConversion, matchError)
       }
       case Schema.Type.UNION => {
         val types = schema.getTypes().asScala.toList
@@ -193,11 +198,12 @@ object ScalaConverter {
       case Schema.Type.ENUM => {
         typeMatcher.avroScalaTypes.`enum` match {
           case EnumAsScalaString => tree TOSTRING
-          case JavaEnum | ScalaEnumeration | ScalaCaseObjectEnum => tree
+          case JavaEnum | ScalaEnumeration | ScalaCaseObjectEnum | Scala3Enum => tree
         }
       }
       case Schema.Type.LONG => {
         val caseLWithTypeLong = CASE(ID("l") withType (LongClass))
+        val matchError = CASE(WILDCARD) ==> NEW("org.apache.avro.AvroRuntimeException", LIT(s"expected type $LongClass"))
         Option(schema.getLogicalType()) match {
           case Some(logicalType) => {
             if (logicalType.getName == "time-micros") {
@@ -205,7 +211,7 @@ object ScalaConverter {
                 case JavaTimeLocalTime =>
                   val LocalTimeClass = RootClass.newClass("java.time.LocalTime")
                   val resultExpr = BLOCK(LocalTimeClass.DOT("ofNanoOfDay").APPLY(REF("l").INFIX("*", LIT(1000L))))
-                  tree MATCH caseLWithTypeLong ==> resultExpr
+                  tree MATCH(caseLWithTypeLong ==> resultExpr, matchError)
                 case UnderlyingPrimitive => tree
               }) withComment "avro time-micros long stores the number of microseconds after midnight, 00:00:00.000000"
             } else if (logicalType.getName == "timestamp-millis") {
@@ -214,13 +220,13 @@ object ScalaConverter {
                   val TimestampClass = RootClass.newClass("java.sql.Timestamp")
                   val resultExpr = BLOCK(NEW(TimestampClass, REF("l")))
                   val longConversion = CASE(ID("l") withType (LongClass)) ==> resultExpr
-                  tree MATCH longConversion
+                  tree MATCH(longConversion, matchError)
                 }
                 case JavaTimeInstant  => {
                   val InstantClass = RootClass.newClass("java.time.Instant")
                   val resultExpr = BLOCK(InstantClass.DOT("ofEpochMilli").APPLY(REF("l")))
                   val longConversion = CASE(ID("l") withType (LongClass)) ==> resultExpr
-                  tree MATCH longConversion
+                  tree MATCH(longConversion, matchError)
                 }
                 case UnderlyingPrimitive => tree
               }
@@ -236,7 +242,7 @@ object ScalaConverter {
                     PAREN(REF("l").INFIX("%", LIT(1000000L))) DOT "toInt" INFIX("*", LIT(1000)),
                     ZoneOffset DOT "UTC"
                   ), ZoneId DOT "of" APPLY LIT("UTC")))
-                  tree MATCH CASE(ID("l") withType (LongClass)) ==> resultExpr
+                  tree MATCH(CASE(ID("l") withType (LongClass)) ==> resultExpr, matchError)
                 case UnderlyingPrimitive => tree
               }) withComment "avro timestamp-micros long stores the number of microseconds from the unix epoch, 1 January 1970 00:00:00.000000 UTC"
             } else if (logicalType.getName == "local-timestamp-millis") {
@@ -249,7 +255,7 @@ object ScalaConverter {
                     PAREN(REF("l").INFIX("%", LIT(1000L))) DOT "toInt" INFIX("*", LIT(1000000)),
                     ZoneOffset DOT "UTC"
                   ))
-                  tree MATCH CASE(ID("l") withType (LongClass)) ==> resultExpr
+                  tree MATCH(CASE(ID("l") withType (LongClass)) ==> resultExpr, matchError)
                 case UnderlyingPrimitive => tree
               }) withComment "avro local-timestamp-millis long stores the number of millis, from 1 January 1970 00:00:00.000000"
             } else if (logicalType.getName == "local-timestamp-micros") {
@@ -262,7 +268,7 @@ object ScalaConverter {
                     PAREN(REF("l").INFIX("%", LIT(1000000L))) DOT "toInt" INFIX("*", LIT(1000)),
                     ZoneOffset DOT "UTC"
                   ))
-                  tree MATCH CASE(ID("l") withType (LongClass)) ==> resultExpr
+                  tree MATCH(CASE(ID("l") withType (LongClass)) ==> resultExpr, matchError)
                 case UnderlyingPrimitive => tree
               }) withComment "avro local-timestamp-micros long stores the number of microseconds, from 1 January 1970 00:00:00.000000"
             }
@@ -274,21 +280,21 @@ object ScalaConverter {
       case Schema.Type.INT => {
         Option(schema.getLogicalType()) match {
           case Some(logicalType) => {
+            val IntegerClass = RootClass.newClass("Integer")
+            val matchError = CASE(WILDCARD) ==> NEW("org.apache.avro.AvroRuntimeException", LIT(s"expected type $IntegerClass"))
             if (logicalType.getName == "date") {
               typeMatcher.avroScalaTypes.date match {
                 case JavaSqlDate => {
-                  val IntegerClass = RootClass.newClass("Integer")
                   val SqlDateClass = RootClass.newClass("java.sql.Date")
                   val resultExpr = BLOCK(NEW(SqlDateClass, REF("i").DOT("toLong").DOT("*").APPLY(LIT(86400000L))))
                   val integerConversion = CASE(ID("i") withType (IntegerClass)) ==> resultExpr
-                  tree MATCH integerConversion
+                  tree MATCH(integerConversion, matchError)
                 }
                 case JavaTimeLocalDate => {
-                  val IntegerClass = RootClass.newClass("Integer")
                   val LocalDateClass = RootClass.newClass("java.time.LocalDate")
-                  val resultExpr = BLOCK(LocalDateClass.DOT("ofEpochDay").APPLY(REF("i").DOT("toInt")))
+                  val resultExpr = BLOCK(LocalDateClass.DOT("ofEpochDay").APPLY(REF("i").DOT("toLong")))
                   val integerConversion = CASE(ID("i") withType (IntegerClass)) ==> resultExpr
-                  tree MATCH integerConversion
+                  tree MATCH(integerConversion, matchError)
                 }
                 case UnderlyingPrimitive => tree
               }
@@ -296,18 +302,16 @@ object ScalaConverter {
             else if (logicalType.getName == "time-millis") {
               typeMatcher.avroScalaTypes.timeMillis match {
                 case JavaSqlTime => {
-                  val IntegerClass = RootClass.newClass("Integer")
                   val SqlTimeClass = RootClass.newClass("java.sql.Time")
                   val resultExpr = BLOCK(NEW(SqlTimeClass, REF("i").DOT("toLong")))
                   val integerConversion = CASE(ID("i") withType (IntegerClass)) ==> resultExpr
-                  tree MATCH integerConversion
+                  tree MATCH(integerConversion, matchError)
                 }
                 case JavaTimeLocalTime => {
-                  val IntegerClass = RootClass.newClass("Integer")
                   val LocalTimeClass = RootClass.newClass("java.time.LocalTime")
                   val resultExpr = BLOCK(LocalTimeClass.DOT("ofNanoOfDay").APPLY(REF("i").INFIX("*", LIT(1000000L))))
                   val integerConversion = CASE(ID("i") withType (IntegerClass)) ==> resultExpr
-                  tree MATCH integerConversion
+                  tree MATCH(integerConversion, matchError)
                 }
                 case UnderlyingPrimitive => tree
               }

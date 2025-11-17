@@ -7,6 +7,7 @@ import avrohugger.format.Standard
 import avrohugger.types._
 import org.specs2._
 
+
 class StandardFileToStringsSpec extends Specification {
   
   def is = s2"""
@@ -46,15 +47,15 @@ class StandardFileToStringsSpec extends Specification {
   // tests specific to fileToX
   def eA = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/twitter.avro")
-    val gen = new Generator(Standard)
+    val gen = Generator(Standard)
     val List(source) = gen.fileToStrings(infile)
     val expected = util.Util.readFile("avrohugger-core/src/test/expected/standard/com/miguno/avro/twitter_schema.scala")
-    source === expected      
+    source === expected
   }
 
   def eB = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/relative.avsc")
-    val gen = new Generator(Standard, Some(Standard.defaultTypes.copy(record = ScalaCaseClassWithSchema)))
+    val gen = Generator(Standard, Some(Standard.defaultTypes.copy(record = ScalaCaseClassWithSchema)))
     val List(source) = gen.fileToStrings(infile)
     val expected = util.Util.readFile("avrohugger-core/src/test/expected/standard/example/Relative.scala")
     source === expected
@@ -63,7 +64,7 @@ class StandardFileToStringsSpec extends Specification {
   // tests common to fileToX and stringToX
   def e1 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/mail.avpr")
-    val gen = new Generator(Standard)
+    val gen = Generator(Standard)
     val List(source) = gen.fileToStrings(infile)
     val expected = util.Util.readFile("avrohugger-core/src/test/expected/standard/example/proto/Message.scala")
     source === expected
@@ -71,7 +72,7 @@ class StandardFileToStringsSpec extends Specification {
 
   def e2 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/user.avsc")
-    val gen = new Generator(Standard)
+    val gen = Generator(Standard)
     val List(source) = gen.fileToStrings(infile)
     val expected = util.Util.readFile("avrohugger-core/src/test/expected/standard/example/User.scala")
     source === expected
@@ -79,7 +80,7 @@ class StandardFileToStringsSpec extends Specification {
   
   def e3 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/AvroTypeProviderTestNoNamespace.avsc")
-    val gen = new Generator(Standard)
+    val gen = Generator(Standard)
     val List(source) = gen.fileToStrings(infile)
     val expected = util.Util.readFile("avrohugger-core/src/test/expected/standard/AvroTypeProviderTestNoNamespace.scala")
     source === expected
@@ -87,7 +88,7 @@ class StandardFileToStringsSpec extends Specification {
   
   def e4 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/nested.avsc")
-    val gen = new Generator(Standard)
+    val gen = Generator(Standard)
     val List(source2, source1, source0) = gen.fileToStrings(infile)
 
     val expected0 = util.Util.readFile("avrohugger-core/src/test/expected/standard/example/Level0.scala")
@@ -102,15 +103,15 @@ class StandardFileToStringsSpec extends Specification {
   def e5 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/nested.avdl")
     val myAvroScalaCustomTypes = Standard.defaultTypes.copy(protocol = types.ScalaADT)
-    val gen = new Generator(format = Standard, avroScalaCustomTypes = Some(myAvroScalaCustomTypes))
+    val gen = Generator(format = Standard, avroScalaCustomTypes = Some(myAvroScalaCustomTypes))
     val List(source) = gen.fileToStrings(infile)
     val expected = util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/NestedProtocol.scala")
-    source === expected      
+    source === expected
   }
   
   def e6 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/recursive.avdl")
-    val gen = new Generator(Standard)
+    val gen = Generator(Standard)
     val List(source) = gen.fileToStrings(infile)
     val expected = util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/Recursive.scala")
     source === expected
@@ -118,7 +119,7 @@ class StandardFileToStringsSpec extends Specification {
 
   def e7 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/enums.avsc")
-    val gen = new Generator(Standard)
+    val gen = Generator(Standard)
     val List(source) = gen.fileToStrings(infile)
     val expected = util.Util.readFile("avrohugger-core/src/test/expected/standard/example/Suit.scala")
     source === expected
@@ -127,7 +128,7 @@ class StandardFileToStringsSpec extends Specification {
   def e8 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/enums.avpr")
     val myAvroScalaCustomTypes = Standard.defaultTypes.copy(protocol = types.ScalaADT)
-    val gen = new Generator(format = Standard, avroScalaCustomTypes = Some(myAvroScalaCustomTypes))
+    val gen = Generator(format = Standard, avroScalaCustomTypes = Some(myAvroScalaCustomTypes))
     val List(source) = gen.fileToStrings(infile)
     val expected = util.Util.readFile("avrohugger-core/src/test/expected/standard/example/proto/EnumProtocol.scala")
     source === expected
@@ -136,7 +137,7 @@ class StandardFileToStringsSpec extends Specification {
   def e9 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/enums.avdl")
     val myAvroScalaCustomTypes = Standard.defaultTypes.copy(protocol = types.ScalaADT)
-    val gen = new Generator(format = Standard, avroScalaCustomTypes = Some(myAvroScalaCustomTypes))
+    val gen = Generator(format = Standard, avroScalaCustomTypes = Some(myAvroScalaCustomTypes))
     val List(source) = gen.fileToStrings(infile)
     val expected = util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/EnumProtocol.scala")
     source === expected
@@ -144,7 +145,7 @@ class StandardFileToStringsSpec extends Specification {
   
   def e10 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/enums_nested.avsc")
-    val gen = new Generator(Standard)
+    val gen = Generator(Standard)
     val List(sourceEnum, sourceRecord) = gen.fileToStrings(infile)
 
     val expectedEnum = util.Util.readFile("avrohugger-core/src/test/expected/standard/example/Direction.scala")
@@ -156,7 +157,7 @@ class StandardFileToStringsSpec extends Specification {
   
   def e11 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/bytes.avsc")
-    val gen = new Generator(Standard)
+    val gen = Generator(Standard)
     val List(source) = gen.fileToStrings(infile)
     val expected = util.Util.readFile("avrohugger-core/src/test/expected/standard/example/BinarySc.scala")
     source === expected
@@ -164,7 +165,7 @@ class StandardFileToStringsSpec extends Specification {
   
   def e12 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/bytes.avpr")
-    val gen = new Generator(Standard)
+    val gen = Generator(Standard)
     val List(source) = gen.fileToStrings(infile)
     val expected = util.Util.readFile("avrohugger-core/src/test/expected/standard/example/proto/BinaryPr.scala")
     source === expected
@@ -172,7 +173,7 @@ class StandardFileToStringsSpec extends Specification {
   
   def e13 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/bytes.avdl")
-    val gen = new Generator(Standard)
+    val gen = Generator(Standard)
     val List(source) = gen.fileToStrings(infile)
     val expected = util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/BinaryIdl.scala")
     source === expected
@@ -180,7 +181,7 @@ class StandardFileToStringsSpec extends Specification {
   
   def e14 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/import.avdl")
-    val gen = new Generator(Standard)
+    val gen = Generator(Standard)
     val List(dep3, dep2, dep1, adt) = gen.fileToStrings(infile)
     
     val expectedADT = util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/ImportProtocol.scala")
@@ -197,7 +198,7 @@ class StandardFileToStringsSpec extends Specification {
   def e15 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/AvroTypeProviderTestEmptyRecord.avdl")
     val myAvroScalaCustomTypes = Standard.defaultTypes.copy(protocol = types.ScalaADT)
-    val gen = new Generator(format = Standard, avroScalaCustomTypes = Some(myAvroScalaCustomTypes))
+    val gen = Generator(format = Standard, avroScalaCustomTypes = Some(myAvroScalaCustomTypes))
     val List(source) = gen.fileToStrings(infile)
     val expected = util.Util.readFile("avrohugger-core/src/test/expected/standard/test/Calculator.scala")
     source === expected
@@ -206,7 +207,7 @@ class StandardFileToStringsSpec extends Specification {
   def e16 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/defaults.avdl")
     val myAvroScalaCustomTypes = Standard.defaultTypes.copy(protocol = types.ScalaADT)
-    val gen = new Generator(format = Standard, avroScalaCustomTypes = Some(myAvroScalaCustomTypes))
+    val gen = Generator(format = Standard, avroScalaCustomTypes = Some(myAvroScalaCustomTypes))
     val List(source) = gen.fileToStrings(infile)
 
     val expected = util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/Defaults.scala")
@@ -215,7 +216,7 @@ class StandardFileToStringsSpec extends Specification {
   
   def e21 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/AvroTypeProviderTestProtocol.avdl")
-    val gen = new Generator(format = Standard)
+    val gen = Generator(format = Standard)
     val outDir = gen.defaultOutputDir + "/standard/"
     val List(source) = gen.fileToStrings(infile)
   
@@ -224,7 +225,7 @@ class StandardFileToStringsSpec extends Specification {
 
   // def e22 = {
   //   val infile = new java.io.File("avrohugger-core/src/test/avro/logical.avdl")
-  //   val gen = new Generator(Standard)
+  //   val gen = Generator(Standard)
   //   val List(source) = gen.fileToStrings(infile)
   //   val expected = util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/LogicalIdl.scala")
   //   source === expected
@@ -233,7 +234,7 @@ class StandardFileToStringsSpec extends Specification {
   // def e23 = {
   //   val infile = new java.io.File("avrohugger-core/src/test/avro/logical.avdl")
   //   val myAvroScalaCustomTypes = Standard.defaultTypes.copy(decimal = ScalaBigDecimalWithPrecision(None))
-  //   val gen = new Generator(Standard, avroScalaCustomTypes = Some(myAvroScalaCustomTypes))
+  //   val gen = Generator(Standard, avroScalaCustomTypes = Some(myAvroScalaCustomTypes))
   //   val List(source) = gen.fileToStrings(infile)
   //   val expected = util.Util.readFile("avrohugger-core/src/test/expected/standard-tagged/example/idl/LogicalIdl.scala")
   //   source === expected
@@ -242,7 +243,7 @@ class StandardFileToStringsSpec extends Specification {
   def e24 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/logical_optional.avdl")
     val myAvroScalaCustomTypes = Standard.defaultTypes.copy(decimal = ScalaBigDecimalWithPrecision(None))
-    val gen = new Generator(Standard, avroScalaCustomTypes = Some(myAvroScalaCustomTypes))
+    val gen = Generator(Standard, avroScalaCustomTypes = Some(myAvroScalaCustomTypes))
     val List(source) = gen.fileToStrings(infile)
     val expected = util.Util.readFile("avrohugger-core/src/test/expected/standard-tagged/example/idl/LogicalOptionalIdl.scala")
     source === expected
@@ -251,7 +252,7 @@ class StandardFileToStringsSpec extends Specification {
   def e25 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/logical_either.avdl")
     val myAvroScalaCustomTypes = Standard.defaultTypes.copy(decimal = ScalaBigDecimalWithPrecision(None))
-    val gen = new Generator(Standard, avroScalaCustomTypes = Some(myAvroScalaCustomTypes))
+    val gen = Generator(Standard, avroScalaCustomTypes = Some(myAvroScalaCustomTypes))
     val List(source) = gen.fileToStrings(infile)
     val expected = util.Util.readFile("avrohugger-core/src/test/expected/standard-tagged/example/idl/LogicalEitherIdl.scala")
     source === expected
@@ -260,7 +261,7 @@ class StandardFileToStringsSpec extends Specification {
   def e26 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/logical_coproduct.avdl")
     val myAvroScalaCustomTypes = Standard.defaultTypes.copy(decimal = ScalaBigDecimalWithPrecision(None))
-    val gen = new Generator(Standard, avroScalaCustomTypes = Some(myAvroScalaCustomTypes))
+    val gen = Generator(Standard, avroScalaCustomTypes = Some(myAvroScalaCustomTypes))
     val List(source) = gen.fileToStrings(infile)
     val expected = util.Util.readFile("avrohugger-core/src/test/expected/standard-tagged/example/idl/LogicalCoproductIdl.scala")
     source === expected
@@ -268,7 +269,7 @@ class StandardFileToStringsSpec extends Specification {
   
   def e27 = {
     val infile = new java.io.File("avrohugger-core/src/test/avro/top_level_union.avsc")
-    val gen = new Generator(Standard)
+    val gen = Generator(Standard)
     val List(source1, source0) = gen.fileToStrings(infile)
 
     val expected0 = util.Util.readFile("avrohugger-core/src/test/expected/standard/example/Dum.scala")

@@ -7,7 +7,7 @@ import org.apache.avro.Schema
 import org.apache.avro.compiler.specific.SpecificCompiler
 
 import java.io._
-import java.nio.file.{FileSystems, Files, Path, Paths}
+import java.nio.file.{ FileSystems, Files, Path, Paths }
 import java.util.Comparator
 
 /** Parent to all ouput format treehuggers
@@ -58,7 +58,7 @@ trait JavaTreehugger {
     val files: java.util.stream.Stream[java.io.File] = sorted.map(_.toFile)
     files.forEach(_.deleteOnExit())
   }
-      
-      
+
+
 
 }

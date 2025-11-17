@@ -6,6 +6,7 @@ import avrohugger.Generator
 import avrohugger.format.SpecificRecord
 import org.specs2._
 
+
 class SpecificStringToStringsSpec extends Specification {
 
   def is = s2"""
@@ -36,7 +37,7 @@ class SpecificStringToStringsSpec extends Specification {
   // tests common to fileToX and stringToX
   def e1 = {
     val inputString = util.Util.readFile("avrohugger-core/src/test/avro/mail.avpr")
-    val gen = new Generator(SpecificRecord)
+    val gen = Generator(SpecificRecord)
     val List(sourceTrait, sourceRecord) = gen.stringToStrings(inputString)
     
     val expectedTrait = util.Util.readFile("avrohugger-core/src/test/expected/specific/example/proto/Mail.scala")
@@ -48,7 +49,7 @@ class SpecificStringToStringsSpec extends Specification {
   
   def e2 = {
     val inputString = util.Util.readFile("avrohugger-core/src/test/avro/user.avsc")
-    val gen = new Generator(SpecificRecord)
+    val gen = Generator(SpecificRecord)
     val List(source) = gen.stringToStrings(inputString)
     val expected = util.Util.readFile("avrohugger-core/src/test/expected/specific/example/User.scala")
     source === expected
@@ -56,7 +57,7 @@ class SpecificStringToStringsSpec extends Specification {
   
   def e3 = {
     val inputString = util.Util.readFile("avrohugger-core/src/test/avro/AvroTypeProviderTestNoNamespace.avsc")
-    val gen = new Generator(SpecificRecord)
+    val gen = Generator(SpecificRecord)
     val List(source) = gen.stringToStrings(inputString)
     val expected = util.Util.readFile("avrohugger-core/src/test/expected/specific/AvroTypeProviderTestNoNamespace.scala")
     source === expected
@@ -64,7 +65,7 @@ class SpecificStringToStringsSpec extends Specification {
   
   def e4 = {
     val inputString = util.Util.readFile("avrohugger-core/src/test/avro/nested.avsc")
-    val gen = new Generator(SpecificRecord)
+    val gen = Generator(SpecificRecord)
     val List(source2, source1, source0) = gen.stringToStrings(inputString)
 
     val expected0 = util.Util.readFile("avrohugger-core/src/test/expected/specific/example/Level0.scala")
@@ -79,15 +80,15 @@ class SpecificStringToStringsSpec extends Specification {
   def e5 = {
     val inputString = util.Util.readFile("avrohugger-core/src/test/avro/nested.avdl")
     val myAvroScalaCustomTypes = SpecificRecord.defaultTypes.copy(protocol = types.ScalaADT)
-    val gen = new Generator(format = SpecificRecord, avroScalaCustomTypes = Some(myAvroScalaCustomTypes))
+    val gen = Generator(format = SpecificRecord, avroScalaCustomTypes = Some(myAvroScalaCustomTypes))
     val List(source) = gen.stringToStrings(inputString)
     val expected = util.Util.readFile("avrohugger-core/src/test/expected/specific/example/idl/NestedProtocol.scala")
-    source === expected      
+    source === expected
   }
   
   def e6 = {
     val inputString = util.Util.readFile("avrohugger-core/src/test/avro/recursive.avdl")
-    val gen = new Generator(SpecificRecord)
+    val gen = Generator(SpecificRecord)
     val List(source) = gen.stringToStrings(inputString)
     val expected = util.Util.readFile("avrohugger-core/src/test/expected/specific/example/idl/Recursive.scala")
     source === expected
@@ -95,7 +96,7 @@ class SpecificStringToStringsSpec extends Specification {
 
   def e7 = {
     val inputString = util.Util.readFile("avrohugger-core/src/test/avro/enums.avsc")
-    val gen = new Generator(SpecificRecord)
+    val gen = Generator(SpecificRecord)
     val List(source) = gen.stringToStrings(inputString)
     val expected = util.Util.readFile("avrohugger-core/src/test/expected/specific/example/Suit.java")
     source === expected
@@ -103,7 +104,7 @@ class SpecificStringToStringsSpec extends Specification {
   
   def e8 = {
     val inputString = util.Util.readFile("avrohugger-core/src/test/avro/enums.avpr")
-    val gen = new Generator(SpecificRecord)
+    val gen = Generator(SpecificRecord)
     val List(sourceRecord, sourceEnum) = gen.stringToStrings(inputString)
     
     val expectedEnum = util.Util.readFile("avrohugger-core/src/test/expected/specific/example/proto/Suit.java")
@@ -115,7 +116,7 @@ class SpecificStringToStringsSpec extends Specification {
   
   def e9 = {
     val inputString = util.Util.readFile("avrohugger-core/src/test/avro/enums.avdl")
-    val gen = new Generator(SpecificRecord)
+    val gen = Generator(SpecificRecord)
     val List(sourceRecord, sourceEnum) = gen.stringToStrings(inputString)
     
     val expectedEnum = util.Util.readFile("avrohugger-core/src/test/expected/specific/example/idl/Suit.java")
@@ -127,7 +128,7 @@ class SpecificStringToStringsSpec extends Specification {
   
   def e10 = {
     val inputString = util.Util.readFile("avrohugger-core/src/test/avro/enums_nested.avsc")
-    val gen = new Generator(SpecificRecord)
+    val gen = Generator(SpecificRecord)
     val List(sourceEnum, sourceRecord) = gen.stringToStrings(inputString)
 
     val expectedEnum = util.Util.readFile("avrohugger-core/src/test/expected/specific/example/Direction.java")
@@ -139,7 +140,7 @@ class SpecificStringToStringsSpec extends Specification {
   
   def e11 = {
     val inputString = util.Util.readFile("avrohugger-core/src/test/avro/bytes.avsc")
-    val gen = new Generator(SpecificRecord)
+    val gen = Generator(SpecificRecord)
     val List(source) = gen.stringToStrings(inputString)
     val expected = util.Util.readFile("avrohugger-core/src/test/expected/specific/example/BinarySc.scala")
     source === expected
@@ -147,7 +148,7 @@ class SpecificStringToStringsSpec extends Specification {
   
   def e12 = {
     val inputString = util.Util.readFile("avrohugger-core/src/test/avro/bytes.avpr")
-    val gen = new Generator(SpecificRecord)
+    val gen = Generator(SpecificRecord)
     val List(source) = gen.stringToStrings(inputString)
     val expected = util.Util.readFile("avrohugger-core/src/test/expected/specific/example/proto/BinaryPr.scala")
     source === expected
@@ -155,7 +156,7 @@ class SpecificStringToStringsSpec extends Specification {
   
   def e13 = {
     val inputString = util.Util.readFile("avrohugger-core/src/test/avro/bytes.avdl")
-    val gen = new Generator(SpecificRecord)
+    val gen = Generator(SpecificRecord)
     val List(source) = gen.stringToStrings(inputString)
     val expected = util.Util.readFile("avrohugger-core/src/test/expected/specific/example/idl/BinaryIdl.scala")
     source === expected
@@ -163,14 +164,14 @@ class SpecificStringToStringsSpec extends Specification {
   
   def e14 = {
     val inputString = util.Util.readFile("avrohugger-core/src/test/avro/import.avdl")
-    val gen = new Generator(SpecificRecord)
+    val gen = Generator(SpecificRecord)
     gen.stringToStrings(inputString) must throwA(new java.lang.RuntimeException("Imports not supported in String IDLs, only avdl files."))
   }
   
   def e15 = {
     val inputString = util.Util.readFile("avrohugger-core/src/test/avro/AvroTypeProviderTestEmptyRecord.avdl")
     val myAvroScalaCustomTypes = SpecificRecord.defaultTypes.copy(protocol = types.ScalaADT)
-    val gen = new Generator(format = SpecificRecord, avroScalaCustomTypes = Some(myAvroScalaCustomTypes))
+    val gen = Generator(format = SpecificRecord, avroScalaCustomTypes = Some(myAvroScalaCustomTypes))
     val List(source) = gen.stringToStrings(inputString)
     val expected = util.Util.readFile("avrohugger-core/src/test/expected/specific/test/Calculator.scala")
     source === expected
@@ -178,7 +179,7 @@ class SpecificStringToStringsSpec extends Specification {
   
   def e16 = {
     val inputString = util.Util.readFile("avrohugger-core/src/test/avro/defaults.avdl")
-    val gen = new Generator(SpecificRecord)
+    val gen = Generator(SpecificRecord)
     val List(sourceRecord, sourceEnum) = gen.stringToStrings(inputString)
 
     val expectedRecord = util.Util.readFile("avrohugger-core/src/test/expected/specific/example/idl/Defaults.scala")
@@ -195,7 +196,7 @@ class SpecificStringToStringsSpec extends Specification {
   
   def e21 = {
     val inputString = util.Util.readFile("avrohugger-core/src/test/avro/AvroTypeProviderTestProtocol.avdl")
-    val gen = new Generator(format = SpecificRecord)
+    val gen = Generator(format = SpecificRecord)
   
     val List(source) = gen.stringToStrings(inputString)
   

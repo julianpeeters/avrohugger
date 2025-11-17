@@ -3,19 +3,18 @@ package format
 package standard
 package avrohuggers
 
-import format.abstractions.avrohuggers.Schemahugger
-import trees.{ StandardCaseClassTree, StandardObjectTree, StandardTraitTree }
-import matchers.TypeMatcher
-import stores.{ClassStore, SchemaStore}
-import types._
+import avrohugger.format.abstractions.avrohuggers.Schemahugger
+import avrohugger.format.standard.trees.{ StandardCaseClassTree, StandardObjectTree, StandardTraitTree }
+import avrohugger.matchers.TypeMatcher
+import avrohugger.stores.ClassStore
+import avrohugger.types._
 import org.apache.avro.Schema
-import org.apache.avro.Schema.Type.{ENUM, FIXED, RECORD}
+import org.apache.avro.Schema.Type.{ ENUM, FIXED, RECORD }
 import treehugger.forest._
 
 object StandardSchemahugger extends Schemahugger {
 
   def toTrees(
-    schemaStore: SchemaStore,
     classStore: ClassStore,
     namespace: Option[String],
     schema: Schema,
@@ -23,7 +22,8 @@ object StandardSchemahugger extends Schemahugger {
     maybeBaseTrait: Option[String],
     maybeFlags: Option[List[Long]],
     restrictedFields: Boolean,
-    targetScalaPartialVersion: String): List[Tree] = { // as case class definition
+    targetScalaPartialVersion: String
+  ): List[Tree] = { // as case class definition
 
     schema.getType match {
       case RECORD =>
@@ -47,6 +47,8 @@ object StandardSchemahugger extends Schemahugger {
           List.empty
         case ScalaCaseObjectEnum =>
           StandardTraitTree.toCaseObjectEnumDef(schema, maybeBaseTrait)
+        case Scala3Enum =>
+          StandardTraitTree.toScala3EnumDef(schema)
         case ScalaEnumeration =>
           val objectDef = StandardObjectTree.toScalaEnumDef(
             classStore,
@@ -64,7 +66,7 @@ object StandardSchemahugger extends Schemahugger {
           typeMatcher)
         val companionDef = StandardObjectTree.toCaseCompanionDef(
           schema,
-          None) 
+          None)
         typeMatcher.avroScalaTypes.fixed match {
           case ScalaCaseClassWrapper => List(classDef)
           case ScalaCaseClassWrapperWithSchema => List(classDef, companionDef)

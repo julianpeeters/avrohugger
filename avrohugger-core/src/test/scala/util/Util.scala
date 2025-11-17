@@ -1,13 +1,15 @@
 package util
 
-import org.specs2.matcher.{Expectable, MatchResult, Matcher}
+import org.specs2.matcher.{ Expectable, ExpectationsCreation, Matcher }
 
 object Util {
 
   def readFile(fileName: String, maxTries: Int = 3): String = {
     def readFile0(count: Int): String = {
       try { // if file is empty, try again, it should be there
-        val contents: String = scala.io.Source.fromFile(fileName).mkString
+        val source = scala.io.Source.fromFile(fileName)
+        val contents: String = source.mkString
+        source.close()
         if (contents.isEmpty && (count < maxTries)) readFile0(count + 1)
         else contents
       } catch { // if file is not found, try again, it should be there
@@ -28,10 +30,18 @@ object Util {
       case e: Throwable => false
     }
 
-  def containExpectedContentIn(expectPath: String): Matcher[String] = new Matcher[String] {
-    override def apply[S <: String](t: Expectable[S]): MatchResult[S] = {
-      val generatedPath = t.value
-      result(readFile(generatedPath) == readFile(expectPath), s"$generatedPath === $expectPath", s"\ndiff -ruBbE $expectPath $generatedPath", t)
-    }
-  }
+  // class LineEndingAmbiguousMatcher(left: String) extends Matcher[String] {
+  //   def apply[S <: String](right: Expectable[S]): MatchResult[S] = {
+  //     val leftAsList = if (left.contains("\r\n")) left.split("\r\n") else left.split("\n")
+  //     val rightValue: String = right.value
+  //     val rightAsList = if (rightValue.contains("\r\n")) rightValue.split("\r\n") else rightValue.split("\n")
+
+  //     val res = leftAsList.mkString("\n") === rightAsList.mkString("\n")
+  //     result(res.isSuccess, res.message, res.message, right)
+  //   }
+  // }
+
+  // implicit class LineEndingAmbiguousMatcherString(s: String) extends ExpectationsCreation{
+  //   def ===(other: String): MatchResult[String] = createExpectable(s).applyMatcher(new LineEndingAmbiguousMatcher(other))
+  // }
 }

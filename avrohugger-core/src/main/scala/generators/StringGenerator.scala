@@ -2,43 +2,36 @@ package avrohugger
 package generators
 
 import avrohugger.format.abstractions.SourceFormat
-import avrohugger.input.DependencyInspector
-import avrohugger.input.NestedSchemaExtractor
-// import avrohugger.input.reflectivecompilation.schemagen._
-import avrohugger.input.parsers.{ FileInputParser, StringInputParser}
+import avrohugger.input.{ DependencyInspector, NestedSchemaExtractor }
+import avrohugger.input.parsers.{ FileInputParser, StringInputParser }
 import avrohugger.matchers.TypeMatcher
-import avrohugger.stores.{ ClassStore, SchemaStore }
-
-import java.io.{File, FileNotFoundException, IOException}
-
+import avrohugger.stores.ClassStore
+import org.apache.avro.Schema.Parser
 import org.apache.avro.{ Protocol, Schema }
-import org.apache.avro.Schema.Type.ENUM
+
+import java.io.{ File, FileNotFoundException, IOException }
+import scala.concurrent.Await
+import scala.concurrent.duration.Duration
 
 // Unable to overload this class' methods because outDir uses a default value
-private[avrohugger] object StringGenerator {
+private[avrohugger] class StringGenerator {
 
   def schemaToStrings(
     schema: Schema,
     format: SourceFormat,
     classStore: ClassStore,
-    schemaStore: SchemaStore,
     typeMatcher: TypeMatcher,
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): List[String] = {
     val maybeNamespace = DependencyInspector.getReferredNamespace(schema)
-    val topLevels =
-      NestedSchemaExtractor.getNestedSchemas(schema, schemaStore, typeMatcher)
-    //reversed to process nested classes first
-    val compilationUnits = topLevels.reverse.distinct.flatMap(schema => {
+    val topLevels = NestedSchemaExtractor.getNestedSchemas(schema, typeMatcher)
+    val compilationUnits = topLevels.distinct.flatMap(schema => {
       // pass in the top-level schema's namespace if the nested schema has none
-      val maybeNS = DependencyInspector.getReferredNamespace(schema) orElse {
-        maybeNamespace
-      }
+      val maybeNS = DependencyInspector.getReferredNamespace(schema).orElse(maybeNamespace)
       format.asCompilationUnits(
         classStore,
         maybeNS,
         Left(schema),
-        schemaStore,
         None,
         typeMatcher,
         restrictedFields,
@@ -51,7 +44,6 @@ private[avrohugger] object StringGenerator {
     protocol: Protocol,
     format: SourceFormat,
     classStore: ClassStore,
-    schemaStore: SchemaStore,
     typeMatcher: TypeMatcher,
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): List[String] = {
@@ -60,7 +52,6 @@ private[avrohugger] object StringGenerator {
       classStore,
       namespace,
       Right(protocol),
-      schemaStore,
       None,
       typeMatcher,
       restrictedFields,
@@ -72,24 +63,18 @@ private[avrohugger] object StringGenerator {
     str: String,
     format: SourceFormat,
     classStore: ClassStore,
-    schemaStore: SchemaStore,
     stringParser: StringInputParser,
     typeMatcher: TypeMatcher,
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): List[String] = {
-    val schemaOrProtocols = stringParser.getSchemaOrProtocols(str, schemaStore)
-    val codeStrings = schemaOrProtocols.flatMap(schemaOrProtocol => {
-      schemaOrProtocol match {
-        case Left(schema) => {
-          schemaToStrings(schema, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
-        }
-        case Right(protocol) => {
-          protocolToStrings(protocol, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
-        }
-      }
-    }).distinct
+    val schemaOrProtocols = stringParser.getSchemaOrProtocols(str)
+    val codeStrings = schemaOrProtocols.flatMap {
+      case Left(schema) =>
+        schemaToStrings(schema, format, classStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
+      case Right(protocol) =>
+        protocolToStrings(protocol, format, classStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
+    }.distinct
     // reset the schema store after processing the whole submission
-    schemaStore.schemas.clear()
     codeStrings
   }
 
@@ -97,23 +82,20 @@ private[avrohugger] object StringGenerator {
     inFile: File,
     format: SourceFormat,
     classStore: ClassStore,
-    schemaStore: SchemaStore,
     fileParser: FileInputParser,
+    schemaParser: Parser,
     typeMatcher: TypeMatcher,
     classLoader: ClassLoader,
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): List[String] = {
     try {
-      val schemaOrProtocols: List[Either[Schema, Protocol]] =
-        fileParser.getSchemaOrProtocols(inFile, format, classStore, classLoader)
-      schemaOrProtocols.flatMap(schemaOrProtocol => schemaOrProtocol match {
-        case Left(schema) => {
-          schemaToStrings(schema, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
+      Await.result(fileParser.getSchemaOrProtocols(inFile, format, classStore, classLoader, schemaParser), Duration.Inf)
+        .flatMap {
+          case Left(schema) =>
+            schemaToStrings(schema, format, classStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
+          case Right(protocol) =>
+            protocolToStrings(protocol, format, classStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
         }
-        case Right(protocol) => {
-          protocolToStrings(protocol, format, classStore, schemaStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
-        }
-      })
     }
     catch {
       case ex: FileNotFoundException => sys.error("File not found:" + ex)
@@ -123,13 +105,14 @@ private[avrohugger] object StringGenerator {
 
 
   def removeExtraWarning(codeStr: String): String = {
-    if (codeStr.startsWith("""/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
-      |/**
-      | * Autogenerated by Avro
-      | *
-      | * DO NOT EDIT DIRECTLY
-      | */
-      |""".stripMargin))
+    if (codeStr.startsWith(
+      """/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
+        |/**
+        | * Autogenerated by Avro
+        | *
+        | * DO NOT EDIT DIRECTLY
+        | */
+        |""".stripMargin))
       codeStr.replace("/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */\n", "")
     else codeStr
   }
