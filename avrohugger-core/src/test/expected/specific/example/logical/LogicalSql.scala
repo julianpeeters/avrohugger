@@ -32,7 +32,7 @@ final case class LogicalSql(var data: BigDecimal, var ts: java.sql.Timestamp, va
       case 4 => {
         tm.getTime()
       }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
@@ -44,7 +44,7 @@ final case class LogicalSql(var data: BigDecimal, var ts: java.sql.Timestamp, va
             val decimalType = schema.getLogicalType().asInstanceOf[org.apache.avro.LogicalTypes.Decimal]
             BigDecimal(LogicalSql.decimalConversion.fromBytes(buffer, schema, decimalType))
           }
-          case _ => new org.apache.avro.AvroRuntimeException("expected type java.nio.ByteBuffer")
+          case _ => throw new org.apache.avro.AvroRuntimeException("expected type java.nio.ByteBuffer")
         }
       }.asInstanceOf[BigDecimal]
       case 1 => this.ts = {
@@ -52,7 +52,7 @@ final case class LogicalSql(var data: BigDecimal, var ts: java.sql.Timestamp, va
           case (l: Long) => {
             new java.sql.Timestamp(l)
           }
-          case _ => new org.apache.avro.AvroRuntimeException("expected type Long")
+          case _ => throw new org.apache.avro.AvroRuntimeException("expected type Long")
         }
       }.asInstanceOf[java.sql.Timestamp]
       case 2 => this.dt = {
@@ -60,7 +60,7 @@ final case class LogicalSql(var data: BigDecimal, var ts: java.sql.Timestamp, va
           case (i: Integer) => {
             new java.sql.Date(i.toLong.*(86400000L))
           }
-          case _ => new org.apache.avro.AvroRuntimeException("expected type Integer")
+          case _ => throw new org.apache.avro.AvroRuntimeException("expected type Integer")
         }
       }.asInstanceOf[java.sql.Date]
       case 3 => this.dataBig = {
@@ -70,7 +70,7 @@ final case class LogicalSql(var data: BigDecimal, var ts: java.sql.Timestamp, va
             val decimalType = schema.getLogicalType().asInstanceOf[org.apache.avro.LogicalTypes.Decimal]
             BigDecimal(LogicalSql.decimalConversion.fromBytes(buffer, schema, decimalType))
           }
-          case _ => new org.apache.avro.AvroRuntimeException("expected type java.nio.ByteBuffer")
+          case _ => throw new org.apache.avro.AvroRuntimeException("expected type java.nio.ByteBuffer")
         }
       }.asInstanceOf[BigDecimal]
       case 4 => this.tm = {
@@ -78,10 +78,10 @@ final case class LogicalSql(var data: BigDecimal, var ts: java.sql.Timestamp, va
           case (i: Integer) => {
             new java.sql.Time(i.toLong)
           }
-          case _ => new org.apache.avro.AvroRuntimeException("expected type Integer")
+          case _ => throw new org.apache.avro.AvroRuntimeException("expected type Integer")
         }
       }.asInstanceOf[java.sql.Time]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }

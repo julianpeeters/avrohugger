@@ -12,7 +12,7 @@ final case class Level2(var name: String) extends org.apache.avro.specific.Speci
       case 0 => {
         name
       }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
@@ -20,7 +20,7 @@ final case class Level2(var name: String) extends org.apache.avro.specific.Speci
       case 0 => this.name = {
         value.toString
       }.asInstanceOf[String]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }
@@ -38,7 +38,7 @@ final case class Level1(var level2: example.idl.Level2) extends org.apache.avro.
       case 0 => {
         level2
       }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
@@ -46,7 +46,7 @@ final case class Level1(var level2: example.idl.Level2) extends org.apache.avro.
       case 0 => this.level2 = {
         value
       }.asInstanceOf[example.idl.Level2]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }
@@ -64,7 +64,7 @@ final case class Level0(var level1: example.idl.Level1) extends org.apache.avro.
       case 0 => {
         level1
       }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
@@ -72,7 +72,7 @@ final case class Level0(var level1: example.idl.Level1) extends org.apache.avro.
       case 0 => this.level1 = {
         value
       }.asInstanceOf[example.idl.Level1]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }

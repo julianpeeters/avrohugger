@@ -16,7 +16,7 @@ case class Driver(var vehicle: Vehicle) extends org.apache.avro.specific.Specifi
       case 0 => {
         vehicle
       }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
@@ -24,7 +24,7 @@ case class Driver(var vehicle: Vehicle) extends org.apache.avro.specific.Specifi
       case 0 => this.vehicle = {
         value
       }.asInstanceOf[Vehicle]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }

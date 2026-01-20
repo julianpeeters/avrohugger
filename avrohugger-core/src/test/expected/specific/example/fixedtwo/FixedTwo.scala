@@ -13,7 +13,7 @@ final case class FixedTwo(var first: fixedtwo.one.fixed, var second: fixedtwo.tw
       case 1 => {
         second
       }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
@@ -24,7 +24,7 @@ final case class FixedTwo(var first: fixedtwo.one.fixed, var second: fixedtwo.tw
       case 1 => this.second = {
         value
       }.asInstanceOf[fixedtwo.two.fixed]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }

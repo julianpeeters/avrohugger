@@ -8,7 +8,7 @@ case class PetOwner(var pet: Pet) extends org.apache.avro.specific.SpecificRecor
       case 0 => {
         pet
       }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
@@ -16,7 +16,7 @@ case class PetOwner(var pet: Pet) extends org.apache.avro.specific.SpecificRecor
       case 0 => this.pet = {
         value
       }.asInstanceOf[Pet]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }

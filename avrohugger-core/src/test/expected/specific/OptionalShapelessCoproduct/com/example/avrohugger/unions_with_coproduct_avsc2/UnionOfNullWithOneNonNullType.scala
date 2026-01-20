@@ -15,7 +15,7 @@ final case class UnionOfNullWithOneNonNullType(var f3: Option[Double :+: CNil]) 
           case None => null
         }
       }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
@@ -26,7 +26,7 @@ final case class UnionOfNullWithOneNonNullType(var f3: Option[Double :+: CNil]) 
           case _ => Some(value)
         }
       }.asInstanceOf[Option[Double :+: CNil]]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }

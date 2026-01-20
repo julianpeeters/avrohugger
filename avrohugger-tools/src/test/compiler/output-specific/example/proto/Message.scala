@@ -16,7 +16,7 @@ final case class Message(var to: String, var from: String, var body: String) ext
       case 2 => {
         body
       }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
@@ -30,7 +30,7 @@ final case class Message(var to: String, var from: String, var body: String) ext
       case 2 => this.body = {
         value.toString
       }.asInstanceOf[String]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }

@@ -22,7 +22,7 @@ final case class User(var name: String, var favorite_number: Option[Int], var fa
           case None => null
         }
       }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
@@ -42,7 +42,7 @@ final case class User(var name: String, var favorite_number: Option[Int], var fa
           case _ => Some(value.toString)
         }
       }.asInstanceOf[Option[String]]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }

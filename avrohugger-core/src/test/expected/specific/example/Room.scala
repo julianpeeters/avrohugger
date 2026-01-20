@@ -12,7 +12,7 @@ final case class Room(var door: door = example.types.door.NORTH) extends org.apa
       case 0 => {
         door
       }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
@@ -20,7 +20,7 @@ final case class Room(var door: door = example.types.door.NORTH) extends org.apa
       case 0 => this.door = {
         value
       }.asInstanceOf[door]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }

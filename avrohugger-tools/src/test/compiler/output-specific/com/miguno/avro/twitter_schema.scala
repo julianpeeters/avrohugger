@@ -21,7 +21,7 @@ final case class twitter_schema(var username: String, var tweet: String, var tim
       case 2 => {
         timestamp
       }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
@@ -35,7 +35,7 @@ final case class twitter_schema(var username: String, var tweet: String, var tim
       case 2 => this.timestamp = {
         value
       }.asInstanceOf[Long]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }

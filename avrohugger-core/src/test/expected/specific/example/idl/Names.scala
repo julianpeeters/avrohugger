@@ -13,7 +13,7 @@ final case class Names(var `protected`: String, var `ends_with_`: String) extend
       case 1 => {
         `ends_with_`
       }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
@@ -24,7 +24,7 @@ final case class Names(var `protected`: String, var `ends_with_`: String) extend
       case 1 => this.`ends_with_` = {
         value.toString
       }.asInstanceOf[String]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }

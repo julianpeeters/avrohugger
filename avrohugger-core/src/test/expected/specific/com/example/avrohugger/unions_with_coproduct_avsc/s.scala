@@ -36,7 +36,7 @@ final case class s(var s: String, var ns: Option[String], var multi2: Either[com
           case None => null
         }
       }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
@@ -68,7 +68,7 @@ final case class s(var s: String, var ns: Option[String], var multi2: Either[com
           case _ => Some(value)
         }
       }.asInstanceOf[Option[com.example.avrohugger.unions_with_coproduct_avsc.r3 :+: com.example.avrohugger.unions_with_coproduct_avsc.r1 :+: com.example.avrohugger.unions_with_coproduct_avsc.r2 :+: CNil]]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }

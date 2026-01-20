@@ -35,7 +35,7 @@ final case class Logical(var dec: BigDecimal, var ts: java.time.Instant, var dt:
       case 5 => {
         time.get(java.time.temporal.ChronoField.MILLI_OF_DAY)
       }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
@@ -47,7 +47,7 @@ final case class Logical(var dec: BigDecimal, var ts: java.time.Instant, var dt:
             val decimalType = schema.getLogicalType().asInstanceOf[org.apache.avro.LogicalTypes.Decimal]
             BigDecimal(Logical.decimalConversion.fromBytes(buffer, schema, decimalType))
           }
-          case _ => new org.apache.avro.AvroRuntimeException("expected type java.nio.ByteBuffer")
+          case _ => throw new org.apache.avro.AvroRuntimeException("expected type java.nio.ByteBuffer")
         }
       }.asInstanceOf[BigDecimal]
       case 1 => this.ts = {
@@ -55,7 +55,7 @@ final case class Logical(var dec: BigDecimal, var ts: java.time.Instant, var dt:
           case (l: Long) => {
             java.time.Instant.ofEpochMilli(l)
           }
-          case _ => new org.apache.avro.AvroRuntimeException("expected type Long")
+          case _ => throw new org.apache.avro.AvroRuntimeException("expected type Long")
         }
       }.asInstanceOf[java.time.Instant]
       case 2 => this.dt = {
@@ -63,7 +63,7 @@ final case class Logical(var dec: BigDecimal, var ts: java.time.Instant, var dt:
           case (i: Integer) => {
             java.time.LocalDate.ofEpochDay(i.toLong)
           }
-          case _ => new org.apache.avro.AvroRuntimeException("expected type Integer")
+          case _ => throw new org.apache.avro.AvroRuntimeException("expected type Integer")
         }
       }.asInstanceOf[java.time.LocalDate]
       case 3 => this.uuid = {
@@ -71,7 +71,7 @@ final case class Logical(var dec: BigDecimal, var ts: java.time.Instant, var dt:
           case (chars: java.lang.CharSequence) => {
             java.util.UUID.fromString(chars.toString)
           }
-          case _ => new org.apache.avro.AvroRuntimeException("expected type CharSequence")
+          case _ => throw new org.apache.avro.AvroRuntimeException("expected type CharSequence")
         }
       }.asInstanceOf[java.util.UUID]
       case 4 => this.decBig = {
@@ -81,7 +81,7 @@ final case class Logical(var dec: BigDecimal, var ts: java.time.Instant, var dt:
             val decimalType = schema.getLogicalType().asInstanceOf[org.apache.avro.LogicalTypes.Decimal]
             BigDecimal(Logical.decimalConversion.fromBytes(buffer, schema, decimalType))
           }
-          case _ => new org.apache.avro.AvroRuntimeException("expected type java.nio.ByteBuffer")
+          case _ => throw new org.apache.avro.AvroRuntimeException("expected type java.nio.ByteBuffer")
         }
       }.asInstanceOf[BigDecimal]
       case 5 => this.time = {
@@ -89,10 +89,10 @@ final case class Logical(var dec: BigDecimal, var ts: java.time.Instant, var dt:
           case (i: Integer) => {
             java.time.LocalTime.ofNanoOfDay(i * 1000000L)
           }
-          case _ => new org.apache.avro.AvroRuntimeException("expected type Integer")
+          case _ => throw new org.apache.avro.AvroRuntimeException("expected type Integer")
         }
       }.asInstanceOf[java.time.LocalTime]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }

@@ -10,7 +10,7 @@ final case class UnionOfOneNonNullType(var f3: Map[String, String]) extends org.
       case 0 => {
         f3
       }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
@@ -18,7 +18,7 @@ final case class UnionOfOneNonNullType(var f3: Map[String, String]) extends org.
       case 0 => this.f3 = {
         value
       }.asInstanceOf[Map[String, String]]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }
