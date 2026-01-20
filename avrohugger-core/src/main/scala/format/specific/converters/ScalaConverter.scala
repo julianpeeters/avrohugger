@@ -98,7 +98,7 @@ object ScalaConverter {
         )
         val arrayConversion = CASE(ID("array") withType(JavaList)) ==> resultExpr
         val errorMessage = LIT(s"expected array with type java.util.List[_]")
-        val errorExpr = NEW("org.apache.avro.AvroRuntimeException", errorMessage)
+        val errorExpr = THROW(NEW("org.apache.avro.AvroRuntimeException", errorMessage))
         val arrayMatchError = CASE(WILDCARD) ==> errorExpr
         val conversionCases = List(arrayConversion, arrayMatchError)
         tree MATCH(conversionCases)
@@ -113,7 +113,7 @@ object ScalaConverter {
                 val UuidClass = RootClass.newClass("java.util.UUID")
                 val resultExpr = BLOCK(UuidClass.DOT("fromString").APPLY(REF("chars").TOSTRING))
                 val charSequenceConversion = CASE(ID("chars") withType CharSequenceClass) ==> resultExpr
-                val matchError = CASE(WILDCARD) ==> NEW("org.apache.avro.AvroRuntimeException", LIT(s"expected type $CharSequenceClass"))
+                val matchError = CASE(WILDCARD) ==> THROW(NEW("org.apache.avro.AvroRuntimeException", LIT(s"expected type $CharSequenceClass")))
                 tree MATCH(charSequenceConversion, matchError)
               }
             }
@@ -144,7 +144,7 @@ object ScalaConverter {
         }
         val mapConversion = CASE(ID("map") withType(JavaMap)) ==> resultExpr
         val errorMessage = LIT(s"expected array with type java.util.List[_]")
-        val errorExpr = NEW("org.apache.avro.AvroRuntimeException", errorMessage)
+        val errorExpr = THROW(NEW("org.apache.avro.AvroRuntimeException", errorMessage))
         val arrayMatchError = CASE(WILDCARD) ==> errorExpr
         tree MATCH(mapConversion, arrayMatchError)
       }
@@ -168,7 +168,7 @@ object ScalaConverter {
           )
         }
         val bufferConversion = CASE(ID("buffer") withType (JavaBuffer)) ==> resultExpr
-        val matchError = CASE(WILDCARD) ==> NEW("org.apache.avro.AvroRuntimeException", LIT(s"expected type $JavaBuffer"))
+        val matchError = CASE(WILDCARD) ==> THROW(NEW("org.apache.avro.AvroRuntimeException", LIT(s"expected type $JavaBuffer")))
         tree MATCH(bufferConversion, matchError)
       }
       case Schema.Type.UNION => {
@@ -203,7 +203,7 @@ object ScalaConverter {
       }
       case Schema.Type.LONG => {
         val caseLWithTypeLong = CASE(ID("l") withType (LongClass))
-        val matchError = CASE(WILDCARD) ==> NEW("org.apache.avro.AvroRuntimeException", LIT(s"expected type $LongClass"))
+        val matchError = CASE(WILDCARD) ==> THROW(NEW("org.apache.avro.AvroRuntimeException", LIT(s"expected type $LongClass")))
         Option(schema.getLogicalType()) match {
           case Some(logicalType) => {
             if (logicalType.getName == "time-micros") {
@@ -281,7 +281,7 @@ object ScalaConverter {
         Option(schema.getLogicalType()) match {
           case Some(logicalType) => {
             val IntegerClass = RootClass.newClass("Integer")
-            val matchError = CASE(WILDCARD) ==> NEW("org.apache.avro.AvroRuntimeException", LIT(s"expected type $IntegerClass"))
+            val matchError = CASE(WILDCARD) ==> THROW(NEW("org.apache.avro.AvroRuntimeException", LIT(s"expected type $IntegerClass")))
             if (logicalType.getName == "date") {
               typeMatcher.avroScalaTypes.date match {
                 case JavaSqlDate => {
