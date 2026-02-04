@@ -49,18 +49,16 @@ final case class LogicalSql(var data: BigDecimal, var ts: java.sql.Timestamp, va
       }.asInstanceOf[BigDecimal]
       case 1 => this.ts = {
         value match {
-          case (l: Long) => {
-            new java.sql.Timestamp(l)
-          }
-          case _ => throw new org.apache.avro.AvroRuntimeException("expected type Long")
+          case (l: Long) => new java.sql.Timestamp(l)
+          case (i: java.time.Instant) => java.sql.Timestamp.from(i)
+          case x => throw new org.apache.avro.AvroRuntimeException(s"expected type Long or java.time.Instant but found ${x.getClass}")
         }
       }.asInstanceOf[java.sql.Timestamp]
       case 2 => this.dt = {
         value match {
-          case (i: Integer) => {
-            new java.sql.Date(i.toLong.*(86400000L))
-          }
-          case _ => throw new org.apache.avro.AvroRuntimeException("expected type Integer")
+          case (i: Integer) => new java.sql.Date(i.toLong.*(86400000L))
+          case (d: java.time.LocalDate) => java.sql.Date.valueOf(d)
+          case x => throw new org.apache.avro.AvroRuntimeException(s"expected type Integer or java.time.LocalDate but found ${x.getClass}")
         }
       }.asInstanceOf[java.sql.Date]
       case 3 => this.dataBig = {
@@ -75,10 +73,9 @@ final case class LogicalSql(var data: BigDecimal, var ts: java.sql.Timestamp, va
       }.asInstanceOf[BigDecimal]
       case 4 => this.tm = {
         value match {
-          case (i: Integer) => {
-            new java.sql.Time(i.toLong)
-          }
-          case _ => throw new org.apache.avro.AvroRuntimeException("expected type Integer")
+          case (i: Integer) => new java.sql.Time(i.toLong)
+          case (t: java.time.LocalTime) => java.sql.Time.valueOf(t)
+          case x => throw new org.apache.avro.AvroRuntimeException(s"expected type Integer or java.time.LocalTime but found ${x.getClass}")
         }
       }.asInstanceOf[java.sql.Time]
       case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
