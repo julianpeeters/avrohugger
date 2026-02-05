@@ -3,7 +3,8 @@ package util
 import avrohugger._
 import avrohugger.format._
 import avrohugger.format.abstractions.SourceFormat
-import org.specs2.matcher.{Matchers, ShouldExpectable}
+import org.specs2.matcher.Matchers
+import org.specs2.matcher.ShouldMatchers.===
 
 import java.io.File
 import java.nio.file.{FileSystems, Path}
@@ -11,7 +12,7 @@ import scala.io.Source
 
 class AvrohuggerSpec(
   inPath: Path,
-  val outputFiles: Seq[Path],
+  outputFiles: Seq[Path],
   sourceFormat: SourceFormat
 ) extends Matchers {
   implicit class PathExtensions(
@@ -55,14 +56,14 @@ class AvrohuggerSpec(
     val generated = outputFiles map generatedString
     val expected = outputFiles map expectedString
 
-    ShouldExpectable(generated) shouldEqual expected
+    generated === expected
   }
 
   def checkFileToStrings = {
-    val generated = gen.fileToStrings(inputFile)
+    val generated: Seq[String] = gen.fileToStrings(inputFile)
     val expected = outputFiles map expectedString
 
-    ShouldExpectable(generated) shouldEqual expected
+    generated === expected
   }
 
   def checkStringToFile = {
@@ -72,17 +73,17 @@ class AvrohuggerSpec(
     val generated = outputFiles map generatedString
     val expected = outputFiles map expectedString
 
-    ShouldExpectable(generated) shouldEqual expected
+    generated === expected
   }
 
   def checkStringToStrings = {
-    val generated = {
+    val generated: Seq[String] = {
       val inputString = readFile(inputFile)
       gen.stringToStrings(inputString)
     }
 
     val expected = outputFiles map expectedString
 
-    ShouldExpectable(generated) shouldEqual expected
+    generated === expected
   }
 }

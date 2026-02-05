@@ -2,16 +2,15 @@ lazy val avroVersion = "1.12.1"
 
 lazy val commonSettings = Seq(
   organization := "com.julianpeeters",
-  version := "2.16.0-SNAPSHOT",
+  version := "2.16.0",
   ThisBuild / versionScheme := Some("semver-spec"),
   scalacOptions ++= Seq(
     "-unchecked", 
     "-deprecation",
     "-feature",
   ),
-  resolvers += "Local Maven Repository" at "file://"+Path.userHome.absolutePath+"/.m2/repository",
   scalaVersion := "3.3.7",
-  crossScalaVersions := Seq("2.12.20", "2.13.17", scalaVersion.value),
+  crossScalaVersions := Seq("2.12.21", "2.13.18", scalaVersion.value),
   libraryDependencies += "org.apache.avro" % "avro" % avroVersion,
   libraryDependencies += "org.apache.avro" % "avro-compiler" % avroVersion,
   libraryDependencies += "org.apache.avro" % "avro-idl" % avroVersion,
@@ -26,7 +25,7 @@ lazy val commonSettings = Seq(
           "org.specs2"             %% "specs2-core"             % "4.20.2" % "test")
       case _ =>
         libraryDependencies.value ++ Seq(
-          "org.specs2"             %% "specs2-core"             % "5.6.4" % "test")
+          "org.specs2"             %% "specs2-core"             % "5.7.0" % "test")
     }
   },
   publishMavenStyle := true,
