@@ -95,7 +95,7 @@ object DefaultValueMatcher {
         collectionType APPLY (node.elements().asScala.toSeq.map(e => fromJsonNode(e, classStore, namespace, schema.getElementType, typeMatcher, useFullName)))
       }
       case Schema.Type.MAP => {
-        val kvps = node.fields().asScala.toList.map(e => LIT(e.getKey) ANY_-> fromJsonNode(e.getValue, classStore, namespace, schema.getValueType, typeMatcher, useFullName))
+        val kvps = node.properties().asScala.toList.map(e => LIT(e.getKey) ANY_-> fromJsonNode(e.getValue, classStore, namespace, schema.getValueType, typeMatcher, useFullName))
         MAKE_MAP(kvps)
       }
       case Schema.Type.RECORD => {

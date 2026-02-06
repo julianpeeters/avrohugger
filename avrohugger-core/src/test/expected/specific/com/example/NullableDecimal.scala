@@ -20,7 +20,7 @@ final case class NullableDecimal(var ciao: Option[BigDecimal] = None) extends or
           case None => null
         }
       }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
@@ -37,7 +37,7 @@ final case class NullableDecimal(var ciao: Option[BigDecimal] = None) extends or
           })
         }
       }.asInstanceOf[Option[BigDecimal]]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }

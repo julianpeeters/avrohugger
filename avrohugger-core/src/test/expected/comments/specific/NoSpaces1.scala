@@ -35,7 +35,7 @@ final case class NoSpaces1(var single_line_comment_property: String, var multi_l
       case 1 => {
         multi_line_property
       }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
@@ -46,7 +46,7 @@ final case class NoSpaces1(var single_line_comment_property: String, var multi_l
       case 1 => this.multi_line_property = {
         value.toString
       }.asInstanceOf[String]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }

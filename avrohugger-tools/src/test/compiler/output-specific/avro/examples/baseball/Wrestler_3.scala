@@ -23,7 +23,7 @@ final case class Wrestler(var number: Int, var first_name: String, var last_name
           }
         }.toBuffer).asJava
       }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
@@ -44,10 +44,10 @@ final case class Wrestler(var number: Int, var first_name: String, var last_name
               x
             }).toSeq
           }
-          case _ => new org.apache.avro.AvroRuntimeException("expected array with type java.util.List[_]")
+          case _ => throw new org.apache.avro.AvroRuntimeException("expected array with type java.util.List[_]")
         }
       }.asInstanceOf[Seq[avro.examples.baseball.Mascot]]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }

@@ -41,7 +41,7 @@ Table of contents
 ##### Generates Scala case classes in various formats:
 
 * `Standard` Vanilla case classes (for use with Apache Avro's [`GenericRecord`
-API](https://avro.apache.org/docs/1.11.1/getting-started-java/#serializing-and-deserializing-with-code-generation), etc.)
+API](https://avro.apache.org/docs/1.12.0/getting-started-java/#serializing-and-deserializing-with-code-generation), etc.)
 
 * `SpecificRecord` Case classes that implement `SpecificRecordBase` and
 therefore have mutable `var` fields (for use with the Avro Specific API -
@@ -110,7 +110,7 @@ _Note:_ Currently [Treehugger](http://eed3si9n.com/treehugger/comments.html#Scal
 ## Usage
 
 * **Library For Scala 2.12, 2.13, and 3**
-* **Parses Schemas and IDLs with Avro version 1.11**
+* **Parses Schemas and IDLs with Avro version 1.12**
 * **Generates Code Compatible with Scala 2.12, 2.13, 3**
 
 

@@ -10,7 +10,7 @@ final case class r1(var f1: Int) extends org.apache.avro.specific.SpecificRecord
       case 0 => {
         f1
       }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
@@ -18,7 +18,7 @@ final case class r1(var f1: Int) extends org.apache.avro.specific.SpecificRecord
       case 0 => this.f1 = {
         value
       }.asInstanceOf[Int]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }

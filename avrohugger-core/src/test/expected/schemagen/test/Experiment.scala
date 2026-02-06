@@ -18,7 +18,7 @@ final case class Experiment(var name: String, var age: Int) extends org.apache.a
       case 1 => {
         age
       }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
@@ -29,7 +29,7 @@ final case class Experiment(var name: String, var age: Int) extends org.apache.a
       case 1 => this.age = {
         value
       }.asInstanceOf[Int]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }

@@ -38,7 +38,7 @@ final case class DateTimeRelatedFields(var field01: Int, var field02: Long, var 
       case 6 => {
         field07
       }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
@@ -64,7 +64,7 @@ final case class DateTimeRelatedFields(var field01: Int, var field02: Long, var 
       case 6 => this.field07 = {
         value
       }.asInstanceOf[Int]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }

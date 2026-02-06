@@ -13,7 +13,7 @@ final case class Card(var suit: Suit, var number: Int) extends org.apache.avro.s
       case 1 => {
         number
       }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
@@ -24,7 +24,7 @@ final case class Card(var suit: Suit, var number: Int) extends org.apache.avro.s
       case 1 => this.number = {
         value
       }.asInstanceOf[Int]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }

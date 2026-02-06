@@ -14,7 +14,7 @@ final case class ArrayIdl(var data: Vector[Int]) extends org.apache.avro.specifi
           }
         }.toBuffer).asJava
       }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
@@ -26,10 +26,10 @@ final case class ArrayIdl(var data: Vector[Int]) extends org.apache.avro.specifi
               x
             }).toVector
           }
-          case _ => new org.apache.avro.AvroRuntimeException("expected array with type java.util.List[_]")
+          case _ => throw new org.apache.avro.AvroRuntimeException("expected array with type java.util.List[_]")
         }
       }.asInstanceOf[Vector[Int]]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }

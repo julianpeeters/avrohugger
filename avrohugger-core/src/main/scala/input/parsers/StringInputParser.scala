@@ -6,7 +6,7 @@ package parsers
 import org.apache.avro.Schema.Parser
 import org.apache.avro.{ Protocol, Schema, SchemaParseException }
 import org.apache.avro.compiler.idl.{ Idl, ParseException }
-
+import org.apache.avro.idl.IdlReader
 import java.nio.charset.Charset
 
 // tries schema first, then protocol, then idl, then for case class defs
@@ -38,13 +38,13 @@ class StringInputParser {
     try {
       val bytes = str.getBytes(Charset.forName("UTF-8"))
       val inStream = new java.io.ByteArrayInputStream(bytes)
-      val idlParser = new Idl(inStream)
-      val protocol = idlParser.CompilationUnit()
+      val idlParser = new IdlReader().parse(inStream)
+      val protocol = idlParser.getProtocol()
       List(Right(protocol))
     }
     catch {
       case e: ParseException => sys.error(s"Unable to parse: ${e}")
-      case npe: NullPointerException => sys.error("Imports not supported in String IDLs, only avdl files.")
+      case e: SchemaParseException => sys.error("Imports not supported in String IDLs, only avdl files.")
       case unknown: Throwable => sys.error("Unexpected exception: " + unknown)
     }
   }

@@ -12,7 +12,7 @@ case class Person(var name: String) extends org.apache.avro.specific.SpecificRec
       case 0 => {
         name
       }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
@@ -20,7 +20,7 @@ case class Person(var name: String) extends org.apache.avro.specific.SpecificRec
       case 0 => this.name = {
         value.toString
       }.asInstanceOf[String]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }

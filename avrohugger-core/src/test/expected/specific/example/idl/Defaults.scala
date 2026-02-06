@@ -12,7 +12,7 @@ final case class Embedded(var inner: Int) extends org.apache.avro.specific.Speci
       case 0 => {
         inner
       }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
@@ -20,7 +20,7 @@ final case class Embedded(var inner: Int) extends org.apache.avro.specific.Speci
       case 0 => this.inner = {
         value
       }.asInstanceOf[Int]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }
@@ -84,7 +84,7 @@ final case class DefaultTest(var suit: DefaultEnum = DefaultEnum.SPADES, var num
       case 9 => {
         java.nio.ByteBuffer.wrap(byt)
       }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
@@ -146,7 +146,7 @@ final case class DefaultTest(var suit: DefaultEnum = DefaultEnum.SPADES, var num
           }
         }
       }.asInstanceOf[Array[Byte]]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }

@@ -12,7 +12,7 @@ final case class Added(var value: Int) extends org.apache.avro.specific.Specific
       case 0 => {
         value
       }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
@@ -20,7 +20,7 @@ final case class Added(var value: Int) extends org.apache.avro.specific.Specific
       case 0 => this.value = {
         value
       }.asInstanceOf[Int]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }
@@ -38,7 +38,7 @@ final case class Subtracted(var value: Int) extends org.apache.avro.specific.Spe
       case 0 => {
         value
       }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
@@ -46,7 +46,7 @@ final case class Subtracted(var value: Int) extends org.apache.avro.specific.Spe
       case 0 => this.value = {
         value
       }.asInstanceOf[Int]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }
@@ -64,7 +64,7 @@ final case class Divided(var value: Int) extends org.apache.avro.specific.Specif
       case 0 => {
         value
       }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
@@ -72,7 +72,7 @@ final case class Divided(var value: Int) extends org.apache.avro.specific.Specif
       case 0 => this.value = {
         value
       }.asInstanceOf[Int]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }
@@ -90,7 +90,7 @@ final case class Multiplied(var value: Int) extends org.apache.avro.specific.Spe
       case 0 => {
         value
       }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
@@ -98,7 +98,7 @@ final case class Multiplied(var value: Int) extends org.apache.avro.specific.Spe
       case 0 => this.value = {
         value
       }.asInstanceOf[Int]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }
@@ -112,12 +112,12 @@ final object Multiplied {
 final case class Reset() extends org.apache.avro.specific.SpecificRecordBase with Calculator {
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
     (field$: @switch) match {
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }

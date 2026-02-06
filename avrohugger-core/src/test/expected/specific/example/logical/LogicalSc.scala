@@ -67,7 +67,7 @@ final case class LogicalSc(var data: BigDecimal, var fxField: example.logical.fx
           localTimestampMillis.toEpochSecond(java.time.ZoneOffset.UTC) * 1000L + (localTimestampMillis.getNano / 1000000L)
         }
       }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
@@ -79,7 +79,7 @@ final case class LogicalSc(var data: BigDecimal, var fxField: example.logical.fx
             val decimalType = schema.getLogicalType().asInstanceOf[org.apache.avro.LogicalTypes.Decimal]
             BigDecimal(LogicalSc.decimalConversion.fromBytes(buffer, schema, decimalType))
           }
-          case _ => new org.apache.avro.AvroRuntimeException("expected type java.nio.ByteBuffer")
+          case _ => throw new org.apache.avro.AvroRuntimeException("expected type java.nio.ByteBuffer")
         }
       }.asInstanceOf[BigDecimal]
       case 1 => this.fxField = {
@@ -87,26 +87,23 @@ final case class LogicalSc(var data: BigDecimal, var fxField: example.logical.fx
       }.asInstanceOf[example.logical.fxType]
       case 2 => this.ts = {
         value match {
-          case (l: Long) => {
-            java.time.Instant.ofEpochMilli(l)
-          }
-          case _ => new org.apache.avro.AvroRuntimeException("expected type Long")
+          case (l: Long) => java.time.Instant.ofEpochMilli(l)
+          case (i: java.time.Instant) => i
+          case x => throw new org.apache.avro.AvroRuntimeException(s"expected type Long or java.time.Instant but found ${x.getClass}")
         }
       }.asInstanceOf[java.time.Instant]
       case 3 => this.dt = {
         value match {
-          case (i: Integer) => {
-            java.time.LocalDate.ofEpochDay(i.toLong)
-          }
-          case _ => new org.apache.avro.AvroRuntimeException("expected type Integer")
+          case (i: Integer) => java.time.LocalDate.ofEpochDay(i.toLong)
+          case (d: java.time.LocalDate) => d
+          case x => throw new org.apache.avro.AvroRuntimeException(s"expected type Integer or java.time.LocalDate but found ${x.getClass}")
         }
       }.asInstanceOf[java.time.LocalDate]
       case 4 => this.uuid = {
         value match {
-          case (chars: java.lang.CharSequence) => {
-            java.util.UUID.fromString(chars.toString)
-          }
-          case _ => new org.apache.avro.AvroRuntimeException("expected type CharSequence")
+          case (chars: java.lang.CharSequence) => java.util.UUID.fromString(chars.toString)
+          case (u: java.util.UUID) => u
+          case x => throw new org.apache.avro.AvroRuntimeException("expected type CharSequence or java.util.UUID but found ${x.getClass}")
         }
       }.asInstanceOf[java.util.UUID]
       case 5 => this.dataBig = {
@@ -116,54 +113,49 @@ final case class LogicalSc(var data: BigDecimal, var fxField: example.logical.fx
             val decimalType = schema.getLogicalType().asInstanceOf[org.apache.avro.LogicalTypes.Decimal]
             BigDecimal(LogicalSc.decimalConversion.fromBytes(buffer, schema, decimalType))
           }
-          case _ => new org.apache.avro.AvroRuntimeException("expected type java.nio.ByteBuffer")
+          case _ => throw new org.apache.avro.AvroRuntimeException("expected type java.nio.ByteBuffer")
         }
       }.asInstanceOf[BigDecimal]
       case 6 => this.tm = {
         value match {
-          case (i: Integer) => {
-            java.time.LocalTime.ofNanoOfDay(i * 1000000L)
-          }
-          case _ => new org.apache.avro.AvroRuntimeException("expected type Integer")
+          case (i: Integer) => java.time.LocalTime.ofNanoOfDay(i * 1000000L)
+          case (t: java.time.LocalTime) => t
+          case x => throw new org.apache.avro.AvroRuntimeException(s"expected type Integer or java.time.LocalTime but found ${x.getClass}")
         }
       }.asInstanceOf[java.time.LocalTime]
       case 7 => this.timeMicros = {
         // avro time-micros long stores the number of microseconds after midnight, 00:00:00.000000
         value match {
-          case (l: Long) => {
-            java.time.LocalTime.ofNanoOfDay(l * 1000L)
-          }
-          case _ => new org.apache.avro.AvroRuntimeException("expected type Long")
+          case (l: Long) => java.time.LocalTime.ofNanoOfDay(l * 1000L)
+          case (t: java.time.LocalTime) => t
+          case x => throw new org.apache.avro.AvroRuntimeException(s"expected type Long or java.time.Instant but found ${x.getClass}")
         }
       }.asInstanceOf[java.time.LocalTime]
       case 8 => this.timestampMicros = {
         // avro timestamp-micros long stores the number of microseconds from the unix epoch, 1 January 1970 00:00:00.000000 UTC
         value match {
-          case (l: Long) => {
-            java.time.ZonedDateTime.of(java.time.LocalDateTime.ofEpochSecond(l / 1000000L, (l % 1000000L).toInt * 1000, java.time.ZoneOffset.UTC), java.time.ZoneId.of("UTC"))
-          }
-          case _ => new org.apache.avro.AvroRuntimeException("expected type Long")
+          case (l: Long) => java.time.ZonedDateTime.of(java.time.LocalDateTime.ofEpochSecond(l / 1000000L, (l % 1000000L).toInt * 1000, java.time.ZoneOffset.UTC), java.time.ZoneId.of("UTC"))
+          case (t: java.time.ZonedDateTime) => t
+          case x => throw new org.apache.avro.AvroRuntimeException(s"expected type Long or java.time.ZonedDateTime but found ${x.getClass}")
         }
       }.asInstanceOf[java.time.ZonedDateTime]
       case 9 => this.localTimestampMicros = {
         // avro local-timestamp-micros long stores the number of microseconds, from 1 January 1970 00:00:00.000000
         value match {
-          case (l: Long) => {
-            java.time.LocalDateTime.ofEpochSecond(l / 1000000L, (l % 1000000L).toInt * 1000, java.time.ZoneOffset.UTC)
-          }
-          case _ => new org.apache.avro.AvroRuntimeException("expected type Long")
+          case (l: Long) => java.time.LocalDateTime.ofEpochSecond(l / 1000000L, (l % 1000000L).toInt * 1000, java.time.ZoneOffset.UTC)
+          case (t: java.time.LocalDateTime) => t
+          case x => throw new org.apache.avro.AvroRuntimeException(s"expected type Long or java.time.LocalDateTime but found ${x.getClass}")
         }
       }.asInstanceOf[java.time.LocalDateTime]
       case 10 => this.localTimestampMillis = {
         // avro local-timestamp-millis long stores the number of millis, from 1 January 1970 00:00:00.000000
         value match {
-          case (l: Long) => {
-            java.time.LocalDateTime.ofEpochSecond(l / 1000L, (l % 1000L).toInt * 1000000, java.time.ZoneOffset.UTC)
-          }
-          case _ => new org.apache.avro.AvroRuntimeException("expected type Long")
+          case (l: Long) => java.time.LocalDateTime.ofEpochSecond(l / 1000L, (l % 1000L).toInt * 1000000, java.time.ZoneOffset.UTC)
+          case (t: java.time.LocalDateTime) => t
+          case x => throw new org.apache.avro.AvroRuntimeException(s"expected type Long or java.time.LocalDateTime but found ${x.getClass}")
         }
       }.asInstanceOf[java.time.LocalDateTime]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }

@@ -16,7 +16,7 @@ final case class Recursive(var name: String, var recursive: Option[example.idl.R
           case None => null
         }
       }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
@@ -30,7 +30,7 @@ final case class Recursive(var name: String, var recursive: Option[example.idl.R
           case _ => Some(value)
         }
       }.asInstanceOf[Option[example.idl.Recursive]]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }

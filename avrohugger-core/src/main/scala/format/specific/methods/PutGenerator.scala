@@ -43,7 +43,7 @@ object PutGenerator {
     classSymbol: ClassSymbol,
     targetScalaPartialVersion: String) = {
 
-    val errorCase = CASE(WILDCARD) ==> NEW("org.apache.avro.AvroRuntimeException", LIT("Bad index"))
+    val errorCase = CASE(WILDCARD) ==> THROW(NEW("org.apache.avro.AvroRuntimeException", LIT("Bad index")))
     val casesPut = indexedFields.map(field => asPutCase(classStore,
       namespace,
       field,

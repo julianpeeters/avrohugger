@@ -5,12 +5,12 @@ package parsers
 import format.abstractions.SourceFormat
 import stores.ClassStore
 import org.apache.avro.{ Protocol, Schema }
+import org.apache.avro.{ AvroTypeException, SchemaParseException }
 import org.apache.avro.Schema.Parser
 import org.apache.avro.Schema.Type.{ ENUM, FIXED, RECORD, UNION }
-import org.apache.avro.compiler.idl.Idl
-import org.apache.avro.generic.{ GenericDatumReader, GenericRecord }
 import org.apache.avro.file.DataFileReader
-import org.apache.avro.SchemaParseException
+import org.apache.avro.generic.{ GenericDatumReader, GenericRecord }
+import org.apache.avro.idl.IdlReader
 
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
@@ -47,12 +47,12 @@ class FileInputParser {
       sys.error(s"Can't redefine:  ${nonEqualElements.mkString(",")} in $inFile")
     } else {
       if (commonElements.isEmpty) {
-        val _ = parser.addTypes(tempParser.getTypes)
+        val _ = parser.addTypes(tempParser.getTypes.values)
       } else {
         val missingTypes = tempParser.getTypes().keySet().asScala.diff(parser.getTypes().keySet().asScala)
         val _ = parser.addTypes(missingTypes.map { t =>
           t -> tempParser.getTypes().get(t)
-        }.toMap.asJava)
+        }.toMap.asJava.values)
       }
     }
   }
@@ -62,14 +62,22 @@ class FileInputParser {
     msg.contains("Undefined name:") || msg.contains("is not a defined name")
   }
 
+  private def mightBeRecoverableType(e: AvroTypeException): Boolean = {
+    val msg = e.getMessage
+    msg.contains("Undefined schema:")
+  }
+
   private def tryParse(inFile: File, parser: Schema.Parser): List[Schema] = {
     val tempParser = new Parser()
     val parsed = Try(tempParser.parse(inFile)).map(schema => {
       copySchemas(inFile: File, tempParser, parser)
       schema
-    }).recoverWith { case e: SchemaParseException if mightBeRecoverable(e) =>
-      Try(parser.parse(inFile))
-    }
+    }).recoverWith {
+        case e: AvroTypeException if mightBeRecoverableType(e) => 
+          Try(parser.parse(inFile))
+        case e: SchemaParseException if mightBeRecoverable(e) => 
+          Try(parser.parse(inFile))
+      }
     unUnion(parsed.get) // throw the avro parse exception if Failure
   }
 
@@ -101,27 +109,34 @@ class FileInputParser {
           p.getTypes().forEach(importedSchema => processedSchemas.putIfAbsent(importedSchema.getFullName, importedSchema))
           List(Right(p))
         }
-        case "avdl" => Future {
-          val idlParser = new Idl(infile, classLoader)
-          val protocol = idlParser.CompilationUnit()
-          /**
-            * IDLs may refer to types imported from another file. When converted
-            * to protocols, the imported types that share the IDL's namespace
-            * cannot be distinguished from types defined within the IDL, yet
-            * should not be generated as subtypes of the IDL's ADT and should
-            * instead be generated in its own namespace. So, strip the protocol
-            * of all imported types and generate them separately.
-            */
-          val importedFiles = IdlImportParser.getImportedFiles(infile, classLoader)
-          Future.sequence(importedFiles.map { file =>
-            val importParser = new Parser() // else attempts to redefine schemas
-            getSchemaOrProtocols(file, format, classStore, classLoader, importParser)
-          }).map { f =>
-            val localProtocol = stripImports(protocol, processedSchemas)
-            localProtocol.getTypes().forEach(importedSchema => processedSchemas.putIfAbsent(importedSchema.getFullName, importedSchema))
-            (Right(localProtocol) +: f.flatten).reverse
-          }
-        }.flatten
+        case "avdl" =>
+          val originalClassLoader = Thread.currentThread().getContextClassLoader()
+          val result = Future {
+            Thread.currentThread().setContextClassLoader(classLoader)
+            val idl = new IdlReader().parse(infile.toPath())
+            val protocol = idl.getProtocol()
+            
+            /**
+              * IDLs may refer to types imported from another file. When converted
+              * to protocols, the imported types that share the IDL's namespace
+              * cannot be distinguished from types defined within the IDL, yet
+              * should not be generated as subtypes of the IDL's ADT and should
+              * instead be generated in its own namespace. So, strip the protocol
+              * of all imported types and generate them separately.
+              */
+            val importedFiles = IdlImportParser.getImportedFiles(infile, classLoader)
+            
+            Future.sequence(importedFiles.map { file =>
+              val importParser = new Parser() // else attempts to redefine schemas
+              getSchemaOrProtocols(file, format, classStore, classLoader, importParser)
+            }).map { f =>
+              val localProtocol = stripImports(protocol, processedSchemas)
+              localProtocol.getTypes().forEach(importedSchema => processedSchemas.putIfAbsent(importedSchema.getFullName, importedSchema))
+              (Right(localProtocol) +: f.flatten).reverse
+            }
+          }.flatten
+          Thread.currentThread().setContextClassLoader(originalClassLoader)
+          result
         case _ =>
           throw new Exception(
             """File must end in ".avpr" for protocol files,

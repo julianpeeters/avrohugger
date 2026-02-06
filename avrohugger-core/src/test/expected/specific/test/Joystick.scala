@@ -10,7 +10,7 @@ final case class Up(var value: Int) extends org.apache.avro.specific.SpecificRec
       case 0 => {
         value
       }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
@@ -18,7 +18,7 @@ final case class Up(var value: Int) extends org.apache.avro.specific.SpecificRec
       case 0 => this.value = {
         value
       }.asInstanceOf[Int]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }
@@ -36,7 +36,7 @@ final case class Down(var value: Int) extends org.apache.avro.specific.SpecificR
       case 0 => {
         value
       }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
@@ -44,7 +44,7 @@ final case class Down(var value: Int) extends org.apache.avro.specific.SpecificR
       case 0 => this.value = {
         value
       }.asInstanceOf[Int]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }

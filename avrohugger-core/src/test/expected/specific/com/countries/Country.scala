@@ -35,7 +35,7 @@ final case class Country(var key: Option[String] = None, var paris: Option[com.e
           case None => null
         }
       }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
@@ -64,7 +64,7 @@ final case class Country(var key: Option[String] = None, var paris: Option[com.e
           case _ => Some(value)
         }
       }.asInstanceOf[Option[com.america.City]]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }

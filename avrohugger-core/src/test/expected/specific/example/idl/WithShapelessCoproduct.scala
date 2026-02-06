@@ -8,12 +8,12 @@ import shapeless.{:+:, CNil, Coproduct}
 case class Event1() extends org.apache.avro.specific.SpecificRecordBase {
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
     (field$: @switch) match {
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }
@@ -27,12 +27,12 @@ object Event1 {
 case class Event2() extends org.apache.avro.specific.SpecificRecordBase {
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
     (field$: @switch) match {
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }
@@ -46,12 +46,12 @@ object Event2 {
 case class Event3() extends org.apache.avro.specific.SpecificRecordBase {
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
     (field$: @switch) match {
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }
@@ -65,12 +65,12 @@ object Event3 {
 case class Event4() extends org.apache.avro.specific.SpecificRecordBase {
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
     (field$: @switch) match {
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }
@@ -91,7 +91,7 @@ final case class ShouldRenderAsOption(var value: Option[example.idl.Event1]) ext
           case None => null
         }
       }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
@@ -102,7 +102,7 @@ final case class ShouldRenderAsOption(var value: Option[example.idl.Event1]) ext
           case _ => Some(value)
         }
       }.asInstanceOf[Option[example.idl.Event1]]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }
@@ -123,7 +123,7 @@ final case class ShouldRenderAsOption2(var value: Option[example.idl.Event1]) ex
           case None => null
         }
       }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
@@ -134,7 +134,7 @@ final case class ShouldRenderAsOption2(var value: Option[example.idl.Event1]) ex
           case _ => Some(value)
         }
       }.asInstanceOf[Option[example.idl.Event1]]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }
@@ -155,7 +155,7 @@ final case class ShouldRenderAsOptionEither(var value: Option[Either[example.idl
           case None => null
         }
       }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
@@ -166,7 +166,7 @@ final case class ShouldRenderAsOptionEither(var value: Option[Either[example.idl
           case _ => Some(value)
         }
       }.asInstanceOf[Option[Either[example.idl.Event1, example.idl.Event2]]]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }
@@ -187,7 +187,7 @@ final case class ShouldRenderAsOptionEither2(var value: Option[Either[example.id
           case None => null
         }
       }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
@@ -198,7 +198,7 @@ final case class ShouldRenderAsOptionEither2(var value: Option[Either[example.id
           case _ => Some(value)
         }
       }.asInstanceOf[Option[Either[example.idl.Event1, example.idl.Event2]]]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }
@@ -219,7 +219,7 @@ final case class ShouldRenderAsOptionEither3(var value: Option[Either[example.id
           case None => null
         }
       }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
@@ -230,7 +230,7 @@ final case class ShouldRenderAsOptionEither3(var value: Option[Either[example.id
           case _ => Some(value)
         }
       }.asInstanceOf[Option[Either[example.idl.Event1, example.idl.Event2]]]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }
@@ -251,7 +251,7 @@ final case class ShouldRenderAsOptionCoproduct(var value: Option[example.idl.Eve
           case None => null
         }
       }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
@@ -262,7 +262,7 @@ final case class ShouldRenderAsOptionCoproduct(var value: Option[example.idl.Eve
           case _ => Some(value)
         }
       }.asInstanceOf[Option[example.idl.Event1 :+: example.idl.Event2 :+: example.idl.Event3 :+: CNil]]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }
@@ -283,7 +283,7 @@ final case class ShouldRenderAsOptionCoproduct2(var value: Option[example.idl.Ev
           case None => null
         }
       }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
@@ -294,7 +294,7 @@ final case class ShouldRenderAsOptionCoproduct2(var value: Option[example.idl.Ev
           case _ => Some(value)
         }
       }.asInstanceOf[Option[example.idl.Event1 :+: example.idl.Event2 :+: example.idl.Event3 :+: CNil]]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }
@@ -315,7 +315,7 @@ final case class ShouldRenderAsOptionCoproduct3(var value: Option[example.idl.Ev
           case None => null
         }
       }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
@@ -326,7 +326,7 @@ final case class ShouldRenderAsOptionCoproduct3(var value: Option[example.idl.Ev
           case _ => Some(value)
         }
       }.asInstanceOf[Option[example.idl.Event1 :+: example.idl.Event2 :+: example.idl.Event3 :+: CNil]]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }
@@ -344,7 +344,7 @@ final case class ShouldRenderAsEither(var value: Either[example.idl.Event1, exam
       case 0 => {
         value
       }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
@@ -352,7 +352,7 @@ final case class ShouldRenderAsEither(var value: Either[example.idl.Event1, exam
       case 0 => this.value = {
         value
       }.asInstanceOf[Either[example.idl.Event1, example.idl.Event2]]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }
@@ -370,7 +370,7 @@ final case class ShouldRenderAsCoproduct(var value: example.idl.Event1 :+: examp
       case 0 => {
         value
       }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
@@ -378,7 +378,7 @@ final case class ShouldRenderAsCoproduct(var value: example.idl.Event1 :+: examp
       case 0 => this.value = {
         value
       }.asInstanceOf[example.idl.Event1 :+: example.idl.Event2 :+: example.idl.Event3 :+: example.idl.Event4 :+: CNil]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }
@@ -396,7 +396,7 @@ final case class ShouldRenderAsCoproduct2(var value: example.idl.Event1 :+: exam
       case 0 => {
         value
       }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
@@ -404,7 +404,7 @@ final case class ShouldRenderAsCoproduct2(var value: example.idl.Event1 :+: exam
       case 0 => this.value = {
         value
       }.asInstanceOf[example.idl.Event1 :+: example.idl.Event2 :+: example.idl.Event3 :+: example.idl.Event4 :+: CNil]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }

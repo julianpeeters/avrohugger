@@ -10,7 +10,7 @@ final case class Level1(var level2: Level2) extends org.apache.avro.specific.Spe
       case 0 => {
         level2
       }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
@@ -18,7 +18,7 @@ final case class Level1(var level2: Level2) extends org.apache.avro.specific.Spe
       case 0 => this.level2 = {
         value
       }.asInstanceOf[Level2]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }

@@ -10,7 +10,7 @@ final case class BinaryIdl(var data: Array[Byte]) extends org.apache.avro.specif
       case 0 => {
         java.nio.ByteBuffer.wrap(data)
       }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
@@ -23,10 +23,10 @@ final case class BinaryIdl(var data: Array[Byte]) extends org.apache.avro.specif
             dup.get(array)
             array
           }
-          case _ => new org.apache.avro.AvroRuntimeException("expected type java.nio.ByteBuffer")
+          case _ => throw new org.apache.avro.AvroRuntimeException("expected type java.nio.ByteBuffer")
         }
       }.asInstanceOf[Array[Byte]]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }

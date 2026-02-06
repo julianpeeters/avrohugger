@@ -42,7 +42,7 @@ final case class LogicalIdl(var dec: BigDecimal = scala.math.BigDecimal("31.80")
         val bigDecimal = scaledValue.bigDecimal
         LogicalIdl.decimalConversion.toBytes(bigDecimal, schema, decimalType)
       }.asInstanceOf[AnyRef]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
@@ -91,7 +91,7 @@ final case class LogicalIdl(var dec: BigDecimal = scala.math.BigDecimal("31.80")
           }
         }
       }.asInstanceOf[BigDecimal]
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }

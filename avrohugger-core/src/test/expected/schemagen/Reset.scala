@@ -5,12 +5,12 @@ import scala.annotation.switch
 case class Reset() extends org.apache.avro.specific.SpecificRecordBase {
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
   def put(field$: Int, value: Any): Unit = {
     (field$: @switch) match {
-      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+      case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
   }
