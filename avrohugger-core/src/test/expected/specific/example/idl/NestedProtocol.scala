@@ -32,7 +32,7 @@ final object Level2 {
 }
 
 final case class Level1(var level2: example.idl.Level2) extends org.apache.avro.specific.SpecificRecordBase with NestedProtocol {
-  def this() = this(new Level2)
+  def this() = this(new example.idl.Level2)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {
@@ -58,7 +58,7 @@ final object Level1 {
 }
 
 final case class Level0(var level1: example.idl.Level1) extends org.apache.avro.specific.SpecificRecordBase with NestedProtocol {
-  def this() = this(new Level1)
+  def this() = this(new example.idl.Level1)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {
