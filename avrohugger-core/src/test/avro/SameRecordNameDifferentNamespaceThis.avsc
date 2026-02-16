@@ -1,0 +1,38 @@
+{
+  "name": "MyRecord",
+  "namespace": "com.myrecord",
+  "type": "record",
+  "fields": [
+        {
+          "name": "MyID",
+          "type": {
+            "name": "ID",
+            "type": "record",
+            "fields" : [
+                { "name": "value", "type": "string"}
+            ]
+          }
+        },
+        {
+          "name": "OtherRecord",
+          "type":
+            {
+              "name": "OtherRecord",
+              "namespace": "com.otherrecord",
+              "type": "record",
+              "fields": [
+                {
+                    "name": "OtherId",
+                    "type": {
+                      "name": "ID",
+                      "type": "record",
+                      "fields" : [
+                          { "name": "value", "type": "string"}
+                      ]
+                    }
+                }
+              ]
+            }
+        }
+  ]
+}

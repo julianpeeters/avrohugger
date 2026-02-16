@@ -76,7 +76,7 @@ object DefaultParamMatcher {
           decimalType = typeMatcher.avroScalaTypes.decimal,
           schema = avroSchema,
           default = ArrayClass.APPLY())
-      case Schema.Type.RECORD  => NEW(classStore.generatedClasses.get(avroSchema.getFullName))
+      case Schema.Type.RECORD  => NEW(RootClass.newClass(avroSchema.getFullName))
       case Schema.Type.UNION =>
         val schemas = avroSchema.getTypes.asScala.toList
         if (avroSchema.isNullable) NONE
