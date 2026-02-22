@@ -2,13 +2,14 @@ lazy val avroVersion = "1.12.1"
 
 lazy val commonSettings = Seq(
   organization := "com.julianpeeters",
-  version := "2.16.1",
+  version := "2.16.2",
   ThisBuild / versionScheme := Some("semver-spec"),
   scalacOptions ++= Seq(
     "-unchecked", 
     "-deprecation",
     "-feature",
   ),
+  resolvers += "Apache Snapshots" at "https://repository.apache.org/content/groups/snapshots",
   scalaVersion := "3.3.7",
   crossScalaVersions := Seq("2.12.21", "2.13.18", scalaVersion.value),
   libraryDependencies += "org.apache.avro" % "avro" % avroVersion,
@@ -51,7 +52,8 @@ lazy val avrohugger = (project in file("."))
   .settings(
     commonSettings,
     publish / skip := true
-  ).aggregate(`avrohugger-core`, `avrohugger-filesorter`, `avrohugger-tools`)
+  // ).aggregate(`avrohugger-core`, `avrohugger-filesorter`, `avrohugger-tools`)
+  ).aggregate(`avrohugger-core`, `avrohugger-filesorter`)
 
 
 lazy val `avrohugger-core` = (project in file("avrohugger-core"))
@@ -67,28 +69,28 @@ lazy val `avrohugger-filesorter` = (project in file("avrohugger-filesorter"))
     libraryDependencies += "io.spray" %% "spray-json" % "1.3.6"
   )
 
-lazy val `avrohugger-tools` = (project in file("avrohugger-tools"))
-  .settings(
-    commonSettings,
-    libraryDependencies += ("org.apache.avro" % "avro-tools" % avroVersion)
-      .exclude("org.slf4j", "*")
-      .exclude("org.apache.avro", "trevni-avro")
-      .exclude("org.apache.avro", "trevni-core"),
-    Compile / assembly / artifact := {
-      val art: Artifact = (Compile / assembly / artifact).value
-      art.withClassifier(Some("assembly"))
-    },
-    addArtifact(Compile / assembly / artifact, assembly).settings,
-    Global / assembly / assemblyMergeStrategy := {
-      case PathList("javax", "servlet", xs@_*) => MergeStrategy.first
-      case PathList("org", "jline", xs@_*) => MergeStrategy.first
-      case p if p.contains("module-info.class") => MergeStrategy.discard
-      case x =>
-        val oldStrategy = (Global / assembly / assemblyMergeStrategy).value
-        oldStrategy(x)
-    },
-    Test / sourceGenerators += addScalaVersionFile.taskValue
-  ).dependsOn(`avrohugger-core`, `avrohugger-filesorter`)
+// lazy val `avrohugger-tools` = (project in file("avrohugger-tools"))
+//   .settings(
+//     commonSettings,
+//     libraryDependencies += ("org.apache.avro" % "avro-tools" % avroVersion)
+//       .exclude("org.slf4j", "*")
+//       .exclude("org.apache.avro", "trevni-avro")
+//       .exclude("org.apache.avro", "trevni-core"),
+//     Compile / assembly / artifact := {
+//       val art: Artifact = (Compile / assembly / artifact).value
+//       art.withClassifier(Some("assembly"))
+//     },
+//     addArtifact(Compile / assembly / artifact, assembly).settings,
+//     Global / assembly / assemblyMergeStrategy := {
+//       case PathList("javax", "servlet", xs@_*) => MergeStrategy.first
+//       case PathList("org", "jline", xs@_*) => MergeStrategy.first
+//       case p if p.contains("module-info.class") => MergeStrategy.discard
+//       case x =>
+//         val oldStrategy = (Global / assembly / assemblyMergeStrategy).value
+//         oldStrategy(x)
+//     },
+//     Test / sourceGenerators += addScalaVersionFile.taskValue
+//   ).dependsOn(`avrohugger-core`, `avrohugger-filesorter`)
 
 lazy val addScalaVersionFile = Def.task {
   val partialScalaVersion =

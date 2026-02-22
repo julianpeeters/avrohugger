@@ -68,9 +68,9 @@ class FileInputParser {
   }
 
   private def tryParse(inFile: File, parser: Schema.Parser): List[Schema] = {
-    val tempParser = new Parser()
-    val parsed = Try(tempParser.parse(inFile)).map(schema => {
-      copySchemas(inFile: File, tempParser, parser)
+    // val tempParser = new Parser()
+    val parsed = Try(parser.parse(inFile)).map(schema => {
+      copySchemas(inFile: File, parser, parser)
       schema
     }).recoverWith {
         case e: AvroTypeException if mightBeRecoverableType(e) => 
@@ -127,8 +127,8 @@ class FileInputParser {
             val importedFiles = IdlImportParser.getImportedFiles(infile, classLoader)
             
             Future.sequence(importedFiles.map { file =>
-              val importParser = new Parser() // else attempts to redefine schemas
-              getSchemaOrProtocols(file, format, classStore, classLoader, importParser)
+              // val importParser = new Parser() // else attempts to redefine schemas
+              getSchemaOrProtocols(file, format, classStore, classLoader, parser)
             }).map { f =>
               val localProtocol = stripImports(protocol, processedSchemas)
               localProtocol.getTypes().forEach(importedSchema => processedSchemas.putIfAbsent(importedSchema.getFullName, importedSchema))
