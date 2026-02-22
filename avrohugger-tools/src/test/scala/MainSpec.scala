@@ -73,7 +73,7 @@ class MainSpec extends mutable.Specification {
       Directory.TEST_INPUT_DIR + "/invalid.avsc",
       Directory.TEST_OUTPUT_BASE_DIR
     ))
-    errBytes.toString() must contain("invalid_type")
+    errBytes.toString() must contain("avro.examples.flight.Invalid")
   }
 
 }
