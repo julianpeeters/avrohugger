@@ -3,7 +3,7 @@ package example
 
 import scala.annotation.switch
 
-final case class Compass(var direction: Direction) extends org.apache.avro.specific.SpecificRecordBase {
+final case class Compass(var direction: example.Direction) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this(null)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
@@ -17,7 +17,7 @@ final case class Compass(var direction: Direction) extends org.apache.avro.speci
     (field$: @switch) match {
       case 0 => this.direction = {
         value
-      }.asInstanceOf[Direction]
+      }.asInstanceOf[example.Direction]
       case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()

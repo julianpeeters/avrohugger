@@ -3,8 +3,6 @@ package com.myrecord
 
 import scala.annotation.switch
 
-import com.otherrecord.{ID, OtherRecord}
-
 final case class MyRecord(var MyID: com.myrecord.ID, var OtherRecord: com.otherrecord.OtherRecord) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this(new com.myrecord.ID, new com.otherrecord.OtherRecord)
   def get(field$: Int): AnyRef = {

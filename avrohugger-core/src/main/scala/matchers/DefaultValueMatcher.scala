@@ -111,7 +111,7 @@ object DefaultValueMatcher {
         val fieldValues = fields.asScala.map { f =>
           fromJsonNode(jsObject.get(f.name), classStore, namespace, f.schema, typeMatcher, useFullName)
         }
-        NEW(schema.getName, fieldValues: _*)
+        NEW(schema.getFullName, fieldValues: _*)
       }
       case Schema.Type.FIXED => {
         REF(schema.getName()) APPLY (

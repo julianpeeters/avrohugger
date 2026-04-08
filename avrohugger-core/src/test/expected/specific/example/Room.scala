@@ -3,9 +3,7 @@ package example
 
 import scala.annotation.switch
 
-import example.types.door
-
-final case class Room(var door: door = example.types.door.NORTH) extends org.apache.avro.specific.SpecificRecordBase {
+final case class Room(var door: example.types.door = example.types.door.NORTH) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this(example.types.door.NORTH)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
@@ -19,7 +17,7 @@ final case class Room(var door: door = example.types.door.NORTH) extends org.apa
     (field$: @switch) match {
       case 0 => this.door = {
         value
-      }.asInstanceOf[door]
+      }.asInstanceOf[example.types.door]
       case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()

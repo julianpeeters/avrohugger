@@ -8,4 +8,4 @@ final object Suit extends Enumeration with EnumProtocol {
   val SPADES, HEARTS, DIAMONDS, CLUBS = Value
 }
 
-final case class Card(suit: Suit.Value, number: Int) extends EnumProtocol
+final case class Card(suit: example.proto.Suit.Value, number: Int) extends EnumProtocol

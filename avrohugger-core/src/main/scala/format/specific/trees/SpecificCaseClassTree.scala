@@ -40,7 +40,7 @@ object SpecificCaseClassTree {
         namespace,
         f,
         typeMatcher,
-        fieldName == fieldType.safeToString)
+        true)
       VAR(fieldName, fieldType) := defaultValue
     }
 

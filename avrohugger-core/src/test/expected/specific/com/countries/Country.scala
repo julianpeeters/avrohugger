@@ -3,10 +3,6 @@ package com.countries
 
 import scala.annotation.switch
 
-import com.europe.City
-
-import com.america.City
-
 final case class Country(var key: Option[String] = None, var paris: Option[com.europe.City] = None, var london: Option[com.europe.City] = None, var newYork: Option[com.america.City] = None) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this(None, None, None, None)
   def get(field$: Int): AnyRef = {

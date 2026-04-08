@@ -38,13 +38,13 @@ object StandardCaseClassTree {
 
     val params: List[ValDef] = avroFields.map(f => {
       val fieldName = FieldRenamer.rename(f.name)
-      val fieldType = typeMatcher.toScalaType(classStore, namespace, f.schema, fieldName == f.schema.getName())
+      val fieldType = typeMatcher.toScalaType(classStore, namespace, f.schema, true)
       val defaultValue = DefaultValueMatcher.getDefaultValue(
         classStore,
         namespace,
         f,
         typeMatcher,
-        fieldName == f.schema.getName()
+        true
       )
       PARAM(fieldName, fieldType) := defaultValue
     })

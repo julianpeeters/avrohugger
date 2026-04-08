@@ -64,7 +64,7 @@ object DefaultParamMatcher {
         }
       case Schema.Type.NULL    => NULL
       case Schema.Type.FIXED   =>
-        val name = RootClass.newClass(s"${avroSchema.getNamespace()}.${classStore.generatedClasses.get(avroSchema.getFullName)}")
+        val name = RootClass.newClass(avroSchema.getFullName)
         REF(name).APPLY(CustomDefaultParamMatcher.checkCustomDecimalType(
           decimalType = typeMatcher.avroScalaTypes.decimal,
           schema = avroSchema,

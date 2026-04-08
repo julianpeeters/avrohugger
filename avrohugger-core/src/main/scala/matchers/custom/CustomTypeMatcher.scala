@@ -25,14 +25,14 @@ object CustomTypeMatcher {
     schema: Schema,
     useFullName: Boolean = false
   ) = enumType match {
-    case JavaEnum => classStore.generatedClasses.get(schema.getFullName)
+    case JavaEnum => RootClass.newClass(schema.getFullName)
     case ScalaEnumeration =>
       if (useFullName)
         RootClass.newClass(s"${schema.getNamespace()}.${classStore.generatedClasses.get(schema.getFullName)}")
       else
         classStore.generatedClasses.get(schema.getFullName)
-    case ScalaCaseObjectEnum => classStore.generatedClasses.get(schema.getFullName)
-    case Scala3Enum => classStore.generatedClasses.get(schema.getFullName)
+    case ScalaCaseObjectEnum => RootClass.newClass(schema.getFullName)
+    case Scala3Enum => RootClass.newClass(schema.getFullName)
     case EnumAsScalaString => StringClass
   }
 

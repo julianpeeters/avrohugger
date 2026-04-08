@@ -132,15 +132,12 @@ object StandardImporter extends Importer {
   def getImports(schemaOrProtocol: Either[Schema, Protocol], currentNamespace: Option[String], typeMatcher: TypeMatcher): List[Import] = {
     val topLevelSchemas = getTopLevelSchemas(schemaOrProtocol, typeMatcher)
     val recordSchemas = getRecordSchemas(topLevelSchemas)
-    val fixedSchemas = getFixedSchemas(topLevelSchemas)
-    val enumSchemas = getEnumSchemas(topLevelSchemas)
-    val userDefinedDeps = getUserDefinedImports(recordSchemas ++ fixedSchemas ++ enumSchemas, currentNamespace, typeMatcher)
     val shapelessDeps = typeMatcher.avroScalaTypes.union match {
       case unionType: ShapelessUnionType => getShapelessImports(recordSchemas, typeMatcher, unionType)
       case OptionScala3UnionType => List()
     }
     val libraryDeps = shapelessDeps
-    libraryDeps ++ userDefinedDeps
+    libraryDeps
   }
 
 }

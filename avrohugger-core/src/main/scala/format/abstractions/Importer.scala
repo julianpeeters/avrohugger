@@ -97,36 +97,10 @@ trait Importer {
       maybeDefaultNamespace = maybeReferredNamespace)
   }
 
-  private def asImportDef(packageName: String, fields: List[Schema], typeMatcher: TypeMatcher): Import = {
-    val maybeUpdatedPackageName = CustomNamespaceMatcher.checkCustomNamespace(
-      Some(packageName),
-      typeMatcher,
-      maybeDefaultNamespace = Some(packageName))
-    val updatedPkg = maybeUpdatedPackageName.getOrElse(packageName)
-    val importedPackageSym = RootClass.newClass(updatedPkg)
-    val importedTypes =
-      fields.map(field => DependencyInspector.getReferredTypeName(field))
-    IMPORT(importedPackageSym, importedTypes)
-  }
-
   private def requiresImportDef(schema: Schema, namespace: Option[String], typeMatcher: TypeMatcher): Boolean = {
     (isRecord(schema) || isEnum(schema) || isFixed(schema)) &&
       checkNamespace(schema, typeMatcher).isDefined &&
       checkNamespace(schema, typeMatcher) != namespace
-  }
-
-  def getUserDefinedImports(
-    recordSchemas: List[Schema],
-    namespace: Option[String],
-    typeMatcher: TypeMatcher): List[Import] = {
-
-    recordSchemas
-      .filter(schema => requiresImportDef(schema, namespace, typeMatcher))
-      .groupBy(schema => checkNamespace(schema, typeMatcher).getOrElse(schema.getNamespace))
-      .toList
-      .map {
-        case (packageName, fields) => asImportDef(packageName, fields, typeMatcher)
-      }
   }
 
   // gets record schemas which may be dependencies

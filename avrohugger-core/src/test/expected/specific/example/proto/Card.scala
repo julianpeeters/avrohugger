@@ -3,7 +3,7 @@ package example.proto
 
 import scala.annotation.switch
 
-final case class Card(var suit: Suit, var number: Int) extends org.apache.avro.specific.SpecificRecordBase {
+final case class Card(var suit: example.proto.Suit, var number: Int) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this(null, 0)
   def get(field$: Int): AnyRef = {
     (field$: @switch) match {
@@ -20,7 +20,7 @@ final case class Card(var suit: Suit, var number: Int) extends org.apache.avro.s
     (field$: @switch) match {
       case 0 => this.suit = {
         value
-      }.asInstanceOf[Suit]
+      }.asInstanceOf[example.proto.Suit]
       case 1 => this.number = {
         value
       }.asInstanceOf[Int]

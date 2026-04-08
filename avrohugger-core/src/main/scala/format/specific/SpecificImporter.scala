@@ -21,8 +21,6 @@ object SpecificImporter extends Importer {
     val switchImport = IMPORT(switchAnnotSymbol)
     val topLevelSchemas = getTopLevelSchemas(schemaOrProtocol, typeMatcher)
     val recordSchemas = getRecordSchemas(topLevelSchemas)
-    val enumSchemas = getEnumSchemas(topLevelSchemas)
-    val userDefinedDeps = getUserDefinedImports(recordSchemas ++ enumSchemas, currentNamespace, typeMatcher)
     val shapelessDeps = typeMatcher.avroScalaTypes.union match {
       case unionType: ShapelessUnionType => getShapelessImports(recordSchemas, typeMatcher, unionType)
       case OptionScala3UnionType => List()
@@ -31,12 +29,12 @@ object SpecificImporter extends Importer {
 
     schemaOrProtocol match {
       case Left(schema) => {
-        if (schema.getType == RECORD) switchImport :: libraryDeps ::: userDefinedDeps
-        else libraryDeps ++ userDefinedDeps
+        if (schema.getType == RECORD) switchImport :: libraryDeps
+        else libraryDeps
       }
       case Right(protocol) => {
         val messages = protocol.getMessages.asScala.toMap
-        if (messages.isEmpty) switchImport :: libraryDeps ::: userDefinedDeps // for ADT
+        if (messages.isEmpty) switchImport :: libraryDeps // for ADT
         else List.empty // for RPC
       }
     }
