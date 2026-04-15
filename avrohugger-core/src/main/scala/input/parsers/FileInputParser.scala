@@ -114,7 +114,7 @@ class FileInputParser {
           val result = Future {
             Thread.currentThread().setContextClassLoader(classLoader)
             val idl = new IdlReader().parse(infile.toPath())
-            val protocol = idl.getProtocol()
+            val maybeProtocol = Option(idl.getProtocol())
             
             /**
               * IDLs may refer to types imported from another file. When converted
@@ -130,9 +130,14 @@ class FileInputParser {
               // val importParser = new Parser() // else attempts to redefine schemas
               getSchemaOrProtocols(file, format, classStore, classLoader, parser)
             }).map { f =>
-              val localProtocol = stripImports(protocol, processedSchemas)
-              localProtocol.getTypes().forEach(importedSchema => processedSchemas.putIfAbsent(importedSchema.getFullName, importedSchema))
-              (Right(localProtocol) +: f.flatten).reverse
+              maybeProtocol match {
+                case Some(protocol) =>
+                  val localProtocol = stripImports(protocol, processedSchemas)
+                  localProtocol.getTypes().forEach(importedSchema => processedSchemas.putIfAbsent(importedSchema.getFullName, importedSchema))
+                  (Right(localProtocol) +: f.flatten).reverse
+                case None =>
+                  (unUnion(idl.getMainSchema()).map(Left(_)) ++ f.flatten).reverse
+              }
             }
           }.flatten
           Thread.currentThread().setContextClassLoader(originalClassLoader)

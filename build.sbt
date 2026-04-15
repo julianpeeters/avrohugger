@@ -2,7 +2,7 @@ lazy val avroVersion = "1.12.1"
 
 lazy val commonSettings = Seq(
   organization := "com.julianpeeters",
-  version := "2.16.3",
+  version := "2.16.4",
   ThisBuild / versionScheme := Some("semver-spec"),
   scalacOptions ++= Seq(
     "-unchecked", 
@@ -20,13 +20,13 @@ lazy val commonSettings = Seq(
       case Some((2, scalaMinor)) if scalaMinor < 13 =>
         libraryDependencies.value ++ Seq(
           "org.scala-lang.modules" %% "scala-collection-compat" % "2.12.0",
-          "org.specs2"             %% "specs2-core"             % "4.20.2" % "test")
+          "org.specs2"             %% "specs2-core"             % "4.23.0" % "test")
       case Some((2, scalaMinor)) =>
         libraryDependencies.value ++ Seq(
-          "org.specs2"             %% "specs2-core"             % "4.20.2" % "test")
+          "org.specs2"             %% "specs2-core"             % "4.23.0" % "test")
       case _ =>
         libraryDependencies.value ++ Seq(
-          "org.specs2"             %% "specs2-core"             % "5.7.0" % "test")
+          "org.specs2"             %% "specs2-core"             % "5.9.0"  % "test")
     }
   },
   publishMavenStyle := true,
