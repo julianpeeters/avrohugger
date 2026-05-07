@@ -136,7 +136,9 @@ class FileInputParser {
                   localProtocol.getTypes().forEach(importedSchema => processedSchemas.putIfAbsent(importedSchema.getFullName, importedSchema))
                   (Right(localProtocol) +: f.flatten).reverse
                 case None =>
-                  (unUnion(idl.getMainSchema()).map(Left(_)) ++ f.flatten).reverse
+                  val mainSchemas = unUnion(idl.getMainSchema())
+                  mainSchemas.map(importedSchema => processedSchemas.putIfAbsent(importedSchema.getFullName, importedSchema))
+                  (mainSchemas.map(Left(_)) ++ f.flatten).reverse
               }
             }
           }.flatten
