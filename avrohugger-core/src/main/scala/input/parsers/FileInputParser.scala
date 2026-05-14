@@ -6,7 +6,7 @@ import format.abstractions.SourceFormat
 import stores.ClassStore
 import org.apache.avro.{ Protocol, Schema }
 import org.apache.avro.{ AvroTypeException, SchemaParseException }
-import org.apache.avro.Schema.Parser
+import org.apache.avro.SchemaParser
 import org.apache.avro.Schema.Type.{ ENUM, FIXED, RECORD, UNION }
 import org.apache.avro.file.DataFileReader
 import org.apache.avro.generic.{ GenericDatumReader, GenericRecord }
@@ -36,26 +36,26 @@ class FileInputParser {
     }
   }
 
-  private def copySchemas(inFile: File, tempParser: Parser, parser: Parser): Unit = {
-    val tempKeys = tempParser.getTypes().keySet().asScala
-    val keys = parser.getTypes().keySet().asScala
-    val commonElements = tempKeys.intersect(keys)
-    val nonEqualElements = commonElements.filter { element =>
-      parser.getTypes().get(element) != tempParser.getTypes().get(element)
-    }
-    if (nonEqualElements.nonEmpty) {
-      sys.error(s"Can't redefine:  ${nonEqualElements.mkString(",")} in $inFile")
-    } else {
-      if (commonElements.isEmpty) {
-        val _ = parser.addTypes(tempParser.getTypes.values)
-      } else {
-        val missingTypes = tempParser.getTypes().keySet().asScala.diff(parser.getTypes().keySet().asScala)
-        val _ = parser.addTypes(missingTypes.map { t =>
-          t -> tempParser.getTypes().get(t)
-        }.toMap.asJava.values)
-      }
-    }
-  }
+  // private def copySchemas(inFile: File, tempParser: SchemaParser, parser: SchemaParser): Unit = {
+  //   val tempKeys = tempParser.getParsedNamedSchemas().asScala.toList.map(s => s.getFullName())
+  //   val keys = parser.getParsedNamedSchemas().asScala.toList.map(s => s.getFullName())
+  //   val commonElements = tempKeys.intersect(keys)
+  //   val nonEqualElements = commonElements.filter { element =>
+  //     parser.getParsedNamedSchemas().asScala.map(s => (s.getFullName(), s)).toMap.get(element) != tempParser.getParsedNamedSchemas().asScala.map(s => (s.getFullName(), s)).toMap.get(element)
+  //   }
+  //   if (nonEqualElements.nonEmpty) {
+  //     sys.error(s"Can't redefine:  ${nonEqualElements.mkString(",")} in $inFile")
+  //   } else {
+  //     if (commonElements.isEmpty) {
+  //       val _ = parser.addTypes(tempParser.getTypes.values)
+  //     } else {
+  //       val missingTypes = tempParser.getTypes().keySet().asScala.diff(parser.getTypes().keySet().asScala)
+  //       val _ = parser.addTypes(missingTypes.map { t =>
+  //         t -> tempParser.getTypes().get(t)
+  //       }.toMap.asJava.values)
+  //     }
+  //   }
+  // }
 
   private def mightBeRecoverable(e: SchemaParseException): Boolean = {
     val msg = e.getMessage
@@ -67,16 +67,16 @@ class FileInputParser {
     msg.contains("Undefined schema:")
   }
 
-  private def tryParse(inFile: File, parser: Schema.Parser): List[Schema] = {
+  private def tryParse(inFile: File, parser: SchemaParser): List[Schema] = {
     // val tempParser = new Parser()
-    val parsed = Try(parser.parse(inFile)).map(schema => {
-      copySchemas(inFile: File, parser, parser)
+    val parsed = Try(parser.parse(inFile).mainSchema()).map(schema => {
+      // copySchemas(inFile: File, parser, parser)
       schema
     }).recoverWith {
         case e: AvroTypeException if mightBeRecoverableType(e) => 
-          Try(parser.parse(inFile))
+          Try(parser.parse(inFile).mainSchema())
         case e: SchemaParseException if mightBeRecoverable(e) => 
-          Try(parser.parse(inFile))
+          Try(parser.parse(inFile).mainSchema())
       }
     unUnion(parsed.get) // throw the avro parse exception if Failure
   }
@@ -86,7 +86,7 @@ class FileInputParser {
     format: SourceFormat,
     classStore: ClassStore,
     classLoader: ClassLoader,
-    parser: Parser): Future[List[Either[Schema, Protocol]]] = {
+    parser: SchemaParser): Future[List[Either[Schema, Protocol]]] = {
     Option(processedFiles.computeIfAbsent(infile.getCanonicalPath, _ => {
       infile.getName.split("\\.").last match {
         case "avro" => Future {

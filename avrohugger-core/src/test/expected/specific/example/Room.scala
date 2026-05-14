@@ -26,5 +26,5 @@ final case class Room(var door: example.types.door = example.types.door.NORTH) e
 }
 
 object Room {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Room\",\"namespace\":\"example\",\"fields\":[{\"name\":\"door\",\"type\":{\"type\":\"enum\",\"name\":\"door\",\"namespace\":\"example.types\",\"symbols\":[\"NORTH\",\"SOUTH\",\"EAST\",\"WEST\"]},\"default\":\"NORTH\"}]}")
+  val SCHEMA$ = new org.apache.avro.SchemaParser().parse("{\"type\":\"record\",\"name\":\"Room\",\"namespace\":\"example\",\"fields\":[{\"name\":\"door\",\"type\":{\"type\":\"enum\",\"name\":\"door\",\"namespace\":\"example.types\",\"symbols\":[\"NORTH\",\"SOUTH\",\"EAST\",\"WEST\"]},\"default\":\"NORTH\"}]}").mainSchema()
 }

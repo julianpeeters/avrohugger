@@ -2,7 +2,7 @@ lazy val avroVersion = "1.12.1"
 
 lazy val commonSettings = Seq(
   organization := "com.julianpeeters",
-  version := "2.16.5-SNAPSHOT",
+  version := "2.17.0-SNAPSHOT",
   ThisBuild / versionScheme := Some("semver-spec"),
   scalacOptions ++= Seq(
     "-unchecked", 
@@ -59,7 +59,7 @@ lazy val `avrohugger-core` = (project in file("avrohugger-core"))
   .settings(
     commonSettings,
     libraryDependencies += ("com.eed3si9n" %% "treehugger" % "0.4.4").cross(CrossVersion.for3Use2_13),
-    Compile / sourceGenerators += addScalaVersionFile.taskValue
+    Compile / sourceGenerators += addVersionFile.taskValue
   )
 
 lazy val `avrohugger-filesorter` = (project in file("avrohugger-filesorter"))
@@ -88,24 +88,30 @@ lazy val `avrohugger-tools` = (project in file("avrohugger-tools"))
         val oldStrategy = (Global / assembly / assemblyMergeStrategy).value
         oldStrategy(x)
     },
-    Test / sourceGenerators += addScalaVersionFile.taskValue
+    Test / sourceGenerators += addVersionFile.taskValue
   ).dependsOn(`avrohugger-core`, `avrohugger-filesorter`)
 
-lazy val addScalaVersionFile = Def.task {
+lazy val addVersionFile = Def.task {
+  val partialAvroVersion =
+    CrossVersion.partialVersion(avroVersion)
+      .map(v => s"${v._1}.${v._2}")
+
   val partialScalaVersion =
     CrossVersion.partialVersion(scalaVersion.value)
       .map(v => s"${v._1}.${v._2}")
 
-  val pv = partialScalaVersion.get
+  val pav = partialAvroVersion.get
+  val psv = partialScalaVersion.get
   val content =
     s"""package avrohugger
        |package internal
        |
-       |object ScalaVersion {
-       |  val version = "$pv"
+       |object Version {
+       |  val avro = "$pav"
+       |  val scala = "$psv"
        |}""".stripMargin
 
-  val file = (Test / sourceManaged).value / "avrohugger" / "internal" / "ScalaVersion.scala"
+  val file = (Test / sourceManaged).value / "avrohugger" / "internal" / "Version.scala"
   IO.write(file, content)
 
   Seq(file)

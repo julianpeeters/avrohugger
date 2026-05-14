@@ -26,5 +26,5 @@ final case class Nickname(var name: String) extends org.apache.avro.specific.Spe
 }
 
 object Nickname {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Nickname\",\"namespace\":\"avro.examples.baseball\",\"fields\":[{\"name\":\"name\",\"type\":\"string\"}]}")
+  val SCHEMA$ = new org.apache.avro.SchemaParser().parse("{\"type\":\"record\",\"name\":\"Nickname\",\"namespace\":\"avro.examples.baseball\",\"fields\":[{\"name\":\"name\",\"type\":\"string\"}]}").mainSchema()
 }

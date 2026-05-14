@@ -28,7 +28,7 @@ final case class NoSpaces4(var comment_property1: String) extends org.apache.avr
 }
 
 final object NoSpaces4 {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"NoSpaces4\",\"namespace\":\"com.example\",\"fields\":[{\"name\":\"comment_property1\",\"type\":\"string\"}]}")
+  val SCHEMA$ = new org.apache.avro.SchemaParser().parse("{\"type\":\"record\",\"name\":\"NoSpaces4\",\"namespace\":\"com.example\",\"fields\":[{\"name\":\"comment_property1\",\"type\":\"string\"}]}").mainSchema()
 }
 
 final case class NoSpaces5(var comment_property2: String) extends org.apache.avro.specific.SpecificRecordBase with Example4 {
@@ -54,5 +54,5 @@ final case class NoSpaces5(var comment_property2: String) extends org.apache.avr
 }
 
 final object NoSpaces5 {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"NoSpaces5\",\"namespace\":\"com.example\",\"fields\":[{\"name\":\"comment_property2\",\"type\":\"string\"}]}")
+  val SCHEMA$ = new org.apache.avro.SchemaParser().parse("{\"type\":\"record\",\"name\":\"NoSpaces5\",\"namespace\":\"com.example\",\"fields\":[{\"name\":\"comment_property2\",\"type\":\"string\"}]}").mainSchema()
 }

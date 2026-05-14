@@ -26,5 +26,5 @@ final case class UnionRecord(var blah: String) extends org.apache.avro.specific.
 }
 
 object UnionRecord {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"UnionRecord\",\"namespace\":\"model\",\"fields\":[{\"name\":\"blah\",\"type\":\"string\"}]}")
+  val SCHEMA$ = new org.apache.avro.SchemaParser().parse("{\"type\":\"record\",\"name\":\"UnionRecord\",\"namespace\":\"model\",\"fields\":[{\"name\":\"blah\",\"type\":\"string\"}]}").mainSchema()
 }

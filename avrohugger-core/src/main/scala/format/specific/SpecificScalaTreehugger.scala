@@ -25,14 +25,15 @@ object SpecificScalaTreehugger extends ScalaTreehugger {
     schemaOrProtocol: Either[Schema, Protocol],
     typeMatcher: TypeMatcher,
     restrictedFields: Boolean,
-    targetScalaPartialVersion: String): String = {
+    targetScalaPartialVersion: String,
+    targetAvroPartialVersion: String): String = {
 
     // imports in case a field type is from a different namespace
     val imports: List[Import] = importer.getImports(schemaOrProtocol, namespace, typeMatcher)
 
     val topLevelDefs: List[Tree] = schemaOrProtocol match {
-      case Left(schema) => schemahugger.toTrees(classStore, namespace, schema, typeMatcher, None, None, restrictedFields, targetScalaPartialVersion)
-      case Right(protocol) => protocolhugger.toTrees(classStore, namespace, protocol, typeMatcher, None, None, restrictedFields, targetScalaPartialVersion)
+      case Left(schema) => schemahugger.toTrees(classStore, namespace, schema, typeMatcher, None, None, restrictedFields, targetScalaPartialVersion, targetAvroPartialVersion)
+      case Right(protocol) => protocolhugger.toTrees(classStore, namespace, protocol, typeMatcher, None, None, restrictedFields, targetScalaPartialVersion, targetAvroPartialVersion)
     }
 
     // wrap the definitions in a block with a comment and a package

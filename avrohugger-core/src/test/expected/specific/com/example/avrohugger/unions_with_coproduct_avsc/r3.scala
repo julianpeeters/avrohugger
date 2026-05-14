@@ -26,5 +26,5 @@ final case class r3(var f3: Boolean) extends org.apache.avro.specific.SpecificRe
 }
 
 object r3 {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"r3\",\"namespace\":\"com.example.avrohugger.unions_with_coproduct_avsc\",\"fields\":[{\"name\":\"f3\",\"type\":\"boolean\"}]}")
+  val SCHEMA$ = new org.apache.avro.SchemaParser().parse("{\"type\":\"record\",\"name\":\"r3\",\"namespace\":\"com.example.avrohugger.unions_with_coproduct_avsc\",\"fields\":[{\"name\":\"f3\",\"type\":\"boolean\"}]}").mainSchema()
 }

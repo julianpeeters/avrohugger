@@ -34,5 +34,5 @@ final case class BinaryPr(var data: Array[Byte]) extends org.apache.avro.specifi
 }
 
 object BinaryPr {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"BinaryPr\",\"namespace\":\"example.proto\",\"fields\":[{\"name\":\"data\",\"type\":\"bytes\"}]}")
+  val SCHEMA$ = new org.apache.avro.SchemaParser().parse("{\"type\":\"record\",\"name\":\"BinaryPr\",\"namespace\":\"example.proto\",\"fields\":[{\"name\":\"data\",\"type\":\"bytes\"}]}").mainSchema()
 }

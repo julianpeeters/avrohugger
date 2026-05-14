@@ -45,6 +45,6 @@ final case class NullableDecimal(var ciao: Option[BigDecimal] = None) extends or
 }
 
 object NullableDecimal {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"NullableDecimal\",\"namespace\":\"com.example\",\"fields\":[{\"name\":\"ciao\",\"type\":[\"null\",{\"type\":\"bytes\",\"scale\":5,\"precision\":64,\"logicalType\":\"decimal\"}],\"default\":null}]}")
+  val SCHEMA$ = new org.apache.avro.SchemaParser().parse("{\"type\":\"record\",\"name\":\"NullableDecimal\",\"namespace\":\"com.example\",\"fields\":[{\"name\":\"ciao\",\"type\":[\"null\",{\"type\":\"bytes\",\"scale\":5,\"precision\":64,\"logicalType\":\"decimal\"}],\"default\":null}]}").mainSchema()
   val decimalConversion = new org.apache.avro.Conversions.DecimalConversion
 }

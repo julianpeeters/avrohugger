@@ -15,7 +15,7 @@ import scala.jdk.CollectionConverters._
 
 object SpecificProtocolhugger extends Protocolhugger {
 
-  def toTrees(classStore: ClassStore, namespace: Option[String], protocol: Protocol, typeMatcher: TypeMatcher, maybeBaseTrait: Option[String], maybeFlags: Option[List[Long]], restrictedFields: Boolean, targetScalaPartialVersion: String): List[Tree] = {
+  def toTrees(classStore: ClassStore, namespace: Option[String], protocol: Protocol, typeMatcher: TypeMatcher, maybeBaseTrait: Option[String], maybeFlags: Option[List[Long]], restrictedFields: Boolean, targetScalaPartialVersion: String, targetAvroPartialVersion: String): List[Tree] = {
 
     val name: String = protocol.getName
     val messages = protocol.getMessages.asScala.toMap
@@ -31,7 +31,7 @@ object SpecificProtocolhugger extends Protocolhugger {
         val maybeNewFlags = Some(List(Flags.FINAL.toLong))
         val sealedTraitDef = SpecificTraitTree.toADTRootDef(protocol)
         val subTypeDefs = localNonEnums.flatMap(schema => {
-          SpecificSchemahugger.toTrees(classStore, namespace, schema, typeMatcher, maybeNewBaseTrait, maybeNewFlags, restrictedFields, targetScalaPartialVersion)
+          SpecificSchemahugger.toTrees(classStore, namespace, schema, typeMatcher, maybeNewBaseTrait, maybeNewFlags, restrictedFields, targetScalaPartialVersion, targetAvroPartialVersion)
         })
         sealedTraitDef +: subTypeDefs
       }
@@ -46,7 +46,7 @@ object SpecificProtocolhugger extends Protocolhugger {
           }
         }
         docTrees ::: localNonEnums.flatMap { schema =>
-          SpecificSchemahugger.toTrees(classStore, namespace, schema, typeMatcher, maybeBaseTrait, maybeFlags, restrictedFields, targetScalaPartialVersion)
+          SpecificSchemahugger.toTrees(classStore, namespace, schema, typeMatcher, maybeBaseTrait, maybeFlags, restrictedFields, targetScalaPartialVersion, targetAvroPartialVersion)
         }
       }
     }

@@ -32,5 +32,5 @@ final case class MyRecord(var MyID: com.myrecord.ID, var OtherRecord: com.otherr
 }
 
 object MyRecord {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"MyRecord\",\"namespace\":\"com.myrecord\",\"fields\":[{\"name\":\"MyID\",\"type\":{\"type\":\"record\",\"name\":\"ID\",\"fields\":[{\"name\":\"value\",\"type\":\"string\"}]}},{\"name\":\"OtherRecord\",\"type\":{\"type\":\"record\",\"name\":\"OtherRecord\",\"namespace\":\"com.otherrecord\",\"fields\":[{\"name\":\"OtherId\",\"type\":{\"type\":\"record\",\"name\":\"ID\",\"fields\":[{\"name\":\"value\",\"type\":\"string\"}]}}]}}]}")
+  val SCHEMA$ = new org.apache.avro.SchemaParser().parse("{\"type\":\"record\",\"name\":\"MyRecord\",\"namespace\":\"com.myrecord\",\"fields\":[{\"name\":\"MyID\",\"type\":{\"type\":\"record\",\"name\":\"ID\",\"fields\":[{\"name\":\"value\",\"type\":\"string\"}]}},{\"name\":\"OtherRecord\",\"type\":{\"type\":\"record\",\"name\":\"OtherRecord\",\"namespace\":\"com.otherrecord\",\"fields\":[{\"name\":\"OtherId\",\"type\":{\"type\":\"record\",\"name\":\"ID\",\"fields\":[{\"name\":\"value\",\"type\":\"string\"}]}}]}}]}").mainSchema()
 }

@@ -32,5 +32,5 @@ final case class Names(var `protected`: String, var `ends_with_`: String) extend
 }
 
 object Names {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Names\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"protected\",\"type\":\"string\"},{\"name\":\"ends_with_\",\"type\":\"string\"}]}")
+  val SCHEMA$ = new org.apache.avro.SchemaParser().parse("{\"type\":\"record\",\"name\":\"Names\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"protected\",\"type\":\"string\"},{\"name\":\"ends_with_\",\"type\":\"string\"}]}").mainSchema()
 }

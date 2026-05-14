@@ -44,17 +44,34 @@ object SpecificObjectTree {
   def toCaseCompanionDef(
     schema: Schema,
     maybeFlags: Option[List[Long]],
-    typeMatcher: TypeMatcher) = {
-    val ParserClass = RootClass.newClass("org.apache.avro.Schema.Parser")
+    typeMatcher: TypeMatcher,
+    targetAvroPartialVersion: String) = {
+    
     val objectDef = maybeFlags match {
       case Some(flags) => OBJECTDEF(schema.getName).withFlags(flags:_*)
       case None => OBJECTDEF(schema.getName)
     }
     val schemaDef = VAL(REF("SCHEMA$")) := {
-      NEW(ParserClass) APPLY (Nil) DOT "parse" APPLY (schema.toString match {
-        case schemaString if schemaString.getBytes(StandardCharsets.UTF_8).length > 65535 => LIST(schemaString.split("},\\{\"").map(LIT)) DOT "mkString" APPLY (LIT("},{\""))
-        case schemaString => LIT(schemaString)
-      })
+      targetAvroPartialVersion match {
+        case "1.12" => {
+          NEW(RootClass.newClass("org.apache.avro.SchemaParser")) APPLY (Nil) DOT "parse" APPLY (schema.toString match {
+            case schemaString if schemaString.getBytes(StandardCharsets.UTF_8).length > 65535 => LIST(schemaString.split("},\\{\"").map(LIT)) DOT "mkString" APPLY (LIT("},{\""))
+            case schemaString => LIT(schemaString)
+          }) DOT "mainSchema" APPLY(Nil)
+        }
+        case "1.11" => {
+          NEW(RootClass.newClass("org.apache.avro.Schema.Parser")) APPLY (Nil) DOT "parse" APPLY (schema.toString match {
+            case schemaString if schemaString.getBytes(StandardCharsets.UTF_8).length > 65535 => LIST(schemaString.split("},\\{\"").map(LIT)) DOT "mkString" APPLY (LIT("},{\""))
+            case schemaString => LIT(schemaString)
+          })
+        }
+        case _ => {// default to most current
+          NEW(RootClass.newClass("org.apache.avro.SchemaParser")) APPLY (Nil) DOT "parse" APPLY (schema.toString match {
+            case schemaString if schemaString.getBytes(StandardCharsets.UTF_8).length > 65535 => LIST(schemaString.split("},\\{\"").map(LIT)) DOT "mkString" APPLY (LIT("},{\""))
+            case schemaString => LIT(schemaString)
+          }) DOT "mainSchema" APPLY(Nil)
+        }
+      }
     }
     val externalReader = VAL("READER$") := NEW("org.apache.avro.specific.SpecificDatumReader").APPLYTYPE(TYPE_REF(schema.getName)).APPLY(
       REF(s"${schema.getFullName()}.SCHEMA$$")

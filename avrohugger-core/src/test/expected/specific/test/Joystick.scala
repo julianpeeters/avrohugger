@@ -26,7 +26,7 @@ final case class Up(var value: Int) extends org.apache.avro.specific.SpecificRec
 }
 
 object Up {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Up\",\"namespace\":\"test\",\"fields\":[{\"name\":\"value\",\"type\":\"int\"}]}")
+  val SCHEMA$ = new org.apache.avro.SchemaParser().parse("{\"type\":\"record\",\"name\":\"Up\",\"namespace\":\"test\",\"fields\":[{\"name\":\"value\",\"type\":\"int\"}]}").mainSchema()
 }
 
 final case class Down(var value: Int) extends org.apache.avro.specific.SpecificRecordBase {
@@ -52,5 +52,5 @@ final case class Down(var value: Int) extends org.apache.avro.specific.SpecificR
 }
 
 object Down {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Down\",\"namespace\":\"test\",\"fields\":[{\"name\":\"value\",\"type\":\"int\"}]}")
+  val SCHEMA$ = new org.apache.avro.SchemaParser().parse("{\"type\":\"record\",\"name\":\"Down\",\"namespace\":\"test\",\"fields\":[{\"name\":\"value\",\"type\":\"int\"}]}").mainSchema()
 }

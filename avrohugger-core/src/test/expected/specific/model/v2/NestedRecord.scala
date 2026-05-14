@@ -34,5 +34,5 @@ final case class NestedRecord(var nestedunion: Option[UnionRecord]) extends org.
 }
 
 object NestedRecord {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"NestedRecord\",\"namespace\":\"model.v2\",\"fields\":[{\"name\":\"nestedunion\",\"type\":[\"null\",{\"type\":\"record\",\"name\":\"UnionRecord\",\"namespace\":\"model\",\"fields\":[{\"name\":\"blah\",\"type\":\"string\"}]}]}]}")
+  val SCHEMA$ = new org.apache.avro.SchemaParser().parse("{\"type\":\"record\",\"name\":\"NestedRecord\",\"namespace\":\"model.v2\",\"fields\":[{\"name\":\"nestedunion\",\"type\":[\"null\",{\"type\":\"record\",\"name\":\"UnionRecord\",\"namespace\":\"model\",\"fields\":[{\"name\":\"blah\",\"type\":\"string\"}]}]}]}").mainSchema()
 }

@@ -3,7 +3,7 @@ package input
 package parsers
 
 
-import org.apache.avro.Schema.Parser
+import org.apache.avro.SchemaParser
 import org.apache.avro.{ Protocol, Schema, SchemaParseException }
 import org.apache.avro.compiler.idl.{ Idl, ParseException }
 import org.apache.avro.idl.IdlReader
@@ -12,11 +12,11 @@ import java.nio.charset.Charset
 // tries schema first, then protocol, then idl, then for case class defs
 class StringInputParser {
 
-  lazy val schemaParser = new Parser()
+  lazy val parser = new SchemaParser()
 
   private def trySchema(str: String): List[Either[Schema, Protocol]] = {
     try {
-      List(Left(schemaParser.parse(str)))
+      List(Left(parser.parse(str).mainSchema()))
     }
     catch {
       case notSchema: SchemaParseException => tryProtocol(str)

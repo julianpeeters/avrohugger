@@ -30,5 +30,5 @@ final case class ComplexExternalDependency(var nestedrecord: NestedRecord) exten
 }
 
 object ComplexExternalDependency {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"ComplexExternalDependency\",\"namespace\":\"test\",\"fields\":[{\"name\":\"nestedrecord\",\"type\":{\"type\":\"record\",\"name\":\"NestedRecord\",\"namespace\":\"model.v2\",\"fields\":[{\"name\":\"nestedunion\",\"type\":[\"null\",{\"type\":\"record\",\"name\":\"UnionRecord\",\"namespace\":\"model\",\"fields\":[{\"name\":\"blah\",\"type\":\"string\"}]}]}]}}]}")
+  val SCHEMA$ = new org.apache.avro.SchemaParser().parse("{\"type\":\"record\",\"name\":\"ComplexExternalDependency\",\"namespace\":\"test\",\"fields\":[{\"name\":\"nestedrecord\",\"type\":{\"type\":\"record\",\"name\":\"NestedRecord\",\"namespace\":\"model.v2\",\"fields\":[{\"name\":\"nestedunion\",\"type\":[\"null\",{\"type\":\"record\",\"name\":\"UnionRecord\",\"namespace\":\"model\",\"fields\":[{\"name\":\"blah\",\"type\":\"string\"}]}]}]}}]}").mainSchema()
 }

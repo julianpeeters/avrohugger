@@ -27,5 +27,5 @@ final case class NoSpaces2(var comment_property: String) extends org.apache.avro
 }
 
 object NoSpaces2 {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"NoSpaces2\",\"namespace\":\"com.example\",\"fields\":[{\"name\":\"comment_property\",\"type\":\"string\",\"doc\":\"This is a single line comment on a field, in a record that has no comment.\"}]}")
+  val SCHEMA$ = new org.apache.avro.SchemaParser().parse("{\"type\":\"record\",\"name\":\"NoSpaces2\",\"namespace\":\"com.example\",\"fields\":[{\"name\":\"comment_property\",\"type\":\"string\",\"doc\":\"This is a single line comment on a field, in a record that has no comment.\"}]}").mainSchema()
 }

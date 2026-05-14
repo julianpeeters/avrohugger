@@ -34,5 +34,5 @@ final case class UnionOfNullWithMoreThanTwoNonNullTypes(var r7: Option[Boolean :
 }
 
 object UnionOfNullWithMoreThanTwoNonNullTypes {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"UnionOfNullWithMoreThanTwoNonNullTypes\",\"namespace\":\"com.example.avrohugger.unions_with_coproduct_avsc2\",\"fields\":[{\"name\":\"r7\",\"type\":[\"null\",\"boolean\",\"int\",\"string\"]}]}")
+  val SCHEMA$ = new org.apache.avro.SchemaParser().parse("{\"type\":\"record\",\"name\":\"UnionOfNullWithMoreThanTwoNonNullTypes\",\"namespace\":\"com.example.avrohugger.unions_with_coproduct_avsc2\",\"fields\":[{\"name\":\"r7\",\"type\":[\"null\",\"boolean\",\"int\",\"string\"]}]}").mainSchema()
 }

@@ -36,7 +36,7 @@ final case class DependentRecord(var dependency: ExternalDependency, var number:
 }
 
 final object DependentRecord {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"DependentRecord\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"dependency\",\"type\":{\"type\":\"record\",\"name\":\"ExternalDependency\",\"namespace\":\"other.ns\",\"fields\":[{\"name\":\"number\",\"type\":\"int\"}]}},{\"name\":\"number\",\"type\":\"int\"}]}")
+  val SCHEMA$ = new org.apache.avro.SchemaParser().parse("{\"type\":\"record\",\"name\":\"DependentRecord\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"dependency\",\"type\":{\"type\":\"record\",\"name\":\"ExternalDependency\",\"namespace\":\"other.ns\",\"fields\":[{\"name\":\"number\",\"type\":\"int\"}]}},{\"name\":\"number\",\"type\":\"int\"}]}").mainSchema()
 }
 
 final case class DependentRecord2(var dependency: Suit, var name: String) extends org.apache.avro.specific.SpecificRecordBase with ImportProtocol {
@@ -68,7 +68,7 @@ final case class DependentRecord2(var dependency: Suit, var name: String) extend
 }
 
 final object DependentRecord2 {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"DependentRecord2\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"dependency\",\"type\":{\"type\":\"enum\",\"name\":\"Suit\",\"namespace\":\"other.ns\",\"symbols\":[\"SPADES\",\"DIAMONDS\",\"CLUBS\",\"HEARTS\"]}},{\"name\":\"name\",\"type\":\"string\"}]}")
+  val SCHEMA$ = new org.apache.avro.SchemaParser().parse("{\"type\":\"record\",\"name\":\"DependentRecord2\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"dependency\",\"type\":{\"type\":\"enum\",\"name\":\"Suit\",\"namespace\":\"other.ns\",\"symbols\":[\"SPADES\",\"DIAMONDS\",\"CLUBS\",\"HEARTS\"]}},{\"name\":\"name\",\"type\":\"string\"}]}").mainSchema()
 }
 
 final case class DependentRecord3(var dependency: Embedded, var value: Boolean) extends org.apache.avro.specific.SpecificRecordBase with ImportProtocol {
@@ -100,5 +100,5 @@ final case class DependentRecord3(var dependency: Embedded, var value: Boolean) 
 }
 
 final object DependentRecord3 {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"DependentRecord3\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"dependency\",\"type\":{\"type\":\"record\",\"name\":\"Embedded\",\"fields\":[{\"name\":\"inner\",\"type\":\"int\"}]}},{\"name\":\"value\",\"type\":\"boolean\"}]}")
+  val SCHEMA$ = new org.apache.avro.SchemaParser().parse("{\"type\":\"record\",\"name\":\"DependentRecord3\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"dependency\",\"type\":{\"type\":\"record\",\"name\":\"Embedded\",\"fields\":[{\"name\":\"inner\",\"type\":\"int\"}]}},{\"name\":\"value\",\"type\":\"boolean\"}]}").mainSchema()
 }

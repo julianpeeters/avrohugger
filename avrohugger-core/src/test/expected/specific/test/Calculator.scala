@@ -28,7 +28,7 @@ final case class Added(var value: Int) extends org.apache.avro.specific.Specific
 }
 
 final object Added {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Added\",\"namespace\":\"test\",\"fields\":[{\"name\":\"value\",\"type\":\"int\"}]}")
+  val SCHEMA$ = new org.apache.avro.SchemaParser().parse("{\"type\":\"record\",\"name\":\"Added\",\"namespace\":\"test\",\"fields\":[{\"name\":\"value\",\"type\":\"int\"}]}").mainSchema()
 }
 
 final case class Subtracted(var value: Int) extends org.apache.avro.specific.SpecificRecordBase with Calculator {
@@ -54,7 +54,7 @@ final case class Subtracted(var value: Int) extends org.apache.avro.specific.Spe
 }
 
 final object Subtracted {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Subtracted\",\"namespace\":\"test\",\"fields\":[{\"name\":\"value\",\"type\":\"int\"}]}")
+  val SCHEMA$ = new org.apache.avro.SchemaParser().parse("{\"type\":\"record\",\"name\":\"Subtracted\",\"namespace\":\"test\",\"fields\":[{\"name\":\"value\",\"type\":\"int\"}]}").mainSchema()
 }
 
 final case class Divided(var value: Int) extends org.apache.avro.specific.SpecificRecordBase with Calculator {
@@ -80,7 +80,7 @@ final case class Divided(var value: Int) extends org.apache.avro.specific.Specif
 }
 
 final object Divided {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Divided\",\"namespace\":\"test\",\"fields\":[{\"name\":\"value\",\"type\":\"int\"}]}")
+  val SCHEMA$ = new org.apache.avro.SchemaParser().parse("{\"type\":\"record\",\"name\":\"Divided\",\"namespace\":\"test\",\"fields\":[{\"name\":\"value\",\"type\":\"int\"}]}").mainSchema()
 }
 
 final case class Multiplied(var value: Int) extends org.apache.avro.specific.SpecificRecordBase with Calculator {
@@ -106,7 +106,7 @@ final case class Multiplied(var value: Int) extends org.apache.avro.specific.Spe
 }
 
 final object Multiplied {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Multiplied\",\"namespace\":\"test\",\"fields\":[{\"name\":\"value\",\"type\":\"int\"}]}")
+  val SCHEMA$ = new org.apache.avro.SchemaParser().parse("{\"type\":\"record\",\"name\":\"Multiplied\",\"namespace\":\"test\",\"fields\":[{\"name\":\"value\",\"type\":\"int\"}]}").mainSchema()
 }
 
 final case class Reset() extends org.apache.avro.specific.SpecificRecordBase with Calculator {
@@ -125,5 +125,5 @@ final case class Reset() extends org.apache.avro.specific.SpecificRecordBase wit
 }
 
 final object Reset {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Reset\",\"namespace\":\"test\",\"fields\":[]}")
+  val SCHEMA$ = new org.apache.avro.SchemaParser().parse("{\"type\":\"record\",\"name\":\"Reset\",\"namespace\":\"test\",\"fields\":[]}").mainSchema()
 }

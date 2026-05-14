@@ -29,7 +29,8 @@ object SpecificRecord extends SourceFormat {
     maybeOutDir: Option[String],
     typeMatcher: TypeMatcher,
     restrictedFields: Boolean,
-    targetScalaPartialVersion: String
+    targetScalaPartialVersion: String,
+    targetAvroPartialVersion: String
   ): List[CompilationUnit] = {
     val localSubtypes = getLocalSubtypes(protocol)
     val localEnums = localSubtypes.filter(isEnum)
@@ -45,7 +46,8 @@ object SpecificRecord extends SourceFormat {
       Right(protocol),
       typeMatcher,
       restrictedFields,
-      targetScalaPartialVersion)
+      targetScalaPartialVersion,
+      targetAvroPartialVersion)
     val rpcTraitCompUnit = CompilationUnit(maybePath, rpcTraitString)
     val scalaCompUnits = localNonEnums.map(schema => {
       val scalaCompilationUnit = getScalaCompilationUnit(
@@ -55,7 +57,8 @@ object SpecificRecord extends SourceFormat {
         typeMatcher,
         maybeOutDir,
         restrictedFields,
-        targetScalaPartialVersion)
+        targetScalaPartialVersion,
+        targetAvroPartialVersion)
       scalaCompilationUnit
     })
     val javaCompUnits = localEnums.map(schema => {
@@ -77,7 +80,8 @@ object SpecificRecord extends SourceFormat {
     maybeOutDir: Option[String],
     typeMatcher: TypeMatcher,
     restrictedFields: Boolean,
-    targetScalaPartialVersion: String): List[CompilationUnit] = {
+    targetScalaPartialVersion: String,
+    targetAvroPartialVersion: String): List[CompilationUnit] = {
     registerTypes(schemaOrProtocol, classStore, typeMatcher)
     val enumType = typeMatcher.avroScalaTypes.`enum`
 
@@ -98,7 +102,8 @@ object SpecificRecord extends SourceFormat {
               typeMatcher,
               maybeOutDir,
               restrictedFields,
-              targetScalaPartialVersion)
+              targetScalaPartialVersion,
+              targetAvroPartialVersion)
             List(scalaCompilationUnit)
           }
           case ENUM => {
@@ -126,7 +131,8 @@ object SpecificRecord extends SourceFormat {
               typeMatcher,
               maybeOutDir,
               restrictedFields,
-              targetScalaPartialVersion)
+              targetScalaPartialVersion,
+              targetAvroPartialVersion)
             List(scalaCompilationUnit)
           }
           case _ => sys.error("Only FIXED, RECORD, or ENUM can be toplevel definitions")
@@ -166,7 +172,8 @@ object SpecificRecord extends SourceFormat {
             typeMatcher,
             maybeOutDir,
             restrictedFields,
-            targetScalaPartialVersion)
+            targetScalaPartialVersion,
+            targetAvroPartialVersion)
           if (localRecords.nonEmpty) scalaCompilationUnit +: javaCompilationUnits
           else javaCompilationUnits
         }
@@ -177,7 +184,8 @@ object SpecificRecord extends SourceFormat {
           maybeOutDir,
           typeMatcher,
           restrictedFields,
-          targetScalaPartialVersion
+          targetScalaPartialVersion,
+          targetAvroPartialVersion
         )
       }
     }
@@ -210,7 +218,8 @@ object SpecificRecord extends SourceFormat {
     outDir: String,
     typeMatcher: TypeMatcher,
     restrictedFields: Boolean,
-    targetScalaPartialVersion: String): Unit = {
+    targetScalaPartialVersion: String,
+    targetAvroPartialVersion: String): Unit = {
     val compilationUnits: List[CompilationUnit] = asCompilationUnits(
       classStore,
       ns,
@@ -218,7 +227,8 @@ object SpecificRecord extends SourceFormat {
       Some(outDir),
       typeMatcher,
       restrictedFields,
-      targetScalaPartialVersion)
+      targetScalaPartialVersion,
+      targetAvroPartialVersion)
     compilationUnits.foreach(writeToFile)
   }
 

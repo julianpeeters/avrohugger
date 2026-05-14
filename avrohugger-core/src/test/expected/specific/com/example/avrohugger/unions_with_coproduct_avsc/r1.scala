@@ -26,5 +26,5 @@ final case class r1(var f1: Int) extends org.apache.avro.specific.SpecificRecord
 }
 
 object r1 {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"r1\",\"namespace\":\"com.example.avrohugger.unions_with_coproduct_avsc\",\"fields\":[{\"name\":\"f1\",\"type\":\"int\"}]}")
+  val SCHEMA$ = new org.apache.avro.SchemaParser().parse("{\"type\":\"record\",\"name\":\"r1\",\"namespace\":\"com.example.avrohugger.unions_with_coproduct_avsc\",\"fields\":[{\"name\":\"f1\",\"type\":\"int\"}]}").mainSchema()
 }

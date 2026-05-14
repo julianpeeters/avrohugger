@@ -21,7 +21,7 @@ final case class fxType() extends org.apache.avro.specific.SpecificFixed {
 }
 
 object fxType {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"fixed\",\"name\":\"fxType\",\"namespace\":\"example.logical\",\"size\":2,\"logicalType\":\"decimal\",\"precision\":2,\"scale\":1}")
+  val SCHEMA$ = new org.apache.avro.SchemaParser().parse("{\"type\":\"fixed\",\"name\":\"fxType\",\"namespace\":\"example.logical\",\"size\":2,\"logicalType\":\"decimal\",\"precision\":2,\"scale\":1}").mainSchema()
   val READER$ = new org.apache.avro.specific.SpecificDatumReader[fxType](example.logical.fxType.SCHEMA$)
   val WRITER$ = new org.apache.avro.specific.SpecificDatumWriter[fxType](example.logical.fxType.SCHEMA$)
   val decimalConversion = new org.apache.avro.Conversions.DecimalConversion

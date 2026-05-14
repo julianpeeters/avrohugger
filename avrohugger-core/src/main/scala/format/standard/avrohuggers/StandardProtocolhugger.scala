@@ -23,7 +23,8 @@ object StandardProtocolhugger extends Protocolhugger {
     maybeBaseTrait: Option[String],
     maybeFlags: Option[List[Long]],
     restrictedFields: Boolean,
-    targetScalaPartialVersion: String
+    targetScalaPartialVersion: String,
+    targetAvroPartialVersion: String
   ): List[Tree] = {
 
     val name: String = protocol.getName
@@ -42,7 +43,7 @@ object StandardProtocolhugger extends Protocolhugger {
       val maybeNewFlags = Some(List(Flags.FINAL.toLong))
       val traitDef = StandardTraitTree.toADTRootDef(protocol, typeMatcher)
       traitDef +: adtSubTypes.flatMap(schema => {
-        StandardSchemahugger.toTrees(classStore, namespace, schema, typeMatcher, maybeNewBaseTrait, maybeNewFlags, restrictedFields, targetScalaPartialVersion)
+        StandardSchemahugger.toTrees(classStore, namespace, schema, typeMatcher, maybeNewBaseTrait, maybeNewFlags, restrictedFields, targetScalaPartialVersion, targetAvroPartialVersion)
       })
     }
     // if only one Scala type is defined, then don't generate sealed trait
@@ -56,7 +57,7 @@ object StandardProtocolhugger extends Protocolhugger {
         }
       }
       docTrees ::: localSubTypes.flatMap(schema => {
-        StandardSchemahugger.toTrees(classStore, namespace, schema, typeMatcher, maybeBaseTrait, maybeFlags, restrictedFields, targetScalaPartialVersion)
+        StandardSchemahugger.toTrees(classStore, namespace, schema, typeMatcher, maybeBaseTrait, maybeFlags, restrictedFields, targetScalaPartialVersion, targetAvroPartialVersion)
       })
     }
   }

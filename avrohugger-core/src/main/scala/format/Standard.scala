@@ -27,7 +27,8 @@ object Standard extends SourceFormat {
     maybeOutDir: Option[String],
     typeMatcher: TypeMatcher,
     restrictedFields: Boolean,
-    targetScalaPartialVersion: String): List[CompilationUnit] = {
+    targetScalaPartialVersion: String,
+    targetAvroPartialVersion: String): List[CompilationUnit] = {
     registerTypes(schemaOrProtocol, classStore, typeMatcher)
     val namespace =
       CustomNamespaceMatcher.checkCustomNamespace(
@@ -48,7 +49,8 @@ object Standard extends SourceFormat {
               typeMatcher,
               maybeOutDir,
               restrictedFields,
-              targetScalaPartialVersion)
+              targetScalaPartialVersion,
+              targetAvroPartialVersion)
             List(scalaCompilationUnit)
           }
           case ENUM => {
@@ -74,7 +76,8 @@ object Standard extends SourceFormat {
                   typeMatcher,
                   maybeOutDir,
                   restrictedFields,
-                  targetScalaPartialVersion)
+                  targetScalaPartialVersion,
+                  targetAvroPartialVersion)
                 List(scalaCompilationUnit)
               }
               case Scala3Enum => {
@@ -85,7 +88,8 @@ object Standard extends SourceFormat {
                   typeMatcher,
                   maybeOutDir,
                   restrictedFields,
-                  targetScalaPartialVersion)
+                  targetScalaPartialVersion,
+                  targetAvroPartialVersion)
                 List(scalaCompilationUnit)
               }
               case ScalaEnumeration => {
@@ -96,7 +100,8 @@ object Standard extends SourceFormat {
                   typeMatcher,
                   maybeOutDir,
                   restrictedFields,
-                  targetScalaPartialVersion)
+                  targetScalaPartialVersion,
+                  targetAvroPartialVersion)
                 List(scalaCompilationUnit)
               }
               case EnumAsScalaString => {
@@ -112,7 +117,8 @@ object Standard extends SourceFormat {
               typeMatcher,
               maybeOutDir,
               restrictedFields,
-              targetScalaPartialVersion)
+              targetScalaPartialVersion,
+              targetAvroPartialVersion)
             List(scalaCompilationUnit)
           case _ => sys.error("Only FIXED, RECORD, or ENUM can be toplevel definitions")
         }
@@ -125,7 +131,8 @@ object Standard extends SourceFormat {
           typeMatcher,
           maybeOutDir,
           restrictedFields,
-          targetScalaPartialVersion)
+          targetScalaPartialVersion,
+          targetAvroPartialVersion)
         enumType match {
           // java enums can't be represented as trees so they can't be handled
           // by treehugger. Their compilation unit must be generated
@@ -161,7 +168,8 @@ object Standard extends SourceFormat {
     outDir: String,
     typeMatcher: TypeMatcher,
     restrictedFields: Boolean,
-    targetScalaPartialVersion: String): Unit = {
+    targetScalaPartialVersion: String,
+    targetAvroPartialVersion: String): Unit = {
     val compilationUnits: List[CompilationUnit] = asCompilationUnits(
       classStore,
       ns,
@@ -169,7 +177,8 @@ object Standard extends SourceFormat {
       Some(outDir),
       typeMatcher,
       restrictedFields,
-      targetScalaPartialVersion)
+      targetScalaPartialVersion,
+      targetAvroPartialVersion)
     compilationUnits.foreach(writeToFile)
   }
 

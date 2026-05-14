@@ -17,7 +17,7 @@ import scala.jdk.CollectionConverters._
 object StandardObjectTree {
 
   def toCaseCompanionDef(schema: Schema, maybeFlags: Option[List[Long]]) = {
-    val ParserClass = RootClass.newClass("org.apache.avro.Schema.Parser")
+    val ParserClass = RootClass.newClass("org.apache.avro.SchemaParser")
     val objectDef = maybeFlags match {
       case Some(flags) => OBJECTDEF(schema.getName).withFlags(flags: _*)
       case None => OBJECTDEF(schema.getName)
@@ -25,7 +25,7 @@ object StandardObjectTree {
     // companion object definition
     objectDef := BLOCK(
       VAL(REF("SCHEMA$")) := {
-        (NEW(ParserClass)) APPLY (Nil) DOT "parse" APPLY (LIT(schema.toString))
+        (NEW(ParserClass)) APPLY (Nil) DOT "parse" APPLY (LIT(schema.toString)) DOT "mainSchema" APPLY(Nil)
       }
     )
   }

@@ -28,5 +28,5 @@ final case class AvroTypeProviderTestNoNamespace(var x: Int) extends org.apache.
 }
 
 object AvroTypeProviderTestNoNamespace {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"AvroTypeProviderTestNoNamespace\",\"doc\":\"Auto-generated schema\",\"fields\":[{\"name\":\"x\",\"type\":\"int\",\"doc\":\"Auto-Generated Field\"}]}")
+  val SCHEMA$ = new org.apache.avro.SchemaParser().parse("{\"type\":\"record\",\"name\":\"AvroTypeProviderTestNoNamespace\",\"doc\":\"Auto-generated schema\",\"fields\":[{\"name\":\"x\",\"type\":\"int\",\"doc\":\"Auto-Generated Field\"}]}").mainSchema()
 }

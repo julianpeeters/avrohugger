@@ -28,7 +28,7 @@ final case class Level2(var name: String) extends org.apache.avro.specific.Speci
 }
 
 final object Level2 {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Level2\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"name\",\"type\":\"string\"}]}")
+  val SCHEMA$ = new org.apache.avro.SchemaParser().parse("{\"type\":\"record\",\"name\":\"Level2\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"name\",\"type\":\"string\"}]}").mainSchema()
 }
 
 final case class Level1(var level2: example.idl.Level2) extends org.apache.avro.specific.SpecificRecordBase with NestedProtocol {
@@ -54,7 +54,7 @@ final case class Level1(var level2: example.idl.Level2) extends org.apache.avro.
 }
 
 final object Level1 {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Level1\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"level2\",\"type\":{\"type\":\"record\",\"name\":\"Level2\",\"fields\":[{\"name\":\"name\",\"type\":\"string\"}]}}]}")
+  val SCHEMA$ = new org.apache.avro.SchemaParser().parse("{\"type\":\"record\",\"name\":\"Level1\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"level2\",\"type\":{\"type\":\"record\",\"name\":\"Level2\",\"fields\":[{\"name\":\"name\",\"type\":\"string\"}]}}]}").mainSchema()
 }
 
 final case class Level0(var level1: example.idl.Level1) extends org.apache.avro.specific.SpecificRecordBase with NestedProtocol {
@@ -80,5 +80,5 @@ final case class Level0(var level1: example.idl.Level1) extends org.apache.avro.
 }
 
 final object Level0 {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Level0\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"level1\",\"type\":{\"type\":\"record\",\"name\":\"Level1\",\"fields\":[{\"name\":\"level2\",\"type\":{\"type\":\"record\",\"name\":\"Level2\",\"fields\":[{\"name\":\"name\",\"type\":\"string\"}]}}]}}]}")
+  val SCHEMA$ = new org.apache.avro.SchemaParser().parse("{\"type\":\"record\",\"name\":\"Level0\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"level1\",\"type\":{\"type\":\"record\",\"name\":\"Level1\",\"fields\":[{\"name\":\"level2\",\"type\":{\"type\":\"record\",\"name\":\"Level2\",\"fields\":[{\"name\":\"name\",\"type\":\"string\"}]}}]}}]}").mainSchema()
 }

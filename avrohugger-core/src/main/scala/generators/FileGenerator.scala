@@ -6,7 +6,7 @@ import avrohugger.input.parsers.{ FileInputParser, StringInputParser }
 import avrohugger.input.{ DependencyInspector, NestedSchemaExtractor }
 import avrohugger.matchers.TypeMatcher
 import avrohugger.stores.ClassStore
-import org.apache.avro.Schema.Parser
+import org.apache.avro.SchemaParser
 import org.apache.avro.{ Protocol, Schema }
 
 import java.io.File
@@ -24,13 +24,14 @@ private[avrohugger] class FileGenerator {
     classStore: ClassStore,
     typeMatcher: TypeMatcher,
     restrictedFields: Boolean,
-    targetScalaPartialVersion: String): Unit = {
+    targetScalaPartialVersion: String,
+    targetAvroPartialVersion: String): Unit = {
     val topNS: Option[String] = DependencyInspector.getReferredNamespace(schema)
     val topLevelSchemas: List[Schema] = NestedSchemaExtractor.getNestedSchemas(schema, typeMatcher)
     topLevelSchemas.distinct.foreach(schema => {
       // pass in the top-level schema's namespace if the nested schema has none
       val ns = DependencyInspector.getReferredNamespace(schema) orElse topNS
-      format.compile(classStore, ns, Left(schema), outDir, typeMatcher, restrictedFields, targetScalaPartialVersion)
+      format.compile(classStore, ns, Left(schema), outDir, typeMatcher, restrictedFields, targetScalaPartialVersion, targetAvroPartialVersion)
     })
   }
 
@@ -41,9 +42,10 @@ private[avrohugger] class FileGenerator {
     classStore: ClassStore,
     typeMatcher: TypeMatcher,
     restrictedFields: Boolean,
-    targetScalaPartialVersion: String): Unit = {
+    targetScalaPartialVersion: String,
+    targetAvroPartialVersion: String): Unit = {
     val ns = Option(protocol.getNamespace)
-    format.compile(classStore, ns, Right(protocol), outDir, typeMatcher, restrictedFields, targetScalaPartialVersion)
+    format.compile(classStore, ns, Right(protocol), outDir, typeMatcher, restrictedFields, targetScalaPartialVersion, targetAvroPartialVersion)
   }
 
   def stringToFile(
@@ -54,13 +56,14 @@ private[avrohugger] class FileGenerator {
     stringParser: StringInputParser,
     typeMatcher: TypeMatcher,
     restrictedFields: Boolean,
-    targetScalaPartialVersion: String): Unit = {
+    targetScalaPartialVersion: String,
+    targetAvroPartialVersion: String): Unit = {
     distinctSchemaOrProtocol(stringParser.getSchemaOrProtocols(str))
       .foreach {
         case Left(schema) =>
-          schemaToFile(schema, outDir, format, classStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
+          schemaToFile(schema, outDir, format, classStore, typeMatcher, restrictedFields, targetScalaPartialVersion, targetAvroPartialVersion)
         case Right(protocol) =>
-          protocolToFile(protocol, outDir, format, classStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
+          protocolToFile(protocol, outDir, format, classStore, typeMatcher, restrictedFields, targetScalaPartialVersion, targetAvroPartialVersion)
       }
   }
 
@@ -70,17 +73,18 @@ private[avrohugger] class FileGenerator {
     format: SourceFormat,
     classStore: ClassStore,
     fileParser: FileInputParser,
-    schemaParser: Parser,
+    schemaParser: SchemaParser,
     typeMatcher: TypeMatcher,
     classLoader: ClassLoader,
     restrictedFields: Boolean,
-    targetScalaPartialVersion: String): Unit = {
+    targetScalaPartialVersion: String,
+    targetAvroPartialVersion: String): Unit = {
     distinctSchemaOrProtocol(Await.result(fileParser.getSchemaOrProtocols(inFile, format, classStore, classLoader, schemaParser), Duration.Inf))
       .foreach {
         case Left(schema) =>
-          schemaToFile(schema, outDir, format, classStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
+          schemaToFile(schema, outDir, format, classStore, typeMatcher, restrictedFields, targetScalaPartialVersion, targetAvroPartialVersion)
         case Right(protocol) =>
-          protocolToFile(protocol, outDir, format, classStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
+          protocolToFile(protocol, outDir, format, classStore, typeMatcher, restrictedFields, targetScalaPartialVersion, targetAvroPartialVersion)
       }
   }
 
@@ -90,17 +94,18 @@ private[avrohugger] class FileGenerator {
     format: SourceFormat,
     classStore: ClassStore,
     fileParser: FileInputParser,
-    schemaParser: Parser,
+    schemaParser: SchemaParser,
     typeMatcher: TypeMatcher,
     classLoader: ClassLoader,
     restrictedFields: Boolean,
-    targetScalaPartialVersion: String): Unit = {
+    targetScalaPartialVersion: String,
+    targetAvroPartialVersion: String): Unit = {
     val f = inFiles.map(fileParser.getSchemaOrProtocols(_, format, classStore, classLoader, schemaParser))
     val res = Future.sequence(f).map(x => distinctSchemaOrProtocol(x.reduce(_ ::: _))).map(_.foreach {
       case Left(schema) =>
-        schemaToFile(schema, outDir, format, classStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
+        schemaToFile(schema, outDir, format, classStore, typeMatcher, restrictedFields, targetScalaPartialVersion, targetAvroPartialVersion)
       case Right(protocol) =>
-        protocolToFile(protocol, outDir, format, classStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
+        protocolToFile(protocol, outDir, format, classStore, typeMatcher, restrictedFields, targetScalaPartialVersion, targetAvroPartialVersion)
     })
     Await.result(res, Duration.Inf)
   }
