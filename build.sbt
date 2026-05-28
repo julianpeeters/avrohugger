@@ -58,7 +58,7 @@ lazy val avrohugger = (project in file("."))
 lazy val `avrohugger-core` = (project in file("avrohugger-core"))
   .settings(
     commonSettings,
-    libraryDependencies += ("com.eed3si9n" %% "treehugger" % "0.5.0").cross(CrossVersion.for3Use2_13),
+    libraryDependencies += "com.eed3si9n" %% "treehugger" % "0.5.0",
     Compile / sourceGenerators += addScalaVersionFile.taskValue
   )
 
