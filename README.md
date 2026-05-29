@@ -2,13 +2,21 @@
 
 **Schema-to-case-class code generation for working with Avro in Scala.**
 
-* `avrohugger-core`: Generate source code at runtime for evaluation at a later step.
-* `avrohugger-filesorter`: Sort schema files for proper compilation order.
-* `avrohugger-tools`: Generate source code at the command line with the avrohugger-tools jar.
+* Library for Scala 2.12, 2.13, and 3
+* Parses Schemas and IDLs with Avro 1.12
+* Generates Code Compatible with Avro 1.11, 1.12, and Scala 2.12, 2.13, 3
+
+##### Get the dependency:
+    
+ [scala library](https://github.com/julianpeeters/avrohugger#avrohugger-core): `avrohugger-core` - Generate source code at runtime for evaluation at a later step.
+
+    "com.julianpeeters" %% "avrohugger-core" % "2.17.0"
+
 
 **Alternative Distributions:**
 
 * [sbt](https://github.com/julianpeeters/sbt-avrohugger): `sbt-avrohugger` - Generate source code at compile time with an sbt plugin.
+* [jar](https://github.com/julianpeeters/avrohugger#avrohugger-tools)`avrohugger-tools`: Generate source code at the command line with the avrohugger-tools jar.
 * [Maven](https://github.com/makubi/avrohugger-maven-plugin): `avrohugger-maven-plugin` - Generate source code at compile time with a maven plugin.
 * [Mill](https://github.com/joan38/mill-avro): `mill-avro` - Generate source code at compile time with a Mill plugin.
 * [Gradle](https://github.com/zladovan/gradle-avrohugger-plugin): `gradle-avrohugger-plugin` - Generate source code at compile time with a gradle plugin.
@@ -24,7 +32,6 @@ Table of contents
   * [Doc Support](#doc-support)
   * [Usage](#usage)
     * [`avrohugger-core`](#avrohugger-core)
-      * [Get the dependency](#get-the-dependency-with)
       * [Description](#description)
       * [Example](#example)
       * [Customizable type mapping](#customizable-type-mapping)
@@ -109,17 +116,8 @@ _Note:_ Currently [Treehugger](http://eed3si9n.com/treehugger/comments.html#Scal
 
 ## Usage
 
-* **Library for Scala 2.12, 2.13, and 3**
-* **Parses Schemas and IDLs with Avro 1.12**
-* **Generates Code Compatible with Avro 1.11, 1.12, and Scala 2.12, 2.13, 3**
-
-
 
 #### `avrohugger-core`
-
-##### Get the dependency with:
-
-    "com.julianpeeters" %% "avrohugger-core" % "2.17.0"
 
 
 ##### Description:
@@ -216,7 +214,7 @@ namespace rewritten. Multiple conflicting wildcards are not permitted.
 
 ##### Description:
 
-To ensure dependent schemas are compiled in the proper order (thus avoiding `org.apache.avro.SchemaParseException: Undefined name: "com.example.MyRecord"` parser errors), sort avsc and avdl files with the `sortSchemaFiles` method on `AvscFileSorter` and `AvdlFileSorter`respectively.
+To ensure dependent schemas are compiled in the proper order (thus avoiding, e.g., `org.apache.avro.SchemaParseException: Undefined name: "com.example.MyRecord"` parser errors), sort avsc and avdl files with the `sortSchemaFiles` method on `AvscFileSorter`.
 
 
 ##### Example:
