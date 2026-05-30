@@ -16,7 +16,7 @@
 **Alternative Distributions:**
 
 * [sbt](https://github.com/julianpeeters/sbt-avrohugger): `sbt-avrohugger` - Generate source code at compile time with an sbt plugin.
-* [jar](https://github.com/julianpeeters/avrohugger#avrohugger-tools)`avrohugger-tools`: Generate source code at the command line with the avrohugger-tools jar.
+* [jar](https://github.com/julianpeeters/avrohugger#avrohugger-tools): `avrohugger-tools` - Generate source code at the command line with the avrohugger-tools jar.
 * [Maven](https://github.com/makubi/avrohugger-maven-plugin): `avrohugger-maven-plugin` - Generate source code at compile time with a maven plugin.
 * [Mill](https://github.com/joan38/mill-avro): `mill-avro` - Generate source code at compile time with a Mill plugin.
 * [Gradle](https://github.com/zladovan/gradle-avrohugger-plugin): `gradle-avrohugger-plugin` - Generate source code at compile time with a gradle plugin.
