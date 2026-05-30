@@ -13,7 +13,7 @@
     "com.julianpeeters" %% "avrohugger-core" % "2.17.0"
 
 
-**Alternative Distributions:**
+##### Alternative Distributions:
 
 * [sbt](https://github.com/julianpeeters/sbt-avrohugger): `sbt-avrohugger` - Generate source code at compile time with an sbt plugin.
 * [jar](https://github.com/julianpeeters/avrohugger#avrohugger-tools): `avrohugger-tools` - Generate source code at the command line with the avrohugger-tools jar.
