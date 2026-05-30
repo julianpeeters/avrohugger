@@ -16,7 +16,7 @@ jobs:
         java: ['21', '25']
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Setup JDK
         uses: actions/setup-java@v5
         with:
