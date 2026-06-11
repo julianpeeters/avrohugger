@@ -89,8 +89,9 @@ class FileInputParser {
     classStore: ClassStore,
     classLoader: ClassLoader,
     parser: Parser): Future[List[Either[Schema, Protocol]]] = {
-    processedFiles.computeIfAbsent(infile.getCanonicalPath, _ => {
-      infile.getName.split("\\.").last match {
+    val path = infile.getCanonicalPath
+    processedFiles.computeIfAbsent(path, _ => {
+      val future: Future[List[Either[Schema, Protocol]]] = infile.getName.split("\\.").last match {
         case "avro" => Future {
           val gdr = new GenericDatumReader[GenericRecord]
           val dfr = new DataFileReader(infile, gdr)
@@ -155,6 +156,8 @@ class FileInputParser {
               |".avsc" for plain text json files, ".avdl" for IDL files, or .avro
               |for binary.""".trim.stripMargin)
       }
+      future.andThen { case _ => processedFiles.put(path, Future.successful(Nil)) }
+      future
     })
   }
 
