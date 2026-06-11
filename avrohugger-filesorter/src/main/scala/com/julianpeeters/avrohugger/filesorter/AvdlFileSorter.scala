@@ -16,21 +16,22 @@ import scala.io.Source
 object AvdlFileSorter {
   def sortSchemaFiles(filesIterable: Iterable[File]): Seq[File] = {
     val files = filesIterable.toList
-    val importsMap = files.map ( file => {
+    val importsMap = files.map(file => {
       (file.getCanonicalFile, getImports(file).filter(_.exists))
     }).toMap
-      
-    @tailrec def addFiles(processedFiles: Vector[File], processedSet: Set[File], remainingFiles: List[File]): Seq[File] = {
+
+    @tailrec def addFiles(processedFiles: Set[File], remainingFiles: List[File]): Seq[File] = {
       remainingFiles match {
-        case Nil => processedFiles
+        case Nil => processedFiles.toSeq
         case h :: t =>
-          if (importsMap(h).forall(processedSet.contains))
-            addFiles(processedFiles :+ h, processedSet + h, t)
+          if (importsMap(h).forall(processedFiles.contains))
+            addFiles(processedFiles + h, t)
           else
-            addFiles(processedFiles, processedSet, t :+ h)
+            addFiles(processedFiles, t :+ h)
       }
     }
-    addFiles(Vector.empty, Set.empty, files)
+
+    addFiles(Set.empty, files)
   }
 
   // TODO This should be replaced by letting AVRO compile the IDL files directly, but I'm not sure how to do that now.
@@ -39,7 +40,7 @@ object AvdlFileSorter {
   private[this] def getImports(file: File): Vector[File] = {
     val source = Source.fromFile(file)
     try {
-      source.getLines().collect{
+      source.getLines().collect {
         case importPattern(currentImport) => new File(file.getParentFile, currentImport).getCanonicalFile
       }.toVector
     }
