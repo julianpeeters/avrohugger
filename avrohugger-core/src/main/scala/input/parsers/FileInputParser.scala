@@ -21,8 +21,8 @@ import scala.util.Try
 
 class FileInputParser {
 
-  var processedFiles: ConcurrentHashMap[String, Future[List[Either[Schema, Protocol]]]] = new ConcurrentHashMap[String, Future[List[Either[Schema, Protocol]]]]()
-  var processedSchemas: ConcurrentHashMap[String, Schema] = new ConcurrentHashMap[String, Schema]()
+  val processedFiles: ConcurrentHashMap[String, Future[List[Either[Schema, Protocol]]]] = new ConcurrentHashMap[String, Future[List[Either[Schema, Protocol]]]]()
+  val processedSchemas: ConcurrentHashMap[String, Schema] = new ConcurrentHashMap[String, Schema]()
 
   private def unUnion(schema: Schema) = {
     schema.getType match {
@@ -37,21 +37,23 @@ class FileInputParser {
   }
 
   private def copySchemas(inFile: File, tempParser: Parser, parser: Parser): Unit = {
-    val tempKeys = tempParser.getTypes().keySet().asScala
-    val keys = parser.getTypes().keySet().asScala
+    val tempTypes = tempParser.getTypes()
+    val types = parser.getTypes()
+    val tempKeys = tempTypes.keySet().asScala
+    val keys = types.keySet().asScala
     val commonElements = tempKeys.intersect(keys)
     val nonEqualElements = commonElements.filter { element =>
-      parser.getTypes().get(element) != tempParser.getTypes().get(element)
+      types.get(element) != tempTypes.get(element)
     }
     if (nonEqualElements.nonEmpty) {
       sys.error(s"Can't redefine:  ${nonEqualElements.mkString(",")} in $inFile")
     } else {
       if (commonElements.isEmpty) {
-        val _ = parser.addTypes(tempParser.getTypes.values)
+        val _ = parser.addTypes(tempTypes.values)
       } else {
-        val missingTypes = tempParser.getTypes().keySet().asScala.diff(parser.getTypes().keySet().asScala)
+        val missingTypes = tempKeys.diff(keys)
         val _ = parser.addTypes(missingTypes.map { t =>
-          t -> tempParser.getTypes().get(t)
+          t -> tempTypes.get(t)
         }.toMap.asJava.values)
       }
     }
@@ -87,7 +89,7 @@ class FileInputParser {
     classStore: ClassStore,
     classLoader: ClassLoader,
     parser: Parser): Future[List[Either[Schema, Protocol]]] = {
-    Option(processedFiles.computeIfAbsent(infile.getCanonicalPath, _ => {
+    processedFiles.computeIfAbsent(infile.getCanonicalPath, _ => {
       infile.getName.split("\\.").last match {
         case "avro" => Future {
           val gdr = new GenericDatumReader[GenericRecord]
@@ -110,47 +112,50 @@ class FileInputParser {
           List(Right(p))
         }
         case "avdl" =>
-          val originalClassLoader = Thread.currentThread().getContextClassLoader()
-          val result = Future {
-            Thread.currentThread().setContextClassLoader(classLoader)
-            val idl = new IdlReader().parse(infile.toPath())
-            val maybeProtocol = Option(idl.getProtocol())
-            
-            /**
-              * IDLs may refer to types imported from another file. When converted
-              * to protocols, the imported types that share the IDL's namespace
-              * cannot be distinguished from types defined within the IDL, yet
-              * should not be generated as subtypes of the IDL's ADT and should
-              * instead be generated in its own namespace. So, strip the protocol
-              * of all imported types and generate them separately.
-              */
-            val importedFiles = IdlImportParser.getImportedFiles(infile, classLoader)
-            
-            Future.sequence(importedFiles.map { file =>
-              // val importParser = new Parser() // else attempts to redefine schemas
-              getSchemaOrProtocols(file, format, classStore, classLoader, parser)
-            }).map { f =>
-              maybeProtocol match {
-                case Some(protocol) =>
-                  val localProtocol = stripImports(protocol, processedSchemas)
-                  localProtocol.getTypes().forEach(importedSchema => processedSchemas.putIfAbsent(importedSchema.getFullName, importedSchema))
-                  (Right(localProtocol) +: f.flatten).reverse
-                case None =>
-                  val mainSchemas = unUnion(idl.getMainSchema())
-                  mainSchemas.map(importedSchema => processedSchemas.putIfAbsent(importedSchema.getFullName, importedSchema))
-                  (mainSchemas.map(Left(_)) ++ f.flatten).reverse
+          Future {
+            val thread = Thread.currentThread()
+            val originalClassLoader = thread.getContextClassLoader()
+            try {
+              thread.setContextClassLoader(classLoader)
+              val idl = new IdlReader().parse(infile.toPath())
+              val maybeProtocol = Option(idl.getProtocol())
+
+              /**
+                * IDLs may refer to types imported from another file. When converted
+                * to protocols, the imported types that share the IDL's namespace
+                * cannot be distinguished from types defined within the IDL, yet
+                * should not be generated as subtypes of the IDL's ADT and should
+                * instead be generated in its own namespace. So, strip the protocol
+                * of all imported types and generate them separately.
+                */
+              val importedFiles = IdlImportParser.getImportedFiles(infile, classLoader)
+
+              Future.sequence(importedFiles.map { file =>
+                // val importParser = new Parser() // else attempts to redefine schemas
+                getSchemaOrProtocols(file, format, classStore, classLoader, parser)
+              }).map { f =>
+                maybeProtocol match {
+                  case Some(protocol) =>
+                    val localProtocol = stripImports(protocol, processedSchemas)
+                    localProtocol.getTypes().forEach(importedSchema => processedSchemas.putIfAbsent(importedSchema.getFullName, importedSchema))
+                    (Right(localProtocol) +: f.flatten).reverse
+                  case None =>
+                    val mainSchemas = unUnion(idl.getMainSchema())
+                    mainSchemas.map(importedSchema => processedSchemas.putIfAbsent(importedSchema.getFullName, importedSchema))
+                    (mainSchemas.map(Left(_)) ++ f.flatten).reverse
+                }
               }
+            } finally {
+              thread.setContextClassLoader(originalClassLoader)
             }
           }.flatten
-          Thread.currentThread().setContextClassLoader(originalClassLoader)
-          result
         case _ =>
           throw new Exception(
             """File must end in ".avpr" for protocol files,
               |".avsc" for plain text json files, ".avdl" for IDL files, or .avro
               |for binary.""".trim.stripMargin)
       }
-    })).getOrElse(Future.successful(List()))
+    })
   }
 
   private def stripImports(protocol: Protocol, imported: ConcurrentHashMap[String, Schema]) = {
