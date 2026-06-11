@@ -20,19 +20,17 @@ object AvdlFileSorter {
       (file.getCanonicalFile, getImports(file).filter(_.exists))
     }).toMap
       
-    @tailrec def addFiles(processedFiles: Seq[File], remainingFiles: List[File]): Seq[File] = {
+    @tailrec def addFiles(processedFiles: Vector[File], processedSet: Set[File], remainingFiles: List[File]): Seq[File] = {
       remainingFiles match {
         case Nil => processedFiles
         case h :: t =>
-          val processedFilesSet = processedFiles.toSet
-          if (importsMap(h).forall(processedFilesSet.contains))
-            addFiles(processedFiles :+ h, t)
+          if (importsMap(h).forall(processedSet.contains))
+            addFiles(processedFiles :+ h, processedSet + h, t)
           else
-            addFiles(processedFiles, t :+ h)
+            addFiles(processedFiles, processedSet, t :+ h)
       }
     }
-    val result = addFiles(Seq.empty, files)
-    result
+    addFiles(Vector.empty, Set.empty, files)
   }
 
   // TODO This should be replaced by letting AVRO compile the IDL files directly, but I'm not sure how to do that now.

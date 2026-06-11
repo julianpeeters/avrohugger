@@ -30,19 +30,24 @@ object AvscFileSorter {
   }
 
   def usedUnusedSchemas(files: Iterable[File]): (Iterable[File], Iterable[File]) = {
+    val fileCache: Map[File, (String, String)] = files.map { f =>
+      val txt = fileText(f)
+      f -> (extractFullNameFromText(txt), txt)
+    }.toMap
     val usedUnused = files.map { file =>
-      val fullName = extractFullName(file)
+      val fullName = fileCache(file)._1
       val numUsages = files.count { candidate =>
-        val candidateName = extractFullName(candidate)
-        strContainsType(candidateName, fileText(candidate), fullName)
+        val (candidateName, candidateText) = fileCache(candidate)
+        strContainsType(candidateName, candidateText, fullName)
       }
       (file, numUsages)
     }.partition(usedUnused => usedUnused._2 > 0)
     (usedUnused._1.map(_._1), usedUnused._2.map(_._1))
   }
 
-  def extractFullName(f: File): String = {
-    val txt = fileText(f)
+  def extractFullName(f: File): String = extractFullNameFromText(fileText(f))
+
+  private def extractFullNameFromText(txt: String): String = {
     val namespace = namespaceRegex.findFirstMatchIn(txt)
     val name = nameRegex.findFirstMatchIn(txt)
     val nameGroup = name.get.group(1)
@@ -56,7 +61,7 @@ object AvscFileSorter {
   def fileText(f: File): String = {
     val src = Source.fromFile(f)
     try {
-      src.getLines().mkString
+      src.getLines().mkString("\n")
     } finally {
       src.close()
     }
