@@ -96,7 +96,7 @@ private[avrohugger] class FileGenerator {
     restrictedFields: Boolean,
     targetScalaPartialVersion: String): Unit = {
     val f = inFiles.map(fileParser.getSchemaOrProtocols(_, format, classStore, classLoader, schemaParser))
-    val res = Future.sequence(f).map(x => distinctSchemaOrProtocol(x.reduce(_ ::: _))).map(_.foreach {
+    val res = Future.sequence(f).map(x => distinctSchemaOrProtocol(x.flatten)).map(_.foreach {
       case Left(schema) =>
         schemaToFile(schema, outDir, format, classStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
       case Right(protocol) =>

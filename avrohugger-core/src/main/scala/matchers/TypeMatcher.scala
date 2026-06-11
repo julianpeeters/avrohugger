@@ -35,15 +35,10 @@ class TypeMatcher(
       else {
         val tp: Type = schema.getType match {
           case Schema.Type.ARRAY =>
-            val avroElement = schema.getElementType
-            val scalaElementType = toScalaType(classStore, namespace, avroElement)
             val collectionType = CustomTypeMatcher.checkCustomArrayType(avroScalaTypes.array)
-            collectionType(scalaElementType)
+            collectionType(matchType(schema.getElementType))
           case Schema.Type.MAP =>
-            val keyType = StringClass
-            val avroValueType = schema.getValueType
-            val scalaValueType = toScalaType(classStore, namespace, avroValueType)
-            TYPE_MAP(keyType, scalaValueType)
+            TYPE_MAP(StringClass, matchType(schema.getValueType))
           case Schema.Type.BOOLEAN => BooleanClass
           case Schema.Type.DOUBLE => CustomTypeMatcher.checkCustomNumberType(avroScalaTypes.double)
           case Schema.Type.FLOAT => CustomTypeMatcher.checkCustomNumberType(avroScalaTypes.float)

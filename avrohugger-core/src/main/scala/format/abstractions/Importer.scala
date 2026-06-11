@@ -75,12 +75,6 @@ trait Importer {
 
   def getFixedSchemas(topLevelSchemas: List[Schema]): List[Schema] =
     topLevelSchemas
-      .flatMap(schema => {
-        schema.getType match {
-          case FIXED => Seq(schema)
-          case _ => Seq.empty[Schema]
-        }
-      })
       .filter(_.getType == FIXED)
       .distinct
 
@@ -98,9 +92,10 @@ trait Importer {
   }
 
   private def requiresImportDef(schema: Schema, namespace: Option[String], typeMatcher: TypeMatcher): Boolean = {
-    (isRecord(schema) || isEnum(schema) || isFixed(schema)) &&
-      checkNamespace(schema, typeMatcher).isDefined &&
-      checkNamespace(schema, typeMatcher) != namespace
+    (isRecord(schema) || isEnum(schema) || isFixed(schema)) && {
+      val ns = checkNamespace(schema, typeMatcher)
+      ns.isDefined && ns != namespace
+    }
   }
 
   // gets record schemas which may be dependencies

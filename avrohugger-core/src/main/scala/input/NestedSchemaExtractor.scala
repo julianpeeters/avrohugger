@@ -23,8 +23,7 @@ object NestedSchemaExtractor {
         visitedSchemas += schema.getFullName
         schema.getType match {
           case RECORD =>
-            val fields: List[Schema.Field] = schema.getFields().asScala.toList
-            val fieldSchemas: List[Schema] = fields.map(field => field.schema)
+            val fieldSchemas: List[Schema] = schema.getFields().asScala.map(_.schema).toList
 
             def flattenSchema(fieldSchema: Schema): List[Schema] = {
               fieldSchema.getType match {
