@@ -23,17 +23,19 @@ object CustomTypeMatcher {
     enumType: AvroScalaEnumType,
     classStore: ClassStore,
     schema: Schema,
-    useFullName: Boolean = false
-  ) = enumType match {
-    case JavaEnum => RootClass.newClass(schema.getFullName)
-    case ScalaEnumeration =>
-      if (useFullName)
-        RootClass.newClass(s"${schema.getNamespace()}.${classStore.generatedClasses.get(schema.getFullName)}")
-      else
-        classStore.generatedClasses.get(schema.getFullName)
-    case ScalaCaseObjectEnum => RootClass.newClass(schema.getFullName)
-    case Scala3Enum => RootClass.newClass(schema.getFullName)
-    case EnumAsScalaString => StringClass
+    useFullName: Boolean = false,
+    typeMatcher: TypeMatcher
+  ) = {
+    val name = schema.getName()
+    val fullName = CustomNamespaceMatcher.checkCustomNamespace(Option(schema.getNamespace()), typeMatcher, Option(schema.getNamespace()))
+                                          .fold(RootClass.newClass(name))(ns => RootClass.newClass(s"${ns}.${name}"))
+    enumType match {
+      case JavaEnum => fullName
+      case ScalaEnumeration => RootClass.newClass(fullName.rawname.append(".Value"))
+      case ScalaCaseObjectEnum => fullName
+      case Scala3Enum => fullName
+      case EnumAsScalaString => StringClass
+    }
   }
 
   def checkCustomNumberType(numberType: AvroScalaNumberType) = numberType match {

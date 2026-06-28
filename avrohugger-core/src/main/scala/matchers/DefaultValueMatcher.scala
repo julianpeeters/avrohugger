@@ -3,6 +3,7 @@ package matchers
 
 import avrohugger.matchers.custom.CustomDefaultParamMatcher
 import avrohugger.matchers.custom.CustomDefaultValueMatcher
+import avrohugger.matchers.custom.CustomNamespaceMatcher
 import avrohugger.stores.ClassStore
 import avrohugger.types._
 import java.nio.charset.StandardCharsets
@@ -75,7 +76,9 @@ object DefaultValueMatcher {
             ).toOption
         )
       case Schema.Type.ENUM => {
-        val refName = if (useFullName) schema.getFullName else schema.getName
+        val name = schema.getName()
+        val refName = CustomNamespaceMatcher.checkCustomNamespace(Option(schema.getNamespace()), typeMatcher, Option(schema.getNamespace()))
+                                         .fold(RootClass.newClass(name))(ns => RootClass.newClass(s"${ns}.${name}"))
         typeMatcher.avroScalaTypes.`enum` match {
           case JavaEnum => (REF(refName) DOT node.textValue())
           case ScalaEnumeration => (REF(refName) DOT node.textValue())
@@ -107,14 +110,19 @@ object DefaultValueMatcher {
           case o: ObjectNode => o
           case _ => throw new Exception(s"Invalid default value for schema: $schema, value: $node")
         }
-
+        val name = schema.getName()
+        val fullName = CustomNamespaceMatcher.checkCustomNamespace(Option(schema.getNamespace()), typeMatcher, Option(schema.getNamespace()))
+                                             .fold(RootClass.newClass(name))(ns => RootClass.newClass(s"${ns}.${name}"))
         val fieldValues = fields.asScala.map { f =>
           fromJsonNode(jsObject.get(f.name), classStore, namespace, f.schema, typeMatcher, useFullName)
         }
-        NEW(schema.getFullName, fieldValues: _*)
+        NEW(fullName, fieldValues: _*)
       }
       case Schema.Type.FIXED => {
-        REF(schema.getName()) APPLY (
+        val name = schema.getName()
+        val fullName = CustomNamespaceMatcher.checkCustomNamespace(Option(schema.getNamespace()), typeMatcher, Option(schema.getNamespace()))
+                                         .fold(RootClass.newClass(name))(ns => RootClass.newClass(s"${ns}.${name}"))
+        REF(fullName) APPLY (
           CustomDefaultParamMatcher.checkCustomDecimalType(
             decimalType = typeMatcher.avroScalaTypes.decimal,
             schema = schema,
