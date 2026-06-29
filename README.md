@@ -2,9 +2,9 @@
 
 **Schema-to-case-class code generation for working with Avro in Scala.**
 
-* Library for Scala 2.12, 2.13, and 3
+* Library for Scala 2, 3
 * Parses Schemas and IDLs with Avro 1.12
-* Generates Code Compatible with Avro 1.7 - 1.12, and Scala 2.12 - 3
+* Generates Code Compatible with Avro 1.11, 1.12, and Scala 2, 3
 
 ##### Get the dependency:
     
@@ -52,7 +52,7 @@ API](https://avro.apache.org/docs/1.12.0/getting-started-java/#serializing-and-d
 
 * `SpecificRecord` Case classes that implement `SpecificRecordBase` and
 therefore have mutable `var` fields (for use with the Avro Specific API -
-Scalding, Spark, Avro, etc.).
+Kafka, Spark, Avro, etc.).
 
 ##### Supports generating case classes with arbitrary fields of the following datatypes:
 
