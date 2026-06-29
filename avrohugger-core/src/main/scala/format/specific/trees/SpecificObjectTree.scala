@@ -43,6 +43,7 @@ object SpecificObjectTree {
   // Companion to case classes
   def toCaseCompanionDef(
     schema: Schema,
+    namespace: Option[String],
     maybeFlags: Option[List[Long]],
     typeMatcher: TypeMatcher) = {
     val ParserClass = RootClass.newClass("org.apache.avro.Schema.Parser")
@@ -50,8 +51,10 @@ object SpecificObjectTree {
       case Some(flags) => OBJECTDEF(schema.getName).withFlags(flags:_*)
       case None => OBJECTDEF(schema.getName)
     }
+    val namespaceRegex = """"namespace":"([^"]+)"""".r
+    val updated = namespaceRegex.replaceFirstIn(schema.toString, s""""namespace":${namespace.fold("""null""")(ns => s""""$ns"""")}""")
     val schemaDef = VAL(REF("SCHEMA$")) := {
-      NEW(ParserClass) APPLY (Nil) DOT "parse" APPLY (schema.toString match {
+      NEW(ParserClass) APPLY (Nil) DOT "parse" APPLY (updated match {
         case schemaString if schemaString.getBytes(StandardCharsets.UTF_8).length > 65535 => LIST(schemaString.split("},\\{\"").map(LIT)) DOT "mkString" APPLY (LIT("},{\""))
         case schemaString => LIT(schemaString)
       })
