@@ -12,11 +12,11 @@ jobs:
       fail-fast: false
       matrix:
         os: [macos-latest, ubuntu-latest]
-        scala: [2.12.21, 2.13.18, 3.3.7]
-        java: ['21', '25']
+        scala: [2.12.21, 2.13.18, 3.3.8]
+        java: ['17', '25']
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Setup JDK
         uses: actions/setup-java@v5
         with:

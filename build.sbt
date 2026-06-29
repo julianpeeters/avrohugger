@@ -2,7 +2,7 @@ lazy val avroVersion = "1.12.1"
 
 lazy val commonSettings = Seq(
   organization := "com.julianpeeters",
-  version := "2.17.1-SNAPSHOT",
+  version := "2.17.1",
   ThisBuild / versionScheme := Some("semver-spec"),
   scalacOptions ++= Seq(
     "-unchecked", 
@@ -26,7 +26,7 @@ lazy val commonSettings = Seq(
           "org.specs2"             %% "specs2-core"             % "4.23.0" % "test")
       case _ =>
         libraryDependencies.value ++ Seq(
-          "org.specs2"             %% "specs2-core"             % "5.9.0"  % "test")
+          "org.specs2"             %% "specs2-core"             % "5.9.1"  % "test")
     }
   },
   publishMavenStyle := true,

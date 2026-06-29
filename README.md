@@ -4,13 +4,13 @@
 
 * Library for Scala 2.12, 2.13, and 3
 * Parses Schemas and IDLs with Avro 1.12
-* Generates Code Compatible with Avro 1.11, 1.12, and Scala 2.12, 2.13, 3
+* Generates Code Compatible with Avro 1.7 - 1.12, and Scala 2.12 - 3
 
 ##### Get the dependency:
     
- [scala library](https://github.com/julianpeeters/avrohugger#avrohugger-core): `avrohugger-core` - Generate source code at runtime for evaluation at a later step.
+[scala library (jvm)](https://github.com/julianpeeters/avrohugger#avrohugger-core): `avrohugger-core` - Generate source code at runtime for evaluation at a later step.
 
-    "com.julianpeeters" %% "avrohugger-core" % "2.17.0"
+    "com.julianpeeters" %% "avrohugger-core" % "2.17.1"
 
 
 ##### Alternative Distributions:
@@ -209,7 +209,7 @@ namespace rewritten. Multiple conflicting wildcards are not permitted.
 
 ##### Get the dependency with:
 
-    "com.julianpeeters" %% "avrohugger-filesorter" % "2.17.0"
+    "com.julianpeeters" %% "avrohugger-filesorter" % "2.17.1"
     
 
 ##### Description:
@@ -229,17 +229,17 @@ To ensure dependent schemas are compiled in the proper order (thus avoiding, e.g
 #### `avrohugger-tools`
 
 
-  Download the avrohugger-tools jar for Scala [2.12](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.12/2.17.0/avrohugger-tools_2.12-2.17.0-assembly.jar), Scala [2.13](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.13/2.17.0/avrohugger-tools_2.13-2.17.0-assembly.jar) (>30MB!), or Scala [3](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_3/2.17.0/avrohugger-tools_3-2.17.0-assembly.jar) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
+  Download the avrohugger-tools jar for Scala [2.12](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.12/2.17.1/avrohugger-tools_2.12-2.17.1-assembly.jar), Scala [2.13](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.13/2.17.1/avrohugger-tools_2.13-2.17.1-assembly.jar) (>30MB!), or Scala [3](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_3/2.17.1/avrohugger-tools_3-2.17.1-assembly.jar) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
 
 
 * `generate` generates Scala case class definitions:
 
-`java -jar /path/to/avrohugger-tools_3-2.17.0-assembly.jar generate schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_3-2.17.1-assembly.jar generate schema user.avsc . `
 
 
 * `generate-specific` generates definitions that extend Avro's `SpecificRecordBase`:
 
-`java -jar /path/to/avrohugger-tools_3-2.17.0-assembly.jar generate-specific schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_3-2.17.1-assembly.jar generate-specific schema user.avsc . `
 
 
 ## Warnings
