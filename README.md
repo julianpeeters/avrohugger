@@ -2,13 +2,21 @@
 
 **Schema-to-case-class code generation for working with Avro in Scala.**
 
-* `avrohugger-core`: Generate source code at runtime for evaluation at a later step.
-* `avrohugger-filesorter`: Sort schema files for proper compilation order.
-* `avrohugger-tools`: Generate source code at the command line with the avrohugger-tools jar.
+* Library for Scala 2, 3
+* Parses Schemas and IDLs with Avro 1.12
+* Generates Code Compatible with Avro 1.11, 1.12, and Scala 2, 3
 
-**Alternative Distributions:**
+##### Get the dependency:
+    
+[scala library (jvm)](https://github.com/julianpeeters/avrohugger#avrohugger-core): `avrohugger-core` - Generate source code at runtime for evaluation at a later step.
+
+    "com.julianpeeters" %% "avrohugger-core" % "2.17.1"
+
+
+##### Alternative Distributions:
 
 * [sbt](https://github.com/julianpeeters/sbt-avrohugger): `sbt-avrohugger` - Generate source code at compile time with an sbt plugin.
+* [jar](https://github.com/julianpeeters/avrohugger#avrohugger-tools): `avrohugger-tools` - Generate source code at the command line with the avrohugger-tools jar.
 * [Maven](https://github.com/makubi/avrohugger-maven-plugin): `avrohugger-maven-plugin` - Generate source code at compile time with a maven plugin.
 * [Mill](https://github.com/joan38/mill-avro): `mill-avro` - Generate source code at compile time with a Mill plugin.
 * [Gradle](https://github.com/zladovan/gradle-avrohugger-plugin): `gradle-avrohugger-plugin` - Generate source code at compile time with a gradle plugin.
@@ -24,7 +32,6 @@ Table of contents
   * [Doc Support](#doc-support)
   * [Usage](#usage)
     * [`avrohugger-core`](#avrohugger-core)
-      * [Get the dependency](#get-the-dependency-with)
       * [Description](#description)
       * [Example](#example)
       * [Customizable type mapping](#customizable-type-mapping)
@@ -45,7 +52,7 @@ API](https://avro.apache.org/docs/1.12.0/getting-started-java/#serializing-and-d
 
 * `SpecificRecord` Case classes that implement `SpecificRecordBase` and
 therefore have mutable `var` fields (for use with the Avro Specific API -
-Scalding, Spark, Avro, etc.).
+Kafka, Spark, Avro, etc.).
 
 ##### Supports generating case classes with arbitrary fields of the following datatypes:
 
@@ -109,17 +116,8 @@ _Note:_ Currently [Treehugger](http://eed3si9n.com/treehugger/comments.html#Scal
 
 ## Usage
 
-* **Library For Scala 2.12, 2.13, and 3**
-* **Parses Schemas and IDLs with Avro 1.12**
-* **Generates Code Compatible with Avro 1.11, 1.12, and Scala 2.12, 2.13, 3**
-
-
 
 #### `avrohugger-core`
-
-##### Get the dependency with:
-
-    "com.julianpeeters" %% "avrohugger-core" % "2.16.4"
 
 
 ##### Description:
@@ -211,12 +209,12 @@ namespace rewritten. Multiple conflicting wildcards are not permitted.
 
 ##### Get the dependency with:
 
-    "com.julianpeeters" %% "avrohugger-filesorter" % "2.16.4"
+    "com.julianpeeters" %% "avrohugger-filesorter" % "2.17.1"
     
 
 ##### Description:
 
-To ensure dependent schemas are compiled in the proper order (thus avoiding `org.apache.avro.SchemaParseException: Undefined name: "com.example.MyRecord"` parser errors), sort avsc and avdl files with the `sortSchemaFiles` method on `AvscFileSorter` and `AvdlFileSorter`respectively.
+To ensure dependent schemas are compiled in the proper order (thus avoiding, e.g., `org.apache.avro.SchemaParseException: Undefined name: "com.example.MyRecord"` parser errors), sort avsc and avdl files with the `sortSchemaFiles` method on `AvscFileSorter`.
 
 
 ##### Example:
@@ -231,17 +229,17 @@ To ensure dependent schemas are compiled in the proper order (thus avoiding `org
 #### `avrohugger-tools`
 
 
-  Download the avrohugger-tools jar for Scala [2.12](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.12/2.16.4/avrohugger-tools_2.12-2.16.4-assembly.jar), Scala [2.13](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.13/2.16.4/avrohugger-tools_2.13-2.16.4-assembly.jar) (>30MB!), or Scala [3](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_3/2.16.4/avrohugger-tools_3-2.16.4-assembly.jar) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
+  Download the avrohugger-tools jar for Scala [2.12](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.12/2.17.1/avrohugger-tools_2.12-2.17.1-assembly.jar), Scala [2.13](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_2.13/2.17.1/avrohugger-tools_2.13-2.17.1-assembly.jar) (>30MB!), or Scala [3](https://search.maven.org/remotecontent?filepath=com/julianpeeters/avrohugger-tools_3/2.17.1/avrohugger-tools_3-2.17.1-assembly.jar) and use it like the avro-tools jar `Usage: [-string] (schema|protocol|datafile) input... outputdir`:
 
 
 * `generate` generates Scala case class definitions:
 
-`java -jar /path/to/avrohugger-tools_3-2.16.4-assembly.jar generate schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_3-2.17.1-assembly.jar generate schema user.avsc . `
 
 
 * `generate-specific` generates definitions that extend Avro's `SpecificRecordBase`:
 
-`java -jar /path/to/avrohugger-tools_3-2.16.4-assembly.jar generate-specific schema user.avsc . `
+`java -jar /path/to/avrohugger-tools_3-2.17.1-assembly.jar generate-specific schema user.avsc . `
 
 
 ## Warnings
@@ -277,7 +275,7 @@ Contributors:
 
 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | | | |
 |:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|     :---      | :---      |          :--- |
-| [Marius Soutier](https://github.com/mariussoutier) </br> [Brian London](https://github.com/BrianLondon) </br> [alancnet](https://github.com/alancnet) </br> [Matt Coffin](https://github.com/mcoffin) </br> [Ryan Koval](http://github.ryankoval.com) </br> [Simonas Gelazevicius](https://github.com/simsasg) </br> [Paul Snively](https://github.com/PaulAtBanno) </br> [Marco Stefani](https://github.com/inafets) </br> [Andrew Gustafson](https://github.com/agustafson) </br> [Kostya Golikov](https://github.com/lazyval) </br> [Plínio Pantaleão](https://github.com/plinioj) </br> [Sietse de Kaper](https://github.com/targeter) </br> [Martin Mauch](https://github.com/nightscape) </br> [Leon Poon](https://github.com/LeonPoon) </br> [Andrzej Ressel](https://github.com/andrzejressel) </br> [Philippus Baalman](https://github.com/Philippus) | [Paul Pearcy](https://github.com/ppearcy) </br> [Matt Allen](https://github.com/Matt343) </br> [C-zito](https://github.com/C-Zito) </br> [Tim Chan](https://github.com/timchan-lumoslabs) </br> [Saket](https://github.com/skate056) </br> [Daniel Davis](https://github.com/wabu) </br> [Zach Cox](https://github.com/zcox) </br> [Diego E. Alonso Blas](https://github.com/diesalbla) </br> [Fede Fernández](https://github.com/fedefernandez) </br> [Rob Landers](https://github.com/withinboredom) </br> [Simon Petty](https://github.com/simonpetty) </br> [Andreas Drobisch](https://github.com/adrobisch) </br> [Timo Schmid](https://github.com/timo-schmid) </br> [Dmytro Orlov](https://github.com/DmytroOrlov)  </br> [Mikołaj Jakubowski](https://github.com/mkljakubowski) | [Stefano Galarraga](https://github.com/galarragas) </br> [Lars Albertsson](https://github.com/lallea) </br> [Eugene Platonov](https://github.com/jozic) </br> [Jerome Wacongne](https://github.com/ch4mpy) </br> [Jon Morra](https://github.com/jon-morra-zefr) </br> [Raúl Raja Martínez](https://github.com/raulraja) </br> [Kaur Matas](https://github.com/kmatasflp) </br> [Chris Albright](https://github.com/chrisalbright) </br> [Francisco Díaz](https://github.com/franciscodr) </br> [Bobby Rauchenberg](https://github.com/bobbyrauchenberg) </br> [Leonard Ehrenfried](https://github.com/leonardehrenfried) </br> [François Sarradin](https://github.com/fsarradin) </br> [niqdev](https://github.com/niqdev) </br> [rsitze-mmai](https://github.com/rsitze-mmai) </br> [Wessel W. Bakker](https://github.com/wwbakker)| [Julien BENOIT](https://github.com/jbenoit2011)  </br> [Adam Drakeford](https://github.com/dr4ke616) </br> [Carlos Silva](https://github.com/alchimystic) </br> [ismail Benammar](https://github.com/ismailBenammar) </br> [mcenkar](https://github.com/mcenkar) </br> [Luca Tronchin](https://github.com/ltronky) </br> [LydiaSkuse](https://github.com/LydiaSkuse) </br> [Algimantas Milašius](https://github.com/AlgMi) </br> [Leonard Ehrenfried](https://github.com/leonardehrenfried) </br> [Massimo Siani](https://github.com/massimosiani)  </br> [Konstantin](https://github.com/tyger) </br> [natefitzgerald](https://github.com/natefitzgerald) </br>  [Victor](https://github.com/gafiatulin) </br> [steve-e](https://github.com/steve-e) </br> [Ayoub Benali](https://github.com/ayoub-benali) |
+| [Marius Soutier](https://github.com/mariussoutier) </br> [Brian London](https://github.com/BrianLondon) </br> [alancnet](https://github.com/alancnet) </br> [Matt Coffin](https://github.com/mcoffin) </br> [Ryan Koval](http://github.ryankoval.com) </br> [Simonas Gelazevicius](https://github.com/simsasg) </br> [Paul Snively](https://github.com/PaulAtBanno) </br> [Marco Stefani](https://github.com/inafets) </br> [Andrew Gustafson](https://github.com/agustafson) </br> [Kostya Golikov](https://github.com/lazyval) </br> [Plínio Pantaleão](https://github.com/plinioj) </br> [Sietse de Kaper](https://github.com/targeter) </br> [Martin Mauch](https://github.com/nightscape) </br> [Leon Poon](https://github.com/LeonPoon) </br> [Andrzej Ressel](https://github.com/andrzejressel) </br> [Philippus Baalman](https://github.com/Philippus) | [Paul Pearcy](https://github.com/ppearcy) </br> [Matt Allen](https://github.com/Matt343) </br> [C-zito](https://github.com/C-Zito) </br> [Tim Chan](https://github.com/timchan-lumoslabs) </br> [Saket](https://github.com/skate056) </br> [Daniel Davis](https://github.com/wabu) </br> [Zach Cox](https://github.com/zcox) </br> [Diego E. Alonso Blas](https://github.com/diesalbla) </br> [Fede Fernández](https://github.com/fedefernandez) </br> [Rob Landers](https://github.com/withinboredom) </br> [Simon Petty](https://github.com/simonpetty) </br> [Andreas Drobisch](https://github.com/adrobisch) </br> [Timo Schmid](https://github.com/timo-schmid) </br> [Dmytro Orlov](https://github.com/DmytroOrlov)  </br> [Mikołaj Jakubowski](https://github.com/mkljakubowski) </br> [Dmytro Nikitin](https://github.com/KRoLer) | [Stefano Galarraga](https://github.com/galarragas) </br> [Lars Albertsson](https://github.com/lallea) </br> [Eugene Platonov](https://github.com/jozic) </br> [Jerome Wacongne](https://github.com/ch4mpy) </br> [Jon Morra](https://github.com/jon-morra-zefr) </br> [Raúl Raja Martínez](https://github.com/raulraja) </br> [Kaur Matas](https://github.com/kmatasflp) </br> [Chris Albright](https://github.com/chrisalbright) </br> [Francisco Díaz](https://github.com/franciscodr) </br> [Bobby Rauchenberg](https://github.com/bobbyrauchenberg) </br> [Leonard Ehrenfried](https://github.com/leonardehrenfried) </br> [François Sarradin](https://github.com/fsarradin) </br> [niqdev](https://github.com/niqdev) </br> [rsitze-mmai](https://github.com/rsitze-mmai) </br> [Wessel W. Bakker](https://github.com/wwbakker)| [Julien BENOIT](https://github.com/jbenoit2011)  </br> [Adam Drakeford](https://github.com/dr4ke616) </br> [Carlos Silva](https://github.com/alchimystic) </br> [ismail Benammar](https://github.com/ismailBenammar) </br> [mcenkar](https://github.com/mcenkar) </br> [Luca Tronchin](https://github.com/ltronky) </br> [LydiaSkuse](https://github.com/LydiaSkuse) </br> [Algimantas Milašius](https://github.com/AlgMi) </br> [Leonard Ehrenfried](https://github.com/leonardehrenfried) </br> [Massimo Siani](https://github.com/massimosiani)  </br> [Konstantin](https://github.com/tyger) </br> [natefitzgerald](https://github.com/natefitzgerald) </br>  [Victor](https://github.com/gafiatulin) </br> [steve-e](https://github.com/steve-e) </br> [Ayoub Benali](https://github.com/ayoub-benali) |
 
 
 ##### Criticism is appreciated.

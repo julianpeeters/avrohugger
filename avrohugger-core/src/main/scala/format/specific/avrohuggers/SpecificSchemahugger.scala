@@ -28,6 +28,7 @@ object SpecificSchemahugger extends Schemahugger {
           targetScalaPartialVersion)
         val companionDef = SpecificObjectTree.toCaseCompanionDef(
           schema,
+          namespace,
           maybeFlags,
           typeMatcher,
           targetAvroPartialVersion)
@@ -42,6 +43,7 @@ object SpecificSchemahugger extends Schemahugger {
           targetScalaPartialVersion)
         val companionDef = SpecificObjectTree.toCaseCompanionDef(
           schema,
+          namespace,
           maybeFlags,
           typeMatcher,
           targetAvroPartialVersion)

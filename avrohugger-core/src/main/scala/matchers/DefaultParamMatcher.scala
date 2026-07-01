@@ -1,7 +1,7 @@
 package avrohugger
 package matchers
 
-import avrohugger.matchers.custom.CustomDefaultParamMatcher
+import avrohugger.matchers.custom.{CustomDefaultParamMatcher, CustomNamespaceMatcher}
 import avrohugger.stores.ClassStore
 import avrohugger.types._
 import org.apache.avro.Schema
@@ -64,8 +64,10 @@ object DefaultParamMatcher {
         }
       case Schema.Type.NULL    => NULL
       case Schema.Type.FIXED   =>
-        val name = RootClass.newClass(avroSchema.getFullName)
-        REF(name).APPLY(CustomDefaultParamMatcher.checkCustomDecimalType(
+        val name = avroSchema.getName()
+        val fullName = CustomNamespaceMatcher.checkCustomNamespace(Option(avroSchema.getNamespace()), typeMatcher, Option(avroSchema.getNamespace()))
+                                         .fold(RootClass.newClass(name))(ns => RootClass.newClass(s"${ns}.${name}"))
+        REF(fullName).APPLY(CustomDefaultParamMatcher.checkCustomDecimalType(
           decimalType = typeMatcher.avroScalaTypes.decimal,
           schema = avroSchema,
           default = ArrayClass.APPLY()))
@@ -76,7 +78,11 @@ object DefaultParamMatcher {
           decimalType = typeMatcher.avroScalaTypes.decimal,
           schema = avroSchema,
           default = ArrayClass.APPLY())
-      case Schema.Type.RECORD  => NEW(RootClass.newClass(avroSchema.getFullName))
+      case Schema.Type.RECORD  =>
+        val name = avroSchema.getName()
+        val fullName = CustomNamespaceMatcher.checkCustomNamespace(Option(avroSchema.getNamespace()), typeMatcher, Option(avroSchema.getNamespace()))
+                                         .fold(RootClass.newClass(name))(ns => RootClass.newClass(s"${ns}.${name}"))
+        NEW(fullName)
       case Schema.Type.UNION =>
         val schemas = avroSchema.getTypes.asScala.toList
         if (avroSchema.isNullable) NONE

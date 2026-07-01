@@ -72,7 +72,10 @@ class TypeMatcher(
               case UUID => RootClass.newClass(nme.createNameType("java.util.UUID"))
             }
           case Schema.Type.FIXED =>
-            RootClass.newClass(s"${schema.getNamespace()}.${classStore.generatedClasses.get(schema.getFullName)}")
+            val name = schema.getName()
+            val fullName = CustomNamespaceMatcher.checkCustomNamespace(Option(schema.getNamespace()), this, Option(schema.getNamespace()))
+                                                 .fold(RootClass.newClass(name))(ns => RootClass.newClass(s"${ns}.${name}"))
+            fullName
           case Schema.Type.BYTES => CustomTypeMatcher.checkCustomDecimalType(avroScalaTypes.decimal, schema)
           case Schema.Type.RECORD =>
             val maybeNamespace = CustomNamespaceMatcher.checkCustomNamespace(
@@ -84,7 +87,7 @@ class TypeMatcher(
               case Some(ns) => s"${ns}.${schema.getName()}"
               case None => schema.getName()
             }
-          case Schema.Type.ENUM => CustomTypeMatcher.checkCustomEnumType(avroScalaTypes.`enum`, classStore, schema, useFullName)
+          case Schema.Type.ENUM => CustomTypeMatcher.checkCustomEnumType(avroScalaTypes.`enum`, classStore, schema, useFullName, this)
           case Schema.Type.UNION =>
             //unions are represented as shapeless.Coproduct
             val unionSchemas = schema.getTypes().asScala.toList

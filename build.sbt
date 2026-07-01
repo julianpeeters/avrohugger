@@ -2,7 +2,7 @@ lazy val avroVersion = "1.12.2-SNAPSHOT"
 
 lazy val commonSettings = Seq(
   organization := "com.julianpeeters",
-  version := "2.17.0-SNAPSHOT",
+  version := "2.18.0-SNAPSHOT",
   ThisBuild / versionScheme := Some("semver-spec"),
   scalacOptions ++= Seq(
     "-unchecked", 
@@ -10,7 +10,7 @@ lazy val commonSettings = Seq(
     "-feature",
   ),
   resolvers += "Apache Snapshots" at "https://repository.apache.org/content/groups/snapshots",
-  scalaVersion := "3.3.7",
+  scalaVersion := "3.3.8",
   crossScalaVersions := Seq("2.12.21", "2.13.18", scalaVersion.value),
   libraryDependencies += "org.apache.avro" % "avro" % avroVersion,
   libraryDependencies += "org.apache.avro" % "avro-compiler" % avroVersion,
@@ -26,7 +26,7 @@ lazy val commonSettings = Seq(
           "org.specs2"             %% "specs2-core"             % "4.23.0" % "test")
       case _ =>
         libraryDependencies.value ++ Seq(
-          "org.specs2"             %% "specs2-core"             % "5.9.0"  % "test")
+          "org.specs2"             %% "specs2-core"             % "5.9.1"  % "test")
     }
   },
   publishMavenStyle := true,
@@ -58,7 +58,7 @@ lazy val avrohugger = (project in file("."))
 lazy val `avrohugger-core` = (project in file("avrohugger-core"))
   .settings(
     commonSettings,
-    libraryDependencies += ("com.eed3si9n" %% "treehugger" % "0.4.4").cross(CrossVersion.for3Use2_13),
+    libraryDependencies += "com.eed3si9n" %% "treehugger" % "0.5.0",
     Compile / sourceGenerators += addVersionFile.taskValue
   )
 

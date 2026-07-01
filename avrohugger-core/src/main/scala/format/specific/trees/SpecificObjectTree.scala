@@ -43,6 +43,7 @@ object SpecificObjectTree {
   // Companion to case classes
   def toCaseCompanionDef(
     schema: Schema,
+    namespace: Option[String],
     maybeFlags: Option[List[Long]],
     typeMatcher: TypeMatcher,
     targetAvroPartialVersion: String) = {
@@ -51,6 +52,8 @@ object SpecificObjectTree {
       case Some(flags) => OBJECTDEF(schema.getName).withFlags(flags:_*)
       case None => OBJECTDEF(schema.getName)
     }
+    val namespaceRegex = """"namespace":"([^"]+)"""".r
+    val updated = namespaceRegex.replaceFirstIn(schema.toString, s""""namespace":${namespace.fold("""null""")(ns => s""""$ns"""")}""")
     val schemaDef = VAL(REF("SCHEMA$")) := {
       targetAvroPartialVersion match {
         case "1.12" => {
@@ -59,17 +62,11 @@ object SpecificObjectTree {
             case schemaString => LIT(schemaString)
           }) DOT "mainSchema" APPLY(Nil)
         }
-        case "1.11" => {
+        case _ => { // default to legacy impl
           NEW(RootClass.newClass("org.apache.avro.Schema.Parser")) APPLY (Nil) DOT "parse" APPLY (schema.toString match {
             case schemaString if schemaString.getBytes(StandardCharsets.UTF_8).length > 65535 => LIST(schemaString.split("},\\{\"").map(LIT)) DOT "mkString" APPLY (LIT("},{\""))
             case schemaString => LIT(schemaString)
           })
-        }
-        case _ => {// default to most current
-          NEW(RootClass.newClass("org.apache.avro.SchemaParser")) APPLY (Nil) DOT "parse" APPLY (schema.toString match {
-            case schemaString if schemaString.getBytes(StandardCharsets.UTF_8).length > 65535 => LIST(schemaString.split("},\\{\"").map(LIT)) DOT "mkString" APPLY (LIT("},{\""))
-            case schemaString => LIT(schemaString)
-          }) DOT "mainSchema" APPLY(Nil)
         }
       }
     }
