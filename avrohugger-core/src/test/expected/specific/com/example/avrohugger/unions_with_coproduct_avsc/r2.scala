@@ -26,5 +26,5 @@ final case class r2(var f2: Double) extends org.apache.avro.specific.SpecificRec
 }
 
 object r2 {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"r2\",\"namespace\":\"com.example.avrohugger.unions_with_coproduct_avsc\",\"fields\":[{\"name\":\"f2\",\"type\":\"double\"}]}")
+  val SCHEMA$ = new org.apache.avro.SchemaParser().parse("{\"type\":\"record\",\"name\":\"r2\",\"namespace\":\"com.example.avrohugger.unions_with_coproduct_avsc\",\"fields\":[{\"name\":\"f2\",\"type\":\"double\"}]}").mainSchema()
 }

@@ -28,5 +28,5 @@ final case class UnionOfOneNonNullType(var f3: Map[String, String] :+: CNil) ext
 }
 
 object UnionOfOneNonNullType {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"UnionOfOneNonNullType\",\"namespace\":\"com.example.avrohugger.unions_with_coproduct_avsc2\",\"fields\":[{\"name\":\"f3\",\"type\":[{\"type\":\"map\",\"values\":\"string\"}]}]}")
+  val SCHEMA$ = new org.apache.avro.SchemaParser().parse("{\"type\":\"record\",\"name\":\"UnionOfOneNonNullType\",\"namespace\":\"com.example.avrohugger.unions_with_coproduct_avsc2\",\"fields\":[{\"name\":\"f3\",\"type\":[{\"type\":\"map\",\"values\":\"string\"}]}]}").mainSchema()
 }

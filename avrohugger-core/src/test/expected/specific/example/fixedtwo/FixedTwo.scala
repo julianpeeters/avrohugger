@@ -32,5 +32,5 @@ final case class FixedTwo(var first: fixedtwo.one.fixed, var second: fixedtwo.tw
 }
 
 object FixedTwo {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"FixedTwo\",\"namespace\":\"fixedtwo\",\"fields\":[{\"name\":\"first\",\"type\":{\"type\":\"fixed\",\"name\":\"fixed\",\"namespace\":\"fixedtwo.one\",\"size\":16}},{\"name\":\"second\",\"type\":{\"type\":\"fixed\",\"name\":\"fixed\",\"namespace\":\"fixedtwo.two\",\"size\":16}}]}")
+  val SCHEMA$ = new org.apache.avro.SchemaParser().parse("{\"type\":\"record\",\"name\":\"FixedTwo\",\"namespace\":\"fixedtwo\",\"fields\":[{\"name\":\"first\",\"type\":{\"type\":\"fixed\",\"name\":\"fixed\",\"namespace\":\"fixedtwo.one\",\"size\":16}},{\"name\":\"second\",\"type\":{\"type\":\"fixed\",\"name\":\"fixed\",\"namespace\":\"fixedtwo.two\",\"size\":16}}]}").mainSchema()
 }

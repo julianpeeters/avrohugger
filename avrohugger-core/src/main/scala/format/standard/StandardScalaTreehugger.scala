@@ -26,13 +26,14 @@ object StandardScalaTreehugger extends ScalaTreehugger {
     typeMatcher: TypeMatcher,
     restrictedFields: Boolean,
     targetScalaPartialVersion: String,
+    targetAvroPartialVersion: String
   ): String = {
 
     val imports = importer.getImports(schemaOrProtocol, namespace, typeMatcher)
 
     val topLevelDefs: List[Tree] = schemaOrProtocol match {
-      case Left(schema) => schemahugger.toTrees(classStore, namespace, schema, typeMatcher, None, None, restrictedFields, targetScalaPartialVersion)
-      case Right(protocol) => protocolhugger.toTrees(classStore, namespace, protocol, typeMatcher, None, None, restrictedFields, targetScalaPartialVersion)
+      case Left(schema) => schemahugger.toTrees(classStore, namespace, schema, typeMatcher, None, None, restrictedFields, targetScalaPartialVersion, targetAvroPartialVersion)
+      case Right(protocol) => protocolhugger.toTrees(classStore, namespace, protocol, typeMatcher, None, None, restrictedFields, targetScalaPartialVersion, targetAvroPartialVersion)
     }
 
     // wrap the imports and class definition in a block with comment and package

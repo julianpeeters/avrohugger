@@ -4,7 +4,7 @@ package specific
 
 import avrohugger._
 import avrohugger.format.SpecificRecord
-import org.apache.avro.Schema
+import org.apache.avro.SchemaParser
 import org.specs2._
 
 
@@ -267,7 +267,7 @@ class SpecificStringToFileSpec extends Specification {
       Stream.from(1).scanLeft(s"""{"type":"record","name":"massive._0","fields":[$fields]}""") { case (field, i) =>
         val fields = primitives.map(n => s"""{"name":"${n}Field","type":${field.replace("_", s"_$n")}}""")
         s"""{"type":"record","name":"massive._$i","fields":[${fields.mkString(",")}]}"""
-      }.filter(_.length > min).map(new Schema.Parser().parse(_)).find(_.toString().length > min).get
+      }.filter(_.length > min).map(new SchemaParser().parse(_).mainSchema()).find(_.toString().length > min).get
     }
 
     val schemaString = schema.toString()

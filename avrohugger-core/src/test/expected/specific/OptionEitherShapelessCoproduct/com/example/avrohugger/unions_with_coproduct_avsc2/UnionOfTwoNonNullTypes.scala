@@ -26,5 +26,5 @@ final case class UnionOfTwoNonNullTypes(var r4: Either[Int, String]) extends org
 }
 
 object UnionOfTwoNonNullTypes {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"UnionOfTwoNonNullTypes\",\"namespace\":\"com.example.avrohugger.unions_with_coproduct_avsc2\",\"fields\":[{\"name\":\"r4\",\"type\":[\"int\",\"string\"]}]}")
+  val SCHEMA$ = new org.apache.avro.SchemaParser().parse("{\"type\":\"record\",\"name\":\"UnionOfTwoNonNullTypes\",\"namespace\":\"com.example.avrohugger.unions_with_coproduct_avsc2\",\"fields\":[{\"name\":\"r4\",\"type\":[\"int\",\"string\"]}]}").mainSchema()
 }

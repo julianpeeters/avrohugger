@@ -26,5 +26,5 @@ final case class Level0(var level1: Level1) extends org.apache.avro.specific.Spe
 }
 
 object Level0 {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Level0\",\"namespace\":\"example\",\"fields\":[{\"name\":\"level1\",\"type\":{\"type\":\"record\",\"name\":\"Level1\",\"fields\":[{\"name\":\"level2\",\"type\":{\"type\":\"record\",\"name\":\"Level2\",\"fields\":[{\"name\":\"name\",\"type\":\"string\"}]}}]}}]}")
+  val SCHEMA$ = new org.apache.avro.SchemaParser().parse("{\"type\":\"record\",\"name\":\"Level0\",\"namespace\":\"example\",\"fields\":[{\"name\":\"level1\",\"type\":{\"type\":\"record\",\"name\":\"Level1\",\"fields\":[{\"name\":\"level2\",\"type\":{\"type\":\"record\",\"name\":\"Level2\",\"fields\":[{\"name\":\"name\",\"type\":\"string\"}]}}]}}]}").mainSchema()
 }

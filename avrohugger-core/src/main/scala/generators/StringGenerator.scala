@@ -6,7 +6,7 @@ import avrohugger.input.{ DependencyInspector, NestedSchemaExtractor }
 import avrohugger.input.parsers.{ FileInputParser, StringInputParser }
 import avrohugger.matchers.TypeMatcher
 import avrohugger.stores.ClassStore
-import org.apache.avro.Schema.Parser
+import org.apache.avro.SchemaParser
 import org.apache.avro.{ Protocol, Schema }
 
 import java.io.{ File, FileNotFoundException, IOException }
@@ -22,7 +22,8 @@ private[avrohugger] class StringGenerator {
     classStore: ClassStore,
     typeMatcher: TypeMatcher,
     restrictedFields: Boolean,
-    targetScalaPartialVersion: String): List[String] = {
+    targetScalaPartialVersion: String,
+    targetAvroPartialVersion: String): List[String] = {
     val maybeNamespace = DependencyInspector.getReferredNamespace(schema)
     val topLevels = NestedSchemaExtractor.getNestedSchemas(schema, typeMatcher)
     val compilationUnits = topLevels.distinct.flatMap(schema => {
@@ -35,7 +36,8 @@ private[avrohugger] class StringGenerator {
         None,
         typeMatcher,
         restrictedFields,
-        targetScalaPartialVersion)
+        targetScalaPartialVersion,
+        targetAvroPartialVersion)
     })
     compilationUnits.map(compUnit => removeExtraWarning(compUnit.codeString))
   }
@@ -46,7 +48,8 @@ private[avrohugger] class StringGenerator {
     classStore: ClassStore,
     typeMatcher: TypeMatcher,
     restrictedFields: Boolean,
-    targetScalaPartialVersion: String): List[String] = {
+    targetScalaPartialVersion: String,
+    targetAvroPartialVersion: String): List[String] = {
     val namespace: Option[String] = Option(protocol.getNamespace)
     val compilationUnits = format.asCompilationUnits(
       classStore,
@@ -55,7 +58,8 @@ private[avrohugger] class StringGenerator {
       None,
       typeMatcher,
       restrictedFields,
-      targetScalaPartialVersion)
+      targetScalaPartialVersion,
+      targetAvroPartialVersion)
     compilationUnits.map(compUnit => removeExtraWarning(compUnit.codeString))
   }
 
@@ -66,13 +70,14 @@ private[avrohugger] class StringGenerator {
     stringParser: StringInputParser,
     typeMatcher: TypeMatcher,
     restrictedFields: Boolean,
-    targetScalaPartialVersion: String): List[String] = {
+    targetScalaPartialVersion: String,
+    targetAvroPartialVersion: String): List[String] = {
     val schemaOrProtocols = stringParser.getSchemaOrProtocols(str)
     val codeStrings = schemaOrProtocols.flatMap {
       case Left(schema) =>
-        schemaToStrings(schema, format, classStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
+        schemaToStrings(schema, format, classStore, typeMatcher, restrictedFields, targetScalaPartialVersion, targetAvroPartialVersion)
       case Right(protocol) =>
-        protocolToStrings(protocol, format, classStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
+        protocolToStrings(protocol, format, classStore, typeMatcher, restrictedFields, targetScalaPartialVersion, targetAvroPartialVersion)
     }.distinct
     // reset the schema store after processing the whole submission
     codeStrings
@@ -83,18 +88,19 @@ private[avrohugger] class StringGenerator {
     format: SourceFormat,
     classStore: ClassStore,
     fileParser: FileInputParser,
-    schemaParser: Parser,
+    schemaParser: SchemaParser,
     typeMatcher: TypeMatcher,
     classLoader: ClassLoader,
     restrictedFields: Boolean,
-    targetScalaPartialVersion: String): List[String] = {
+    targetScalaPartialVersion: String,
+    targetAvroPartialVersion: String): List[String] = {
     try {
       Await.result(fileParser.getSchemaOrProtocols(inFile, format, classStore, classLoader, schemaParser), Duration.Inf)
         .flatMap {
           case Left(schema) =>
-            schemaToStrings(schema, format, classStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
+            schemaToStrings(schema, format, classStore, typeMatcher, restrictedFields, targetScalaPartialVersion, targetAvroPartialVersion)
           case Right(protocol) =>
-            protocolToStrings(protocol, format, classStore, typeMatcher, restrictedFields, targetScalaPartialVersion)
+            protocolToStrings(protocol, format, classStore, typeMatcher, restrictedFields, targetScalaPartialVersion, targetAvroPartialVersion)
         }
     }
     catch {

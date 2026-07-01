@@ -22,7 +22,8 @@ object StandardSchemahugger extends Schemahugger {
     maybeBaseTrait: Option[String],
     maybeFlags: Option[List[Long]],
     restrictedFields: Boolean,
-    targetScalaPartialVersion: String
+    targetScalaPartialVersion: String,
+    targetAvroPartialVersion: String
   ): List[Tree] = { // as case class definition
 
     schema.getType match {

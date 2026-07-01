@@ -32,5 +32,5 @@ final case class UnionOfNullWithOneNonNullType(var f3: Option[Double]) extends o
 }
 
 object UnionOfNullWithOneNonNullType {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"UnionOfNullWithOneNonNullType\",\"namespace\":\"com.example.avrohugger.unions_with_coproduct_avsc2\",\"fields\":[{\"name\":\"f3\",\"type\":[\"null\",\"double\"]}]}")
+  val SCHEMA$ = new org.apache.avro.SchemaParser().parse("{\"type\":\"record\",\"name\":\"UnionOfNullWithOneNonNullType\",\"namespace\":\"com.example.avrohugger.unions_with_coproduct_avsc2\",\"fields\":[{\"name\":\"f3\",\"type\":[\"null\",\"double\"]}]}").mainSchema()
 }

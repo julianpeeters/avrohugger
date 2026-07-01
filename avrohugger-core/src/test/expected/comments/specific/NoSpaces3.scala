@@ -31,5 +31,5 @@ final case class NoSpaces3(var comment_property: String) extends org.apache.avro
 }
 
 object NoSpaces3 {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"NoSpaces3\",\"namespace\":\"com.example\",\"doc\":\"The comment applies to the `NoSpaces3` record, but is not indented to the\\nlevel of the record specification.\",\"fields\":[{\"name\":\"comment_property\",\"type\":\"string\"}]}")
+  val SCHEMA$ = new org.apache.avro.SchemaParser().parse("{\"type\":\"record\",\"name\":\"NoSpaces3\",\"namespace\":\"com.example\",\"doc\":\"The comment applies to the `NoSpaces3` record, but is not indented to the\\nlevel of the record specification.\",\"fields\":[{\"name\":\"comment_property\",\"type\":\"string\"}]}").mainSchema()
 }

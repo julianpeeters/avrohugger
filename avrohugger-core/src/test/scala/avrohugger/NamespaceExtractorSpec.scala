@@ -2,7 +2,7 @@ package avrohugger
 package test
 
 import avrohugger.input.DependencyInspector.getReferredNamespace
-import org.apache.avro.Schema
+import org.apache.avro.SchemaParser
 import org.specs2._
 
 class NamespaceExtractorSpec extends Specification {
@@ -51,7 +51,7 @@ class NamespaceExtractorSpec extends Specification {
      |}
    """.stripMargin
 
-  lazy val ownerSchema = (new Schema.Parser()).parse(schemaDef)
+  lazy val ownerSchema = (new SchemaParser()).parse(schemaDef).mainSchema()
 
   def is = s2"""
     A NamespaceExtractor should

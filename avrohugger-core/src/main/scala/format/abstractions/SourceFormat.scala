@@ -49,7 +49,8 @@ trait SourceFormat {
     maybeOutDir: Option[String],
     typeMatcher: TypeMatcher,
     restrictedFields: Boolean,
-    targetScalaPartialVersion: String): List[CompilationUnit]
+    targetScalaPartialVersion: String,
+    targetAvroPartialVersion: String): List[CompilationUnit]
 
   def compile(
     classStore: ClassStore,
@@ -58,7 +59,8 @@ trait SourceFormat {
     outDir: String,
     typeMatcher: TypeMatcher,
     restrictedFields: Boolean,
-    targetScalaPartialVersion: String): Unit
+    targetScalaPartialVersion: String,
+    targetAvroPartialVersion: String): Unit
 
   val defaultTypes: AvroScalaTypes
 
@@ -148,7 +150,8 @@ trait SourceFormat {
     typeMatcher: TypeMatcher,
     maybeOutDir: Option[String],
     restrictedFields: Boolean,
-    targetScalaPartialVersion: String): CompilationUnit = {
+    targetScalaPartialVersion: String,
+    targetAvroPartialVersion: String): CompilationUnit = {
     val scalaFilePath =
       getFilePath(namespace, schemaOrProtocol, maybeOutDir, typeMatcher)
     val scalaString = scalaTreehugger.asScalaCodeString(
@@ -157,7 +160,8 @@ trait SourceFormat {
       schemaOrProtocol,
       typeMatcher,
       restrictedFields,
-      targetScalaPartialVersion)
+      targetScalaPartialVersion,
+      targetAvroPartialVersion)
     CompilationUnit(scalaFilePath, scalaString)
   }
 

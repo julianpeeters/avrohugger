@@ -34,5 +34,5 @@ final case class BinaryIdl(var data: Array[Byte]) extends org.apache.avro.specif
 }
 
 object BinaryIdl {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"BinaryIdl\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"data\",\"type\":\"bytes\"}]}")
+  val SCHEMA$ = new org.apache.avro.SchemaParser().parse("{\"type\":\"record\",\"name\":\"BinaryIdl\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"data\",\"type\":\"bytes\"}]}").mainSchema()
 }

@@ -20,7 +20,8 @@ trait Protocolhugger {
     maybeBaseTrait: Option[String],
     maybeFlags: Option[List[Long]],
     restrictedFields: Boolean,
-    targetScalaPartialVersion: String
+    targetScalaPartialVersion: String,
+    targetAvroPartialVersion: String
   ): List[Tree]
 
 
