@@ -54,7 +54,7 @@ class SpecificGeneratorToolSpec extends mutable.Specification {
 
     val testPlayerFile =
       if (avrohugger.internal.ScalaVersion.version == "2.13")  Directory.TEST_EXPECTED_SPECIFIC_PLAYER_213
-      else if (avrohugger.internal.ScalaVersion.version == "3.3") Directory.TEST_EXPECTED_SPECIFIC_PLAYER_3
+      else if (avrohugger.internal.ScalaVersion.version.startsWith("3")) Directory.TEST_EXPECTED_SPECIFIC_PLAYER_3
       else Directory.TEST_EXPECTED_SPECIFIC_PLAYER
 
     Util.readFile(Directory.TEST_OUTPUT_SPECIFIC_NICKNAME) === Util.readFile(Directory.TEST_EXPECTED_SPECIFIC_NICKNAME)
@@ -70,7 +70,7 @@ class SpecificGeneratorToolSpec extends mutable.Specification {
 
     def testWrestlerFile: String = {
       if (avrohugger.internal.ScalaVersion.version == "2.13") Directory.TEST_EXPECTED_SPECIFIC_WRESTLER_213
-      else if (avrohugger.internal.ScalaVersion.version == "3.3") Directory.TEST_EXPECTED_SPECIFIC_WRESTLER_3
+      else if (avrohugger.internal.ScalaVersion.version.startsWith("3")) Directory.TEST_EXPECTED_SPECIFIC_WRESTLER_3
       else Directory.TEST_EXPECTED_SPECIFIC_WRESTLER
     }
 
