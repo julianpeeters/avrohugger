@@ -29,6 +29,7 @@ lazy val commonSettings = Seq(
           "org.specs2"             %% "specs2-core"             % "5.9.1"  % "test")
     }
   },
+  
   publishMavenStyle := true,
   publishTo := localStaging.value,
   pomIncludeRepository := { _ => false },
@@ -88,6 +89,7 @@ lazy val `avrohugger-tools` = (project in file("avrohugger-tools"))
         val oldStrategy = (Global / assembly / assemblyMergeStrategy).value
         oldStrategy(x)
     },
+    Test / fork := true,
     Test / sourceGenerators += addScalaVersionFile.taskValue
   ).dependsOn(`avrohugger-core`, `avrohugger-filesorter`)
 
