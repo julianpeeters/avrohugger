@@ -10,7 +10,7 @@ lazy val commonSettings = Seq(
     "-feature",
   ),
   resolvers += "Apache Snapshots" at "https://repository.apache.org/content/groups/snapshots",
-  scalaVersion := "3.3.9-RC1",
+  scalaVersion := "3.3.8",
   crossScalaVersions := Seq("2.12.21", "2.13.18", scalaVersion.value),
   libraryDependencies += "org.apache.avro" % "avro" % avroVersion,
   libraryDependencies += "org.apache.avro" % "avro-compiler" % avroVersion,
