@@ -89,8 +89,6 @@ lazy val `avrohugger-tools` = (project in file("avrohugger-tools"))
         val oldStrategy = (Global / assembly / assemblyMergeStrategy).value
         oldStrategy(x)
     },
-    Test / fork := true,
-    Test / baseDirectory := baseDirectory.value,
     Test / sourceGenerators += addScalaVersionFile.taskValue
   ).dependsOn(`avrohugger-core`, `avrohugger-filesorter`)
 
