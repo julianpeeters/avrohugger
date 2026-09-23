@@ -90,6 +90,7 @@ lazy val `avrohugger-tools` = (project in file("avrohugger-tools"))
         oldStrategy(x)
     },
     Test / fork := true,
+    Test / baseDirectory := baseDirectory.value,
     Test / sourceGenerators += addScalaVersionFile.taskValue
   ).dependsOn(`avrohugger-core`, `avrohugger-filesorter`)
 
