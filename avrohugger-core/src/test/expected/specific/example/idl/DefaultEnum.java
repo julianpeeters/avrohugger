@@ -7,7 +7,7 @@ package example.idl;
 @org.apache.avro.specific.AvroGenerated
 public enum DefaultEnum implements org.apache.avro.generic.GenericEnumSymbol<DefaultEnum> {
   SPADES, DIAMONDS, CLUBS, HEARTS  ;
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"enum\",\"name\":\"DefaultEnum\",\"namespace\":\"example.idl\",\"symbols\":[\"SPADES\",\"DIAMONDS\",\"CLUBS\",\"HEARTS\"]}");
+  public static final org.apache.avro.Schema SCHEMA$ = org.apache.avro.JsonSchemaParser.parseInternal("{\"type\":\"enum\",\"name\":\"DefaultEnum\",\"namespace\":\"example.idl\",\"symbols\":[\"SPADES\",\"DIAMONDS\",\"CLUBS\",\"HEARTS\"]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
   @Override

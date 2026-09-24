@@ -8,6 +8,6 @@ package example.proto;
 @org.apache.avro.specific.AvroGenerated
 public enum Suit {
   SPADES, HEARTS, DIAMONDS, CLUBS  ;
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"enum\",\"name\":\"Suit\",\"namespace\":\"example.proto\",\"symbols\":[\"SPADES\",\"HEARTS\",\"DIAMONDS\",\"CLUBS\"]}");
+  public static final org.apache.avro.Schema SCHEMA$ = org.apache.avro.JsonSchemaParser.parseInternal("{\"type\":\"enum\",\"name\":\"Suit\",\"namespace\":\"example.proto\",\"symbols\":[\"SPADES\",\"HEARTS\",\"DIAMONDS\",\"CLUBS\"]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 }

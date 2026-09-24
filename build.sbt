@@ -1,8 +1,8 @@
-lazy val avroVersion = "1.12.1"
+lazy val avroVersion = "1.12.2"
 
 lazy val commonSettings = Seq(
   organization := "com.julianpeeters",
-  version := "2.17.1",
+  version := "2.18.0-SNAPSHOT",
   ThisBuild / versionScheme := Some("semver-spec"),
   scalacOptions ++= Seq(
     "-unchecked", 
@@ -10,7 +10,7 @@ lazy val commonSettings = Seq(
     "-feature",
   ),
   resolvers += "Apache Snapshots" at "https://repository.apache.org/content/groups/snapshots",
-  scalaVersion := "3.3.8",
+  scalaVersion := "3.3.9-RC1",
   crossScalaVersions := Seq("2.12.21", "2.13.18", scalaVersion.value),
   libraryDependencies += "org.apache.avro" % "avro" % avroVersion,
   libraryDependencies += "org.apache.avro" % "avro-compiler" % avroVersion,
@@ -29,6 +29,7 @@ lazy val commonSettings = Seq(
           "org.specs2"             %% "specs2-core"             % "5.9.1"  % "test")
     }
   },
+  
   publishMavenStyle := true,
   publishTo := localStaging.value,
   pomIncludeRepository := { _ => false },
