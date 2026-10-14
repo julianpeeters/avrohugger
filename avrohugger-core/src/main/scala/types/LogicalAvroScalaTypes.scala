@@ -13,7 +13,7 @@ case object JavaTimeLocalDate extends AvroScalaDateType
 
 sealed trait AvroScalaTimestampMillisType extends Product with Serializable
 case object JavaSqlTimestamp extends AvroScalaTimestampMillisType
-case object JavaTimeInstant extends AvroScalaTimestampMillisType
+case object JavaTimeInstant extends AvroScalaTimestampMillisType with AvroScalaTimestampType
 
 sealed trait AvroUuidType extends Product with Serializable
 case object JavaUuid extends AvroUuidType

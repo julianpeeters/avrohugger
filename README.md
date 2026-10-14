@@ -77,7 +77,7 @@ Kafka, Spark, Avro, etc.).
 |TimeMillis|java.time.LocalTime<br>Int|java.time.LocalTime<br>Int| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 |TimeMicros|java.time.LocalTime<br>Long|java.time.LocalTime<br>Long| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 |TimestampMillis|java.time.Instant<br>java.sql.Timestamp<br>Long|java.time.Instant<br>java.sql.Timestamp<br>Long| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
-|TimestampMicros|java.time.Instant<br>java.sql.Timestamp<br>Long|java.time.Instant<br>java.sql.Timestamp<br>Long| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
+|TimestampMicros|java.time.ZonedDateTime<br>java.time.Instant<br>Long|java.time.ZonedDateTime<br>java.time.Instant<br>Long| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 |LocalTimestampMillis|java.time.LocalDateTime<br>Long|java.time.LocalDateTime<br>Long| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 |LocalTimestampMicros|java.time.LocalDateTime<br>Long|java.time.LocalDateTime<br>Long| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|
 |UUID|java.util.UUID|java.util.UUID| See [Customizable Type Mapping](https://github.com/julianpeeters/avrohugger#customizable-type-mapping)|

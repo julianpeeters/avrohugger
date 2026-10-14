@@ -157,6 +157,7 @@ object JavaConverter {
       }
       case _: LogicalTypes.TimestampMicros => (typeMatcher.avroScalaTypes.timestampMicros match {
         case JavaTimeZonedDateTime => BLOCK(tree.DOT("toEpochSecond").INFIX("*", LIT(1000000L)).INFIX("+", tree.DOT("getNano").INFIX("/", LIT(1000L))))
+        case JavaTimeInstant => BLOCK(tree.DOT("getEpochSecond").INFIX("*", LIT(1000000L)).INFIX("+", tree.DOT("getNano").INFIX("/", LIT(1000L))))
         case UnderlyingPrimitive => tree
       }) withComment "avro timestamp-micros long stores the number of microseconds from the unix epoch, 1 January 1970 00:00:00.000000 UTC"
       case _: LogicalTypes.LocalTimestampMillis => (typeMatcher.avroScalaTypes.localTimestampMillis match {

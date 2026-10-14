@@ -249,6 +249,15 @@ object ScalaConverter {
                   val longConversion = CASE(ID("l") withType (LongClass)) ==> resultExpr
                   val timeZoneConversion = CASE(ID("t") withType (ZonedDateTime)) ==> REF("t")
                   tree MATCH(longConversion, timeZoneConversion, matchError)
+                case JavaTimeInstant =>
+                  val matchError = CASE(REF("x")) ==> THROW(NEW("org.apache.avro.AvroRuntimeException", INTERP("s", LIT(s"expected type $LongClass or $InstantClass but found $${x.getClass}"))))
+                  val resultExpr = InstantClass.DOT("ofEpochSecond").APPLY(
+                    REF("l").INFIX("/", LIT(1000000L)),
+                    PAREN(REF("l").INFIX("%", LIT(1000000L))).INFIX("*", LIT(1000L))
+                  )
+                  val longConversion = CASE(ID("l") withType (LongClass)) ==> resultExpr
+                  val instantConversion = CASE(ID("i") withType (InstantClass)) ==> REF("i")
+                  tree MATCH(longConversion, instantConversion, matchError)
                 case UnderlyingPrimitive => tree
               }) withComment "avro timestamp-micros long stores the number of microseconds from the unix epoch, 1 January 1970 00:00:00.000000 UTC"
             } else if (logicalType.getName == "local-timestamp-millis") {

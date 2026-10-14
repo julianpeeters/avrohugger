@@ -80,6 +80,7 @@ object CustomTypeMatcher {
 
   def checkCustomTimestampMicrosType(timeType: AvroScalaTimestampType) = timeType match {
     case JavaTimeZonedDateTime => RootClass.newClass(nme.createNameType("java.time.ZonedDateTime"))
+    case JavaTimeInstant => RootClass.newClass(nme.createNameType("java.time.Instant"))
     case UnderlyingPrimitive => LongClass
   }
 

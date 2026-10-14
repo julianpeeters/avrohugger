@@ -72,6 +72,7 @@ object CustomDefaultParamMatcher {
   def checkCustomTimestampMicrosType(timeMillisType: AvroScalaTimestampType): Tree =
     timeMillisType match {
       case JavaTimeZonedDateTime => REF("java.time.ZonedDateTime.of").APPLY(REF("java.time.LocalDateTime") DOT "MIN", REF("java.time.ZoneId") DOT "of" APPLY LIT("UTC"))
+      case JavaTimeInstant => REF("java.time.Instant.now")
       case UnderlyingPrimitive => LIT(0L)
     }
 
