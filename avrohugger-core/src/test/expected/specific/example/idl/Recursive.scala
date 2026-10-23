@@ -5,7 +5,7 @@ import scala.annotation.switch
 
 final case class Recursive(var name: String, var recursive: Option[example.idl.Recursive]) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this("", None)
-  def get(field$: Int): AnyRef = {
+  def get(`field$`: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {
         name
@@ -19,7 +19,7 @@ final case class Recursive(var name: String, var recursive: Option[example.idl.R
       case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
-  def put(field$: Int, value: Any): Unit = {
+  def put(`field$`: Int, value: Any): Unit = {
     (field$: @switch) match {
       case 0 => this.name = {
         value.toString
@@ -38,5 +38,5 @@ final case class Recursive(var name: String, var recursive: Option[example.idl.R
 }
 
 object Recursive {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Recursive\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"recursive\",\"type\":[\"null\",\"Recursive\"]}]}")
+  val `SCHEMA$` = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Recursive\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"recursive\",\"type\":[\"null\",\"Recursive\"]}]}")
 }

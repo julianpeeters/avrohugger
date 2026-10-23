@@ -5,7 +5,7 @@ import scala.annotation.switch
 
 final case class NullableDecimal(var ciao: Option[BigDecimal] = None) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this(None)
-  def get(field$: Int): AnyRef = {
+  def get(`field$`: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {
         ciao match {
@@ -23,7 +23,7 @@ final case class NullableDecimal(var ciao: Option[BigDecimal] = None) extends or
       case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
-  def put(field$: Int, value: Any): Unit = {
+  def put(`field$`: Int, value: Any): Unit = {
     (field$: @switch) match {
       case 0 => this.ciao = {
         value match {
@@ -45,6 +45,6 @@ final case class NullableDecimal(var ciao: Option[BigDecimal] = None) extends or
 }
 
 object NullableDecimal {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"NullableDecimal\",\"namespace\":\"com.example\",\"fields\":[{\"name\":\"ciao\",\"type\":[\"null\",{\"type\":\"bytes\",\"scale\":5,\"precision\":64,\"logicalType\":\"decimal\"}],\"default\":null}]}")
+  val `SCHEMA$` = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"NullableDecimal\",\"namespace\":\"com.example\",\"fields\":[{\"name\":\"ciao\",\"type\":[\"null\",{\"type\":\"bytes\",\"scale\":5,\"precision\":64,\"logicalType\":\"decimal\"}],\"default\":null}]}")
   val decimalConversion = new org.apache.avro.Conversions.DecimalConversion
 }

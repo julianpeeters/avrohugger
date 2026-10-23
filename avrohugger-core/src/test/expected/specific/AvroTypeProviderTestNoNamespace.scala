@@ -7,7 +7,7 @@ import scala.annotation.switch
  */
 final case class AvroTypeProviderTestNoNamespace(var x: Int) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this(0)
-  def get(field$: Int): AnyRef = {
+  def get(`field$`: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {
         x
@@ -15,7 +15,7 @@ final case class AvroTypeProviderTestNoNamespace(var x: Int) extends org.apache.
       case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
-  def put(field$: Int, value: Any): Unit = {
+  def put(`field$`: Int, value: Any): Unit = {
     (field$: @switch) match {
       case 0 => this.x = {
         value
@@ -28,5 +28,5 @@ final case class AvroTypeProviderTestNoNamespace(var x: Int) extends org.apache.
 }
 
 object AvroTypeProviderTestNoNamespace {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"AvroTypeProviderTestNoNamespace\",\"doc\":\"Auto-generated schema\",\"fields\":[{\"name\":\"x\",\"type\":\"int\",\"doc\":\"Auto-Generated Field\"}]}")
+  val `SCHEMA$` = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"AvroTypeProviderTestNoNamespace\",\"doc\":\"Auto-generated schema\",\"fields\":[{\"name\":\"x\",\"type\":\"int\",\"doc\":\"Auto-Generated Field\"}]}")
 }

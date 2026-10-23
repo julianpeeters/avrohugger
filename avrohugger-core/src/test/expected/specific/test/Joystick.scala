@@ -5,7 +5,7 @@ import scala.annotation.switch
 
 final case class Up(var value: Int) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this(0)
-  def get(field$: Int): AnyRef = {
+  def get(`field$`: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {
         value
@@ -13,7 +13,7 @@ final case class Up(var value: Int) extends org.apache.avro.specific.SpecificRec
       case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
-  def put(field$: Int, value: Any): Unit = {
+  def put(`field$`: Int, value: Any): Unit = {
     (field$: @switch) match {
       case 0 => this.value = {
         value
@@ -26,12 +26,12 @@ final case class Up(var value: Int) extends org.apache.avro.specific.SpecificRec
 }
 
 object Up {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Up\",\"namespace\":\"test\",\"fields\":[{\"name\":\"value\",\"type\":\"int\"}]}")
+  val `SCHEMA$` = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Up\",\"namespace\":\"test\",\"fields\":[{\"name\":\"value\",\"type\":\"int\"}]}")
 }
 
 final case class Down(var value: Int) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this(0)
-  def get(field$: Int): AnyRef = {
+  def get(`field$`: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {
         value
@@ -39,7 +39,7 @@ final case class Down(var value: Int) extends org.apache.avro.specific.SpecificR
       case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
-  def put(field$: Int, value: Any): Unit = {
+  def put(`field$`: Int, value: Any): Unit = {
     (field$: @switch) match {
       case 0 => this.value = {
         value
@@ -52,5 +52,5 @@ final case class Down(var value: Int) extends org.apache.avro.specific.SpecificR
 }
 
 object Down {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Down\",\"namespace\":\"test\",\"fields\":[{\"name\":\"value\",\"type\":\"int\"}]}")
+  val `SCHEMA$` = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Down\",\"namespace\":\"test\",\"fields\":[{\"name\":\"value\",\"type\":\"int\"}]}")
 }

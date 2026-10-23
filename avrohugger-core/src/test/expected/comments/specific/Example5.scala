@@ -5,7 +5,7 @@ import scala.annotation.switch
 
 final case class NoSpaces6(var comment_property1: String) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this("")
-  def get(field$: Int): AnyRef = {
+  def get(`field$`: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {
         comment_property1
@@ -13,7 +13,7 @@ final case class NoSpaces6(var comment_property1: String) extends org.apache.avr
       case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
-  def put(field$: Int, value: Any): Unit = {
+  def put(`field$`: Int, value: Any): Unit = {
     (field$: @switch) match {
       case 0 => this.comment_property1 = {
         value.toString
@@ -26,12 +26,12 @@ final case class NoSpaces6(var comment_property1: String) extends org.apache.avr
 }
 
 object NoSpaces6 {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"NoSpaces6\",\"namespace\":\"com.example\",\"fields\":[{\"name\":\"comment_property1\",\"type\":\"string\"}]}")
+  val `SCHEMA$` = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"NoSpaces6\",\"namespace\":\"com.example\",\"fields\":[{\"name\":\"comment_property1\",\"type\":\"string\"}]}")
 }
 
 final case class NoSpaces7(var comment_property2: String) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this("")
-  def get(field$: Int): AnyRef = {
+  def get(`field$`: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {
         comment_property2
@@ -39,7 +39,7 @@ final case class NoSpaces7(var comment_property2: String) extends org.apache.avr
       case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
-  def put(field$: Int, value: Any): Unit = {
+  def put(`field$`: Int, value: Any): Unit = {
     (field$: @switch) match {
       case 0 => this.comment_property2 = {
         value.toString
@@ -52,5 +52,5 @@ final case class NoSpaces7(var comment_property2: String) extends org.apache.avr
 }
 
 object NoSpaces7 {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"NoSpaces7\",\"namespace\":\"com.example\",\"fields\":[{\"name\":\"comment_property2\",\"type\":\"string\"}]}")
+  val `SCHEMA$` = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"NoSpaces7\",\"namespace\":\"com.example\",\"fields\":[{\"name\":\"comment_property2\",\"type\":\"string\"}]}")
 }

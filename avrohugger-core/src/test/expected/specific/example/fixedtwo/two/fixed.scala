@@ -13,9 +13,9 @@ final case class fixed() extends org.apache.avro.specific.SpecificFixed {
 }
 
 object fixed {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"fixed\",\"name\":\"fixed\",\"namespace\":\"fixedtwo.two\",\"size\":16}")
-  val READER$ = new org.apache.avro.specific.SpecificDatumReader[fixed](fixedtwo.two.fixed.SCHEMA$)
-  val WRITER$ = new org.apache.avro.specific.SpecificDatumWriter[fixed](fixedtwo.two.fixed.SCHEMA$)
+  val `SCHEMA$` = new org.apache.avro.Schema.Parser().parse("{\"type\":\"fixed\",\"name\":\"fixed\",\"namespace\":\"fixedtwo.two\",\"size\":16}")
+  val `READER$` = new org.apache.avro.specific.SpecificDatumReader[fixed](fixedtwo.two.fixed.SCHEMA$)
+  val `WRITER$` = new org.apache.avro.specific.SpecificDatumWriter[fixed](fixedtwo.two.fixed.SCHEMA$)
   def apply(data: Array[Byte]): fixed = {
     val fixed = new fixedtwo.two.fixed()
     fixed.bytes(data)

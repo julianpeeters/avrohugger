@@ -51,7 +51,7 @@ object PutGenerator {
       classSymbol,
       targetScalaPartialVersion)) :+ errorCase
 
-    DEF("put", UnitClass) withParams(PARAM("field$", IntClass), PARAM("value", AnyClass)) := BLOCK(
+    DEF("put", UnitClass) withParams(PARAM(BACKQUOTED("field$") withType IntClass), PARAM("value", AnyClass)) := BLOCK(
       REF("field$") withAnnots (ANNOT("switch")) MATCH (casesPut), UNIT
     )
   }

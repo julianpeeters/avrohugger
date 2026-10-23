@@ -5,7 +5,7 @@ import scala.annotation.switch
 
 final case class Country(var key: Option[String] = None, var paris: Option[com.europe.City] = None, var london: Option[com.europe.City] = None, var newYork: Option[com.america.City] = None) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this(None, None, None, None)
-  def get(field$: Int): AnyRef = {
+  def get(`field$`: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {
         key match {
@@ -34,7 +34,7 @@ final case class Country(var key: Option[String] = None, var paris: Option[com.e
       case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
-  def put(field$: Int, value: Any): Unit = {
+  def put(`field$`: Int, value: Any): Unit = {
     (field$: @switch) match {
       case 0 => this.key = {
         value match {
@@ -68,5 +68,5 @@ final case class Country(var key: Option[String] = None, var paris: Option[com.e
 }
 
 object Country {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Country\",\"namespace\":\"com.countries\",\"fields\":[{\"name\":\"key\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"paris\",\"type\":[\"null\",{\"type\":\"record\",\"name\":\"City\",\"namespace\":\"com.europe\",\"fields\":[{\"name\":\"key\",\"type\":\"string\",\"default\":\"Paris\"}]}],\"default\":null},{\"name\":\"london\",\"type\":[\"null\",\"com.europe.City\"],\"default\":null},{\"name\":\"newYork\",\"type\":[\"null\",{\"type\":\"record\",\"name\":\"City\",\"namespace\":\"com.america\",\"fields\":[{\"name\":\"name\",\"type\":\"string\",\"default\":\"Paris\"}]}],\"default\":null}]}")
+  val `SCHEMA$` = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Country\",\"namespace\":\"com.countries\",\"fields\":[{\"name\":\"key\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"paris\",\"type\":[\"null\",{\"type\":\"record\",\"name\":\"City\",\"namespace\":\"com.europe\",\"fields\":[{\"name\":\"key\",\"type\":\"string\",\"default\":\"Paris\"}]}],\"default\":null},{\"name\":\"london\",\"type\":[\"null\",\"com.europe.City\"],\"default\":null},{\"name\":\"newYork\",\"type\":[\"null\",{\"type\":\"record\",\"name\":\"City\",\"namespace\":\"com.america\",\"fields\":[{\"name\":\"name\",\"type\":\"string\",\"default\":\"Paris\"}]}],\"default\":null}]}")
 }

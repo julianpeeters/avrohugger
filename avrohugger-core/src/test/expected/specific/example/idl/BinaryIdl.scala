@@ -5,7 +5,7 @@ import scala.annotation.switch
 
 final case class BinaryIdl(var data: Array[Byte]) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this(Array())
-  def get(field$: Int): AnyRef = {
+  def get(`field$`: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {
         java.nio.ByteBuffer.wrap(data)
@@ -13,7 +13,7 @@ final case class BinaryIdl(var data: Array[Byte]) extends org.apache.avro.specif
       case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
-  def put(field$: Int, value: Any): Unit = {
+  def put(`field$`: Int, value: Any): Unit = {
     (field$: @switch) match {
       case 0 => this.data = {
         value match {
@@ -34,5 +34,5 @@ final case class BinaryIdl(var data: Array[Byte]) extends org.apache.avro.specif
 }
 
 object BinaryIdl {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"BinaryIdl\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"data\",\"type\":\"bytes\"}]}")
+  val `SCHEMA$` = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"BinaryIdl\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"data\",\"type\":\"bytes\"}]}")
 }
