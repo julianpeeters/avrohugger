@@ -12,8 +12,8 @@ jobs:
       fail-fast: false
       matrix:
         os: [macos-latest, ubuntu-latest]
-        scala: [2.12.21, 2.13.18, 3.3.9-RC1]
-        java: ['17', '25']
+        scala: [2.12.21, 2.13.18, 3.3.9]
+        java: ['17', '25', '27']
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v6
