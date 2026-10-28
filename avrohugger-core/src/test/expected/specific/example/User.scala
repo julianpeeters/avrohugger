@@ -5,7 +5,7 @@ import scala.annotation.switch
 
 final case class User(var name: String, var favorite_number: Option[Int], var favorite_color: Option[String]) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this("", None, None)
-  def get(field$: Int): AnyRef = {
+  def get(`field$`: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {
         name
@@ -25,7 +25,7 @@ final case class User(var name: String, var favorite_number: Option[Int], var fa
       case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
-  def put(field$: Int, value: Any): Unit = {
+  def put(`field$`: Int, value: Any): Unit = {
     (field$: @switch) match {
       case 0 => this.name = {
         value.toString
@@ -50,5 +50,5 @@ final case class User(var name: String, var favorite_number: Option[Int], var fa
 }
 
 object User {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"User\",\"namespace\":\"example\",\"fields\":[{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"favorite_number\",\"type\":[\"int\",\"null\"]},{\"name\":\"favorite_color\",\"type\":[\"string\",\"null\"]}]}")
+  val `SCHEMA$` = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"User\",\"namespace\":\"example\",\"fields\":[{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"favorite_number\",\"type\":[\"int\",\"null\"]},{\"name\":\"favorite_color\",\"type\":[\"string\",\"null\"]}]}")
 }

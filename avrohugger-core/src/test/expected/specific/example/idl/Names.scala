@@ -5,7 +5,7 @@ import scala.annotation.switch
 
 final case class Names(var `protected`: String, var `ends_with_`: String) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this("", "")
-  def get(field$: Int): AnyRef = {
+  def get(`field$`: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {
         `protected`
@@ -16,7 +16,7 @@ final case class Names(var `protected`: String, var `ends_with_`: String) extend
       case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
-  def put(field$: Int, value: Any): Unit = {
+  def put(`field$`: Int, value: Any): Unit = {
     (field$: @switch) match {
       case 0 => this.`protected` = {
         value.toString
@@ -32,5 +32,5 @@ final case class Names(var `protected`: String, var `ends_with_`: String) extend
 }
 
 object Names {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Names\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"protected\",\"type\":\"string\"},{\"name\":\"ends_with_\",\"type\":\"string\"}]}")
+  val `SCHEMA$` = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Names\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"protected\",\"type\":\"string\"},{\"name\":\"ends_with_\",\"type\":\"string\"}]}")
 }

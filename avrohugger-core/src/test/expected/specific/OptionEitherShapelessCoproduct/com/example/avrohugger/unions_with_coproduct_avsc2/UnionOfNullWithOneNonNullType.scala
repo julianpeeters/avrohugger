@@ -5,7 +5,7 @@ import scala.annotation.switch
 
 final case class UnionOfNullWithOneNonNullType(var f3: Option[Double]) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this(None)
-  def get(field$: Int): AnyRef = {
+  def get(`field$`: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {
         f3 match {
@@ -16,7 +16,7 @@ final case class UnionOfNullWithOneNonNullType(var f3: Option[Double]) extends o
       case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
-  def put(field$: Int, value: Any): Unit = {
+  def put(`field$`: Int, value: Any): Unit = {
     (field$: @switch) match {
       case 0 => this.f3 = {
         value match {
@@ -32,5 +32,5 @@ final case class UnionOfNullWithOneNonNullType(var f3: Option[Double]) extends o
 }
 
 object UnionOfNullWithOneNonNullType {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"UnionOfNullWithOneNonNullType\",\"namespace\":\"com.example.avrohugger.unions_with_coproduct_avsc2\",\"fields\":[{\"name\":\"f3\",\"type\":[\"null\",\"double\"]}]}")
+  val `SCHEMA$` = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"UnionOfNullWithOneNonNullType\",\"namespace\":\"com.example.avrohugger.unions_with_coproduct_avsc2\",\"fields\":[{\"name\":\"f3\",\"type\":[\"null\",\"double\"]}]}")
 }

@@ -7,7 +7,7 @@ import model.UnionRecord
 
 final case class NestedRecord(var nestedunion: Option[UnionRecord]) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this(None)
-  def get(field$: Int): AnyRef = {
+  def get(`field$`: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {
         nestedunion match {
@@ -18,7 +18,7 @@ final case class NestedRecord(var nestedunion: Option[UnionRecord]) extends org.
       case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
-  def put(field$: Int, value: Any): Unit = {
+  def put(`field$`: Int, value: Any): Unit = {
     (field$: @switch) match {
       case 0 => this.nestedunion = {
         value match {
@@ -34,5 +34,5 @@ final case class NestedRecord(var nestedunion: Option[UnionRecord]) extends org.
 }
 
 object NestedRecord {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"NestedRecord\",\"namespace\":\"model.v2\",\"fields\":[{\"name\":\"nestedunion\",\"type\":[\"null\",{\"type\":\"record\",\"name\":\"UnionRecord\",\"namespace\":\"model\",\"fields\":[{\"name\":\"blah\",\"type\":\"string\"}]}]}]}")
+  val `SCHEMA$` = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"NestedRecord\",\"namespace\":\"model.v2\",\"fields\":[{\"name\":\"nestedunion\",\"type\":[\"null\",{\"type\":\"record\",\"name\":\"UnionRecord\",\"namespace\":\"model\",\"fields\":[{\"name\":\"blah\",\"type\":\"string\"}]}]}]}")
 }

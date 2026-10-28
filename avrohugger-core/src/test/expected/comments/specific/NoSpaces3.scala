@@ -10,7 +10,7 @@ import scala.annotation.switch
  */
 final case class NoSpaces3(var comment_property: String) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this("")
-  def get(field$: Int): AnyRef = {
+  def get(`field$`: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {
         comment_property
@@ -18,7 +18,7 @@ final case class NoSpaces3(var comment_property: String) extends org.apache.avro
       case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
-  def put(field$: Int, value: Any): Unit = {
+  def put(`field$`: Int, value: Any): Unit = {
     (field$: @switch) match {
       case 0 => this.comment_property = {
         value.toString
@@ -31,5 +31,5 @@ final case class NoSpaces3(var comment_property: String) extends org.apache.avro
 }
 
 object NoSpaces3 {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"NoSpaces3\",\"namespace\":\"com.example\",\"doc\":\"The comment applies to the `NoSpaces3` record, but is not indented to the\\nlevel of the record specification.\",\"fields\":[{\"name\":\"comment_property\",\"type\":\"string\"}]}")
+  val `SCHEMA$` = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"NoSpaces3\",\"namespace\":\"com.example\",\"doc\":\"The comment applies to the `NoSpaces3` record, but is not indented to the\\nlevel of the record specification.\",\"fields\":[{\"name\":\"comment_property\",\"type\":\"string\"}]}")
 }

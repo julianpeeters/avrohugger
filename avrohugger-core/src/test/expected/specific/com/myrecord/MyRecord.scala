@@ -5,7 +5,7 @@ import scala.annotation.switch
 
 final case class MyRecord(var MyID: com.myrecord.ID, var OtherRecord: com.otherrecord.OtherRecord) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this(new com.myrecord.ID, new com.otherrecord.OtherRecord)
-  def get(field$: Int): AnyRef = {
+  def get(`field$`: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {
         MyID
@@ -16,7 +16,7 @@ final case class MyRecord(var MyID: com.myrecord.ID, var OtherRecord: com.otherr
       case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
-  def put(field$: Int, value: Any): Unit = {
+  def put(`field$`: Int, value: Any): Unit = {
     (field$: @switch) match {
       case 0 => this.MyID = {
         value
@@ -32,5 +32,5 @@ final case class MyRecord(var MyID: com.myrecord.ID, var OtherRecord: com.otherr
 }
 
 object MyRecord {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"MyRecord\",\"namespace\":\"com.myrecord\",\"fields\":[{\"name\":\"MyID\",\"type\":{\"type\":\"record\",\"name\":\"ID\",\"fields\":[{\"name\":\"value\",\"type\":\"string\"}]}},{\"name\":\"OtherRecord\",\"type\":{\"type\":\"record\",\"name\":\"OtherRecord\",\"namespace\":\"com.otherrecord\",\"fields\":[{\"name\":\"OtherId\",\"type\":{\"type\":\"record\",\"name\":\"ID\",\"fields\":[{\"name\":\"value\",\"type\":\"string\"}]}}]}}]}")
+  val `SCHEMA$` = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"MyRecord\",\"namespace\":\"com.myrecord\",\"fields\":[{\"name\":\"MyID\",\"type\":{\"type\":\"record\",\"name\":\"ID\",\"fields\":[{\"name\":\"value\",\"type\":\"string\"}]}},{\"name\":\"OtherRecord\",\"type\":{\"type\":\"record\",\"name\":\"OtherRecord\",\"namespace\":\"com.otherrecord\",\"fields\":[{\"name\":\"OtherId\",\"type\":{\"type\":\"record\",\"name\":\"ID\",\"fields\":[{\"name\":\"value\",\"type\":\"string\"}]}}]}}]}")
 }

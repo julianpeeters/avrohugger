@@ -5,7 +5,7 @@ import scala.annotation.switch
 
 final case class LogicalSc(var data: BigDecimal, var fxField: example.logical.fxType, var ts: java.time.Instant, var dt: java.time.LocalDate, var uuid: java.util.UUID, var dataBig: BigDecimal, var tm: java.time.LocalTime, var timeMicros: java.time.LocalTime, var timestampMicros: java.time.ZonedDateTime, var localTimestampMicros: java.time.LocalDateTime, var localTimestampMillis: java.time.LocalDateTime) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this(scala.math.BigDecimal(0), example.logical.fxType(scala.math.BigDecimal(0)), java.time.Instant.now, java.time.LocalDate.now, java.util.UUID.randomUUID, scala.math.BigDecimal(0), java.time.LocalTime.now, java.time.LocalTime.MIDNIGHT, java.time.ZonedDateTime.of(java.time.LocalDateTime.MIN, java.time.ZoneId.of("UTC")), java.time.LocalDateTime.MIN, java.time.LocalDateTime.MIN)
-  def get(field$: Int): AnyRef = {
+  def get(`field$`: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {
         val schema = getSchema.getFields().get(field$).schema()
@@ -70,7 +70,7 @@ final case class LogicalSc(var data: BigDecimal, var fxField: example.logical.fx
       case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
-  def put(field$: Int, value: Any): Unit = {
+  def put(`field$`: Int, value: Any): Unit = {
     (field$: @switch) match {
       case 0 => this.data = {
         value match {
@@ -163,6 +163,6 @@ final case class LogicalSc(var data: BigDecimal, var fxField: example.logical.fx
 }
 
 object LogicalSc {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"LogicalSc\",\"namespace\":\"example.logical\",\"fields\":[{\"name\":\"data\",\"type\":{\"type\":\"bytes\",\"logicalType\":\"decimal\",\"precision\":9,\"scale\":2}},{\"name\":\"fxField\",\"type\":{\"type\":\"fixed\",\"name\":\"fxType\",\"size\":2,\"logicalType\":\"decimal\",\"precision\":2,\"scale\":1}},{\"name\":\"ts\",\"type\":{\"type\":\"long\",\"logicalType\":\"timestamp-millis\"}},{\"name\":\"dt\",\"type\":{\"type\":\"int\",\"logicalType\":\"date\"}},{\"name\":\"uuid\",\"type\":{\"type\":\"string\",\"logicalType\":\"uuid\"}},{\"name\":\"dataBig\",\"type\":{\"type\":\"bytes\",\"logicalType\":\"decimal\",\"precision\":20,\"scale\":12}},{\"name\":\"tm\",\"type\":{\"type\":\"int\",\"logicalType\":\"time-millis\"}},{\"name\":\"timeMicros\",\"type\":{\"type\":\"long\",\"logicalType\":\"time-micros\"}},{\"name\":\"timestampMicros\",\"type\":{\"type\":\"long\",\"logicalType\":\"timestamp-micros\"}},{\"name\":\"localTimestampMicros\",\"type\":{\"type\":\"long\",\"logicalType\":\"local-timestamp-micros\"}},{\"name\":\"localTimestampMillis\",\"type\":{\"type\":\"long\",\"logicalType\":\"local-timestamp-millis\"}}]}")
+  val `SCHEMA$` = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"LogicalSc\",\"namespace\":\"example.logical\",\"fields\":[{\"name\":\"data\",\"type\":{\"type\":\"bytes\",\"logicalType\":\"decimal\",\"precision\":9,\"scale\":2}},{\"name\":\"fxField\",\"type\":{\"type\":\"fixed\",\"name\":\"fxType\",\"size\":2,\"logicalType\":\"decimal\",\"precision\":2,\"scale\":1}},{\"name\":\"ts\",\"type\":{\"type\":\"long\",\"logicalType\":\"timestamp-millis\"}},{\"name\":\"dt\",\"type\":{\"type\":\"int\",\"logicalType\":\"date\"}},{\"name\":\"uuid\",\"type\":{\"type\":\"string\",\"logicalType\":\"uuid\"}},{\"name\":\"dataBig\",\"type\":{\"type\":\"bytes\",\"logicalType\":\"decimal\",\"precision\":20,\"scale\":12}},{\"name\":\"tm\",\"type\":{\"type\":\"int\",\"logicalType\":\"time-millis\"}},{\"name\":\"timeMicros\",\"type\":{\"type\":\"long\",\"logicalType\":\"time-micros\"}},{\"name\":\"timestampMicros\",\"type\":{\"type\":\"long\",\"logicalType\":\"timestamp-micros\"}},{\"name\":\"localTimestampMicros\",\"type\":{\"type\":\"long\",\"logicalType\":\"local-timestamp-micros\"}},{\"name\":\"localTimestampMillis\",\"type\":{\"type\":\"long\",\"logicalType\":\"local-timestamp-millis\"}}]}")
   val decimalConversion = new org.apache.avro.Conversions.DecimalConversion
 }

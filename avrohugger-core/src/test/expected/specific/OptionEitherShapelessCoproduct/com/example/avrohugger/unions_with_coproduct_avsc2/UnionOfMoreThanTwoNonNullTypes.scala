@@ -7,7 +7,7 @@ import shapeless.{:+:, CNil, Coproduct}
 
 final case class UnionOfMoreThanTwoNonNullTypes(var r6: Boolean :+: Int :+: String :+: CNil) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this(shapeless.Coproduct[Boolean :+: Int :+: String :+: CNil](false))
-  def get(field$: Int): AnyRef = {
+  def get(`field$`: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {
         r6
@@ -15,7 +15,7 @@ final case class UnionOfMoreThanTwoNonNullTypes(var r6: Boolean :+: Int :+: Stri
       case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
-  def put(field$: Int, value: Any): Unit = {
+  def put(`field$`: Int, value: Any): Unit = {
     (field$: @switch) match {
       case 0 => this.r6 = {
         value
@@ -28,5 +28,5 @@ final case class UnionOfMoreThanTwoNonNullTypes(var r6: Boolean :+: Int :+: Stri
 }
 
 object UnionOfMoreThanTwoNonNullTypes {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"UnionOfMoreThanTwoNonNullTypes\",\"namespace\":\"com.example.avrohugger.unions_with_coproduct_avsc2\",\"fields\":[{\"name\":\"r6\",\"type\":[\"boolean\",\"int\",\"string\"]}]}")
+  val `SCHEMA$` = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"UnionOfMoreThanTwoNonNullTypes\",\"namespace\":\"com.example.avrohugger.unions_with_coproduct_avsc2\",\"fields\":[{\"name\":\"r6\",\"type\":[\"boolean\",\"int\",\"string\"]}]}")
 }

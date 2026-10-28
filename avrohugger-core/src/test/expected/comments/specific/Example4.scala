@@ -7,7 +7,7 @@ sealed trait Example4 extends org.apache.avro.specific.SpecificRecordBase with P
 
 final case class NoSpaces4(var comment_property1: String) extends org.apache.avro.specific.SpecificRecordBase with Example4 {
   def this() = this("")
-  def get(field$: Int): AnyRef = {
+  def get(`field$`: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {
         comment_property1
@@ -15,7 +15,7 @@ final case class NoSpaces4(var comment_property1: String) extends org.apache.avr
       case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
-  def put(field$: Int, value: Any): Unit = {
+  def put(`field$`: Int, value: Any): Unit = {
     (field$: @switch) match {
       case 0 => this.comment_property1 = {
         value.toString
@@ -28,12 +28,12 @@ final case class NoSpaces4(var comment_property1: String) extends org.apache.avr
 }
 
 final object NoSpaces4 {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"NoSpaces4\",\"namespace\":\"com.example\",\"fields\":[{\"name\":\"comment_property1\",\"type\":\"string\"}]}")
+  val `SCHEMA$` = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"NoSpaces4\",\"namespace\":\"com.example\",\"fields\":[{\"name\":\"comment_property1\",\"type\":\"string\"}]}")
 }
 
 final case class NoSpaces5(var comment_property2: String) extends org.apache.avro.specific.SpecificRecordBase with Example4 {
   def this() = this("")
-  def get(field$: Int): AnyRef = {
+  def get(`field$`: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {
         comment_property2
@@ -41,7 +41,7 @@ final case class NoSpaces5(var comment_property2: String) extends org.apache.avr
       case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
-  def put(field$: Int, value: Any): Unit = {
+  def put(`field$`: Int, value: Any): Unit = {
     (field$: @switch) match {
       case 0 => this.comment_property2 = {
         value.toString
@@ -54,5 +54,5 @@ final case class NoSpaces5(var comment_property2: String) extends org.apache.avr
 }
 
 final object NoSpaces5 {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"NoSpaces5\",\"namespace\":\"com.example\",\"fields\":[{\"name\":\"comment_property2\",\"type\":\"string\"}]}")
+  val `SCHEMA$` = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"NoSpaces5\",\"namespace\":\"com.example\",\"fields\":[{\"name\":\"comment_property2\",\"type\":\"string\"}]}")
 }
