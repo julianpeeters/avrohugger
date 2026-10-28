@@ -7,7 +7,7 @@ import shapeless.{:+:, CNil, Coproduct}
 
 final case class s(var s: String, var ns: Option[String], var multi2: Either[com.example.avrohugger.unions_with_coproduct_avsc.r1, com.example.avrohugger.unions_with_coproduct_avsc.r2], var multi2opt: Option[Either[com.example.avrohugger.unions_with_coproduct_avsc.r1, com.example.avrohugger.unions_with_coproduct_avsc.r2]], var multi3: com.example.avrohugger.unions_with_coproduct_avsc.r3 :+: com.example.avrohugger.unions_with_coproduct_avsc.r1 :+: com.example.avrohugger.unions_with_coproduct_avsc.r2 :+: CNil, var multi3opt: Option[com.example.avrohugger.unions_with_coproduct_avsc.r3 :+: com.example.avrohugger.unions_with_coproduct_avsc.r1 :+: com.example.avrohugger.unions_with_coproduct_avsc.r2 :+: CNil]) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this("", None, Left(new com.example.avrohugger.unions_with_coproduct_avsc.r1), None, shapeless.Coproduct[com.example.avrohugger.unions_with_coproduct_avsc.r3 :+: com.example.avrohugger.unions_with_coproduct_avsc.r1 :+: com.example.avrohugger.unions_with_coproduct_avsc.r2 :+: CNil](new com.example.avrohugger.unions_with_coproduct_avsc.r3), None)
-  def get(field$: Int): AnyRef = {
+  def get(`field$`: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {
         s
@@ -39,7 +39,7 @@ final case class s(var s: String, var ns: Option[String], var multi2: Either[com
       case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
-  def put(field$: Int, value: Any): Unit = {
+  def put(`field$`: Int, value: Any): Unit = {
     (field$: @switch) match {
       case 0 => this.s = {
         value.toString
@@ -76,5 +76,5 @@ final case class s(var s: String, var ns: Option[String], var multi2: Either[com
 }
 
 object s {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"s\",\"namespace\":\"com.example.avrohugger.unions_with_coproduct_avsc\",\"fields\":[{\"name\":\"s\",\"type\":\"string\"},{\"name\":\"ns\",\"type\":[\"null\",\"string\"]},{\"name\":\"multi2\",\"type\":[{\"type\":\"record\",\"name\":\"r1\",\"fields\":[{\"name\":\"f1\",\"type\":\"int\"}]},{\"type\":\"record\",\"name\":\"r2\",\"fields\":[{\"name\":\"f2\",\"type\":\"double\"}]}]},{\"name\":\"multi2opt\",\"type\":[\"null\",\"r1\",\"r2\"]},{\"name\":\"multi3\",\"type\":[{\"type\":\"record\",\"name\":\"r3\",\"fields\":[{\"name\":\"f3\",\"type\":\"boolean\"}]},\"r1\",\"r2\"]},{\"name\":\"multi3opt\",\"type\":[\"null\",\"r3\",\"r1\",\"r2\"]}]}")
+  val `SCHEMA$` = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"s\",\"namespace\":\"com.example.avrohugger.unions_with_coproduct_avsc\",\"fields\":[{\"name\":\"s\",\"type\":\"string\"},{\"name\":\"ns\",\"type\":[\"null\",\"string\"]},{\"name\":\"multi2\",\"type\":[{\"type\":\"record\",\"name\":\"r1\",\"fields\":[{\"name\":\"f1\",\"type\":\"int\"}]},{\"type\":\"record\",\"name\":\"r2\",\"fields\":[{\"name\":\"f2\",\"type\":\"double\"}]}]},{\"name\":\"multi2opt\",\"type\":[\"null\",\"r1\",\"r2\"]},{\"name\":\"multi3\",\"type\":[{\"type\":\"record\",\"name\":\"r3\",\"fields\":[{\"name\":\"f3\",\"type\":\"boolean\"}]},\"r1\",\"r2\"]},{\"name\":\"multi3opt\",\"type\":[\"null\",\"r3\",\"r1\",\"r2\"]}]}")
 }

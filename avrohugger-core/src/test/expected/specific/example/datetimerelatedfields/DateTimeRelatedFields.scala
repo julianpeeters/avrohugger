@@ -15,7 +15,7 @@ import scala.annotation.switch
  */
 final case class DateTimeRelatedFields(var field01: Int, var field02: Long, var field03: Long, var field04: Long, var field05: Long, var field06: Int, var field07: Int) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this(0, 0L, 0L, 0L, 0L, 0, 0)
-  def get(field$: Int): AnyRef = {
+  def get(`field$`: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {
         field01
@@ -41,7 +41,7 @@ final case class DateTimeRelatedFields(var field01: Int, var field02: Long, var 
       case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
-  def put(field$: Int, value: Any): Unit = {
+  def put(`field$`: Int, value: Any): Unit = {
     (field$: @switch) match {
       case 0 => this.field01 = {
         value
@@ -72,5 +72,5 @@ final case class DateTimeRelatedFields(var field01: Int, var field02: Long, var 
 }
 
 object DateTimeRelatedFields {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"DateTimeRelatedFields\",\"namespace\":\"example.datetimerelatedfields\",\"doc\":\"Record with the fields that relate to date and time\",\"fields\":[{\"name\":\"field01\",\"type\":\"int\",\"logicalType\":\"date\"},{\"name\":\"field02\",\"type\":\"long\",\"logicalType\":\"timestamp-millis\"},{\"name\":\"field03\",\"type\":\"long\",\"logicalType\":\"timestamp-micros\"},{\"name\":\"field04\",\"type\":\"long\",\"logicalType\":\"local-timestamp-micros\"},{\"name\":\"field05\",\"type\":\"long\",\"logicalType\":\"local-timestamp-millis\"},{\"name\":\"field06\",\"type\":\"int\",\"logicalType\":\"time-millis\"},{\"name\":\"field07\",\"type\":\"int\",\"logicalType\":\"time-micros\"}],\"messages\":{}}")
+  val `SCHEMA$` = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"DateTimeRelatedFields\",\"namespace\":\"example.datetimerelatedfields\",\"doc\":\"Record with the fields that relate to date and time\",\"fields\":[{\"name\":\"field01\",\"type\":\"int\",\"logicalType\":\"date\"},{\"name\":\"field02\",\"type\":\"long\",\"logicalType\":\"timestamp-millis\"},{\"name\":\"field03\",\"type\":\"long\",\"logicalType\":\"timestamp-micros\"},{\"name\":\"field04\",\"type\":\"long\",\"logicalType\":\"local-timestamp-micros\"},{\"name\":\"field05\",\"type\":\"long\",\"logicalType\":\"local-timestamp-millis\"},{\"name\":\"field06\",\"type\":\"int\",\"logicalType\":\"time-millis\"},{\"name\":\"field07\",\"type\":\"int\",\"logicalType\":\"time-micros\"}],\"messages\":{}}")
 }

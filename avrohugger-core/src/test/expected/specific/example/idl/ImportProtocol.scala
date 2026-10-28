@@ -9,7 +9,7 @@ sealed trait ImportProtocol extends org.apache.avro.specific.SpecificRecordBase 
 
 final case class DependentRecord(var dependency: ExternalDependency, var number: Int) extends org.apache.avro.specific.SpecificRecordBase with ImportProtocol {
   def this() = this(new ExternalDependency, 0)
-  def get(field$: Int): AnyRef = {
+  def get(`field$`: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {
         dependency
@@ -20,7 +20,7 @@ final case class DependentRecord(var dependency: ExternalDependency, var number:
       case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
-  def put(field$: Int, value: Any): Unit = {
+  def put(`field$`: Int, value: Any): Unit = {
     (field$: @switch) match {
       case 0 => this.dependency = {
         value
@@ -36,12 +36,12 @@ final case class DependentRecord(var dependency: ExternalDependency, var number:
 }
 
 final object DependentRecord {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"DependentRecord\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"dependency\",\"type\":{\"type\":\"record\",\"name\":\"ExternalDependency\",\"namespace\":\"other.ns\",\"fields\":[{\"name\":\"number\",\"type\":\"int\"}]}},{\"name\":\"number\",\"type\":\"int\"}]}")
+  val `SCHEMA$` = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"DependentRecord\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"dependency\",\"type\":{\"type\":\"record\",\"name\":\"ExternalDependency\",\"namespace\":\"other.ns\",\"fields\":[{\"name\":\"number\",\"type\":\"int\"}]}},{\"name\":\"number\",\"type\":\"int\"}]}")
 }
 
 final case class DependentRecord2(var dependency: Suit, var name: String) extends org.apache.avro.specific.SpecificRecordBase with ImportProtocol {
   def this() = this(null, "")
-  def get(field$: Int): AnyRef = {
+  def get(`field$`: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {
         dependency
@@ -52,7 +52,7 @@ final case class DependentRecord2(var dependency: Suit, var name: String) extend
       case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
-  def put(field$: Int, value: Any): Unit = {
+  def put(`field$`: Int, value: Any): Unit = {
     (field$: @switch) match {
       case 0 => this.dependency = {
         value
@@ -68,12 +68,12 @@ final case class DependentRecord2(var dependency: Suit, var name: String) extend
 }
 
 final object DependentRecord2 {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"DependentRecord2\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"dependency\",\"type\":{\"type\":\"enum\",\"name\":\"Suit\",\"namespace\":\"other.ns\",\"symbols\":[\"SPADES\",\"DIAMONDS\",\"CLUBS\",\"HEARTS\"]}},{\"name\":\"name\",\"type\":\"string\"}]}")
+  val `SCHEMA$` = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"DependentRecord2\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"dependency\",\"type\":{\"type\":\"enum\",\"name\":\"Suit\",\"namespace\":\"other.ns\",\"symbols\":[\"SPADES\",\"DIAMONDS\",\"CLUBS\",\"HEARTS\"]}},{\"name\":\"name\",\"type\":\"string\"}]}")
 }
 
 final case class DependentRecord3(var dependency: Embedded, var value: Boolean) extends org.apache.avro.specific.SpecificRecordBase with ImportProtocol {
   def this() = this(new Embedded, false)
-  def get(field$: Int): AnyRef = {
+  def get(`field$`: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {
         dependency
@@ -84,7 +84,7 @@ final case class DependentRecord3(var dependency: Embedded, var value: Boolean) 
       case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
-  def put(field$: Int, value: Any): Unit = {
+  def put(`field$`: Int, value: Any): Unit = {
     (field$: @switch) match {
       case 0 => this.dependency = {
         value
@@ -100,5 +100,5 @@ final case class DependentRecord3(var dependency: Embedded, var value: Boolean) 
 }
 
 final object DependentRecord3 {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"DependentRecord3\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"dependency\",\"type\":{\"type\":\"record\",\"name\":\"Embedded\",\"fields\":[{\"name\":\"inner\",\"type\":\"int\"}]}},{\"name\":\"value\",\"type\":\"boolean\"}]}")
+  val `SCHEMA$` = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"DependentRecord3\",\"namespace\":\"example.idl\",\"fields\":[{\"name\":\"dependency\",\"type\":{\"type\":\"record\",\"name\":\"Embedded\",\"fields\":[{\"name\":\"inner\",\"type\":\"int\"}]}},{\"name\":\"value\",\"type\":\"boolean\"}]}")
 }

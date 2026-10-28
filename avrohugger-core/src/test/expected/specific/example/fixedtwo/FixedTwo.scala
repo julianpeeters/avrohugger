@@ -5,7 +5,7 @@ import scala.annotation.switch
 
 final case class FixedTwo(var first: fixedtwo.one.fixed, var second: fixedtwo.two.fixed) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this(fixedtwo.one.fixed(Array()), fixedtwo.two.fixed(Array()))
-  def get(field$: Int): AnyRef = {
+  def get(`field$`: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {
         first
@@ -16,7 +16,7 @@ final case class FixedTwo(var first: fixedtwo.one.fixed, var second: fixedtwo.tw
       case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
-  def put(field$: Int, value: Any): Unit = {
+  def put(`field$`: Int, value: Any): Unit = {
     (field$: @switch) match {
       case 0 => this.first = {
         value
@@ -32,5 +32,5 @@ final case class FixedTwo(var first: fixedtwo.one.fixed, var second: fixedtwo.tw
 }
 
 object FixedTwo {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"FixedTwo\",\"namespace\":\"fixedtwo\",\"fields\":[{\"name\":\"first\",\"type\":{\"type\":\"fixed\",\"name\":\"fixed\",\"namespace\":\"fixedtwo.one\",\"size\":16}},{\"name\":\"second\",\"type\":{\"type\":\"fixed\",\"name\":\"fixed\",\"namespace\":\"fixedtwo.two\",\"size\":16}}]}")
+  val `SCHEMA$` = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"FixedTwo\",\"namespace\":\"fixedtwo\",\"fields\":[{\"name\":\"first\",\"type\":{\"type\":\"fixed\",\"name\":\"fixed\",\"namespace\":\"fixedtwo.one\",\"size\":16}},{\"name\":\"second\",\"type\":{\"type\":\"fixed\",\"name\":\"fixed\",\"namespace\":\"fixedtwo.two\",\"size\":16}}]}")
 }

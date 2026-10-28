@@ -5,7 +5,7 @@ import scala.annotation.switch
 
 final case class Room(var door: example.types.door = example.types.door.NORTH) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this(example.types.door.NORTH)
-  def get(field$: Int): AnyRef = {
+  def get(`field$`: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {
         door
@@ -13,7 +13,7 @@ final case class Room(var door: example.types.door = example.types.door.NORTH) e
       case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
-  def put(field$: Int, value: Any): Unit = {
+  def put(`field$`: Int, value: Any): Unit = {
     (field$: @switch) match {
       case 0 => this.door = {
         value
@@ -26,5 +26,5 @@ final case class Room(var door: example.types.door = example.types.door.NORTH) e
 }
 
 object Room {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Room\",\"namespace\":\"example\",\"fields\":[{\"name\":\"door\",\"type\":{\"type\":\"enum\",\"name\":\"door\",\"namespace\":\"example.types\",\"symbols\":[\"NORTH\",\"SOUTH\",\"EAST\",\"WEST\"]},\"default\":\"NORTH\"}]}")
+  val `SCHEMA$` = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Room\",\"namespace\":\"example\",\"fields\":[{\"name\":\"door\",\"type\":{\"type\":\"enum\",\"name\":\"door\",\"namespace\":\"example.types\",\"symbols\":[\"NORTH\",\"SOUTH\",\"EAST\",\"WEST\"]},\"default\":\"NORTH\"}]}")
 }

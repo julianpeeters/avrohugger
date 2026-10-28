@@ -5,7 +5,7 @@ import scala.annotation.switch
 
 final case class UnionRecord(var blah: String) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this("")
-  def get(field$: Int): AnyRef = {
+  def get(`field$`: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {
         blah
@@ -13,7 +13,7 @@ final case class UnionRecord(var blah: String) extends org.apache.avro.specific.
       case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
-  def put(field$: Int, value: Any): Unit = {
+  def put(`field$`: Int, value: Any): Unit = {
     (field$: @switch) match {
       case 0 => this.blah = {
         value.toString
@@ -26,5 +26,5 @@ final case class UnionRecord(var blah: String) extends org.apache.avro.specific.
 }
 
 object UnionRecord {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"UnionRecord\",\"namespace\":\"model\",\"fields\":[{\"name\":\"blah\",\"type\":\"string\"}]}")
+  val `SCHEMA$` = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"UnionRecord\",\"namespace\":\"model\",\"fields\":[{\"name\":\"blah\",\"type\":\"string\"}]}")
 }

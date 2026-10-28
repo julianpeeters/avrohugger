@@ -7,7 +7,7 @@ import shapeless.{:+:, CNil}
 
 final case class UnionOfNullWithTwoNonNullTypes(var r5: Option[Int :+: String :+: CNil]) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this(None)
-  def get(field$: Int): AnyRef = {
+  def get(`field$`: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {
         r5 match {
@@ -18,7 +18,7 @@ final case class UnionOfNullWithTwoNonNullTypes(var r5: Option[Int :+: String :+
       case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
-  def put(field$: Int, value: Any): Unit = {
+  def put(`field$`: Int, value: Any): Unit = {
     (field$: @switch) match {
       case 0 => this.r5 = {
         value match {
@@ -34,5 +34,5 @@ final case class UnionOfNullWithTwoNonNullTypes(var r5: Option[Int :+: String :+
 }
 
 object UnionOfNullWithTwoNonNullTypes {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"UnionOfNullWithTwoNonNullTypes\",\"namespace\":\"com.example.avrohugger.unions_with_coproduct_avsc2\",\"fields\":[{\"name\":\"r5\",\"type\":[\"null\",\"int\",\"string\"]}]}")
+  val `SCHEMA$` = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"UnionOfNullWithTwoNonNullTypes\",\"namespace\":\"com.example.avrohugger.unions_with_coproduct_avsc2\",\"fields\":[{\"name\":\"r5\",\"type\":[\"null\",\"int\",\"string\"]}]}")
 }

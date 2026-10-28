@@ -27,7 +27,7 @@ import scala.annotation.switch
  */
 final case class NoSpaces1(var single_line_comment_property: String, var multi_line_property: String) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this("", "")
-  def get(field$: Int): AnyRef = {
+  def get(`field$`: Int): AnyRef = {
     (field$: @switch) match {
       case 0 => {
         single_line_comment_property
@@ -38,7 +38,7 @@ final case class NoSpaces1(var single_line_comment_property: String, var multi_l
       case _ => throw new org.apache.avro.AvroRuntimeException("Bad index")
     }
   }
-  def put(field$: Int, value: Any): Unit = {
+  def put(`field$`: Int, value: Any): Unit = {
     (field$: @switch) match {
       case 0 => this.single_line_comment_property = {
         value.toString
@@ -54,5 +54,5 @@ final case class NoSpaces1(var single_line_comment_property: String, var multi_l
 }
 
 object NoSpaces1 {
-  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"NoSpaces1\",\"namespace\":\"com.example\",\"doc\":\"The comment applies to the `NoSpaces1` record, but is not indented to the\\nlevel of the record specification.\",\"fields\":[{\"name\":\"single_line_comment_property\",\"type\":\"string\",\"doc\":\"This is a single line comment that is indented for readability,\\nand is not affected by indentation.\"},{\"name\":\"multi_line_property\",\"type\":\"string\",\"doc\":\"This multi-line comment on `mult_line_property` that would be affected by indentation.\\n\\nThis is another paragraph\\n\\n\\n    This is an indented block and should be shown as\\n    such.\\n\\nHere is a code block that apparently does not work for avrodoc. E.g. no [GFM](https://help.github.com/articles/github-flavored-markdown) support.\\n\\n```ruby\\n# this is a Ruby code block\\ndef method(arg1, arg2=nil)\\n  puts \\\"hello world!\\\"\\nend\\n```\"}]}")
+  val `SCHEMA$` = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"NoSpaces1\",\"namespace\":\"com.example\",\"doc\":\"The comment applies to the `NoSpaces1` record, but is not indented to the\\nlevel of the record specification.\",\"fields\":[{\"name\":\"single_line_comment_property\",\"type\":\"string\",\"doc\":\"This is a single line comment that is indented for readability,\\nand is not affected by indentation.\"},{\"name\":\"multi_line_property\",\"type\":\"string\",\"doc\":\"This multi-line comment on `mult_line_property` that would be affected by indentation.\\n\\nThis is another paragraph\\n\\n\\n    This is an indented block and should be shown as\\n    such.\\n\\nHere is a code block that apparently does not work for avrodoc. E.g. no [GFM](https://help.github.com/articles/github-flavored-markdown) support.\\n\\n```ruby\\n# this is a Ruby code block\\ndef method(arg1, arg2=nil)\\n  puts \\\"hello world!\\\"\\nend\\n```\"}]}")
 }

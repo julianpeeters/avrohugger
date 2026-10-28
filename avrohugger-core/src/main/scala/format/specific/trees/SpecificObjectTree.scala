@@ -53,16 +53,16 @@ object SpecificObjectTree {
     }
     val namespaceRegex = """"namespace":"([^"]+)"""".r
     val updated = namespaceRegex.replaceFirstIn(schema.toString, s""""namespace":${namespace.fold("""null""")(ns => s""""$ns"""")}""")
-    val schemaDef = VAL(REF("SCHEMA$")) := {
+    val schemaDef = VAL(BACKQUOTED("SCHEMA$")) := {
       NEW(ParserClass) APPLY (Nil) DOT "parse" APPLY (updated match {
         case schemaString if schemaString.getBytes(StandardCharsets.UTF_8).length > 65535 => LIST(schemaString.split("},\\{\"").map(LIT)) DOT "mkString" APPLY (LIT("},{\""))
         case schemaString => LIT(schemaString)
       })
     }
-    val externalReader = VAL("READER$") := NEW("org.apache.avro.specific.SpecificDatumReader").APPLYTYPE(TYPE_REF(schema.getName)).APPLY(
+    val externalReader = VAL(BACKQUOTED("READER$")) := NEW("org.apache.avro.specific.SpecificDatumReader").APPLYTYPE(TYPE_REF(schema.getName)).APPLY(
       REF(s"${schema.getFullName()}.SCHEMA$$")
     )
-    val externalWriter = VAL("WRITER$") := NEW("org.apache.avro.specific.SpecificDatumWriter").APPLYTYPE(TYPE_REF(schema.getName)).APPLY(
+    val externalWriter = VAL(BACKQUOTED("WRITER$")) := NEW("org.apache.avro.specific.SpecificDatumWriter").APPLYTYPE(TYPE_REF(schema.getName)).APPLY(
       REF(s"${schema.getFullName()}.SCHEMA$$")
     )
     val defCtorDefault = DEF("apply", TYPE_REF(schema.getName())).withParams(PARAM("data", TYPE_ARRAY(ByteClass))) := BLOCK(
