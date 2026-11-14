@@ -43,14 +43,18 @@ object StandardScalaTreehugger extends ScalaTreehugger {
         val importStrings = if (imports.nonEmpty) imports.mkString("\n") else ""
         s"/* $header */\n" + pkg + importStrings + content + "\n"
       case _ =>
+        // treehugger can't print Scala 3 enums, so append them as raw strings after the rest of the file
+        val (enums, others) = topLevelDefs.partition(_.isInstanceOf[Scala3EnumSourceCode])
         val tree = {
-          val blockContent = imports ++ topLevelDefs
+          val blockContent = imports ++ others
           if (namespace.isDefined) BLOCK(blockContent).inPackage(namespace.get)
           else BLOCK(blockContent: _*).withoutPackage
         }.withDoc(header)
         // SpecificCompiler can't return a tree for Java enums, so return
         // a string here for a consistent api vis a vis *ToFile and *ToStrings
-        treeToString(tree)
+        val code = treeToString(tree)
+        val enumCode = enums.collect { case Scala3EnumSourceCode(content) => content }
+        if (enumCode.isEmpty) code else code + "\n\n" + enumCode.mkString("\n")
     }
   }
 

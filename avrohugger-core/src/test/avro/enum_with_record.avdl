@@ -1,0 +1,10 @@
+@namespace("example.idl")
+protocol EnumWithRecordProtocol {
+
+  enum Color { RED, GREEN }
+
+  record Paint {
+    Color color;
+  }
+
+}

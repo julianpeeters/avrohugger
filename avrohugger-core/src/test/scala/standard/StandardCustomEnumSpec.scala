@@ -18,6 +18,7 @@ class StandardCustomEnumSpec extends Specification {
     correctly generate files with enums as scala strings when asked for $e6
     correctly generate strings with scala 3 enums when asked for $e7
     correctly generate files with Scala 3 enums when asked for $e8
+    correctly generate strings with scala 3 enums next to records in a protocol $e9
   """
   
   def e1 = {
@@ -211,6 +212,16 @@ class StandardCustomEnumSpec extends Specification {
     dep1 === expectedDep1
     dep2 === expectedDep2
     dep3 === expectedDep3
+  }
+
+  def e9 = {
+    val infile = new java.io.File("avrohugger-core/src/test/avro/enum_with_record.avdl")
+    val gen = Generator(
+      Standard,
+      Some(Standard.defaultTypes.copy(`enum` = Scala3Enum, protocol = ScalaADT)))
+    val List(adt) = gen.fileToStrings(infile)
+    val expectedADT = util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/scala3enum/EnumWithRecordProtocol.scala")
+    adt === expectedADT
   }
 
 }
