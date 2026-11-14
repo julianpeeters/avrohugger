@@ -33,8 +33,8 @@ lazy val commonSettings = Seq(
   publishMavenStyle := true,
   publishTo := localStaging.value,
   pomIncludeRepository := { _ => false },
-  licenses := Seq("Apache 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
-  homepage := Some(url("https://github.com/julianpeeters/avrohugger")),
+  licenses := Seq("Apache 2.0" -> uri("http://www.apache.org/licenses/LICENSE-2.0")),
+  homepage := Some(uri("https://github.com/julianpeeters/avrohugger")),
   pomExtra := (
     <scm>
       <url>git://github.com/julianpeeters/avrohugger.git</url>
